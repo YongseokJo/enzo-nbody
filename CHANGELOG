@@ -1,0 +1,341 @@
+= Enzo Changelog =
+
+== Version 2.6 == 
+
+_Release Date - 8-2-2019
+
+ * New Feature: Conversion from Mercurial+BitBucket to Git+GitHub
+ * New Feature: Automated testing on GitHub with CircleCI (GH PR #55)
+ * New Feature: Fuzzy dark matter evolution module + test problems (GH PR #61)
+ * New Feature: Subgrid-scale turbulence modeling framework (BB PR #407)
+ * New Feature: Magnetic supernova feedback (BB PR #346)
+ * New Feature: Active particle framework + docs (GH PR #57, PR #83, PR #85)
+
+ * Enhancement: Two new types of refinement regions: “Must refine” and “cooling-based refinement” regions, both of which move.  (GH PR #59)
+ * Enhancement: Star particle mass ramp added (GH PR #68)
+ * Enhancement: Zeldovich Pancake includes dark matter particles (BB PR #435)
+ * Enhancement: Python scripts in repository upgraded to Python 3 (BB PR #351, PR #363, PR #437)
+ * Enhancement: All physical constants consolidated into a single header file (BB PR #417, 428, )
+ * Enhancement: Cosmology simulations added to test suite (BB PR #419)
+ * Enhancement: Test suite provides more information about running and crashing tests (BB PR #339)
+ * Enhancement: Particle splitter has many new features (BB PR #426)
+ * Enhancement: Updated MPI error handler to MPI 2+ standards (BB PR #430)
+ * Enhancement: Additional must-refine particle capabilities: cell de-refinement (BB PR #424), ability for more complex conditionals (BB PR #369)
+ * Enhancement: Adjust Grackle UV background treatment at high redshift (BB PR #423)
+ * Enhancement: H- and H2II photodetachment added to radiation transport and transport chemistry network and tests (BB PR #390, PR #401, PR 409, PR #410)
+ * Enhancement: EvolveLevel and EvolveLevel_RK combined (BB PR #364)
+ * Enhancement: Problem initializers now all use AllocatedGrids (BB PR #404)
+ * Enhancement: All test problems now use power-of-two refinement factor (BB PR #340)
+ * Enhancement: Expansion parameter/redshift now use tables, enabling non-standard cosmologies (BB PR #393)
+ * Enhancement: Added stellar wind option to CollapseTest (BB PR #388)
+ * Enhancement: Expanded feedback options in idealized SMBH and elliptical galaxy simulations (BB PR #387)
+ * Enhancement: Grackle updated to use H2 self-shielding approximation (BB PR #349)
+ * Enhancement: Grackle supports user-supplied redshift in non-cosmological simulations (BB PR #334)
+ * Enhancement: Updated Grackle interface to support Grackle 3.x (Grackle 2.x support discontinued)  (BB PR #347)
+ * Enhancement: Test suite updated to work with yt-3 (BB PR #304)
+ * Enhancement: Particles supported in GalaxySimulation when using DiskGravity (BB PR #336)
+ * Enhancement: Improved documentation:
+    Dedner MHD (BB PR #415)
+    Enzo flowchart update (BB PR #418)
+    Recombined Enzo parameter list and expansion of physics/analysis capabilities section (BB PR #412)
+    Added MUSIC IC description (BB PR #376) 
+    Updated Quick-start guide (BB PR #376)
+    Updated FAQ including table of contents (BB PR #377)
+    Updated parameter descriptions (BB PR #367)
+    Updated tutorial (BB PR #372)
+
+ * Bugfix: Fixes to map RadiationRedshift* parameters to Grackle (GH PR #81)
+ * Bugfix: Small tweak to hierarchy file reader - patch for pre-AP simulations (GH PR #80)
+ * Bugfix: Documentation updated to reflect hg->git conversion (GH PR #63)
+ * Bugfix: Makefile hg->git conversion (GH PR #58)
+ * Bugfix: Test that boundary condition files are correctly read  (GH PR #58)
+ * Bugfix: Magnetic supernovae function with mixed precision  (GH PR #58)
+ * Bugfix: Libconfig removed (GH PR #67)
+ * Bugfix: 128-bit particles compilation errors fixed (BB PR #433), 32-bit compilation errors fixed (BB PR #416, PR #425)
+ * Bugfix: Memory leak in magnetic supernovae (BB PR #421)
+ * Bugfix: Misc. small runtime bug fixes (BB PR #427, PR #429, PR #382, PR #355, PR #353, PR #348)
+ * Bugfix: Cooling time calculation should include ghost zones (BB PR #414)
+ * Bugfix: Unused parameters removed (BB PR #408, PR #385, PR #378, PR #367, PR #342)
+ * Bugfix: ErrorException.h cleanup (BB PR #411)
+ * Bugfix: MHD-RK memory fix (BB PR #405)
+ * Bugfix: Grackle + radiation transport timestep fix (BB PR #391, PR #354)
+ * Bugfix: Many small compilation bugs fixed (BB PR #380, PR #332, PR #328)
+ * Bugfix: Removal of many uncompiled files (BB PR #386)
+ * Bugfix: CT MHD color species advection fixed (BB PR #361)
+ * Bugfix: HDF5 1.10 compatibility fix (BB PR #371)
+ * Bugfix: Fix Ray tracing load balance crash (BB PR #370)
+ * Bugfix: Conduction timestep properly saved (BB PR #341)
+ * Bugfix: Fixed rarefaction fan calculation in flux_twoshock.F (BB PR #338)
+ * Bugfix: Density floor in PPM solver (euler.F) changed from hard-coded to using pre-existing SmallRho parameter (BB PR #333)
+
+
+== Version 2.5 ==
+
+_Release date - 3-10-2016
+
+  * New Feature: AGORA isolated galaxy problem and related Goldbaum,
+	Forbes & Krumholz feedback routines (PR #253, PR #295)
+  * New Feature: Grackle 2.0 support (PR #260)
+  * New Feature: Support for several new test problems for MHD (PR #244,
+	PR #299)
+  * New Feature: Implementation of stochastic forcing in turbulence
+	problems (PR #251)
+  * New Feature: Refinement by metal mass (PR #288)
+  * New Feature: Must Refine particles (PR #309)
+  * New Feature: New 2D test problems for hydro and MHD (PR #305)
+  * New Feature: Power-of-2 memory allocation (enhances memory
+	performance)  (PR #297)
+  * New Feature: Cosmic ray pressure/diffusion/injection (PR #300)
+  * New Feature: Simpson et al. Kinetic stellar feedback (PR #277)
+  * Enhancement: HDF5 hierarchy output no longer default due to code slowdown
+	(PR #245)
+  * Enhancement: New Stampede makefiles (intel and gnu compilers) (PR
+	#246)
+  * Enhancement: Ignore grid hydro parameters on restart - use global
+	values (PR #250)
+  * Enhancement: FLD solver speedup and scaling improvement (PR #254, PR #264)
+  * Enhancement: RNG streams now reproducible in parallel (PR #262)
+  * Enhancement: Updated default value of solar metallicity to be
+	consistent with Cloudy (PR #272)
+  * Enhancement: Minor performance improvements (PR #273)
+  * Enhancement: hydro_rk solver speedups (PR #286)
+  * Enhancement: Misc. small fixes/updates from John Wise regarding star
+	particles and sink particles (PR #287)
+  * Enhancement: Updates to Enzo's inline FOF halo finder (PR #283)
+  * Enhancement: Can now calculate dust temperature from command line (PR #282)
+  * Enhancement: Ray tracing has several optimizations and new features,
+	most of which promote speed and/or stability
+	(PR #294)
+  * Enhancement: Enzo native chemistry solver updated with timestep
+	limiter, H2 self-shielding, non-cosmological redshift (PR #289)
+  * Enhancement: CollapseTest and PhotonTest updated for correctness and
+	flexibility (PR #298)
+  * Enhancement: Pop III star star cluster formation and feedback
+	improvements and new features (PR #293)
+  * Enhancement: UniformGravity support in MUSCL (PR #310)
+  * Enhancement: UngridTranspose=2 is now default (PR #313)
+  * Enhancement: GalaxySimulation enhancements (PR #300)
+  * Enhancement: MHD CT cosmology update (PR #318)
+  * Bugfix: Misc. MHD bug fixes and cleanup (PR #243, PR #257, PR #265, PR
+	#269, PR #271, PR #278)
+  * Bugfix: Makefile updates and fixes (PR #256, PR #285, PR #301, PR #302)
+  * Bugfix: Typo in TurbulenceSimulation (PR #248)
+  * Bugfix: Doc cleanup (PR #252, PR #259, PR #263, PR #267)
+  * Bugfix: Fixed "output cooling time only" and "output smoothed dm field
+	only" options (PR #255)
+  * Bugfix: Fixed MaximumGravityRefinementLevel to work with SiblingList
+	(PR #238)
+  * Bugfix: CommunicationLoadBalanceGrids fix for MinProc (PR #258)
+  * Bugfix: Small stability/reproducibility fixes (PR #261, PR #266, PR #275)
+  * Bugfix: Removed excessive unnecessary code warnings (PR #268)
+  * Bugfix: Added missing input file in CoolingTest_Grackle (PR #279)
+  * Bugfix: Fix to Grid::CheckForExternalReflections doing right side
+	incorrectly (PR #274)
+  * Bugfix: Enzo-performance module hang in parallel (PR #296)
+  * Bugfix: MUSCL pressure support for EOS=0 corrected (PR #281)
+  * Bugfix: Color density floor to PPM reconstruction (PR #284)
+  * Bugfix: ReadParameterFile memory leak (PR #306)
+  * Bugfix: StochasticForcing works with all solvers (PR #308)
+  * Bugfix: Compilation problem with new-problem-types-yes (PR #307)
+  * Bugfix: WriteParameterFile doesn't write correct TimeActionTime (PR #312)
+  * Bugfix: LoadBalancing when all grids have equal work (PR #311)
+  * Bugfix: Flux correction for metal fields (PR #314)
+  * Bugfix: Minor bugs in gFLDSplit and gFLDProblem solvers (PR #317)
+  * Bugfix: mismatched new/delete in Grid_ProjectSolutionToParentGrid (PR #319)
+  * Bugfix: float/double mismatches (PR #320)
+  * Bugfix: compiler warnings found with -Werror (PR #321)
+  * Bugfix: 2D simulation segfault (PR #322)
+  * Bugfix: Enhancing compilibility w/photon-no (PR #323)
+  * Bugfix: Checking of cosmic ray fluid parameteters upon startup (PR #325)
+
+== Version 2.4 ==
+_Release date - 8-8-2014
+
+  * New Feature: A progess meter script has been added to the bin directory
+                 (PR #233)
+  * New Feature: Added a rotating turbulent sphere test problem (PR #206)
+  * New Feature: Hierarchy rebuilds can now be controlled dynamically (PR #196)
+  * New Feature: Grackle chemistry and cooling (PR #194)
+  * Enhancement: Conversion factors from code units to CGS units are now written
+                 with increased precision (PR 239)
+  * Enhancement: Improved compatibility for cosmology simulations that include
+                 FLD, chemistry, and cooling. (PR #230)
+  * Enhancement: Significant updates for the unigrid FLD solver (PR #216)
+  * Enhancement: Particle splitting has been reimplemented with an improved 
+                 algorithm (PR #188)
+  * Enhancement: CosmologySimulation can now be run with MHDCT (PR #223)
+  * Enhancement: PPM simulations that use MinimumPressureSupport now use an 
+                 improved algorithm for runs with cooling (PR #220)
+  * Enhancement: Added a parameter that allows fully manual control over the root
+                 grid decomposition (PR #219, PR#226)
+  * Enhancement: Documentation on how to add a new BaryonField has been added.
+                 (PR #221)
+  * Enhancement: The galaxy simulation can now be run without using comoving
+                 coordinates (PR #204)
+  * Enhancement: Added a timestep-independent star particle creation mechanism
+                 (PR #197)
+  * Enhancement: Improvements for the tracer particle implementation (PR #193)
+  * Enhancement: Improvements for the Kelvin-Helmholtz test problem (PR #192)
+  * Enhancement: Buffer zones on processor boundaries will now be properly
+                 flagged for refinement. (PR #190, PR #218)
+  * Enhancement: The shear refinement criterion is now compatible with more
+                 simulation types (PR #189)
+  * Enhancement: AccelerationBoundary is now compatible with point source gravity
+                 (PR #117)
+  * Enhancement: Test problems will generate more efficient hierarchies during
+                 problem initialization (PR #182)
+  * Enhancement: Improvements for the CPU and GPU Dedner MHD solvers 
+                 (PR #177, PR #200)
+  * Enhancement: New refine region mechanics (PR #155, PR #172, PR #227)
+  * Enhancement: MHDCT works with outflow boundary conditions (PR #176, PR#198)
+  * Bugfix: Fixed an issue with the emissivity field in the FLD module having 
+            incorrect units (PR 241)
+  * Bugfix: Compilation issues for the FLD module in 32-bit mode have been 
+            resolved (PR 240)
+  * Bugfix: The internal energy field is no longer made conservative during flux
+            correction if cooling is turned on (PR 228)
+  * Bugfix: Fixed an issue where incorrect fluxes were being generated for
+            the internal energy in simulations that used flux correction.  This
+            may improve stability in some applications. (PR 217)
+  * Bugfix: FinalRedshift is no longer derived from StopTime, preventing
+            desynchronization between these parameters (PR 236)
+  * Bugfix: The FLD radiative transfer parameter file is now only written by
+            the root processor (PR #235)
+  * Bugfix: Fixed issues with mpgrafic and P-GroupFinder (PR #215)
+  * Bugfix: Fixed issues with transport of color fields at refinement boundaries.
+            (PR #199)
+  * Bugfix: Remove AddParticleAttributes, which sometimes causes particle 
+            metadata to be incorrectly zeroed out (PR #208)
+  * Bugfix: The -g command line option now works as expected (PR #207) 
+  * Bugfix: A buggy MIN macro was causing ComputeTimestep to be called twice
+            (PR #200)
+  * Bugfix: Fix for simulations that use ExternalGravity but no self gravity
+            (PR #201)
+  * Bugfix: Inits now uses increased precision when writing subgrid locations.
+            (PR #195)
+  * Bugfix: Use Agg as the plotting backend for performance_tools (PR #191)
+  * Bugfix: AddFeedbackSphere is now compatible with the Zeus hydro solver 
+            (PR 187)
+  * Bugfix: Fixed issues MHD test problems (PR #185, PR #186)
+  * Bugfix: Fixes for uninitialized memory errors reported by valgrind 
+            (PR #181, PR #184)
+  * Bugfix: Fixed issues with compiling in mixed precision mode (PR #181)
+  * Bugfix: Fixed an issue with NumberOfOutputsBeforeExit functionality (PR #179)
+  * Bugfix: Fixed an issue with header include order in the RK solvers (PR #178)
+  * Bugfix: MagneticField is not set to NULL after being deleted (PR #175)
+  * Bugfix: Fixed an issue that caused the build to fail if hg is not 
+            present (PR #174)
+  * Bugfix: Fixed Haardt & Madau 2012 radiation field rates (PR #171)
+
+== Version 2.3 ==
+_Release date - July 9, 2013_
+
+  * New Feature: MHDCT, divergence free MHD ( PR #121, PR #156, PR #160)
+  * New Feature: New Haard & Madau 2012 radiation background ( PR #143)
+  * New Feature: Second derivative refinement criteria ( PR #164)
+  * New Feature: New TestOrbit problem for orbiting point masses ( PR #152)
+  * New Feature: New magnetic reconnection test ( PR #121)
+  * New Feature: CUDA PPM solver ( PR #78)
+  * New Feature: Supermassive black hole feedback ( PR #119)
+  * Enhancement: New additions to the RefineRegion mechanics ( PR #155)
+  * Enhancement: Improvements to the gravity solver ( PR #120, PR #124, PR #131 PR #163, )
+  * Enhancement: Improvements to the CUDA MHD solver
+  * Enhancement: New output mechanism for debugging difficult code ( PR #103)
+  * Enhancement: Updates to documentation ( PR #94, PR #104, PR #140, PR #141)
+  * Enhancement: Performance timers for communication ( PR #139)
+  * Enhancement: Updates to test problems, test runner, and inits ( PR #87, PR #89, 
+                 PR #91, PR #93, PR #95, PR #96, PR #97, PR #98, PR #99, PR #100, 
+                 PR #101, PR #102, PR #107, PR #108, PR #110, PR #113 PR #123, 
+                 PR #132, PR #133, PR #149, PR #146, PR #151, PR #154, PR #161, PR #167, )
+  * Enhancement: Improvements to the enzo/yt inline interface ( PR #131)
+  * Enhancement: NumberOfGhostZones is now a run-time parameter ( PR #84)
+  * Bugfix: OutputOnDensity fixes ( PR #122, PR #136)
+  * Bugfix: Cooling fixes ( PR #126, PR #136)
+  * Bugfix: Ray tracer bugfixes for isolaced BCs, constant dt, memory bug ( PR #144, PR #158)
+  * Bugfix: Timestep bug fixed for multispecies ( PR #153)
+  * Bugfix: Sink particle fix ( PR #129)
+  * Bugfix: Set acceleration boundary updates ( PR #88) 
+
+== Version 2.2 ==
+_Release date - Nov 30, 2012_
+
+  * New Feature: Supernova Ia feedback (no PR)
+  * New Feature: H2-regulated star formation prescription (PR #41)
+  * New Feature: Light-weight timing and performance measuring tool (PR #35)
+  * Enhancement: Fortran precisions are now explicit. (PR #80)
+  * Enhancement: Improved inline yt analysis. (PR #13)
+  * Enhancement: Support for ghost-zone input/output. (PR #8)
+  * Enhancement: Reorganized and improved code documentation. (PR #79, and many more)
+  * Enhancement: Improvements to answer testing. (PR #82, and many more)
+  * Enhancement: Docs for enzo performance measurement/analysis. (PR #38)
+  * Bugfix: Generalizing the conversion to conserved quantities. (PR #75)
+  * Bugfix: Fixing the set-acceleration-boundary compile flag. (PR #77)
+  * Bugfix: Bug fix in hydro shock tubes initialization (PR #76)
+  * Bugfix: Fix precision settings in WriteParameterFile. (PR #74)
+  * Bugfix: Fixing create_config_info.py to replace ^M with \n in the output of 'hg diff'. (PR #73)
+  * Bugfix: MAX_ANY_DIRECTION check (PR #72)
+  * Bugfix: Fixing memory leak. (PR #71)
+  * Bugfix: Shocks on output bugfix (PR #70)
+  * Bugfix: Backporting Mike's hdf5 hierarchy fixes. (PR #69)
+  * Bugfix: fix too-many-files issue with make dep (PR #65)
+  * Bugfix: Changing MAX_ANY_SINGLE_DIRECTION from 3079 to 1024. (PR #62)
+  * Bugfix: Minor fixes to H2 chemistry & cooling (PR #61)
+  * Bugfix: Removing extra 1/dom factor in MetalCooling = 1 (PR #59)
+  * Bugfix: Removing unused experimental chemistry code (PR #60)
+  * Bugfix: Adding -fdefault-double-8 for example machine files for GNU v4.6+ (PR #54)
+  * Bugfix: Change default setting for (the inaccurately named) bitwise-identicality setting to no (PR #47)
+  * Bugfix: Subgrid size change and FOF bugfix (PR #46)
+  * Bugfix: Fixed tracer particle allocation (PR #44)
+  * Bugfix: Sink particle merging fixes (PR #40)
+  * Bugfix: Fixed small errorPartition Grid only if not already partitioned (PR #28)
+  * Bugfix: Small changes for GENum in AddFeedbackSphere and IdentifyPhysicalQuantites to avoid confusion with DensNum. (PR #25)
+  * Bugfix: Fix for Ghost Zone IO (PR #34)
+  * Bugfix: Fixing some errors in the description of Cen & Ostriker star (PR #33)
+  * Bugfix: moved ENZO_FAIL before the loop to see if fields already exist. this loop will be infinite if OldNumberOfBaryonFields + FieldsToAdd > MAX_NUMBER_OF_BARYON_FIELDS, so it's best to do the check first. (PR #31)
+  * Bugfix: Corrected Make.config.target's transposition of branch and revision info (PR #30)
+  * Bugfix: Fixing small error (3.5%) in TemperatureUnits in CosmologyGetUnits.C (PR #26)
+  * Bugfix: Small doc fix. (PR #22)
+  * Bugfix: Changing enzo_unit_tests.h to Unix file format (PR #19)
+  * Bugfix: Bugfix MetalCooling=1 missing a factor of density (PR #16)
+  * Bugfix: Make inits work for 2D cosmology simulations (PR #12)
+  * Bugfix: Deleting LevelArray variable after HDF5 hierarchy is written (PR #9)
+  * Bugfix: make HDF5Hierarchy work with particles-128 (PR #11)
+  * Bugfix: Fix urgent Ghost Zone bug (PR #14)
+  * Bugfix: dtPhoton lower limit (PR #5)
+  * Bugfix: HDF5 Hierarchy fix (PR #1)
+  * Bugfix: Fix the rotating cylinder test problem (PR #4)
+
+== Version 2.1.1 ==
+_Release date - Oct 27, 2011_
+
+  * Enhancement: Test suite is now fully operational.  See run/README for more details.
+  * Enhancement: The “must refine” region can move with a user-defined, time-dependent refine region (parameter RefineRegionFile and refinement option 12)
+  * Bugfix: Enzo now compiles with HDF5 v1.6.x (Michael Kuhlen)
+  * Bugfix: User-defined time-dependent refine region now works with code time (David Collins)
+  * Bugfix: Photon timesteps no longer go to tiny numbers (~1e-20) in certain situations when using the HII-restricted timestepping algortihm.
+
+== Version 2.1.0 ==
+_Release date - Oct 17, 2011_
+
+  * New feature: Isotropic and anisotropic heat conduction
+  * New feature: X-ray ionization and heating
+  * New feature: Massive black hole particles
+  * New feature: Testing suite
+  * New feature: Shock tracking
+  * New feature: Distributed stellar feedback across multiple cells
+  * Enhancement: Improved molecular hydrogen chemistry at high densities
+  * Enhancement: Fourth-order accurate gravity solver
+  * Enhancement: HDF5 based hierarchy file (off by default)
+  * Enhancement: Dust cooling -- Molecular hydrogen formation on dust grains
+  * Enhancement: Time-dependent Lyman-Werner radiation backgrounds
+  * Enhancement: Type Ia SNe and planetary nebulae feedback
+  * Enhancement: HLLC and HLL Riemann solvers for HD (HydroMethod=0)
+  * Enhancement: HLLD Riemann solver for MHD
+  * Enhancement: Improved inline analysis with yt
+  * Enhancement: Simplifed multi-mesh cosmological initial conditions with inits.
+  * Enhancement: Improved and expanded documentation
+  * Performance improvement: Load balancing on a space-filling curve
+  * Performance improvement: Parallel ray tracing
+  * Performance improvement: Ray tracing load balancing
+  * Changed all FORTRAN files to .F instead of .src to remove the pre-processing step.
+  * Various bugfixes over the past year.

@@ -1,0 +1,12 @@
+name = 'NohProblem2DAMR'
+answer_testing_script = 'test_noh2damr.py'
+nprocs = 1
+runtime = 'short'
+hydro = True
+gravity = False
+AMR = True
+dimensionality = 2
+max_time_minutes = 2
+fullsuite = True
+pushsuite = True
+quicksuite = False

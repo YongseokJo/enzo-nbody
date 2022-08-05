@@ -1,0 +1,12 @@
+#!/bin/sh
+./configure \
+    CFLAGS="" \
+    FCFLAGS="-fno-underscoring" \
+    LDFLAGS="" \
+    FC=mpif90 \
+    CC=mpicc \
+    --enable-enzo \
+    --enable-double \
+    --enable-onedim \
+    --with-hdf=/usr/local/hdf5p
+
