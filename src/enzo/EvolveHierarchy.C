@@ -162,6 +162,7 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 	double tlev0, tlev1, treb0, treb1, tloop0, tloop1, tentry, texit;
 	LevelHierarchyEntry *Temp;
 	double LastCPUTime;
+	float dtProc   = huge_number;
 
 	if (nbody_comm != MPI_COMM_NULL)  goto START; //by YS, skip for nbody comms
 
@@ -379,7 +380,6 @@ START: //by YS, start for nbody comms
 
 		/* Compute minimum timestep on the top level. */
 
-		float dtProc   = huge_number;
 		Temp = LevelArray[0];
 
 		// Start skipping
@@ -528,7 +528,7 @@ START2:
 			}
 			return FAIL;
 		}
-		if (nbody_comm != MPI_COMM_NULL)  goto START3; //by YS, skip for nbody comms
+		if (nbody_comm != MPI_COMM_NULL)  continue; //by YS, skip for nbody comms
 
 
 
@@ -711,7 +711,6 @@ START2:
 				StoppedByOutput = TRUE;
 			}
 		}
-START3:
 
 } // ===== end of main loop ====
 

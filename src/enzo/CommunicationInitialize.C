@@ -70,20 +70,25 @@ int CommunicationInitialize(Eint32 *argc, char **argv[])
 		MPI_Comm_group(MPI_COMM_WORLD, &world_group);
 
 		const int mpi_nbody_size = 6;
-		int ranks[mpi_nbody_size];
+		const int mpi_enzo_size = mpi_size-6;
+		int ranks_nbody[mpi_nbody_size];
 		for (int i=0;i<mpi_nbody_size;i++) {
-			ranks[i] = mpi_size-i-1;
+			ranks_nbody[i] = i + mpi_enzo_size;
 		}
-		int tag = mpi_rank/(mpi_size-mpi_nbody_size);
+		int ranks_enzo[mpi_enzo_size];
+		for (int i=0;i<mpi_enzo_size;i++) {
+			ranks_enzo[i] = i;
+		}
+		int tag = mpi_rank/(mpi_enzo_size);
 
 		// Construct a enzo group and corresponding communicator
 		MPI_Group enzo_group;
-		MPI_Group_excl(world_group, mpi_nbody_size, ranks, &enzo_group);
+		MPI_Group_incl(world_group, mpi_enzo_size, ranks_enzo, &enzo_group);
 		MPI_Comm_create_group(MPI_COMM_WORLD, enzo_group, tag, &enzo_comm);
 
 		// Construct a nbody group and corresponding communicator
 		MPI_Group nbody_group;
-		MPI_Group_incl(world_group, mpi_nbody_size, ranks, &nbody_group);
+		MPI_Group_incl(world_group, mpi_nbody_size, ranks_nbody, &nbody_group);
 		MPI_Comm_create_group(MPI_COMM_WORLD, nbody_group, tag, &nbody_comm);
 
 		int new_rank, new_size;

@@ -18,6 +18,7 @@ make precision-64 integers-32 particle-id-32 max-baryons-30 opt-aggressive lcape
 make show-config
 make show-flags
 make -j3
+cp enzo.exe enzo_spare.exe
 echo "Make done!"
 pwd
 date

@@ -551,9 +551,10 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 NBODY: // by YS, run N-body code, here
 		if (nbody_comm != MPI_COMM_NULL) {
-			fprintf(stderr, "I am a NBODY process ().", MyProcessorNumber);
+			fprintf(stderr, "I am a NBODY process (%d).", MyProcessorNumber);
 			//CalculateNbody(ParticlesInfo(pos,mass,vel), ExpansionFactor, dtNow);	
 		}
+		MPI_Barrier(MPI_COMM_WORLD);
 		if (nbody_comm != MPI_COMM_NULL) goto NEXT;
 
 
@@ -845,7 +846,7 @@ NEXT: //by YS, right after NBODY calculations for nbody process
 	ENZO_VFAIL("Error in EvolveLevel (%"ISYM").\n", level)
       }
     }
-		if (nbody_comm != MPI_COMM_NULL) goto END;
+		if (nbody_comm != MPI_COMM_NULL) break;//goto END;
 
 #ifdef USE_LCAPERF
     // Update lcaperf "level" attribute
@@ -1037,7 +1038,7 @@ NEXT: //by YS, right after NBODY calculations for nbody process
     delete [] SiblingList;
     SiblingGridListStorage[level] = NULL;
   }
-END: // by YS, after EvolveLevel for nbody comms.
+//END: // by YS, after EvolveLevel for nbody comms.
   return SUCCESS;
  
 }

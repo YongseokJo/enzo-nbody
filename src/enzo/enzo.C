@@ -295,19 +295,21 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
   int_argc = argc;
  
 #ifdef USE_MPI
-  double t_init0, t_init1;
+		double t_init0, t_init1;
 
-  t_init0 = MPI_Wtime();
+	if (MPI_COMM_NULL != enzo_comm) {
+		t_init0 = MPI_Wtime();
 #endif /* USE_MPI */
 
-  // Create enzo timer and initialize default timers
-  enzo_timer = new enzo_timing::enzo_timer();
-  TIMER_REGISTER("CommunicationTranspose");
-  TIMER_REGISTER("ComputePotentialFieldLevelZero");
-  TIMER_REGISTER("RebuildHierarchy");
-  TIMER_REGISTER("SetBoundaryConditions");
-  TIMER_REGISTER("SolveHydroEquations");
-  TIMER_REGISTER("Total");
+		// Create enzo timer and initialize default timers
+		enzo_timer = new enzo_timing::enzo_timer();
+		TIMER_REGISTER("CommunicationTranspose");
+		TIMER_REGISTER("ComputePotentialFieldLevelZero");
+		TIMER_REGISTER("RebuildHierarchy");
+		TIMER_REGISTER("SetBoundaryConditions");
+		TIMER_REGISTER("SolveHydroEquations");
+		TIMER_REGISTER("Total");
+	}
 
 #ifdef USE_LCAPERF
 
