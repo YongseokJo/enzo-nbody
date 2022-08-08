@@ -1,6 +1,5 @@
 # This is an example of a comment,
 # whereas blank lines are ignored.
-*.O
 *.o
 *.exe
 *.swp
