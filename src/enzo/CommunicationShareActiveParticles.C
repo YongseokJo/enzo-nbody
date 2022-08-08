@@ -28,6 +28,7 @@
 #include "ActiveParticle.h"
 #include "CommunicationUtilities.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 void my_exit(int status);
 
@@ -83,7 +84,7 @@ int CommunicationShareActiveParticles(int *NumberToMove,
       MPI_Datatype DataTypeInt = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
 
       MPI_Allgather(&NumberToSend, 1, DataTypeInt,
-		    nCount, 1, DataTypeInt, MPI_COMM_WORLD);
+		    nCount, 1, DataTypeInt, enzo_comm);
 
       NumberOfNewParticles = 0;
       for (i = 0; i < NumberOfProcessors; i++) {
@@ -129,7 +130,7 @@ int CommunicationShareActiveParticles(int *NumberToMove,
       char* recv_buffer = new char[total_buffer_size];
 
       MPI_Allgatherv(send_buffer, local_buffer_size, MPI_PACKED,
-		     recv_buffer, all_buffer_sizes, displace, MPI_PACKED, MPI_COMM_WORLD);
+		     recv_buffer, all_buffer_sizes, displace, MPI_PACKED, enzo_comm);
 
       /* Unpack the particle buffers, generate global shared active particle list */
       

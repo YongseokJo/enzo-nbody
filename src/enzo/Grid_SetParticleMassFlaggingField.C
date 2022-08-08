@@ -26,6 +26,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "communication.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, int Target,
@@ -165,7 +166,7 @@ int grid::SetParticleMassFlaggingField(int StartProc, int EndProc, int level,
 //	     MyProcessorNumber, ProcessorNumber, size);
       CommunicationBufferedSend(ParticleMassFlaggingField, size, DataType,
 				ProcessorNumber, MPI_SENDPMFLAG_TAG, 
-				MPI_COMM_WORLD, size*sizeof(float));
+				enzo_comm, size*sizeof(float));
       delete [] ParticleMassFlaggingField;
       ParticleMassFlaggingField = NULL;
     }
@@ -200,7 +201,7 @@ int grid::SetParticleMassFlaggingField(int StartProc, int EndProc, int level,
 
       if (Source >= StartProc && Source < EndProc) {
 	buffer = new float[size];
-	MPI_Irecv(buffer, Count, DataType, Source, MPI_SENDPMFLAG_TAG, MPI_COMM_WORLD, 
+	MPI_Irecv(buffer, Count, DataType, Source, MPI_SENDPMFLAG_TAG, enzo_comm, 
 		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 
 	CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;

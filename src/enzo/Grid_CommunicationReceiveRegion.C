@@ -31,6 +31,7 @@
 #include "Grid.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 // function prototypes
  
@@ -343,7 +344,7 @@ int SendAllBaryonFields = FALSE;
 		TransferSize, FromProcessor, ProcessorNumber);
 #endif
       CommunicationBufferedSend(buffer, TransferSize, DataType, ProcessorNumber, 
-				0, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+				0, enzo_comm, BUFFER_IN_PLACE);
     } // ENDIF from processor
     
     if (MyProcessorNumber == ProcessorNumber) {
@@ -354,7 +355,7 @@ int SendAllBaryonFields = FALSE;
 
       if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
 	MPI_Irecv(buffer, TransferSize, DataType, FromProcessor, 0, 
-		  MPI_COMM_WORLD, 
+		  enzo_comm, 
 		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 	CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer;
 	CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
@@ -365,7 +366,7 @@ int SendAllBaryonFields = FALSE;
 
       if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
 	MPI_Recv(buffer, TransferSize, DataType, FromProcessor, 0, 
-		 MPI_COMM_WORLD, &Status);
+		 enzo_comm, &Status);
       }
 
     } // ENDIF grid processor

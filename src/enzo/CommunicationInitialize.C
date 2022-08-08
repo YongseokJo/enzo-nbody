@@ -30,13 +30,18 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "communication.h"
- 
+#include "communicators.h"
+
 /* function prototypes */
 void my_exit(int exit_status);
 
 #ifdef USE_MPI
 void CommunicationErrorHandlerFn(MPI_Comm *comm, MPI_Arg *err, ...);
 #endif
+
+
+MPI_Comm nbody_comm;
+MPI_Comm enzo_comm;
 
 
 int CommunicationInitialize(Eint32 *argc, char **argv[])
@@ -56,8 +61,47 @@ int CommunicationInitialize(Eint32 *argc, char **argv[])
   MPI_Comm_create_errhandler(CommunicationErrorHandlerFn, &CommunicationErrorHandler);
   MPI_Comm_set_errhandler(comm, CommunicationErrorHandler);
 
+
+
+	// by YS, N body function will be activated only if mpi_size > 12
+	if (mpi_size >= 12) {
+		// by YS, create the group of processes in MPI_COMM_WORLD
+		MPI_Group world_group;
+		MPI_Comm_group(MPI_COMM_WORLD, &world_group);
+
+		const int mpi_nbody_size = 6;
+		int ranks[mpi_nbody_size];
+		for (int i=0;i<mpi_nbody_size;i++) {
+			ranks[i] = mpi_size-i-1;
+		}
+		int tag = mpi_rank/(mpi_size-mpi_nbody_size);
+
+		// Construct a enzo group and corresponding communicator
+		MPI_Group enzo_group;
+		MPI_Group_excl(world_group, mpi_nbody_size, ranks, &enzo_group);
+		MPI_Comm_create_group(MPI_COMM_WORLD, enzo_group, tag, &enzo_comm);
+
+		// Construct a nbody group and corresponding communicator
+		MPI_Group nbody_group;
+		MPI_Group_incl(world_group, mpi_nbody_size, ranks, &nbody_group);
+		MPI_Comm_create_group(MPI_COMM_WORLD, nbody_group, tag, &nbody_comm);
+
+		int new_rank, new_size;
+		//if (mpi_rank >= (mpi_size-mpi_nbody_size)) {
+		if (MPI_COMM_NULL != nbody_comm) {
+			MPI_Comm_rank(nbody_comm, &new_rank);
+			MPI_Comm_size(nbody_comm, &new_size);
+			NumberOfProcessors = mpi_nbody_size;
+		}
+		if (MPI_COMM_NULL != enzo_comm) {
+			MPI_Comm_rank(enzo_comm, &new_rank);
+			MPI_Comm_size(enzo_comm, &new_size);
+			NumberOfProcessors = mpi_size-mpi_nbody_size;
+		}
+	}
+
   MyProcessorNumber = mpi_rank;
-  NumberOfProcessors = mpi_size;
+  //NumberOfProcessors = mpi_size;
  
   if (MyProcessorNumber == ROOT_PROCESSOR)
     printf("MPI_Init: NumberOfProcessors = %"ISYM"\n", NumberOfProcessors);
@@ -97,6 +141,8 @@ int CommunicationFinalize()
 {
  
 #ifdef USE_MPI
+	MPI_Comm_free(&enzo_comm);
+	MPI_Comm_free(&nbody_comm);
   MPI_Errhandler_free(&CommunicationErrorHandler);
   MPI_Finalize();
 #endif /* USE_MPI */

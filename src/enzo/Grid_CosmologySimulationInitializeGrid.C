@@ -39,6 +39,7 @@
 #include "Grid.h"
 #include "CosmologyParameters.h"
 #include "fortran.def"
+#include "communicators.h"
 void my_exit(int status);
  
 #ifdef PROTO  // Remove troublesome HDF PROTO declaration
@@ -711,7 +712,7 @@ int grid::CosmologySimulationInitializeGrid(
       MPI_Arg mpi_size;
 
 #ifdef USE_MPI 
-      MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+      MPI_Comm_size(enzo_comm, &mpi_size);
 #else
       mpi_size = 1;
 #endif

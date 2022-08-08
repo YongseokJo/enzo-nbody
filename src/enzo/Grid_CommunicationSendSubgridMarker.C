@@ -30,6 +30,7 @@
 #include "Grid.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define LEVEL_BIT_OFFSET 24
  
@@ -105,7 +106,7 @@ int grid::CommunicationSendSubgridMarker(grid *ToGrid, int ToProcessor)
     /* Send the buffer */
 
     CommunicationBufferedSend(buffer, size, MPI_INT, ToProcessor,
-			      MPI_SENDMARKER_TAG, MPI_COMM_WORLD,
+			      MPI_SENDMARKER_TAG, enzo_comm,
 			      BUFFER_IN_PLACE);
 
   } // ENDIF from processor
@@ -116,7 +117,7 @@ int grid::CommunicationSendSubgridMarker(grid *ToGrid, int ToProcessor)
 
     if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
       MPI_Irecv(buffer, size, MPI_INT, ProcessorNumber,
-		MPI_SENDMARKER_TAG, MPI_COMM_WORLD,
+		MPI_SENDMARKER_TAG, enzo_comm,
 		CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
       CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;
       CommunicationReceiveGridTwo[CommunicationReceiveIndex] = ToGrid;

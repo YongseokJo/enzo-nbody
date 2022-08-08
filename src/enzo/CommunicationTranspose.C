@@ -27,6 +27,8 @@
 #include "Hierarchy.h"
 #include "TopGridData.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
+
  
 extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
                                    int *sdim1, int *sdim2, int *sdim3,
@@ -215,16 +217,16 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
        
 //      if (MPI_Sendrecv((void*) SendBuffer, Count, DataType, Dest,
 //	       MPI_TRANSPOSE_TAG, (void*) ReceiveBuffer, RecvCount,
-//	       DataType, Source, MPI_TRANSPOSE_TAG, MPI_COMM_WORLD,
+//	       DataType, Source, MPI_TRANSPOSE_TAG, enzo_comm,
 //	       &status) != MPI_SUCCESS) {
 //	ENZO_VFAIL("Proc %"ISYM" MPI_Sendrecv error %"ISYM"\n", MyProcessorNumber,
 //		status.MPI_ERROR)
 //      }
 
       MPI_Irecv((void*) ReceiveBuffer, RecvCount, DataType, Source, 
-		MPI_TRANSPOSE_TAG, MPI_COMM_WORLD, &RequestHandle);
+		MPI_TRANSPOSE_TAG, enzo_comm, &RequestHandle);
       MPI_Send((void*) SendBuffer, Count, DataType, Dest, 
-	       MPI_TRANSPOSE_TAG, MPI_COMM_WORLD);
+	       MPI_TRANSPOSE_TAG, enzo_comm);
       MPI_Wait(&RequestHandle, &status);
  
 #ifdef MPI_INSTRUMENTATION
@@ -688,15 +690,15 @@ int OptimizedUnigridCommunicationTranspose(
 /* 
       if (MPI_Sendrecv((void*) SendBuffer, Count, DataType, Dest,
 	       MPI_TRANSPOSE_TAG, (void*) ReceiveBuffer, RecvCount,
-	       DataType, Source, MPI_TRANSPOSE_TAG, MPI_COMM_WORLD,
+	       DataType, Source, MPI_TRANSPOSE_TAG, enzo_comm,
 	       &Status) != MPI_SUCCESS) {
 	ENZO_VFAIL("Proc %"ISYM" MPI_Sendrecv error %"ISYM"\n", MyProcessorNumber,
 		Status.MPI_ERROR)
       }
 */
 
-      MPI_Irecv((void*) ReceiveBuffer, RecvCount, DataType, Source, MPI_TRANSPOSE_TAG, MPI_COMM_WORLD, &RequestHandle);
-      MPI_Send((void*) SendBuffer, Count, DataType, Dest, MPI_TRANSPOSE_TAG, MPI_COMM_WORLD);
+      MPI_Irecv((void*) ReceiveBuffer, RecvCount, DataType, Source, MPI_TRANSPOSE_TAG, enzo_comm, &RequestHandle);
+      MPI_Send((void*) SendBuffer, Count, DataType, Dest, MPI_TRANSPOSE_TAG, enzo_comm);
       MPI_Wait(&RequestHandle, &Status);
 
  
@@ -979,7 +981,7 @@ int NonBlockingCommunicationTranspose(region *FromRegion, int NumberOfFromRegion
        
 //      if (MPI_Sendrecv((void*) SendBuffer, Count, DataType, Dest,
 //	       MPI_TRANSPOSE_TAG, (void*) ReceiveBuffer, RecvCount,
-//	       DataType, Source, MPI_TRANSPOSE_TAG, MPI_COMM_WORLD,
+//	       DataType, Source, MPI_TRANSPOSE_TAG, enzo_comm,
 //	       &status) != MPI_SUCCESS) {
 //	ENZO_VFAIL("Proc %"ISYM" MPI_Sendrecv error %"ISYM"\n", MyProcessorNumber,
 //		status.MPI_ERROR)
@@ -988,16 +990,16 @@ int NonBlockingCommunicationTranspose(region *FromRegion, int NumberOfFromRegion
       /* Post receive call */
 
       MPI_Irecv((void*) ReceiveBuffer[ni], RecvCount, DataType, Source, 
-		MPI_TRANSPOSE_TAG, MPI_COMM_WORLD, RequestHandle+ni);
+		MPI_TRANSPOSE_TAG, enzo_comm, RequestHandle+ni);
 
       /* Buffered send of the data */
 
       CommunicationBufferedSend(SendBuffer[ni], Count, DataType, Dest,
-				MPI_TRANSPOSE_TAG, MPI_COMM_WORLD,
+				MPI_TRANSPOSE_TAG, enzo_comm,
 				BUFFER_IN_PLACE);
 
 //      MPI_Send((void*) SendBuffer[ni], Count, DataType, Dest, 
-//	       MPI_TRANSPOSE_TAG, MPI_COMM_WORLD);
+//	       MPI_TRANSPOSE_TAG, enzo_comm);
 //      MPI_Wait(&RequestHandle, &status);
  
 #ifdef MPI_INSTRUMENTATION

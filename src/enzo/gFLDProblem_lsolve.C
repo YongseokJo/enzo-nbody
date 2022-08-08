@@ -68,7 +68,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDProblem.h"
-
+#include "communicators.h"
 
 int gFLDProblem::lsolve(EnzoVector *s, EnzoVector *b, 
 			EnzoVector *u, float delta)
@@ -81,7 +81,7 @@ int gFLDProblem::lsolve(EnzoVector *s, EnzoVector *b,
 
   // in case MPI is not included
 #ifndef MPI_INT
-  int MPI_COMM_WORLD = 0;
+  int enzo_comm = 0;
 #endif
   
   // have b communicate neighbor information and enforce BCs
@@ -315,9 +315,9 @@ int gFLDProblem::lsolve(EnzoVector *s, EnzoVector *b,
   HYPRE_StructSolver solver;
   HYPRE_StructSolver preconditioner;
 //   if (debug)  printf("lsolve: calling HYPRE_StructPCGCreate\n");
-  HYPRE_StructPCGCreate(MPI_COMM_WORLD, &solver);
+  HYPRE_StructPCGCreate(enzo_comm, &solver);
 //   if (debug)  printf("lsolve: calling HYPRE_StructPFMGCreate\n");
-  HYPRE_StructPFMGCreate(MPI_COMM_WORLD, &preconditioner);
+  HYPRE_StructPFMGCreate(enzo_comm, &preconditioner);
 
   //          set preconditioner options
 //   if (debug)  printf("lsolve: calling HYPRE_StructPFMGSet*\n");

@@ -10,6 +10,8 @@
 /
 ************************************************************************/
  
+
+
 #ifdef USE_MPI
 #include "mpi.h"
 #endif /* USE_MPI */
@@ -28,6 +30,7 @@
 #include "TopGridData.h"
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
 
 #ifdef MPI_INSTRUMENTATION
 #define START_TIMING starttime = MPI_Wtime();
@@ -58,7 +61,7 @@ Eflt32 CommunicationMinValue(Eflt32 Value)
   START_TIMING;
   MPI_Datatype DataType = MPI_FLOAT;
   MPI_Arg Count = 1;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -78,7 +81,7 @@ Eflt64 CommunicationMinValue(Eflt64 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -98,7 +101,7 @@ Eflt128 CommunicationMinValue(Eflt128 Value)
   MPI_Arg Count = 1;
   
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -118,7 +121,7 @@ Eint32 CommunicationMinValue(Eint32 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -138,7 +141,7 @@ Eint64 CommunicationMinValue(Eint64 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MIN, enzo_comm);
   END_TIMING;
 
 #endif /* USE_MPI */
@@ -163,7 +166,7 @@ Eflt32 CommunicationMaxValue(Eflt32 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -183,7 +186,7 @@ Eflt64 CommunicationMaxValue(Eflt64 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -203,7 +206,7 @@ Eflt128 CommunicationMaxValue(Eflt128 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -222,7 +225,7 @@ Eint32 CommunicationMaxValue(Eint32 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -243,7 +246,7 @@ Eint64 CommunicationMaxValue(Eint64 Value)
   MPI_Arg Count = 1;
 
   START_TIMING;
-  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&Value, &ReturnValue, Count, DataType, MPI_MAX, enzo_comm);
   END_TIMING;
  
 #endif /* USE_MPI */
@@ -272,7 +275,7 @@ int CommunicationSumValues(Eflt32 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -299,7 +302,7 @@ int CommunicationSumValues(Eflt64 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -326,7 +329,7 @@ int CommunicationSumValues(Eflt128 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -353,7 +356,7 @@ int CommunicationSumValues(Eint32 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -380,7 +383,7 @@ int CommunicationSumValues(Eint64 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Reduce(buffer, Values, Count, DataType, MPI_SUM, ROOT_PROCESSOR, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -412,7 +415,7 @@ int CommunicationAllSumValues(Eflt32 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -439,7 +442,7 @@ int CommunicationAllSumValues(Eflt64 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -466,7 +469,7 @@ int CommunicationAllSumValues(Eflt128 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -493,7 +496,7 @@ int CommunicationAllSumValues(Eint32 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -520,7 +523,7 @@ int CommunicationAllSumValues(Eint64 *Values, int Number)
     buffer[i] = Values[i];
  
   START_TIMING;
-  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(buffer, Values, Count, DataType, MPI_SUM, enzo_comm);
   END_TIMING;
  
   delete [] buffer;
@@ -552,7 +555,7 @@ int CommunicationReduceValues(Eflt32 *Values, int Number,
 
   START_TIMING;
   MPI_Reduce(buffer, Values, Count, DataType, ReduceOperation, ROOT_PROCESSOR,
-	     MPI_COMM_WORLD);
+	     enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -578,7 +581,7 @@ int CommunicationReduceValues(Eflt64 *Values, int Number,
 
   START_TIMING;
   MPI_Reduce(buffer, Values, Count, DataType, ReduceOperation, ROOT_PROCESSOR,
-	     MPI_COMM_WORLD);
+	     enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -603,7 +606,7 @@ int CommunicationReduceValues(Eflt128 *Values, int Number,
 
   START_TIMING;
   MPI_Reduce(buffer, Values, Count, DataType, ReduceOperation, ROOT_PROCESSOR,
-	     MPI_COMM_WORLD);
+	     enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -628,7 +631,7 @@ int CommunicationReduceValues(Eint32 *Values, int Number,
 
   START_TIMING;
   MPI_Reduce(buffer, Values, Count, DataType, ReduceOperation, ROOT_PROCESSOR,
-	     MPI_COMM_WORLD);
+	     enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -653,7 +656,7 @@ int CommunicationReduceValues(Eint64 *Values, int Number,
 
   START_TIMING;
   MPI_Reduce(buffer, Values, Count, DataType, ReduceOperation, ROOT_PROCESSOR,
-	     MPI_COMM_WORLD);
+	     enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -682,7 +685,7 @@ int CommunicationAllReduceValues(Eflt32 *Values, int Number,
 
   START_TIMING;
   MPI_Allreduce(buffer, Values, Count, DataType, ReduceOperation,
-		MPI_COMM_WORLD);
+		enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -707,7 +710,7 @@ int CommunicationAllReduceValues(Eflt64 *Values, int Number,
 
   START_TIMING;
   MPI_Allreduce(buffer, Values, Count, DataType, ReduceOperation,
-		MPI_COMM_WORLD);
+		enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -732,7 +735,7 @@ int CommunicationAllReduceValues(Eflt128 *Values, int Number,
 
   START_TIMING;
   MPI_Allreduce(buffer, Values, Count, DataType, ReduceOperation,
-		MPI_COMM_WORLD);
+		enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -757,7 +760,7 @@ int CommunicationAllReduceValues(Eint32 *Values, int Number,
 
   START_TIMING;
   MPI_Allreduce(buffer, Values, Count, DataType, ReduceOperation,
-		MPI_COMM_WORLD);
+		enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -782,7 +785,7 @@ int CommunicationAllReduceValues(Eint64 *Values, int Number,
 
   START_TIMING;
   MPI_Allreduce(buffer, Values, Count, DataType, ReduceOperation,
-		MPI_COMM_WORLD);
+		enzo_comm);
   END_TIMING;
 
   delete [] buffer;
@@ -798,7 +801,7 @@ int CommunicationAllReduceValues(Eint64 *Values, int Number,
 int CommunicationBarrier()
 {
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif /* USE_MPI */
   return SUCCESS;
 }

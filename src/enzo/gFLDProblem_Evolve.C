@@ -20,6 +20,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 
 /* function prototypes */
@@ -44,7 +45,7 @@ int gFLDProblem::Evolve(HierarchyEntry *ThisGrid, float deltat)
 #ifdef USE_MPI
   //  check that MyProcessorNumber agrees with MPI process ID
   MPI_Arg MPI_id;
-  MPI_Comm_rank(MPI_COMM_WORLD, &MPI_id);
+  MPI_Comm_rank(enzo_comm, &MPI_id);
   if (MyProcessorNumber != MPI_id) {
     fprintf(stderr, "ERROR: Enzo PID %"ISYM" doesn't match MPI ID %"ISYM"\n", 
 	    MyProcessorNumber, int(MPI_id));
@@ -251,9 +252,9 @@ int gFLDProblem::Evolve(HierarchyEntry *ThisGrid, float deltat)
 #ifdef USE_MPI
   MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
   MPI_Arg one = 1;
-  MPI_Allreduce(&(UMaxVals[1]), &dtmp, one, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&(UMaxVals[1]), &dtmp, one, DataType, MPI_MAX, enzo_comm);
   UMaxVals[1] = dtmp;
-  MPI_Allreduce(&(UTypVals[1]), &dtmp, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&(UTypVals[1]), &dtmp, one, DataType, MPI_SUM, enzo_comm);
   UTypVals[1] = dtmp/NumberOfProcessors;  // estimate based on equidistribution
 #endif
   UTypVals[1] /= ecScale;

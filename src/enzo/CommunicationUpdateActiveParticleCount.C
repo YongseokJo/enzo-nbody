@@ -41,6 +41,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define NO_DEBUG
 
@@ -81,7 +82,7 @@ int CommunicationUpdateActiveParticleCount(HierarchyEntry *Grids[],
   MPI_Arg GridCount = NumberOfGrids;
    
   MPI_Allreduce(PartialNewActiveParticleCount, TotalNewActiveParticleCount, GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
 
 #ifdef MPI_INSTRUMENTATION
   endtime = MPI_Wtime();

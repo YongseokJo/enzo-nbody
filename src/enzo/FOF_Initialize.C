@@ -38,6 +38,7 @@
 #include "FOF_allvars.h"
 #include "FOF_nrutil.h"
 #include "FOF_proto.h"
+#include "communicators.h"
 
 /************************************************************************/
 
@@ -262,11 +263,11 @@ void FOF_Initialize(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef USE_MPI
     // Get counts over all processors
     MPI_Allreduce(Nslab_local, D.Nslab, NumberOfProcessors, PINTDataType,
-		  MPI_SUM, MPI_COMM_WORLD);
+		  MPI_SUM, enzo_comm);
     MPI_Allreduce(NtoLeft_local, D.NtoLeft, NumberOfProcessors, PINTDataType,
-		  MPI_SUM, MPI_COMM_WORLD);
+		  MPI_SUM, enzo_comm);
     MPI_Allreduce(NtoRight_local, D.NtoRight, NumberOfProcessors, PINTDataType,
-		  MPI_SUM, MPI_COMM_WORLD);
+		  MPI_SUM, enzo_comm);
 #endif
 
     for (proc = 0; proc < NumberOfProcessors; proc++) {
@@ -320,7 +321,7 @@ void FOF_Initialize(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     // First gather the number of local particles on each processor
 #ifdef USE_MPI
     MPI_Alltoall(Nslab_local, 1, PINTDataType, Nslab_recv, 1, PINTDataType,
-		 MPI_COMM_WORLD);
+		 enzo_comm);
 #endif
 
     TotalRecv = 0;
@@ -344,7 +345,7 @@ void FOF_Initialize(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef USE_MPI
     MPI_Alltoallv(Plocal, MPI_Nslab_local, MPI_disp_local, MPI_BYTE,
 		  D.P+1, MPI_Nslab_recv, MPI_disp_recv, MPI_BYTE,
-		  MPI_COMM_WORLD);
+		  enzo_comm);
 #endif
 
     delete [] Plocal;

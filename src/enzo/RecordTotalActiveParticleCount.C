@@ -27,6 +27,7 @@
 #include "LevelHierarchy.h"
 #include "CosmologyParameters.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 void RecordTotalActiveParticleCount(HierarchyEntry *Grids[], int NumberOfGrids,
 				    int TotalActiveParticleCountPrevious[])
@@ -54,7 +55,7 @@ void RecordTotalActiveParticleCount(HierarchyEntry *Grids[], int NumberOfGrids,
    
   MPI_Allreduce(PartialActiveParticleCountPrevious, 
 		TotalActiveParticleCountPrevious, GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
 #endif
 
   delete [] PartialActiveParticleCountPrevious;

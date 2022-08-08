@@ -32,6 +32,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
  
 // Function prototypes
  
@@ -357,8 +358,8 @@ int CommunicationPartitionGrid(HierarchyEntry *Grid, int gridnum)
 #ifdef USE_MPI
   MPI_Datatype DataTypeInt = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
   for (dim = 0; dim < MAX_DIMENSION; dim++) {
-    MPI_Bcast(GridDims[dim], Layout[dim], DataTypeInt, ROOT_PROCESSOR, MPI_COMM_WORLD);
-    MPI_Bcast(StartIndex[dim], Layout[dim], DataTypeInt, ROOT_PROCESSOR, MPI_COMM_WORLD);
+    MPI_Bcast(GridDims[dim], Layout[dim], DataTypeInt, ROOT_PROCESSOR, enzo_comm);
+    MPI_Bcast(StartIndex[dim], Layout[dim], DataTypeInt, ROOT_PROCESSOR, enzo_comm);
   }
 #endif  
 

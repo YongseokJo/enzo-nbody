@@ -30,6 +30,7 @@
 #include "communication.h"
 #include "CommunicationUtilities.h"
 #include "GroupPhotonList.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, 
@@ -167,7 +168,7 @@ int grid::CommunicationSendPhotonPackages(grid *ToGrid, int ToProcessor,
 	printf("PhotonSend(P%"ISYM"): Sending %"ISYM" photons to processor %"ISYM".\n",
 	       MyProcessorNumber, FromNumber, ToProcessor);
       CommunicationBufferedSend(buffer, Count, PhotonBufferType, Dest,
-				MPI_PHOTON_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+				MPI_PHOTON_TAG, enzo_comm, BUFFER_IN_PLACE);
     }
 
     if (MyProcessorNumber == ToProcessor) {
@@ -178,7 +179,7 @@ int grid::CommunicationSendPhotonPackages(grid *ToGrid, int ToProcessor,
 
       if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
 	MPI_Irecv(buffer, Count, PhotonBufferType, Source, MPI_PHOTON_TAG,
-		  MPI_COMM_WORLD,
+		  enzo_comm,
 		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 
 	CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;
@@ -196,7 +197,7 @@ int grid::CommunicationSendPhotonPackages(grid *ToGrid, int ToProcessor,
 
       if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
 	if (MPI_Recv(buffer, Count, PhotonBufferType, Source,
-		     MPI_PHOTON_TAG, MPI_COMM_WORLD, &status) != MPI_SUCCESS) {
+		     MPI_PHOTON_TAG, enzo_comm, &status) != MPI_SUCCESS) {
 	  fprintf(stderr, "P(%"ISYM"): MPI_Recv error %"ISYM"\n", MyProcessorNumber,
 		  status.MPI_ERROR);
 	  fprintf(stderr, "P(%"ISYM"): TransferSize = %"ISYM" ProcessorNumber = %"ISYM"\n", 

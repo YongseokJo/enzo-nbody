@@ -29,6 +29,7 @@
 #include "ImplicitProblemABC.h"
 #endif
 #include "CosmologyParameters.h"
+#include "communicators.h"
 
 #define DEBUG 0
 void CollectParticleTypes(char **active_particle_types, int numparticles);
@@ -150,9 +151,9 @@ int ConvertParticles2ActiveParticles(char *ParameterFile,
       }
     }
 #ifdef USE_MPI
-  MPI_Allreduce(&numtypes, &global_active_particles, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-  MPI_Allreduce(Masterarray, RMasterarray, MAX_ACTIVE_PARTICLE_TYPES, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Allreduce(&numtypes, &global_active_particles, 1, MPI_INT, MPI_SUM, enzo_comm);
+  MPI_Allreduce(Masterarray, RMasterarray, MAX_ACTIVE_PARTICLE_TYPES, MPI_INT, MPI_MAX, enzo_comm);
+  MPI_Barrier(enzo_comm);
   if(MyProcessorNumber == ROOT_PROCESSOR)
     printf("%s: Number of particles found = %d\n", __FUNCTION__, global_active_particles);
 #endif
@@ -201,7 +202,7 @@ int ConvertParticles2ActiveParticles(char *ParameterFile,
 
 #ifdef USE_MPI
   MPI_Allreduce(&TotalNumberOfNewParticles, &GlobalTotalNumberOfNewParticles, 1, MPI_INT, MPI_SUM, 
-		MPI_COMM_WORLD);
+		enzo_comm);
   if(GlobalTotalNumberOfNewParticles && MyProcessorNumber == ROOT_PROCESSOR)
     printf("%s: TotalNumberOfNewParticles = %d\n", __FUNCTION__, GlobalTotalNumberOfNewParticles);
 #endif
@@ -224,7 +225,7 @@ void CollectParticleTypes(char **active_particle_types, int global_active_partic
   Eint32 my_gsize = 0;
   char **ap_types;
   char **ap_types2;
-  MPI_Comm_size(MPI_COMM_WORLD, &my_gsize);
+  MPI_Comm_size(enzo_comm, &my_gsize);
   ap_types = new char*[global_active_particles];
   ap_types2 = new char*[global_active_particles*my_gsize];
   int j = 0;
@@ -257,7 +258,7 @@ void CollectParticleTypes(char **active_particle_types, int global_active_partic
   for(int i=0; i<global_active_particles; i++) {
     int offset = global_active_particles*MyProcessorNumber;
     MPI_Allgather(ap_types[i], MAX_LINE_LENGTH, MPI_CHAR,
-		  ap_types2[i], MAX_LINE_LENGTH, MPI_CHAR, MPI_COMM_WORLD);
+		  ap_types2[i], MAX_LINE_LENGTH, MPI_CHAR, enzo_comm);
   }
   if(MyProcessorNumber == ROOT_PROCESSOR) {
     int k = 0;
@@ -269,7 +270,7 @@ void CollectParticleTypes(char **active_particle_types, int global_active_partic
       printf("Populating array with %s\n", ap_types2[i]);
       strcpy(active_particle_types[k++], ap_types2[i]);
     // fprintf(stdout, "P%d: Enabling particle type[%d] =  %s\n", MyProcessorNumber, i, active_particle_types[i]); fflush(stdout);
-    //MPI_Barrier(MPI_COMM_WORLD);
+    //MPI_Barrier(enzo_comm);
     }
   }
  

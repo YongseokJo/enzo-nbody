@@ -33,6 +33,7 @@
 #include "LevelHierarchy.h"
 #include "communication.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 /* Because we're basically doing a non-blocking MPI_Reduce(MPI_SUM),
    we need to allocate buffers for each on all processors.  Split up
@@ -217,7 +218,7 @@ int DepositParticleMassFlaggingField(LevelHierarchyEntry* LevelArray[],
 #endif
 
     stat = MPI_Alltoall(NumberOfSends, 1, DataTypeInt,
-			RecvListCount, 1, DataTypeInt, MPI_COMM_WORLD);
+			RecvListCount, 1, DataTypeInt, enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
     TotalNumberOfRecv = 0;
@@ -255,7 +256,7 @@ int DepositParticleMassFlaggingField(LevelHierarchyEntry* LevelArray[],
     stat = MPI_Alltoallv(SendList, MPI_SendListCount, MPI_SendListDisplacements,
 			   MPI_TwoInt,
 			 SharedList, MPI_RecvListCount, MPI_RecvListDisplacements,
-			   MPI_TwoInt, MPI_COMM_WORLD);
+			   MPI_TwoInt, enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
 #ifdef TIMING

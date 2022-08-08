@@ -36,6 +36,7 @@
 #include "global_data.h"
 
 #include "EnzoVector.h"
+#include "communicators.h"
 
 //  Vector Boundary Communication Routine
 //  (may be used for parallelism, or even for single-proc. periodic BCs)
@@ -56,7 +57,7 @@ int EnzoVector::exchange()
   int x2len = Nx2 + Ng2l + Ng2r;
 
   // Get MPI processor rank
-  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  MPI_Comm_rank(enzo_comm, &myrank);
 
   // set exchange tags
   MPI_Arg msg_xch_x0l = 10000;
@@ -91,7 +92,7 @@ int EnzoVector::exchange()
 //     if (Nbors[0][0] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[0][0], one, IDataType, 
 // 		    MPI_Arg(Nbors[0][0]), msg_xch_x0l, 
-// 		    MPI_COMM_WORLD, &recv_x0l) != 0) {
+// 		    enzo_comm, &recv_x0l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x0L receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -99,7 +100,7 @@ int EnzoVector::exchange()
 //     if (Nbors[0][1] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[0][1], one, IDataType, 
 // 		    MPI_Arg(Nbors[0][1]), msg_xch_x0r, 
-// 		    MPI_COMM_WORLD, &recv_x0r) != 0) {
+// 		    enzo_comm, &recv_x0r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x0R receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -107,7 +108,7 @@ int EnzoVector::exchange()
 //     if (Nbors[1][0] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[1][0], one, IDataType, 
 // 		    MPI_Arg(Nbors[1][0]), msg_xch_x1l, 
-// 		    MPI_COMM_WORLD, &recv_x1l) != 0) {
+// 		    enzo_comm, &recv_x1l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x1L receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -115,7 +116,7 @@ int EnzoVector::exchange()
 //     if (Nbors[1][1] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[1][1], one, IDataType, 
 // 		    MPI_Arg(Nbors[1][1]), msg_xch_x1r, 
-// 		    MPI_COMM_WORLD, &recv_x1r) != 0) {
+// 		    enzo_comm, &recv_x1r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x1R receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -123,7 +124,7 @@ int EnzoVector::exchange()
 //     if (Nbors[2][0] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[2][0], one, IDataType, 
 // 		    MPI_Arg(Nbors[2][0]), msg_xch_x2l, 
-// 		    MPI_COMM_WORLD, &recv_x2l) != 0) {
+// 		    enzo_comm, &recv_x2l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x2L receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -131,7 +132,7 @@ int EnzoVector::exchange()
 //     if (Nbors[2][1] != MPI_PROC_NULL)
 //       if (MPI_Irecv(&NborGhosts[2][1], one, IDataType, 
 // 		    MPI_Arg(Nbors[2][1]), msg_xch_x2r, 
-// 		    MPI_COMM_WORLD, &recv_x2r) != 0) {
+// 		    enzo_comm, &recv_x2r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x2R receive error\n",myrank);
 // 	return FAIL;
 //       }
@@ -141,7 +142,7 @@ int EnzoVector::exchange()
 //     if (Nbors[0][1] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng0r, one, IDataType, 
 // 		    MPI_Arg(Nbors[0][1]), msg_xch_x0l, 
-// 		    MPI_COMM_WORLD, &send_x0l) != 0) {
+// 		    enzo_comm, &send_x0l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x0R send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -149,7 +150,7 @@ int EnzoVector::exchange()
 //     if (Nbors[0][0] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng0l, one, IDataType, 
 // 		    MPI_Arg(Nbors[0][0]), msg_xch_x0r, 
-// 		    MPI_COMM_WORLD, &send_x0r) != 0) {
+// 		    enzo_comm, &send_x0r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x0L send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -157,7 +158,7 @@ int EnzoVector::exchange()
 //     if (Nbors[1][1] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng1r, one, IDataType, 
 // 		    MPI_Arg(Nbors[1][1]), msg_xch_x1l, 
-// 		    MPI_COMM_WORLD, &send_x1l) != 0) {
+// 		    enzo_comm, &send_x1l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x1R send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -165,7 +166,7 @@ int EnzoVector::exchange()
 //     if (Nbors[1][0] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng1l, one, IDataType, 
 // 		    MPI_Arg(Nbors[1][0]), msg_xch_x1r, 
-// 		    MPI_COMM_WORLD, &send_x1r) != 0) {
+// 		    enzo_comm, &send_x1r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x1L send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -173,7 +174,7 @@ int EnzoVector::exchange()
 //     if (Nbors[2][1] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng2r, one, IDataType, 
 // 		    MPI_Arg(Nbors[2][1]), msg_xch_x2l, 
-// 		    MPI_COMM_WORLD, &send_x2l) != 0) {
+// 		    enzo_comm, &send_x2l) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x2R send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -181,7 +182,7 @@ int EnzoVector::exchange()
 //     if (Nbors[2][0] != MPI_PROC_NULL)
 //       if (MPI_Isend(&Ng2l, one, IDataType, 
 // 		    MPI_Arg(Nbors[2][0]), msg_xch_x2r, 
-// 		    MPI_COMM_WORLD, &send_x2r) != 0) {
+// 		    enzo_comm, &send_x2r) != 0) {
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x2L send error\n",myrank);
 // 	return FAIL;
 //       }
@@ -261,7 +262,7 @@ int EnzoVector::exchange()
 // 	fprintf(stderr,"EnzoVector_Exchange p%i: x2L wait error\n",myrank);
 // 	return FAIL;
 //       }
-//     MPI_Barrier(MPI_COMM_WORLD);
+//     MPI_Barrier(enzo_comm);
     NborGhosts[0][0] = Ng0r;  NborGhosts[0][1] = Ng0l;
     NborGhosts[1][0] = Ng1r;  NborGhosts[1][1] = Ng1l;
     NborGhosts[2][0] = Ng2r;  NborGhosts[2][1] = Ng2l;
@@ -313,7 +314,7 @@ int EnzoVector::exchange()
   if (Nbors[0][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX0l, x0Lrecvsize, FDataType, 
 		  MPI_Arg(Nbors[0][0]), msg_xch_x0l, 
-		  MPI_COMM_WORLD, &recv_x0l) != 0) {
+		  enzo_comm, &recv_x0l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x0L receive error\n",myrank);
       return FAIL;
     }
@@ -322,7 +323,7 @@ int EnzoVector::exchange()
   if (Nbors[0][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX0r, x0Rrecvsize, FDataType, 
 		  MPI_Arg(Nbors[0][1]), msg_xch_x0r, 
-		  MPI_COMM_WORLD, &recv_x0r) != 0) {
+		  enzo_comm, &recv_x0r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x0R receive error\n",myrank);
       return FAIL;
     }
@@ -331,7 +332,7 @@ int EnzoVector::exchange()
   if (Nbors[1][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX1l, x1Lrecvsize, FDataType, 
 		  MPI_Arg(Nbors[1][0]), msg_xch_x1l, 
-		  MPI_COMM_WORLD, &recv_x1l) != 0) {
+		  enzo_comm, &recv_x1l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x1L receive error\n",myrank);
       return FAIL;
     }
@@ -340,7 +341,7 @@ int EnzoVector::exchange()
   if (Nbors[1][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX1r, x1Rrecvsize, FDataType, 
 		  MPI_Arg(Nbors[1][1]), msg_xch_x1r, 
-		  MPI_COMM_WORLD, &recv_x1r) != 0) {
+		  enzo_comm, &recv_x1r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x1R receive error\n",myrank);
       return FAIL;
     }
@@ -349,7 +350,7 @@ int EnzoVector::exchange()
   if (Nbors[2][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX2l, x2Lrecvsize, FDataType, 
 		  MPI_Arg(Nbors[2][0]), msg_xch_x2l, 
-		  MPI_COMM_WORLD, &recv_x2l) != 0) {
+		  enzo_comm, &recv_x2l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x2L receive error\n",myrank);
       return FAIL;
     }
@@ -358,7 +359,7 @@ int EnzoVector::exchange()
   if (Nbors[2][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX2r, x2Rrecvsize, FDataType, 
 		  MPI_Arg(Nbors[2][1]), msg_xch_x2r, 
-		  MPI_COMM_WORLD, &recv_x2r) != 0) {
+		  enzo_comm, &recv_x2r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x2R receive error\n",myrank);
       return FAIL;
     }
@@ -380,7 +381,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX0l, x0Rsendsize, FDataType, 
 		  MPI_Arg(Nbors[0][1]), msg_xch_x0l, 
-		  MPI_COMM_WORLD, &send_x0l) != 0) {
+		  enzo_comm, &send_x0l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x0R send error\n",myrank);
       return FAIL;
     }
@@ -397,7 +398,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX0r, x0Lsendsize, FDataType, 
 		  MPI_Arg(Nbors[0][0]), msg_xch_x0r, 
-		  MPI_COMM_WORLD, &send_x0r) != 0) {
+		  enzo_comm, &send_x0r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x0L send error\n",myrank);
       return FAIL;
     }
@@ -414,7 +415,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX1l, x1Rsendsize, FDataType, 
 		  MPI_Arg(Nbors[1][1]), msg_xch_x1l, 
-		  MPI_COMM_WORLD, &send_x1l) != 0) {
+		  enzo_comm, &send_x1l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x1R send error\n",myrank);
       return FAIL;
     }
@@ -431,7 +432,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX1r, x1Lsendsize, FDataType, 
 		  MPI_Arg(Nbors[1][0]), msg_xch_x1r, 
-		  MPI_COMM_WORLD, &send_x1r) != 0) {
+		  enzo_comm, &send_x1r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x1L send error\n",myrank);
       return FAIL;
     }
@@ -448,7 +449,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX2l, x2Rsendsize, FDataType, 
 		  MPI_Arg(Nbors[2][1]), msg_xch_x2l, 
-		  MPI_COMM_WORLD, &send_x2l) != 0) {
+		  enzo_comm, &send_x2l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x2R send error\n",myrank);
       return FAIL;
     }
@@ -465,7 +466,7 @@ int EnzoVector::exchange()
     }
     if (MPI_Isend(SendBufX2r, x2Lsendsize, FDataType, 
 		  MPI_Arg(Nbors[2][0]), msg_xch_x2r, 
-		  MPI_COMM_WORLD, &send_x2r) != 0) {
+		  enzo_comm, &send_x2r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange p%i: x2L send error\n",myrank);
       return FAIL;
     }
@@ -615,7 +616,7 @@ int EnzoVector::exchange()
     }
   }
 
-  //  MPI_Barrier(MPI_COMM_WORLD);
+  //  MPI_Barrier(enzo_comm);
   //  printf("Exiting EnzoVector::exchange\n");
 
   return SUCCESS;
@@ -734,7 +735,7 @@ int EnzoVector::exchange_component(int ivar)
   int x2len = Nx2 + Ng2l + Ng2r;
 
   // Get MPI processor rank
-  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  MPI_Comm_rank(enzo_comm, &myrank);
 
   // set exchange tags
   MPI_Arg msg_xch_x0l = 10000 + (ivar+1)*10;
@@ -811,7 +812,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[0][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX0l_comp, x0Lrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[0][0]), msg_xch_x0l, 
-		  MPI_COMM_WORLD, &recv_x0l) != 0) {
+		  enzo_comm, &recv_x0l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x0L receive error\n",myrank);
       return FAIL;
     }
@@ -820,7 +821,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[0][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX0r_comp, x0Rrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[0][1]), msg_xch_x0r, 
-		  MPI_COMM_WORLD, &recv_x0r) != 0) {
+		  enzo_comm, &recv_x0r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x0R receive error\n",myrank);
       return FAIL;
     }
@@ -829,7 +830,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[1][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX1l_comp, x1Lrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[1][0]), msg_xch_x1l, 
-		  MPI_COMM_WORLD, &recv_x1l) != 0) {
+		  enzo_comm, &recv_x1l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x1L receive error\n",myrank);
       return FAIL;
     }
@@ -838,7 +839,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[1][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX1r_comp, x1Rrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[1][1]), msg_xch_x1r, 
-		  MPI_COMM_WORLD, &recv_x1r) != 0) {
+		  enzo_comm, &recv_x1r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x1R receive error\n",myrank);
       return FAIL;
     }
@@ -847,7 +848,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[2][0] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX2l_comp, x2Lrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[2][0]), msg_xch_x2l, 
-		  MPI_COMM_WORLD, &recv_x2l) != 0) {
+		  enzo_comm, &recv_x2l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x2L receive error\n",myrank);
       return FAIL;
     }
@@ -856,7 +857,7 @@ int EnzoVector::exchange_component(int ivar)
   if (Nbors[2][1] != MPI_PROC_NULL) {
     if (MPI_Irecv(RecvBufX2r_comp, x2Rrecvsize_comp, FDataType, 
 		  MPI_Arg(Nbors[2][1]), msg_xch_x2r, 
-		  MPI_COMM_WORLD, &recv_x2r) != 0) {
+		  enzo_comm, &recv_x2r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x2R receive error\n",myrank);
       return FAIL;
     }
@@ -875,7 +876,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX0l_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX0l_comp, x0Rsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[0][1]), msg_xch_x0l, 
-		  MPI_COMM_WORLD, &send_x0l) != 0) {
+		  enzo_comm, &send_x0l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x0R send error\n",myrank);
       return FAIL;
     }
@@ -889,7 +890,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX0r_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX0r_comp, x0Lsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[0][0]), msg_xch_x0r, 
-		  MPI_COMM_WORLD, &send_x0r) != 0) {
+		  enzo_comm, &send_x0r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x0L send error\n",myrank);
       return FAIL;
     }
@@ -903,7 +904,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX1l_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX1l_comp, x1Rsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[1][1]), msg_xch_x1l, 
-		  MPI_COMM_WORLD, &send_x1l) != 0) {
+		  enzo_comm, &send_x1l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x1R send error\n",myrank);
       return FAIL;
     }
@@ -917,7 +918,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX1r_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX1r_comp, x1Lsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[1][0]), msg_xch_x1r, 
-		  MPI_COMM_WORLD, &send_x1r) != 0) {
+		  enzo_comm, &send_x1r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x1L send error\n",myrank);
       return FAIL;
     }
@@ -931,7 +932,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX2l_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX2l_comp, x2Rsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[2][1]), msg_xch_x2l, 
-		  MPI_COMM_WORLD, &send_x2l) != 0) {
+		  enzo_comm, &send_x2l) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x2R send error\n",myrank);
       return FAIL;
     }
@@ -945,7 +946,7 @@ int EnzoVector::exchange_component(int ivar)
 	  SendBufX2r_comp[idx++] = mydata[(k*x1len + j)*x0len + i];
     if (MPI_Isend(SendBufX2r_comp, x2Lsendsize_comp, FDataType, 
 		  MPI_Arg(Nbors[2][0]), msg_xch_x2r, 
-		  MPI_COMM_WORLD, &send_x2r) != 0) {
+		  enzo_comm, &send_x2r) != 0) {
       fprintf(stderr,"EnzoVector_Exchange_Component p%i: x2L send error\n",myrank);
       return FAIL;
     }
@@ -1077,7 +1078,7 @@ int EnzoVector::exchange_component(int ivar)
     }
   }
 
-  //  MPI_Barrier(MPI_COMM_WORLD);
+  //  MPI_Barrier(enzo_comm);
   //  printf("Exiting EnzoVector::exchange_component\n");
 
   return SUCCESS;

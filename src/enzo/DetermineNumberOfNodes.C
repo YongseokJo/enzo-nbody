@@ -21,6 +21,7 @@
 #include "macros_and_parameters.h"
 #include "typedefs.h"
 #include "global_data.h"
+#include "communicators.h"
 
 int CommunicationBroadcastValue(int *Value, int BroadcastProcessor);
 
@@ -48,7 +49,7 @@ int DetermineNumberOfNodes(void)
 #ifdef USE_MPI
   MPI_Gather(hostname, MAX_LINE_LENGTH, MPI_BYTE, 
 	     AllHosts, MAX_LINE_LENGTH, MPI_BYTE,
-	     ROOT_PROCESSOR, MPI_COMM_WORLD);
+	     ROOT_PROCESSOR, enzo_comm);
 #endif
 
   if (MyProcessorNumber == ROOT_PROCESSOR) {

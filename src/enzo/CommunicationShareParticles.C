@@ -24,6 +24,7 @@
 #include "typedefs.h"
 #include "global_data.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 void my_exit(int status);
 
@@ -116,7 +117,7 @@ int CommunicationShareParticles(int *NumberToMove, particle_data* &SendList,
     ******************************/
     
     stat = MPI_Alltoall(NumberToMove, SendCount, DataTypeInt,
-			RecvListCount, RecvCount, DataTypeInt, MPI_COMM_WORLD);
+			RecvListCount, RecvCount, DataTypeInt, enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
     /* Allocate buffers and generated displacement list. */
@@ -138,7 +139,7 @@ int CommunicationShareParticles(int *NumberToMove, particle_data* &SendList,
 			   MPI_ParticleMoveList,
 			 SharedList, MPI_RecvListCount, MPI_RecvListDisplacements,
 			   MPI_ParticleMoveList,
-			 MPI_COMM_WORLD);
+			 enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
 #ifdef MPI_INSTRUMENTATION

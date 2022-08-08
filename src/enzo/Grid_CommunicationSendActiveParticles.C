@@ -29,6 +29,7 @@
 #include "communication.h"
 #include "CommunicationUtilities.h"
 #include "ActiveParticle.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, 
@@ -123,14 +124,14 @@ int grid::CommunicationSendActiveParticles(
        ((CommunicationDirection == COMMUNICATION_SEND_RECEIVE) || 
         (CommunicationDirection == COMMUNICATION_SEND))) {
       CommunicationBufferedSend(type_count, Count, IntDataType, 
-        Dest, MPI_SENDAP_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+        Dest, MPI_SENDAP_TAG, enzo_comm, BUFFER_IN_PLACE);
     }
     
     // recv
     if (MyProcessorNumber == ToProcessor) { 
       if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
         MPI_Irecv(type_count, Count, IntDataType, Source, MPI_SENDAP_TAG,
-          MPI_COMM_WORLD, CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
+          enzo_comm, CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
       
 	    CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;
 	    CommunicationReceiveGridTwo[CommunicationReceiveIndex] = ToGrid;
@@ -143,7 +144,7 @@ int grid::CommunicationSendActiveParticles(
 	  }
 	  if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
 	    MPI_Recv(type_count, Count, IntDataType, Source, MPI_SENDAP_TAG,
-          MPI_COMM_WORLD, &status);
+          enzo_comm, &status);
       }
     } // myproc == toproc
   } // procnum != toproc
@@ -205,14 +206,14 @@ int grid::CommunicationSendActiveParticles(
        (CommunicationDirection == COMMUNICATION_SEND))) {
       // send the actual particle data.
       CommunicationBufferedSend(buffer, Count, MPI_PACKED, 
-				Dest, MPI_SENDAP_TAG + 1 + type, MPI_COMM_WORLD, 
+				Dest, MPI_SENDAP_TAG + 1 + type, enzo_comm, 
 				BUFFER_IN_PLACE);
 	}
 
     if (MyProcessorNumber == ToProcessor) {
       if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
       	MPI_Irecv(buffer, Count, MPI_PACKED, Source,
-		  MPI_SENDAP_TAG + 1 + type, MPI_COMM_WORLD,
+		  MPI_SENDAP_TAG + 1 + type, enzo_comm,
 		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 
 	CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;
@@ -227,7 +228,7 @@ int grid::CommunicationSendActiveParticles(
 
       if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE) 
 	MPI_Recv(buffer, Count, MPI_PACKED, Source,
-		 MPI_SENDAP_TAG + 1 + type, MPI_COMM_WORLD, &status);
+		 MPI_SENDAP_TAG + 1 + type, enzo_comm, &status);
 
     } // ENDIF MyProcessorNumber == ToProcessor
 

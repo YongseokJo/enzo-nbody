@@ -34,6 +34,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "phys_constants.h"
+#include "communicators.h"
 
 /* function prototypes */
 
@@ -116,7 +117,7 @@ int CommunicationMergeStarParticle(HierarchyEntry *Grids[],
 
   Eint32 *SendListCount = new Eint32[NumberOfProcessors];
 
-  MPI_Allgather(&ParticlesToSend, 1, MPI_INT, SendListCount, 1, MPI_INT, MPI_COMM_WORLD);
+  MPI_Allgather(&ParticlesToSend, 1, MPI_INT, SendListCount, 1, MPI_INT, enzo_comm);
 
   int NumberOfSharedParticles = 0;
   for (i = 0; i < NumberOfProcessors; i++)
@@ -140,7 +141,7 @@ int CommunicationMergeStarParticle(HierarchyEntry *Grids[],
 
   MPI_Allgatherv(SendList, ParticlesToSend, MPI_ParticleEntry,
 		 SharedList, SendListCount, SendListDisplacements, MPI_ParticleEntry,
-		 MPI_COMM_WORLD);
+		 enzo_comm);
 
   float DensityUnits = 1.0, LengthUnits = 1.0, TemperatureUnits = 1, 
     TimeUnits = 1.0, VelocityUnits = 1.0;
@@ -230,7 +231,7 @@ int CommunicationMergeStarParticle(HierarchyEntry *Grids[],
 
   /* communicate to check whether all the particles are added */
 
-  MPI_Allreduce(PartialAdded, TotalAdded, NumberOfGroups, IntDataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(PartialAdded, TotalAdded, NumberOfGroups, IntDataType, MPI_SUM, enzo_comm);
 
   int total = 0;
   for (i = 0; i < NumberOfGroups; i++)

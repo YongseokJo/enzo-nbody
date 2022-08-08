@@ -36,6 +36,7 @@
 #include "global_data.h"
 
 #include "EnzoVector.h"
+#include "communicators.h"
 
 //  Vector Boundary Communication Routine
 //  (may be used for parallelism, or even for single-proc. periodic BCs)
@@ -51,7 +52,7 @@ int EnzoVector::exchange_end()
   int x2len = Nx2 + Ng2l + Ng2r;
 
   // Get MPI processor rank
-  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  MPI_Comm_rank(enzo_comm, &myrank);
 
   // allocate MPI status object
   MPI_Status status;
@@ -222,7 +223,7 @@ int EnzoVector::exchange_end_component(int ivar)
   int x2len = Nx2 + Ng2l + Ng2r;
 
   // Get MPI processor rank
-  MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+  MPI_Comm_rank(enzo_comm, &myrank);
 
   // allocate MPI status object
   MPI_Status status;

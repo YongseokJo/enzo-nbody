@@ -36,6 +36,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "TopGridData.h"
+#include "communicators.h"
 
 void WriteListOfFloats(FILE *fptr, int N, float floats[]);
 void WriteListOfFloats(FILE *fptr, int N, FLOAT floats[]);
@@ -446,10 +447,10 @@ int GalaxySimulationInitialize(FILE *fptr, FILE *Outfptr,
  // BWO: this forces the synchronization of the various point source gravity
  // parameters between processors.  If this is not done, things go to pieces!
 
- MPI_Barrier(MPI_COMM_WORLD);
+ MPI_Barrier(enzo_comm);
  MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
- MPI_Bcast(&PointSourceGravityConstant,1,DataType,ROOT_PROCESSOR, MPI_COMM_WORLD);
- MPI_Bcast(&PointSourceGravityCoreRadius,1,DataType,ROOT_PROCESSOR, MPI_COMM_WORLD);
+ MPI_Bcast(&PointSourceGravityConstant,1,DataType,ROOT_PROCESSOR, enzo_comm);
+ MPI_Bcast(&PointSourceGravityCoreRadius,1,DataType,ROOT_PROCESSOR, enzo_comm);
 
 #endif
 

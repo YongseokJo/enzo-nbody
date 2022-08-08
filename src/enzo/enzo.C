@@ -19,6 +19,7 @@
  
 #ifdef USE_MPI
 #include "mpi.h"
+#include "communicators.h"
 #endif /* USE_MPI */
  
 #include <stdlib.h>
@@ -267,6 +268,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
   int i;
 
   // Initialize Communications
+	
 
   CommunicationInitialize(&argc, &argv); 
 
@@ -460,7 +462,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 
 
   // START
- 
+	if (nbody_comm != MPI_COMM_NULL)  goto START; //by YS, skip for nbody comms
   for (int level = 0; level < MAX_DEPTH_OF_HIERARCHY; level++) {
     LevelArray[level] = NULL;
   }
@@ -789,6 +791,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 
   // Call the main evolution routine
   if (debug) fprintf(stderr, "INITIALDT ::::::::::: %16.8e\n", Initialdt);
+START: //by YS, start for nbody comms
   try {
   if (EvolveHierarchy(TopGrid, MetaData, &Exterior, 
 #ifdef TRANSFER

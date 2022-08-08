@@ -38,6 +38,7 @@
 #include "LevelHierarchy.h"
 #include "CosmologyParameters.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define NO_DEBUG_PS
 
@@ -248,7 +249,7 @@ void RecordTotalStarParticleCount(HierarchyEntry *Grids[], int NumberOfGrids,
   MPI_Arg GridCount = NumberOfGrids;
    
   MPI_Allreduce(PartialStarParticleCountPrevious, TotalStarParticleCountPrevious, GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
 #endif
 
   delete [] PartialStarParticleCountPrevious;

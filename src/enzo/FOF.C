@@ -39,6 +39,7 @@
 #include "FOF_allvars.h"
 #include "FOF_nrutil.h"
 #include "FOF_proto.h"
+#include "communicators.h"
 
 /************************************************************************/
 void FOF_Initialize(TopGridData *MetaData, 
@@ -400,8 +401,8 @@ int get_particles(int dest, int minid, int len, FOF_particle_data *buf,
 
 
 #ifdef USE_MPI
-  MPI_Bcast(&minid,  1, IntDataType, dest, MPI_COMM_WORLD);
-  MPI_Bcast(&len,    1, IntDataType, dest, MPI_COMM_WORLD);
+  MPI_Bcast(&minid,  1, IntDataType, dest, enzo_comm);
+  MPI_Bcast(&len,    1, IntDataType, dest, enzo_comm);
 #endif
 
   localbuf = new FOF_particle_data[len];
@@ -459,20 +460,20 @@ int get_particles(int dest, int minid, int len, FOF_particle_data *buf,
       buf[i] = localbuf[i];
     for (i = 0; i < NumberOfProcessors; i++) {
       if (i != MyProcessorNumber) {
-	MPI_Recv(&nrecv, 1, IntDataType, i, i, MPI_COMM_WORLD, &status);
+	MPI_Recv(&nrecv, 1, IntDataType, i, i, enzo_comm, &status);
 	if (nrecv) {
 	  MPI_Recv(&buf[nlocal], nrecv*sizeof(FOF_particle_data), 
-		   MPI_BYTE, i, i, MPI_COMM_WORLD, &status);
+		   MPI_BYTE, i, i, enzo_comm, &status);
 	  nlocal += nrecv;
 	} // ENDIF nrecv
       } // ENDIF other processor
     } // ENDFOR processors
   }
   else {
-    MPI_Ssend(&nlocal, 1, IntDataType, dest, MyProcessorNumber, MPI_COMM_WORLD);
+    MPI_Ssend(&nlocal, 1, IntDataType, dest, MyProcessorNumber, enzo_comm);
     if (nlocal)
       MPI_Ssend(localbuf, nlocal*sizeof(FOF_particle_data), 
-		MPI_BYTE, dest, MyProcessorNumber, MPI_COMM_WORLD);
+		MPI_BYTE, dest, MyProcessorNumber, enzo_comm);
   } // ENDELSE
 #endif /* USE_MPI */
 
@@ -529,38 +530,38 @@ int link_across(FOFData &AllVars)
 #ifdef USE_MPI
   if (MyProcessorNumber & 1) {
     MPI_Recv(&buffer[nbuf], AllVars.NtoLeft[rightTask]*sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     nbuf += AllVars.NtoLeft[rightTask];
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
   } // ENDIF odd processors
   else {
     MPI_Ssend(buftoleft, 
 	      AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data),
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
     nbuf += AllVars.NtoRight[leftTask];
   } // ENDELSE
 
   if (MyProcessorNumber & 1) {
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
       nbuf += AllVars.NtoRight[leftTask];
       MPI_Ssend(buftoleft, 
 		AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-		MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+		MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
   } // ENDIF odd processors
   else {
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoLeft[rightTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     nbuf += AllVars.NtoLeft[rightTask];
   } // ENDELSE
 #endif /* USE_MPI */
@@ -594,7 +595,7 @@ int link_across(FOFData &AllVars)
 
 #ifdef USE_MPI
   MPI_Allreduce(&AllVars.NLinkAcross, &nlinktot, 1, IntDataType, MPI_SUM, 
-		MPI_COMM_WORLD);
+		enzo_comm);
 #endif
 
   return nlinktot;
@@ -633,8 +634,8 @@ void compile_group_catalogue(FOFData &AllVars)
   else {
 #ifdef USE_MPI
   MPI_Allreduce(&AllVars.Ngroups, &AllVars.NgroupsAll, 1, IntDataType, MPI_SUM, 
-		MPI_COMM_WORLD);
-  MPI_Allreduce(&nbound, &Nbound, 1, IntDataType, MPI_SUM, MPI_COMM_WORLD);
+		enzo_comm);
+  MPI_Allreduce(&nbound, &Nbound, 1, IntDataType, MPI_SUM, enzo_comm);
 #endif
   } // ENDELSE serial
 
@@ -672,7 +673,7 @@ void compile_group_catalogue(FOFData &AllVars)
 #ifdef USE_MPI
   else
     MPI_Allgather(&AllVars.Ngroups, 1, IntDataType, AllVars.NgroupsList, 1, 
-		  IntDataType, MPI_COMM_WORLD);
+		  IntDataType, enzo_comm);
 #endif /* USE_MPI */
 
   AllVars.GroupDatAll = new gr_data[AllVars.NgroupsAll];
@@ -686,7 +687,7 @@ void compile_group_catalogue(FOFData &AllVars)
     for (i = 1; i < NumberOfProcessors; i++) {
       MPI_Recv(&AllVars.GroupDatAll[count], 
 	       AllVars.NgroupsList[i]*sizeof(gr_data), MPI_BYTE, 
-	       i, 0, MPI_COMM_WORLD, &status);
+	       i, 0, enzo_comm, &status);
       count += AllVars.NgroupsList[i];
     }
 #endif /* USE_MPI */
@@ -694,7 +695,7 @@ void compile_group_catalogue(FOFData &AllVars)
 #ifdef USE_MPI
   else
     MPI_Ssend(&AllVars.GroupDat[0], AllVars.Ngroups*sizeof(gr_data), 
-	      MPI_BYTE, 0, 0, MPI_COMM_WORLD);
+	      MPI_BYTE, 0, 0, enzo_comm);
 #endif /* USE_MPI */
   
   if (debug) {
@@ -707,7 +708,7 @@ void compile_group_catalogue(FOFData &AllVars)
 
 #ifdef USE_MPI
   MPI_Bcast(AllVars.GroupDatAll, AllVars.NgroupsAll*sizeof(gr_data), 
-	    MPI_BYTE, 0, MPI_COMM_WORLD); 
+	    MPI_BYTE, 0, enzo_comm); 
 #endif
 }
 
@@ -792,38 +793,38 @@ void stitch_together(FOFData &AllVars)
   if (MyProcessorNumber & 1) {
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoLeft[rightTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     nbuf +=  AllVars.NtoLeft[rightTask];
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
   }
   else {
     MPI_Ssend(buftoleft, 
 	      AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
     nbuf +=  AllVars.NtoRight[leftTask];
   } // ENDELSE
 
   if (MyProcessorNumber & 1) {
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
       nbuf += AllVars.NtoRight[leftTask];
       MPI_Ssend(buftoleft, 
 		AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-		MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+		MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
   } // ENDIF odd processor
   else {
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&buffer[nbuf], 
 	     AllVars.NtoLeft[rightTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     nbuf += AllVars.NtoLeft[rightTask];
     }
 #endif /* USE_MPI */
@@ -966,38 +967,38 @@ void exchange_shadow(FOFData &AllVars, int TopGridResolution, bool SmoothData)
   if (MyProcessorNumber & 1) {
     MPI_Recv(&AllVars.P[1+AllVars.Nlocal], 
 	     AllVars.NtoLeft[rightTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     AllVars.Nlocal += AllVars.NtoLeft[rightTask];
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
   }
   else {
     MPI_Ssend(buftoleft, 
 	      AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&AllVars.P[1+AllVars.Nlocal], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
     AllVars.Nlocal += AllVars.NtoRight[leftTask];
   } // ENDELSE
 
   if (MyProcessorNumber & 1) {
     MPI_Recv(&AllVars.P[1+AllVars.Nlocal], 
 	     AllVars.NtoRight[leftTask] * sizeof(FOF_particle_data), 
-	     MPI_BYTE, leftTask, leftTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, leftTask, leftTask, enzo_comm, &status);
     AllVars.Nlocal += AllVars.NtoRight[leftTask];
     MPI_Ssend(buftoleft, 
 	      AllVars.NtoLeft[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, leftTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, leftTask, MyProcessorNumber, enzo_comm);
   }
   else {
     MPI_Ssend(buftoright, 
 	      AllVars.NtoRight[MyProcessorNumber] * sizeof(FOF_particle_data), 
-	      MPI_BYTE, rightTask, MyProcessorNumber, MPI_COMM_WORLD);
+	      MPI_BYTE, rightTask, MyProcessorNumber, enzo_comm);
     MPI_Recv(&AllVars.P[1+AllVars.Nlocal], 
 	     AllVars.NtoLeft[rightTask]*sizeof(FOF_particle_data), 
-	     MPI_BYTE, rightTask, rightTask, MPI_COMM_WORLD, &status);
+	     MPI_BYTE, rightTask, rightTask, enzo_comm, &status);
     AllVars.Nlocal += AllVars.NtoLeft[rightTask];
   } // ENDELSE
 #endif /* USE_MPI */

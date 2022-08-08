@@ -29,6 +29,7 @@
 #include "GridList.h"
 #include "ExternalBoundary.h"
 #include "Grid.h"
+#include "communicators.h"
  
 int grid::CollectParticleMassFlaggingField(void)
 {
@@ -62,7 +63,7 @@ int grid::CollectParticleMassFlaggingField(void)
     buffer[i] = ParticleMassFlaggingField[i];
 
   MPI_Reduce(buffer, ParticleMassFlaggingField, Count, DataType, MPI_SUM, 
-	     ProcessorNumber, MPI_COMM_WORLD);
+	     ProcessorNumber, enzo_comm);
 
   delete [] buffer;
 

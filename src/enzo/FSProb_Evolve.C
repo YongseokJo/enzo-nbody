@@ -31,6 +31,7 @@
 #ifdef TRANSFER
 #include "FSProb.h"
 #include "CosmologyParameters.h"
+#include "communicators.h"
 
 /* function prototypes */
 int CosmologyComputeExpansionFactor(FLOAT time, FLOAT *a, FLOAT *dadt);
@@ -55,7 +56,7 @@ int FSProb::Evolve(HierarchyEntry *ThisGrid, float deltat)
 #ifdef USE_MPI
   //  check that MyProcessorNumber agrees with MPI process ID
   MPI_Arg MPI_id;
-  MPI_Comm_rank(MPI_COMM_WORLD, &MPI_id);
+  MPI_Comm_rank(enzo_comm, &MPI_id);
   if (MyProcessorNumber != MPI_id) {
     fprintf(stderr, "ERROR: Enzo PID %"ISYM" doesn't match MPI ID %"ISYM"\n", 
 	    MyProcessorNumber, int(MPI_id));
@@ -63,7 +64,7 @@ int FSProb::Evolve(HierarchyEntry *ThisGrid, float deltat)
   }
 #endif
 #ifndef MPI_INT
-  int MPI_COMM_WORLD = 0;
+  int enzo_comm = 0;
 #endif
 
   // start MPI timer
@@ -276,8 +277,8 @@ int FSProb::Evolve(HierarchyEntry *ThisGrid, float deltat)
   //          create the solver & preconditioner
   HYPRE_StructSolver solver;
   HYPRE_StructSolver preconditioner;
-  HYPRE_StructGMRESCreate(MPI_COMM_WORLD, &solver);
-  HYPRE_StructPFMGCreate(MPI_COMM_WORLD, &preconditioner);
+  HYPRE_StructGMRESCreate(enzo_comm, &solver);
+  HYPRE_StructPFMGCreate(enzo_comm, &preconditioner);
 
   //          set preconditioner options
   HYPRE_StructPFMGSetMaxIter(preconditioner, sol_maxit);
@@ -411,9 +412,9 @@ int FSProb::Evolve(HierarchyEntry *ThisGrid, float deltat)
     else {
       MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
       if (dtnorm > 0.0) 
-	MPI_Allreduce(&loc_est,&glob_est,1,DataType,MPI_SUM,MPI_COMM_WORLD);
+	MPI_Allreduce(&loc_est,&glob_est,1,DataType,MPI_SUM,enzo_comm);
       else
-	MPI_Allreduce(&loc_est,&glob_est,1,DataType,MPI_MAX,MPI_COMM_WORLD);
+	MPI_Allreduce(&loc_est,&glob_est,1,DataType,MPI_MAX,enzo_comm);
     }
 #else
     glob_est = loc_est;

@@ -30,6 +30,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "communication.h"
+#include "communicators.h"
 void my_exit(int status);
  
  
@@ -82,7 +83,7 @@ int CommunicationReceiveFluxes(fluxes *Fluxes, int FromProc,
   
   if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
     MPI_Irecv(buffer, Count, DataType, Source, 
-	      MPI_FLUX_TAG, MPI_COMM_WORLD,
+	      MPI_FLUX_TAG, enzo_comm,
 	      CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
     CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer;
     CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
@@ -95,7 +96,7 @@ int CommunicationReceiveFluxes(fluxes *Fluxes, int FromProc,
 
   if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
     if (MPI_Recv(buffer, Count, DataType, Source, MPI_FLUX_TAG, 
-		 MPI_COMM_WORLD, &status) != MPI_SUCCESS) {
+		 enzo_comm, &status) != MPI_SUCCESS) {
       ENZO_VFAIL("Proc %d MPI_Recv error %d\n", MyProcessorNumber,
 	      status.MPI_ERROR)
 

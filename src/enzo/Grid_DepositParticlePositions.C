@@ -34,6 +34,7 @@
 #include "Grid.h"
 #include "ActiveParticle.h"
 #include "communication.h"
+#include "communicators.h"
  
 /* function prototypes */
  
@@ -444,17 +445,17 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
     if (MyProcessorNumber == ProcessorNumber)
       CommunicationBufferedSend(DepositFieldPointer, Count, DataType, 
 			     Dest, MPI_SENDREGION_TAG, 
-			     MPI_COMM_WORLD, BUFFER_IN_PLACE);
+			     enzo_comm, BUFFER_IN_PLACE);
 
     if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
 	CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
       MPI_Recv(DepositFieldPointer, Count, DataType, Source, 
-	       MPI_SENDREGION_TAG, MPI_COMM_WORLD, &status);
+	       MPI_SENDREGION_TAG, enzo_comm, &status);
 
     if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
 	CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
       MPI_Irecv(DepositFieldPointer, Count, DataType, Source, 
-	        MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+	        MPI_SENDREGION_TAG, enzo_comm, 
 	        CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
       CommunicationReceiveBuffer[CommunicationReceiveIndex] = 
 	                                                  DepositFieldPointer;

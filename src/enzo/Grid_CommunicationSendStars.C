@@ -26,6 +26,7 @@
 #include "Grid.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 /* function prototypes */
 
@@ -101,14 +102,14 @@ int grid::CommunicationSendStars(grid *ToGrid, int ToProcessor)
 #endif
     if (MyProcessorNumber == ProcessorNumber)
       CommunicationBufferedSend(buffer, Count, MPI_STAR, 
-				Dest, MPI_SENDSTAR_TAG, MPI_COMM_WORLD, 
+				Dest, MPI_SENDSTAR_TAG, enzo_comm, 
 				BUFFER_IN_PLACE);
 
     if (MyProcessorNumber == ToProcessor) {
 
       if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
 	MPI_Irecv(buffer, Count, MPI_STAR, Source,
-		  MPI_SENDSTAR_TAG, MPI_COMM_WORLD,
+		  MPI_SENDSTAR_TAG, enzo_comm,
 		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 
 	CommunicationReceiveGridOne[CommunicationReceiveIndex] = this;
@@ -124,7 +125,7 @@ int grid::CommunicationSendStars(grid *ToGrid, int ToProcessor)
 
       if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
 	MPI_Recv(buffer, Count, MPI_STAR, Source,
-		 MPI_SENDSTAR_TAG, MPI_COMM_WORLD, &status);
+		 MPI_SENDSTAR_TAG, enzo_comm, &status);
 
     } // ENDIF MyProcessorNumber == ToProcessor
 

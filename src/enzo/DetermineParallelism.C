@@ -38,6 +38,7 @@
 #include "Grid.h"
 #include "Hierarchy.h"
 #include "TopGridData.h"
+#include "communicators.h"
 
 int DetermineParallelism(HierarchyEntry *TopGrid, TopGridData &MetaData)
 {
@@ -122,7 +123,7 @@ int DetermineParallelism(HierarchyEntry *TopGrid, TopGridData &MetaData)
 
   /* Iterate over grids, storing information and finding neighbors */ 
   MPI_Arg NProcs;
-  MPI_Comm_size(MPI_COMM_WORLD, &NProcs);
+  MPI_Comm_size(enzo_comm, &NProcs);
   FLOAT x0Left, x0Right, x1Left, x1Right, x2Left, x2Right;
   bool NotEvenOnce;
   HierarchyEntry *ThatGrid = TopGrid;

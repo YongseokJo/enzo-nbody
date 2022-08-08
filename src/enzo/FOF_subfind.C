@@ -17,6 +17,7 @@
 
 #include "FOF_allvars.h"
 #include "FOF_proto.h"
+#include "communicators.h"
 
 /************************************************************************/
 
@@ -281,7 +282,7 @@ void subfind(FOFData &D, int CycleNumber, FLOAT EnzoTime)
 	// task != 0
 	else {
 #ifdef USE_MPI
-	  MPI_Recv(&nsubs, 1, MPI_INT, task, task, MPI_COMM_WORLD, &status);
+	  MPI_Recv(&nsubs, 1, MPI_INT, task, task, enzo_comm, &status);
 	  if (nsubs > 0) {
 
 	    bufmsub      = new float[nsubs];
@@ -289,9 +290,9 @@ void subfind(FOFData &D, int CycleNumber, FLOAT EnzoTime)
 	    bufsuboffset = new int[nsubs];
 	    fbufsuboffset = new int[nsubs];
 
-	    MPI_Recv(bufsublen, nsubs, IntDataType, task, task, MPI_COMM_WORLD,
+	    MPI_Recv(bufsublen, nsubs, IntDataType, task, task, enzo_comm,
 		     &status);
-	    MPI_Recv(bufsuboffset, nsubs, IntDataType, task, task, MPI_COMM_WORLD,
+	    MPI_Recv(bufsuboffset, nsubs, IntDataType, task, task, enzo_comm,
 		     &status);
 
 	    for (i = 0; i < nsubs; i++) {
@@ -307,7 +308,7 @@ void subfind(FOFData &D, int CycleNumber, FLOAT EnzoTime)
 	  partbuf = new FOF_particle_data[len];
 
 	  MPI_Recv(partbuf, len*sizeof(FOF_particle_data),
-		   MPI_BYTE, task, task, MPI_COMM_WORLD, &status);
+		   MPI_BYTE, task, task, enzo_comm, &status);
 
 	  for (i = 0; i < nsubs; i++) {
 	    get_properties(D, partbuf+bufsuboffset[i]-start, bufsublen[i], true, cm, 
@@ -427,15 +428,15 @@ void subfind(FOFData &D, int CycleNumber, FLOAT EnzoTime)
 
 #ifdef USE_MPI
 	if (MyProcessorNumber == task) {
-	  MPI_Ssend(&nsubs, 1, MPI_INT, 0, MyProcessorNumber, MPI_COMM_WORLD);
+	  MPI_Ssend(&nsubs, 1, MPI_INT, 0, MyProcessorNumber, enzo_comm);
 	  if(nsubs) {
 	    MPI_Ssend(sublen,    nsubs, MPI_INT, 0, MyProcessorNumber, 
-		      MPI_COMM_WORLD);
+		      enzo_comm);
 	    MPI_Ssend(suboffset, nsubs, MPI_INT, 0, MyProcessorNumber, 
-		      MPI_COMM_WORLD);
+		      enzo_comm);
 	  }
 	  MPI_Ssend(Pbuf, D.GroupDatAll[gr-task].Len*sizeof(FOF_particle_data), 
-		    MPI_BYTE, 0, MyProcessorNumber, MPI_COMM_WORLD);
+		    MPI_BYTE, 0, MyProcessorNumber, enzo_comm);
 	} // ENDIF proc == task
 
 #endif /* USE_MPI */

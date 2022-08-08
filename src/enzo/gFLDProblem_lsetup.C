@@ -29,6 +29,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDProblem.h"
+#include "communicators.h"
 
 
 
@@ -187,7 +188,7 @@ int gFLDProblem::lsetup(EnzoVector *u)
     else {
       MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
       MPI_Arg one = 1;
-      MPI_Allreduce(&dtmp1, &dtmp2, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+      MPI_Allreduce(&dtmp1, &dtmp2, one, DataType, MPI_SUM, enzo_comm);
       utypical[1] = dtmp2/NumberOfProcessors;  // estimate based on equidistribution
     }
 #else

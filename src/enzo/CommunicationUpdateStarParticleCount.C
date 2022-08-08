@@ -40,6 +40,7 @@
 #include "TopGridData.h"
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
 
 int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 					 TopGridData *MetaData,
@@ -92,7 +93,7 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
     buffer[index+1] = PartialStarParticleCount[grid];
   }
   MPI_Allreduce(buffer, rbuffer, 2*GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
   for (grid = 0, index = 0; grid < NumberOfGrids; index += 2, grid++) {
     TotalParticleCount[grid] = rbuffer[index];
     TotalStarParticleCount[grid] = rbuffer[index+1];
@@ -227,9 +228,9 @@ int CommunicationUpdateStarParticleCountOld(HierarchyEntry *Grids[],
   MPI_Arg GridCount = NumberOfGrids;
    
   MPI_Allreduce(PartialParticleCount, TotalParticleCount, GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
   MPI_Allreduce(PartialStarParticleCount, TotalStarParticleCount, GridCount,
-		DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+		DataTypeInt, MPI_SUM, enzo_comm);
 
 #ifdef MPI_INSTRUMENTATION
   endtime = MPI_Wtime();

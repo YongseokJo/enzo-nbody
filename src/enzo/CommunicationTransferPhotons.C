@@ -32,6 +32,7 @@
 #include "LevelHierarchy.h"
 #include "GroupPhotonList.h"
 #include "PhotonCommunication.h"
+#include "communicators.h"
 
 PhotonPackageEntry* DeletePhotonPackage(PhotonPackageEntry *PP);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
@@ -335,7 +336,7 @@ int CommunicationTransferPhotons(LevelHierarchyEntry *LevelArray[],
 	Size = (i < NumberOfMessages-1) ? PHOTON_BUFFER_SIZE : (nPhoton[proc]-Offset);
 	CommunicationBufferedSend(SendList[proc]+Offset, 
 				  Size, MPI_PhotonList, proc, tag, 
-				  MPI_COMM_WORLD,
+				  enzo_comm,
 				  Size*sizeof(GroupPhotonList));
       } // ENDFOR messages
       delete [] SendList[proc];

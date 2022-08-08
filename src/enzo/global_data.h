@@ -20,6 +20,12 @@
 #ifndef GLOBAL_DATA_DEFINED__
 #define GLOBAL_DATA_DEFINED__
 
+
+#ifdef USE_MPI
+#include "mpi.h"
+#include <stdlib.h>
+#endif /* USE_MPI , by YS */
+
 #include <stdio.h>
 #ifdef MEMORY_POOL
 #include "MemoryPool.h"
@@ -564,6 +570,8 @@ EXTERN int MyProcessorNumber;
 EXTERN int NumberOfProcessors;
 EXTERN float CommunicationTime;
 
+
+
 /* Parameter to indicate if top grid should do parallel IO
    (currently only works for ProblemType == 30). */
 
@@ -805,6 +813,9 @@ EXTERN FILE *memtracePtr;
 EXTERN int traceMEM;
 EXTERN char memtracename[MAX_NAME_LENGTH];
 #endif
+
+
+
 
 /* New Movie Data */
 

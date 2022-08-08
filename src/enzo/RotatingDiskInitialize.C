@@ -13,6 +13,7 @@
 ************************************************************************/
 #ifdef USE_MPI
 #include "mpi.h"
+#include "communicators.h"
 #endif /* USE_MPI */
 #include <string.h>
 #include <stdio.h>
@@ -198,11 +199,11 @@ int RotatingDiskInitialize(FILE *fptr, FILE *Outfptr, HierarchyEntry &TopGrid,
      PointSourceGravityConstant and PointSourceGravityCoreRadius. When running in parallel, these
      values need to be shares with all processors. */
 	
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
   MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
-  MPI_Bcast(&PointSourceGravityConstant,1,DataType,ROOT_PROCESSOR, MPI_COMM_WORLD);
-  MPI_Bcast(&PointSourceGravityCoreRadius,1,DataType,ROOT_PROCESSOR, MPI_COMM_WORLD);
-  MPI_Bcast(&PointSourceGravityPosition,1,DataType,ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Bcast(&PointSourceGravityConstant,1,DataType,ROOT_PROCESSOR, enzo_comm);
+  MPI_Bcast(&PointSourceGravityCoreRadius,1,DataType,ROOT_PROCESSOR, enzo_comm);
+  MPI_Bcast(&PointSourceGravityPosition,1,DataType,ROOT_PROCESSOR, enzo_comm);
  	
 #endif
 	

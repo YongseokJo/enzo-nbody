@@ -21,6 +21,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "FSProb.h"
+#include "communicators.h"
 
 /* Fortran function prototypes */
 extern "C" void FORTRAN_NAME(fsprob_setupsystem)(
@@ -91,7 +92,7 @@ int FSProb::SetupSystem(Eflt64 *mat, Eflt64 *rhs, float *rhsnorm,
   float rhssum=0.0;
 #ifdef USE_MPI
   MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
-  MPI_Allreduce(rhsnorm, &rhssum, 1, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(rhsnorm, &rhssum, 1, DataType, MPI_SUM, enzo_comm);
 #else
   rhssum = *rhsnorm;
 #endif
