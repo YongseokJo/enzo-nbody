@@ -1,4 +1,4 @@
-      SUBROUTINE FORCECOR(I,X,XDOT,BODY,F,FD,SCALE,DT,NMAX,NXTLEN)
+      SUBROUTINE FORCECOR(SCALE,DT,NXTLEN)
 
 *
 *
@@ -7,39 +7,41 @@
 *     --------------------
 *     Common variables (inputs and outputs)
 
-      INTEGER I,NMAX,NXTLEN
-      REAL*8  X(3,NMAX),XDOT(3,NMAX),F(3,NMAX),FD(3,NMAX),
-      REAL*8  BODY(NMAX),SCALE,DT
+      INCLUDE 'enzo_common6.h'
+
+      INTEGER I,K,NXTLEN
+      REAL*8  SCALE,DT
 
 *     Local variables
 
-      REAL*8  XP(3),XPDOT(3),FP(3),FPDOT(3),
+      REAL*8 DTSQ,DT6,DT2,DTSQ12,DT13
+      REAL*8 DF,SUM,AT3,BT2
 
 *     jpred_int -> predict position of single particle (future) this becomes X and Xdot
 
-      call JPRED_INT(I,X,XDOT,F,FD,SCALE,DT,NMAX,NXTLEN,XP,XPDOT)
+      call JPRED_INT(SCALE,DT,NXTLEN)
 
-      call FPRED_INT(I,XP,XPDOT,BODY,SCALE,TIME,DT,NMAX,NXTLEN,FP,FPD)
+      call FPRED_INT(SCALE,DT,NXTLEN)
 
       DTSQ = DT**2
       DT6 = 6.0/(DT*DTSQ)
       DT2 = 2.0/DTSQ
       DTSQ12 = ONE12*DTSQ
       DT13 = ONE3*DT
+      
+      DO I = 1,NXTLEN
+          DO K = 1,3
+             DF = F0(K,I) - F(K,I)
+             SUM = F0DOT(K,I) + FDOT(K,I)
+             AT3 = 2.0*DF + DT*SUM
+             BT2 = -3.0*DF - DT*(SUM + FDOT(K,I))
 
-      DO 80 K = 1,3
-          DF = FP(K) - F(K,I)
-          SUM = FPD(K) + FD(K,I)
-          AT3 = 2.0*DF + DT*SUM
-          BT2 = -3.0*DF - DT*(SUM + FID)
-
-          D0(K,I) = F(K,I)
-          D0R(K,I) = FP(K)
-          D1R(K,I) = FPD(K)
-          D3R(K,I) = AT3*DT6
-          D2R(K,I) = (3.0*AT3 + BT2)*DT2
-
-   80 continue
+             D0(K,I) = F0(K,I)
+             D1(K,I) = F0DOT(K,I)
+             D3(K,I) = AT3*DT6
+             D2(K,I) = (3.0*AT3 + BT2)*DT2
+          END DO
+      END DO
 
       RETURN
 *

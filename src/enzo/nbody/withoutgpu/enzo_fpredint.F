@@ -1,4 +1,5 @@
-      SUBROUTINE FORCEINT(SCALE,DT,NXTLEN)
+      SUBROUTINE FPRED_INT(SCALE,DT,NXTLEN)
+*
 *
 *
 *     Force Calculation of Particles w/o GPU
@@ -26,12 +27,12 @@
 *     Initialize arrays, I covers all particles
 
       DO I = 1, NXTLEN         
-         F0(1,I) = 0.0D0
-         F0(2,I) = 0.0D0
-         F0(3,I) = 0.0D0
-         F0DOT(1,I) = 0.0D0
-         F0DOT(2,I) = 0.0D0
-         F0DOT(3,I) = 0.0D0
+         F(1,I) = 0.0D0
+         F(2,I) = 0.0D0
+         F(3,I) = 0.0D0
+         FDOT(1,I) = 0.0D0
+         FDOT(2,I) = 0.0D0
+         FDOT(3,I) = 0.0D0
          RIJMIN = 1.E20
 
 *     Calculate the forces
@@ -44,15 +45,15 @@
             IF (J .NE. I) THEN
 
 *     Relative position calculated (x2-x1)
-               A1 = X0(1,J) - X0(1,I)
-               A2 = X0(2,J) - X0(2,I)
-               A3 = X0(3,J) - X0(3,I)
+               A1 = X(1,J) - X(1,I)
+               A2 = X(2,J) - X(2,I)
+               A3 = X(3,J) - X(3,I)
 
 *     Predicted coordinates avoids spurious force differences.
 
-               DV(1) = X0DOT(1,J) - X0DOT(1,I)
-               DV(2) = X0DOT(2,J) - X0DOT(2,I)
-               DV(3) = X0DOT(3,J) - X0DOT(3,I)
+               DV(1) = XDOT(1,J) - XDOT(1,I)
+               DV(2) = XDOT(2,J) - XDOT(2,I)
+               DV(3) = XDOT(3,J) - XDOT(3,I)
 
                RIJ2 = A1*A1 + A2*A2 + A3*A3
 
@@ -65,18 +66,18 @@
                DRDV = A1*DV(1) + A2*DV(2) + A3*DV(3)
                DRDP = 3.0*DRDV*DR2I
     
-               F0(1,I) = F0(1,I) + A1*DR3I
-               F0(2,I) = F0(2,I) + A2*DR3I
-               F0(3,I) = F0(3,I) + A3*DR3I
-               F0DOT(1,I) = F0DOT(1,I) + (DV(1) - A1*DRDP)*DR3I
-               F0DOT(2,I) = F0DOT(2,I) + (DV(2) - A2*DRDP)*DR3I
-               F0DOT(3,I) = F0DOT(3,I) + (DV(3) - A3*DRDP)*DR3I
-
+               F(1,I) = F(1,I) + A1*DR3I
+               F(2,I) = F(2,I) + A2*DR3I
+               F(3,I) = F(3,I) + A3*DR3I
+               FDOT(1,I) = FDOT(1,I) + (DV(1) - A1*DRDP)*DR3I
+               FDOT(2,I) = FDOT(2,I) + (DV(2) - A2*DRDP)*DR3I
+               FDOT(3,I) = FDOT(3,I) + (DV(3) - A3*DRDP)*DR3I
             END IF
          END DO
+*         PRINT *,'FORCE',F(1,I),FDOT(1,I)
+
       END DO
       
       RETURN
 
       END
-      
