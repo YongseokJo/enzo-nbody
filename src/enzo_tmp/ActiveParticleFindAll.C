@@ -15,6 +15,9 @@
 *************************************************************************/
 
 #ifdef USE_MPI
+/* by YS, MPI COMMs*/
+#include "mpi.h"
+#include "communicators.h"
 #endif /* USE_MPI */
 
 #include "preincludes.h"

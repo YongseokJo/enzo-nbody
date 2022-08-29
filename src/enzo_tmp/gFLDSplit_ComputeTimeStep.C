@@ -28,6 +28,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDSplit.h"
+#include "communicators.h"
 
  
  

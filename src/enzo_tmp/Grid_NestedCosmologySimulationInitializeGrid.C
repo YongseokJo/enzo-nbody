@@ -41,6 +41,7 @@
 #include "Grid.h"
 #include "CosmologyParameters.h"
 #include "fortran.def"
+#include "communicators.h"
 void my_exit(int status);
  
 #ifdef PROTO  // Remove troublesome HDF PROTO declaration

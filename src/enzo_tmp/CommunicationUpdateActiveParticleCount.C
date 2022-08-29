@@ -41,6 +41,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define NO_DEBUG
 

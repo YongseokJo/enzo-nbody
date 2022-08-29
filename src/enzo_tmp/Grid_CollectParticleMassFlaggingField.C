@@ -29,6 +29,7 @@
 #include "GridList.h"
 #include "ExternalBoundary.h"
 #include "Grid.h"
+#include "communicators.h"
  
 int grid::CollectParticleMassFlaggingField(void)
 {

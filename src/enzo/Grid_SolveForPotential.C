@@ -75,7 +75,14 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   }
   tol_dim = max(sqrt(float(size))*1e-6, tol_dim);
  
+#ifdef NBODY
+	float **rhs;
+	rhs	= new float*[2];
+	rhs[0]	= new float[size];
+	rhs[1]	= new float[size];
+#else
   float *rhs = new float[size];
+#endif
  
   float Constant = GravitationalConstant * InverseVolumeElement *
                    POW(GravitatingMassFieldCellSize, 2) / a;
@@ -102,8 +109,14 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
 #else /* SMOOTH_SOURCE */
  
-  for (i = 0; i < size; i++)
+  for (i = 0; i < size; i++) {
+#ifdef NBODY
+    rhs[0][i] = GravitatingMassField[0][i] * Constant;
+    rhs[1][i] = GravitatingMassField[1][i] * Constant;
+#else
     rhs[i] = GravitatingMassField[i] * Constant;
+#endif
+	}
  
 #endif /* SMOOTH_SOURCE */
  
@@ -118,12 +131,25 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #ifdef UNUSED
   int iteration = 0;
 #endif /* UNUSED */
- 
+#ifdef NBODY 
+  if (MultigridSolver(rhs[0], PotentialField[0], GridRank,
+		      GravitatingMassFieldDimension, norm, mean,
+		      GravitySmooth, tol_dim, MAX_ITERATION) == FAIL) {
+    ENZO_FAIL("Error in MultigridDriver.\n");
+  }
+
+  if (MultigridSolver(rhs[1], PotentialField[1], GridRank,
+		      GravitatingMassFieldDimension, norm, mean,
+		      GravitySmooth, tol_dim, MAX_ITERATION) == FAIL) {
+    ENZO_FAIL("Error in MultigridDriver.\n");
+  }
+#else
   if (MultigridSolver(rhs, PotentialField, GridRank,
 		      GravitatingMassFieldDimension, norm, mean,
 		      GravitySmooth, tol_dim, MAX_ITERATION) == FAIL) {
     ENZO_FAIL("Error in MultigridDriver.\n");
   }
+#endif
  
 #ifdef UNUSED
   while (norm/mean > tol_dim) {

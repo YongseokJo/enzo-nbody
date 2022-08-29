@@ -25,7 +25,7 @@
 #include "GridList.h"
 #include "ExternalBoundary.h"
 #include "Grid.h"
- 
+#define NBODY 
 int FindField(int field, int farray[], int numfields);
  
 int grid::CopyPotentialToBaryonField()
@@ -91,10 +91,14 @@ int grid::CopyPotentialToBaryonField()
       for (i = 0; i < GridDimension[0]; i++, index++)
       {
 	//	BaryonField[field][jj++] = GravitatingMassField[index] + 1; // use this for debugging 
-	BaryonField[field][jj++] = PotentialField[index];
+#ifdef NBODY	
+				BaryonField[field][jj++] = PotentialField[0][index];
+#else
+				BaryonField[field][jj++] = PotentialField[index];
+#endif
 	// debuggin:
-	maxPot = max(maxPot,PotentialField[index]);
-	minPot = min(minPot,PotentialField[index]);
+	maxPot = max(maxPot,PotentialField[0][index]);
+	minPot = min(minPot,PotentialField[0][index]);
       }
  
     }

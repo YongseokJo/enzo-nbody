@@ -22,6 +22,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
  
+#define NBODY
 /* function prototypes */
  
  
@@ -51,14 +52,25 @@ int grid::ClearGravitatingMassField()
   //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
   if (GravitatingMassField == NULL)
+#ifdef NBODY
+     GravitatingMassField = new float*[2];
+     GravitatingMassField[0] = new float[size];
+     GravitatingMassField[1] = new float[size];
+#else
     GravitatingMassField = new float[size];
+#endif
   if (GravitatingMassField == NULL) {
     ENZO_FAIL("malloc error (out of memory?)\n");
 
   }
  
   for (i = 0; i < size; i++)
+#ifdef NBODY
+    GravitatingMassField[0][i] = 0.0;
+    GravitatingMassField[1][i] = 0.0;
+#else
     GravitatingMassField[i] = 0.0;
+#endif
  
   return SUCCESS;
 }

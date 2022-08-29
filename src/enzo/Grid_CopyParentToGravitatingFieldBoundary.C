@@ -32,6 +32,9 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "communication.h"
+
+
+#define NBODY
  
 /* function prototypes */
  
@@ -136,7 +139,6 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
 #define NO_INTERPOLATE_LINEAR
  
 #ifdef INTERPOLATE_LINEAR
- 
   FORTRAN_NAME(prolong)(ParentGrid->GravitatingMassField,
 			GravitatingMassField, &GridRank,
 			ParentDim, ParentDim+1, ParentDim+2,
@@ -145,30 +147,39 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
 			GravitatingMassFieldDimension+2,
 			ParentOffset, ParentOffset+1, ParentOffset+2,
 			Refinement, Refinement+1, Refinement+2);
+
  
 #else /* INTERPOLATE_LINEAR */
  
   /* Interpolate (nearest neighbour) */
  
   if(ParentGrid->GravitatingMassField == NULL) ENZO_FAIL("NO GMF in PARENT");
-  int iparent, jparent, kparent, parentindex;
-  for (k = 0; k < GravitatingMassFieldDimension[2]; k++) {
-    kparent = nint((k + ParentOffset[2])/Refinement[2]);
-    for (j = 0; j < GravitatingMassFieldDimension[1]; j++) {
-      jparent = nint((j + ParentOffset[1])/Refinement[1]);
-      parentindex = (kparent*ParentDim[1] + jparent)*ParentDim[0];
-      gravityindex = (k*GravitatingMassFieldDimension[1] + j)*
-	GravitatingMassFieldDimension[0];
-      for (i = 0; i < GravitatingMassFieldDimension[0]; i++, gravityindex++) {
-	iparent = nint((i+ParentOffset[0])/Refinement[0]);
-	
-	GravitatingMassField[gravityindex] =
-	  ParentGrid->GravitatingMassField[parentindex+iparent];
-	
-      }
-    }
-  }
- 
+	int iparent, jparent, kparent, parentindex;
+	for (k = 0; k < GravitatingMassFieldDimension[2]; k++) {
+		kparent = nint((k + ParentOffset[2])/Refinement[2]);
+		for (j = 0; j < GravitatingMassFieldDimension[1]; j++) {
+			jparent = nint((j + ParentOffset[1])/Refinement[1]);
+			parentindex = (kparent*ParentDim[1] + jparent)*ParentDim[0];
+			gravityindex = (k*GravitatingMassFieldDimension[1] + j)*
+				GravitatingMassFieldDimension[0];
+			for (i = 0; i < GravitatingMassFieldDimension[0]; i++, gravityindex++) {
+				iparent = nint((i+ParentOffset[0])/Refinement[0]);
+
+#ifdef NBODY
+				GravitatingMassField[0][gravityindex] =
+					ParentGrid->GravitatingMassField[0][parentindex+iparent];
+
+				GravitatingMassField[1][gravityindex] =
+					ParentGrid->GravitatingMassField[1][parentindex+iparent];
+#else	
+				GravitatingMassField[gravityindex] =
+					ParentGrid->GravitatingMassField[parentindex+iparent];
+
+#endif
+			}
+		}
+	}
+
 #endif /* INTERPOLATE_LINEAR */
  
   /* Clean up parent. */
@@ -181,9 +192,14 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
   /* Add one to field to account for one subtracted in ComovingSourceTerm. */
  
   if (ComovingCoordinates)
-    for (i = 0; i < size; i++)
+    for (i = 0; i < size; i++) {
+#ifdef NBODY
+      GravitatingMassField[0][i] += 1.0;
+      GravitatingMassField[1][i] += 1.0;
+#else
       GravitatingMassField[i] += 1.0;
- 
+#endif
+		}
   /* Clear the region of GMF that will overlap with real grid points
      (i.e. clear the region that we shouldn't have set in the above loop). */
  
@@ -202,7 +218,12 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
       for (i = SubGridExtra[0];
 	   i < GravitatingMassFieldDimension[0]-SubGridExtra[0];
 	   i++, gravityindex++)
+#ifdef NBODY
+	GravitatingMassField[1][gravityindex] = 0;
+	GravitatingMassField[0][gravityindex] = 0;
+#else
 	GravitatingMassField[gravityindex] = 0;
+#endif
     }
  
   return SUCCESS;

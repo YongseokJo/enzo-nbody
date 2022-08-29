@@ -27,6 +27,7 @@
 #include "LevelHierarchy.h"
 #include "CosmologyParameters.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 void RecordTotalActiveParticleCount(HierarchyEntry *Grids[], int NumberOfGrids,
 				    int TotalActiveParticleCountPrevious[])

@@ -315,10 +315,15 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
   /* Create a SUBling list of the subgrids */
   LevelHierarchyEntry **SUBlingList;
 
-  /* Initialize the chaining mesh used in the FastSiblingLocator. */
+  
+	/* Initialize the chaining mesh used in the FastSiblingLocator. */
 
   if (dbx) fprintf(stderr, "EL: Initialize FSL \n"); 
   SiblingGridList *SiblingList = new SiblingGridList[NumberOfGrids];
+
+	Star *AllStars = NULL;
+
+	if (nbody_comm != MPI_COMM_NULL) goto NBODY; //by YS, go to nbody part for nbody comms.
   SiblingGridListStorage[level] = SiblingList;
   CreateSiblingList(Grids, NumberOfGrids, SiblingList, StaticLevelZero,MetaData,level);
   
@@ -439,7 +444,6 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     ActiveParticleInitialize(Grids, MetaData, NumberOfGrids, LevelArray,
                              level);
     
-    Star *AllStars = NULL;
     StarParticleInitialize(Grids, MetaData, NumberOfGrids, LevelArray,
 			   level, AllStars, TotalStarParticleCountPrevious);
 
@@ -479,7 +483,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
     When = 0.5;
 
-		// By YS, here we should add some lines that prohibit some types of particle masses from depositing to a cell. 
+		// by YS, here we should add some lines that prohibit some types of particle masses from depositing to a cell. 
 #ifdef FAST_SIB
      PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
 #else   // !FAST_SIB
@@ -543,6 +547,18 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
            */
 #ifdef SAB
     } // End of loop over grids
+		
+
+NBODY: // by YS, run N-body code, here
+		if (nbody_comm != MPI_COMM_NULL) {
+			fprintf(stderr, "I am a NBODY process (%d).", MyProcessorNumber);
+			//CalculateNbody(ParticlesInfo(pos,mass,vel), ExpansionFactor, dtNow);	
+		}
+		MPI_Barrier(MPI_COMM_WORLD);
+		if (nbody_comm != MPI_COMM_NULL) goto NEXT;
+
+
+
 
     //Ensure the consistency of the AccelerationField
     SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
@@ -590,38 +606,41 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
     if( HydroMethod == HD_RK || HydroMethod == MHD_RK ){
 #ifdef FAST_SIB
-        SetBoundaryConditions(Grids, NumberOfGrids, SiblingList, level, MetaData, Exterior, LevelArray[level]);
+			SetBoundaryConditions(Grids, NumberOfGrids, SiblingList, level, MetaData, Exterior, LevelArray[level]);
 #else
-        SetBoundaryConditions(Grids, NumberOfGrids, level, MetaData, Exterior, LevelArray[level]);
+			SetBoundaryConditions(Grids, NumberOfGrids, level, MetaData, Exterior, LevelArray[level]);
 #endif
 
 
-        RK2SecondStepBaryonDeposit = 1; // set this to (0/1) to (not use/use) this extra step  //#####
-        if (RK2SecondStepBaryonDeposit && SelfGravity && UseHydro) {  
+			RK2SecondStepBaryonDeposit = 1; // set this to (0/1) to (not use/use) this extra step  //#####
+			if (RK2SecondStepBaryonDeposit && SelfGravity && UseHydro) {  
 
-            When = 0.5;
+				When = 0.5;
 #ifdef FAST_SIB
-            PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+				PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
 #else  
-            PrepareDensityField(LevelArray, level, MetaData, When);
+				PrepareDensityField(LevelArray, level, MetaData, When);
 #endif  // end FAST_SIB
 
 
-            for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
+				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
 
-                /* Gravity: compute acceleration field for grid and particles. */
-                if (RK2SecondStepBaryonDeposit && SelfGravity) {
-                    int Dummy;
-                    if (level <= MaximumGravityRefinementLevel) {
-                        if (level > 0) 
-                            Grids[grid1]->GridData->SolveForPotential(level) ;
-                        Grids[grid1]->GridData->ComputeAccelerations(level) ;
-                    }
-                } // end: if (SelfGravity)
+					/* Gravity: compute acceleration field for grid and particles. */
+					if (RK2SecondStepBaryonDeposit && SelfGravity) {
+						int Dummy;
+						if (level <= MaximumGravityRefinementLevel) {
+							if (level > 0) 
+								Grids[grid1]->GridData->SolveForPotential(level) ;
+							Grids[grid1]->GridData->ComputeAccelerations(level) ;
+						}
+					} // end: if (SelfGravity)
 
-                Grids[grid1]->GridData->ComputeAccelerationFieldExternal() ;
+					Grids[grid1]->GridData->ComputeAccelerationFieldExternal() ;
 
-            } // End of loop over grids
+				} // End of loop over grids
+
+ 
+
 
 
 #ifdef SAB    
@@ -664,10 +683,6 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     }//RK hydro
     
       /* Solve the cooling and species rate equations. */
- 
-
-		// By YS, run N-body code, here
-		//CalculateNbody(ParticlesInfo(pos,mass,vel), ExpansionFactor, dtNow);	
 
 		for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
       Grids[grid1]->GridData->MultiSpeciesHandler();
@@ -819,7 +834,8 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
         for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
           Grids[grid1]->GridData->SetTimeStep(dtThisLevel[level]);
     }
-
+		
+NEXT: //by YS, right after NBODY calculations for nbody process 
     if (LevelArray[level+1] != NULL) {
       if (EvolveLevel(MetaData, LevelArray, level+1, dtThisLevel[level], Exterior
 #ifdef TRANSFER
@@ -830,6 +846,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 	ENZO_VFAIL("Error in EvolveLevel (%"ISYM").\n", level)
       }
     }
+		if (nbody_comm != MPI_COMM_NULL) break;//goto END;
 
 #ifdef USE_LCAPERF
     // Update lcaperf "level" attribute
@@ -1021,7 +1038,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     delete [] SiblingList;
     SiblingGridListStorage[level] = NULL;
   }
-
+//END: // by YS, after EvolveLevel for nbody comms.
   return SUCCESS;
  
 }

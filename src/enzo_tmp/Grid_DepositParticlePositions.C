@@ -34,6 +34,7 @@
 #include "Grid.h"
 #include "ActiveParticle.h"
 #include "communication.h"
+#include "communicators.h"
  
 /* function prototypes */
  

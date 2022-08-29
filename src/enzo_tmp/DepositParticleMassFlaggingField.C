@@ -33,6 +33,7 @@
 #include "LevelHierarchy.h"
 #include "communication.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 /* Because we're basically doing a non-blocking MPI_Reduce(MPI_SUM),
    we need to allocate buffers for each on all processors.  Split up

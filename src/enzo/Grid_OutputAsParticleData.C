@@ -264,9 +264,15 @@ int grid::OutputAsParticleData(FLOAT RegionLeftEdge[], FLOAT RegionRightEdge[],
       index = (FieldPosition[1] +
 	       FieldPosition[2]*GravitatingMassFieldParticlesDimension[1])*
 	GravitatingMassFieldParticlesDimension[0] + FieldPosition[0];
-      if (GravitatingMassFieldParticles != NULL)
+      if (GravitatingMassFieldParticles != NULL) {
+#ifdef NBODY
+	density = GravitatingMassFieldParticles[0][index];
+#else
 	density = GravitatingMassFieldParticles[index];
+#endif
+			}
       else
+			
 	density = 0;
       if (density == 0) density = ParticleMass[n];
  

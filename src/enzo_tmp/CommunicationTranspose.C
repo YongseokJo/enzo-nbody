@@ -27,6 +27,8 @@
 #include "Hierarchy.h"
 #include "TopGridData.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
+
  
 extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
                                    int *sdim1, int *sdim2, int *sdim3,

@@ -49,6 +49,7 @@ struct HierarchyEntry;
 #include "ProblemType.h"
 #endif
 
+#define NBODY
 //extern int CommunicationDirection;
 
 //struct ParticleEntry {
@@ -123,8 +124,12 @@ class grid
   int    NumberOfParticles;
   FLOAT *ParticlePosition[MAX_DIMENSION];  // pointers to position arrays
   float *ParticleVelocity[MAX_DIMENSION];  // pointers to velocity arrays
-  float *ParticleAcceleration[MAX_DIMENSION+1];  // 
-  float *ParticleMass;                     // pointer to mass array
+#ifdef NBODY
+	float **ParticleAcceleration[MAX_DIMENSION+1];  // 
+#else
+	float *ParticleAcceleration[MAX_DIMENSION+1];  // 
+#endif
+	float *ParticleMass;                     // pointer to mass array
   PINT  *ParticleNumber;                   // unique identifier
   int   *ParticleType;                     // type of particle
   float *ParticleAttribute[MAX_NUMBER_OF_PARTICLE_ATTRIBUTES];
@@ -155,13 +160,21 @@ class grid
 //
 //  Gravity data
 // 
-  float *PotentialField;
+
+#ifdef NBODY
+	float **PotentialField;
+  float **AccelerationField[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
+	float **GravitatingMassField; 
+  float **GravitatingMassFieldParticles;     // for particles only // by YS Jo
+#else
+	float *PotentialField;
   float *AccelerationField[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
-  float *GravitatingMassField;
+	float *GravitatingMassField; 
+  float *GravitatingMassFieldParticles;     // for particles only // by YS Jo
+#endif
   FLOAT  GravitatingMassFieldLeftEdge[MAX_DIMENSION];
   int    GravitatingMassFieldDimension[MAX_DIMENSION];
   FLOAT  GravitatingMassFieldCellSize;     // all dimensions must be the same
-  float *GravitatingMassFieldParticles;     // for particles only
   FLOAT  GravitatingMassFieldParticlesLeftEdge[MAX_DIMENSION];
   FLOAT  GravitatingMassFieldParticlesCellSize;
   int    GravitatingMassFieldParticlesDimension[MAX_DIMENSION];
@@ -618,6 +631,20 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Baryons: compute the cooling time. */
 
    int ComputeCoolingTime(float *cooling_time, int CoolingTimeOnly=FALSE);
+
+/* Baryons: compute cooling rate for user supplied data */
+
+   int GrackleCustomCoolRate(int rank, int *dim, float *cool_rate,
+			     float *dens, float *thrmeng,
+			     float *velx, float *vely, float *velz,
+			     float *HIdens=NULL, float *HIIdens=NULL,
+			     float *HeIdens=NULL, float *HeIIdens=NULL, float *HeIIIdens=NULL,
+			     float *edens=NULL,
+			     float *HMdens=NULL, float *H2Idens=NULL, float *H2IIdens=NULL,
+			     float *DIdens=NULL, float *DIIdens=NULL, float *HDIdens=NULL,
+			     float *metaldens=NULL,
+			     float *kphHI=NULL, float *kphHeI=NULL, float *kphHeII=NULL,
+			     float *kdissH2I=NULL, float *gamma=NULL);
 
 /* Baryons & DualEnergyFormalism: Restore consistency between total and
                                   internal energy fields. */
@@ -1233,9 +1260,13 @@ gradient force to gravitational force for one-zone collapse test. */
    int InterpolateParticlePositions(grid *FromGrid, int DifferenceType);
 
 /* Generic routine for interpolating particles/grid. */
-
+//#ifdef NBODY
+   int InterpolatePositions(FLOAT *Positions[], int dim, float *Field[], 
+			    int Number);
+//#else
    int InterpolatePositions(FLOAT *Positions[], int dim, float *Field, 
 			    int Number);
+//#endif
 
 /* Gravity: Delete GravitatingMassField. */
 
@@ -1247,7 +1278,13 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Gravity: Init GravitatingMassField. */
 
    void InitGravitatingMassField(int size) {
+#ifdef NBODY
+     GravitatingMassField = new float*[2];
+     GravitatingMassField[0] = new float[size];
+     GravitatingMassField[1] = new float[size];
+#else
      GravitatingMassField = new float[size];
+#endif
    }
 
 /* Gravity */
@@ -2304,28 +2341,45 @@ int zEulerSweep(int j, int NumberOfSubgrids, fluxes *SubgridFluxes[],
 
 
   /* Initialization for isolated galaxy sims */
+  int _GalaxySimulationInitialization = 0;
   int GalaxySimulationInitializeGrid(
-				     FLOAT DiskRadius,
-				     float GalaxyMass,
-				     float GasMass,
+				     double DiskRadius,
+				     double GalaxyMass,
+				     double GasMass,
 				     FLOAT DiskPosition[MAX_DIMENSION], 
-				     FLOAT ScaleHeightz,
-				     FLOAT ScaleHeightR, 
-				     FLOAT GalaxyTruncationRadius,
-				     float DMConcentration,
-				     float DiskTemperature,
-				     float InitialTemperature,
-				     float UniformDensity,
+				     double ScaleHeightz,
+				     double ScaleHeightR, 
+				     double GalaxyTruncationRadius,
+                 double DiskDensityCap,
+				     double DMConcentration,
+				     double DiskTemperature,
+				     double InitialTemperature,
+				     double UniformDensity,
+				     int   EquilibrateChem,
 				     int   GasHalo,
-				     float GasHaloScaleRadius,
-				     float GasHaloDensity,
-				     float AngularMomentum[MAX_DIMENSION],
-				     float UniformVelocity[MAX_DIMENSION], 
+				     double GasHaloScaleRadius,
+				     double GasHaloDensity,
+				     double GasHaloDensity2,
+				     double GasTemperature,
+				     double GasAlpha,
+				     double GasZeta,
+				     double GasZeta2,
+				     double GasCoreEntropy,
+				     double GasHaloRatio,
+				     double GasMetallicity,
+				     int   UseHaloRotation,
+				     double RotationScaleVelocity,
+				     double RotationScaleRadius,
+				     double RotationPowerLawIndex,
+				     double DiskMetallicityEnhancementFactor,
+				     double AngularMomentum[MAX_DIMENSION],
+				     double UniformVelocity[MAX_DIMENSION], 
 				     int UseMetallicityField, 
-				     float GalaxySimulationInflowTime,
-				     float GalaxySimulationInflowDensity,
+				     FLOAT GalaxySimulationInflowTime,
+				     double GalaxySimulationInflowDensity,
 				     int level,
-				     float GalaxySimulationCR = 0.0 );
+				     double GalaxySimulationCR = 0.0
+                 );
 
   /* Free expansion test */
   int FreeExpansionInitializeGrid(int FreeExpansionFullBox,

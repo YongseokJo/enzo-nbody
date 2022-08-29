@@ -850,7 +850,13 @@ int grid::ReadExtraFields(hid_t group_id)
       if(this->GravitatingMassField != NULL)
         delete this->GravitatingMassField;
       //fprintf(stderr, "ALLOCATING %"ISYM" for GMF\n", size);
-      this->GravitatingMassField = new float[size];
+#ifdef NBODY
+			this->GravitatingMassField = new float*[2];
+			this->GravitatingMassField[0] = new float[size];
+			this->GravitatingMassField[1] = new float[size];
+#else
+			this->GravitatingMassField = new float[size];
+#endif
       this->read_dataset(GridRank, GMFOutDims, "GravitatingMassField",
           group_id, HDF5_REAL, (VOIDP) this->GravitatingMassField, FALSE);
   }
@@ -868,7 +874,14 @@ int grid::ReadExtraFields(hid_t group_id)
       if(this->PotentialField != NULL)
         delete this->PotentialField;
       //fprintf(stderr, "ALLOCATING %"ISYM" for PF\n", size);
-      this->PotentialField = new float[size];
+#ifdef NBODY
+			this->PotentialField = new float*[2];
+			this->PotentialField[0] = new float[size];
+			this->PotentialField[1] = new float[size];
+#else
+			this->PotentialField = new float[size];
+
+#endif
       this->read_dataset(GridRank, GMFOutDims, "PotentialField",
           group_id, HDF5_REAL, (VOIDP) this->PotentialField, FALSE);
   }

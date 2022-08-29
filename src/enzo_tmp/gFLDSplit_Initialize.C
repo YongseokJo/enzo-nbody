@@ -26,6 +26,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 // #ifdef _OPENMP
 // #include <omp.h>

@@ -49,7 +49,13 @@ int grid::PrepareGreensFunction()
   for (dim = 0; dim < GridRank; dim++)
     size *= GravitatingMassFieldDimension[dim];
  
+#ifdef NBODY
+  PotentialField = new float*[2];
+  PotentialField[0] = new float[size];
+  PotentialField[1] = new float[size];
+#else
   PotentialField = new float[size];
+#endif
  
   /* Set the constant to be used. */
  
@@ -77,13 +83,28 @@ int grid::PrepareGreensFunction()
 	r = sqrt(xpos*xpos + ypos*ypos + zpos*zpos);
 	r = max(r, GravitatingMassFieldCellSize);
 	r *= GravitatingMassFieldCellSize;
+#ifdef NBODY
+	if (GridRank == 3) {
+	  PotentialField[0][n] = GravConst_factor/r;
+	  PotentialField[1][n] = GravConst_factor/r;
+	}
+	if (GridRank == 2) {
+	  PotentialField[0][n] = GravConst_factor*log(r);
+	  PotentialField[1][n] = GravConst_factor*log(r);
+	}
+	if (GridRank == 1) {
+	  PotentialField[0][n] = GravConst_factor*r;
+	  PotentialField[1][n] = GravConst_factor*r;
+	}
+#else
 	if (GridRank == 3)
 	  PotentialField[n] = GravConst_factor/r;
 	if (GridRank == 2)
 	  PotentialField[n] = GravConst_factor*log(r);
 	if (GridRank == 1)
-
 	  PotentialField[n] = GravConst_factor*r;
+#endif
+
  
       }
     }

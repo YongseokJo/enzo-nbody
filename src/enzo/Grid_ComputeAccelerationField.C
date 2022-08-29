@@ -79,20 +79,42 @@ int grid::ComputeAccelerationField(int DifferenceType, int level)
     if (AccelerationField[dim] != NULL) {
       delete [] AccelerationField[dim];
     }
- 
+#define NBODY
+#ifdef NBODY 
+    AccelerationField[dim] = new float*[2];
+    AccelerationField[dim][0] = new float[size];
+    AccelerationField[dim][1] = new float[size];
+#else
     AccelerationField[dim] = new float[size];
+#endif
  
   }
  
   /* Difference potential. */
- 
+#ifdef NBODY 
+  FORTRAN_NAME(comp_accel)(PotentialField[0], AccelerationField[0][0],
+      AccelerationField[1][0], AccelerationField[2][0], &GridRank, &DifferenceType,
+	    GravitatingMassFieldDimension, GravitatingMassFieldDimension+1,
+	      GravitatingMassFieldDimension+2,
+	    GridDimension, GridDimension+1, GridDimension+2,
+            Offset, Offset+1, Offset+2, CellSize, CellSize+1, CellSize+2);
+	
+  FORTRAN_NAME(comp_accel)(PotentialField[1], AccelerationField[0][1],
+      AccelerationField[1][1], AccelerationField[2][1], &GridRank, &DifferenceType,
+	    GravitatingMassFieldDimension, GravitatingMassFieldDimension+1,
+	      GravitatingMassFieldDimension+2,
+	    GridDimension, GridDimension+1, GridDimension+2,
+            Offset, Offset+1, Offset+2, CellSize, CellSize+1, CellSize+2);
+
+#else
   FORTRAN_NAME(comp_accel)(PotentialField, AccelerationField[0],
       AccelerationField[1], AccelerationField[2], &GridRank, &DifferenceType,
 	    GravitatingMassFieldDimension, GravitatingMassFieldDimension+1,
 	      GravitatingMassFieldDimension+2,
 	    GridDimension, GridDimension+1, GridDimension+2,
             Offset, Offset+1, Offset+2, CellSize, CellSize+1, CellSize+2);
- 
+
+#endif
   /* Smooth if necessary. */
  
 #define NO_SMOOTH_ACCEL

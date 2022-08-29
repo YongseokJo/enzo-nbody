@@ -26,6 +26,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "communication.h"
+#include "communicators.h"
 
 #define LEVEL_BIT_OFFSET 24
 

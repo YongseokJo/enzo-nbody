@@ -26,6 +26,7 @@ extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
                                    int *sstart1, int *sstart2, int *sstart3,
                                    int *dstart1, int *dstart2, int *dststart3);
  
+#define NBODY
  
 int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 {
@@ -59,20 +60,31 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
   /* If the data is on this processor then copy it to a new region. */
  
   if (MyProcessorNumber == InitialRegion->Processor) {
- 
-    /* Set FieldPointer to the appropriate field. */
- 
-    float *FieldPointer;
-    if (Field == POTENTIAL_FIELD) {
-      if (PotentialField == NULL)
-	PotentialField = new float[size]();
-      FieldPointer = PotentialField;
-    } else {
-      ENZO_VFAIL("Field %"ISYM" not recognized.\n", Field)
-    }
- 
+
+		/* Set FieldPointer to the appropriate field. */
+
+		float *FieldPointer;
+#ifdef NBODY
+		float *FieldPointerNoStar;
+#endif
+		if (Field == POTENTIAL_FIELD) {
+			if (PotentialField == NULL)
+#ifdef NBODY
+				PotentialField = new float*[2];
+				PotentialField[0] = new float[size];
+				PotentialField[1] = new float[size];
+				FieldPointer = PotentialField[0];
+				FieldPointerNoStar = PotentialField[1];
+#else
+				PotentialField = new float[size]();
+				FieldPointer = PotentialField;
+#endif
+		} else {
+			ENZO_VFAIL("Field %"ISYM" not recognized.\n", Field)
+		}
+
     /* Copy region data into grid. */
- 
+#ifdef NBODY 
     FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointer,
 			 InitialRegion->RegionDim,
 			 InitialRegion->RegionDim+1,
@@ -80,6 +92,22 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 			 GravDim, GravDim+1, GravDim+2,
 			 GravStart, GravStart+1, GravStart+2,
 			 Zero, Zero+1, Zero+2);
+    FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointerNoStar,
+			 InitialRegion->RegionDim,
+			 InitialRegion->RegionDim+1,
+			 InitialRegion->RegionDim+2,
+			 GravDim, GravDim+1, GravDim+2,
+			 GravStart, GravStart+1, GravStart+2,
+			 Zero, Zero+1, Zero+2);
+#else
+    FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointer,
+			 InitialRegion->RegionDim,
+			 InitialRegion->RegionDim+1,
+			 InitialRegion->RegionDim+2,
+			 GravDim, GravDim+1, GravDim+2,
+			 GravStart, GravStart+1, GravStart+2,
+			 Zero, Zero+1, Zero+2);
+#endif
  
     /* Delete old field. */
  

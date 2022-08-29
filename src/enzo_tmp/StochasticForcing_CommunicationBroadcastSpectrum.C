@@ -20,6 +20,7 @@
 #include "StochasticForcing.h"
 #include "global_data.h"
 #include "error.h"
+#include "communicators.h"
 
 /* function prototypes */
 

@@ -685,7 +685,11 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 	      temp[(i-StartIndex[0])                           +
 		   (j-StartIndex[1])*ActiveDim[0]              +
 		   (k-StartIndex[2])*ActiveDim[0]*ActiveDim[1] ] =
+#ifdef NBODY
+			GravitatingMassFieldParticles[0][ i +
+#else
 			GravitatingMassFieldParticles[ i +
+#endif
 			j*GravitatingMassFieldParticlesDimension[0] +
 			k*GravitatingMassFieldParticlesDimension[0]*
 			GravitatingMassFieldParticlesDimension[1]];

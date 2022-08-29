@@ -28,6 +28,8 @@
 #include "Grid.h"
 
 #include "phys_constants.h"
+
+#define NBODY
  
 extern "C" void FORTRAN_NAME(projplane)(
           float *grid1, float *grid2, float *flaggrid, int *iflag,
@@ -269,7 +271,11 @@ int grid::ProjectToPlane(FLOAT ProjectedFieldLeftEdge[],
 		   (max(0, Offset[0]) - Offset[0]);
 	for (i = max(0,Offset[0]); i < GridDimension[0]-max(0,Offset[0]);
 	     i++, bfindex++, dmindex++)
+#ifdef NBODY
+	  temp[bfindex] = GravitatingMassFieldParticles[0][dmindex];
+#else
 	  temp[bfindex] = GravitatingMassFieldParticles[dmindex];
+#endif
       }
  
     FORTRAN_NAME(projplane)(temp, NULL,

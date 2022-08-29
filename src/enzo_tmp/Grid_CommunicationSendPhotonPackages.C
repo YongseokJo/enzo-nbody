@@ -30,6 +30,7 @@
 #include "communication.h"
 #include "CommunicationUtilities.h"
 #include "GroupPhotonList.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, 

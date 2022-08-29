@@ -28,6 +28,7 @@
 #include "communication.h"
  
 #define NO_SPLINE
+#define NBODY
  
 /* function prototypes */
  
@@ -79,7 +80,13 @@ int grid::PreparePotentialField(grid *ParentGrid)
       CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
     if (PotentialField != NULL)
       delete [] PotentialField;
+#ifdef NBODY
+    PotentialField = new float*[2];
+    PotentialField[0] = new float[size];
+    PotentialField[1] = new float[size];
+#else
     PotentialField = new float[size];
+#endif
   }
  
   /* Declarations. */
@@ -176,6 +183,25 @@ int grid::PreparePotentialField(grid *ParentGrid)
  
 #else /* SPLINE */
  
+#ifdef NBODY	
+  FORTRAN_NAME(prolong)(ParentGrid->PotentialField[0],
+			    PotentialField[0], &GridRank,
+			    ParentDim, ParentDim+1, ParentDim+2,
+			    GravitatingMassFieldDimension,
+			    GravitatingMassFieldDimension+1,
+			    GravitatingMassFieldDimension+2,
+			    ParentOffset, ParentOffset+1, ParentOffset+2,
+			    Refinement, Refinement+1, Refinement+2);
+  FORTRAN_NAME(prolong)(ParentGrid->PotentialField[1],
+			    PotentialField[1], &GridRank,
+			    ParentDim, ParentDim+1, ParentDim+2,
+			    GravitatingMassFieldDimension,
+			    GravitatingMassFieldDimension+1,
+			    GravitatingMassFieldDimension+2,
+			    ParentOffset, ParentOffset+1, ParentOffset+2,
+			    Refinement, Refinement+1, Refinement+2);
+
+#else
   FORTRAN_NAME(prolong)(ParentGrid->PotentialField,
 			    PotentialField, &GridRank,
 			    ParentDim, ParentDim+1, ParentDim+2,
@@ -184,6 +210,8 @@ int grid::PreparePotentialField(grid *ParentGrid)
 			    GravitatingMassFieldDimension+2,
 			    ParentOffset, ParentOffset+1, ParentOffset+2,
 			    Refinement, Refinement+1, Refinement+2);
+
+#endif
  
 #endif /* SPLINE */
  

@@ -68,7 +68,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDProblem.h"
-
+#include "communicators.h"
 
 int gFLDProblem::lsolve(EnzoVector *s, EnzoVector *b, 
 			EnzoVector *u, float delta)

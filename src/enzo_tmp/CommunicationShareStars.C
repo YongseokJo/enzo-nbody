@@ -24,6 +24,7 @@
 #include "typedefs.h"
 #include "global_data.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 void my_exit(int status);
 

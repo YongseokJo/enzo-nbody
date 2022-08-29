@@ -21,6 +21,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "FSProb.h"
+#include "communicators.h"
 
 /* Fortran function prototypes */
 extern "C" void FORTRAN_NAME(fsprob_setupsystem)(

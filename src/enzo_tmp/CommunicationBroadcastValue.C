@@ -29,6 +29,7 @@
 #include "TopGridData.h"
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
 void my_exit(int status);
  
  

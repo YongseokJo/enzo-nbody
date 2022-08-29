@@ -28,6 +28,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "communication.h"
+#include "communicators.h"
  
 /* function prototypes */
  

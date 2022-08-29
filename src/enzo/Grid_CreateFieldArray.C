@@ -235,7 +235,11 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 
   	array = new EnzoArray<float>(2, dims, sindex, eindex);
   	for(i = 0; i < this->GridRank; i++){
+#ifdef NBODY
+  	  array->Vector[i] = this->ParticleAcceleration[i][0];
+#else
   	  array->Vector[i] = this->ParticleAcceleration[i];
+#endif
   	}
       }
       break;
@@ -269,7 +273,12 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       sindex, eindex,
 			       cell_width);
 	
+#define NBODY
+#ifdef NBODY
+  	array->Array = this->PotentialField[0];
+#else
   	array->Array = this->PotentialField;
+#endif
       }
       break;
       
@@ -282,7 +291,11 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       cell_width);
 	
   	for(i = 0; i < this->GridRank; i++){
+#ifdef NBODY
+  	  array->Vector[i] = this->AccelerationField[i][0];
+#else
   	  array->Vector[i] = this->AccelerationField[i];
+#endif
   	}
       }
       break;
@@ -298,8 +311,11 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       this->GravitatingMassFieldDimension,
 			       sindex, eindex,
 			       cell_width);
-	
+#ifdef NBODY	
+  	array->Array = this->GravitatingMassField[0];
+#else
   	array->Array = this->GravitatingMassField;
+#endif
       }
       break;
       

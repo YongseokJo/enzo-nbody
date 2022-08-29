@@ -26,6 +26,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "communication.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, int Target,

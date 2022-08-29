@@ -28,6 +28,7 @@
 int FindField(int f, int farray[], int n);
  
 #define INCLUDE_GHOST_ZONES
+#define NBODY
  
 int grid::AddBaryonsToGravitatingMassField()
 {
@@ -81,11 +82,22 @@ int grid::AddBaryonsToGravitatingMassField()
       gmfindex = ((k+Offset[2])*GravitatingMassFieldDimension[1] +
 		  (j+Offset[1]))*GravitatingMassFieldDimension[0] +
 		     Offset[0];
-      for (i = 0; i < GridDimension[0]; i++, index++, gmfindex++)
+      for (i = 0; i < GridDimension[0]; i++, index++, gmfindex++) {
+#ifdef NBODY
+	GravitatingMassField[0][gmfindex] += BaryonField[DensNum][index];
+	GravitatingMassField[1][gmfindex] += BaryonField[DensNum][index];
+#else
 	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
+#endif
+		}
   // Add FDM density
   if (QuantumPressure ==1){
+#ifdef NBODY
+      GravitatingMassField[0][gmfindex] += BaryonField[FDMDensNum][index];
+      GravitatingMassField[1][gmfindex] += BaryonField[FDMDensNum][index];
+#else
       GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
+#endif
     }
   }
  
@@ -98,11 +110,22 @@ int grid::AddBaryonsToGravitatingMassField()
 		   GridStartIndex[0]+Offset[0];
       index = (k*GridDimension[1] + j)*GridDimension[0] + GridStartIndex[0];
       for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++,
-	     index++, gmfindex++)
+	     index++, gmfindex++) {
+#ifdef NBODY
+	GravitatingMassField[0][gmfindex] += BaryonField[DensNum][index];
+	GravitatingMassField[1][gmfindex] += BaryonField[DensNum][index];
+#else
 	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
+#endif
+			}
   // Add FDM density
   if (QuantumPressure ==1){
+#ifdef NBODY
+      GravitatingMassField[0][gmfindex] += BaryonField[FDMDensNum][index];
+      GravitatingMassField[1][gmfindex] += BaryonField[FDMDensNum][index];
+#else
       GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
+#endif
     }
     }
  

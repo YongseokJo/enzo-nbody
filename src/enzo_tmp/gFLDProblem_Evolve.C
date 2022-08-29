@@ -20,6 +20,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 
 /* function prototypes */

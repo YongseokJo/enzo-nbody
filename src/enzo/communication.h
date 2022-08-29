@@ -93,6 +93,10 @@ EXTERN int CommunicationReceiveIndex;
 EXTERN int          CommunicationReceiveCallType[MAX_RECEIVE_BUFFERS];
 EXTERN MPI_Request  CommunicationReceiveMPI_Request[MAX_RECEIVE_BUFFERS];
 EXTERN float       *CommunicationReceiveBuffer[MAX_RECEIVE_BUFFERS];
+#define NBODY
+#ifdef NBODY
+EXTERN float       *CommunicationReceiveBuffer1[MAX_RECEIVE_BUFFERS];
+#endif
 EXTERN grid        *CommunicationReceiveGridOne[MAX_RECEIVE_BUFFERS];
 EXTERN grid        *CommunicationReceiveGridTwo[MAX_RECEIVE_BUFFERS];
 EXTERN int          CommunicationReceiveDependsOn[MAX_RECEIVE_BUFFERS];

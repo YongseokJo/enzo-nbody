@@ -26,6 +26,7 @@
 #include "GroupPhotonList.h"
 #include "CommunicationUtilities.h"
 #include "PhotonCommunication.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSendCancel(int Tag);

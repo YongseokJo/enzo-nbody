@@ -31,6 +31,7 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 void my_exit(int status);
  

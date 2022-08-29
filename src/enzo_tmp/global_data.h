@@ -570,9 +570,6 @@ EXTERN int MyProcessorNumber;
 EXTERN int NumberOfProcessors;
 EXTERN float CommunicationTime;
 
-/* by YS, MPI COMMs*/
-EXTERN MPI_Comm enzo_comm;
-EXTERN MPI_Comm nbody_comm;
 
 
 /* Parameter to indicate if top grid should do parallel IO

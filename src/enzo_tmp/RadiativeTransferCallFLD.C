@@ -28,6 +28,7 @@
 #include "LevelHierarchy.h"
 #include "StarParticleData.h"
 #include "ImplicitProblemABC.h"
+#include "communicators.h"
 
 float CommunicationMinValue(float Value);
 int FLDCorrectForImpulses(int field, LevelHierarchyEntry *LevelArray[],

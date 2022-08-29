@@ -194,7 +194,11 @@ int grid::SchrodingerSolver( int nhy )
          GridRank, 
          GravitatingMassFieldDimension[0],GravitatingMassFieldDimension[1],GravitatingMassFieldDimension[2],
          dtFixed/2., hmcoef,
+#ifdef NBODY
+         PotentialField[0], 
+#else
          PotentialField, 
+#endif
          Offset[0], Offset[1], Offset[2]) == FAIL){
          ENZO_FAIL("Error in Add poteitial before RK!\n"); 
       }
@@ -205,7 +209,11 @@ int grid::SchrodingerSolver( int nhy )
          GridRank, 
          GravitatingMassFieldDimension[0],GravitatingMassFieldDimension[1],GravitatingMassFieldDimension[2],
          dtFixed, hmcoef,
+#ifdef NBODY
+         PotentialField[0], 
+#else
          PotentialField, 
+#endif
          Offset[0], Offset[1], Offset[2]) == FAIL){
          ENZO_FAIL("Error in Add poteitial before RK!\n");
       }

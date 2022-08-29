@@ -38,6 +38,7 @@
 #include "LevelHierarchy.h"
 #include "CosmologyParameters.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define NO_DEBUG_PS
 

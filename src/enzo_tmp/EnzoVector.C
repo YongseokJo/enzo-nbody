@@ -38,6 +38,7 @@ typedef int MPI_Request;
 #include "global_data.h"
 
 #include "EnzoVector.h"
+#include "communicators.h"
 
 
 

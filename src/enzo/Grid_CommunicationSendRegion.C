@@ -30,7 +30,6 @@
 #include "Grid.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
-#include "communicators.h"
 
 // function prototypes
  
@@ -104,7 +103,19 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
   }//if(UseMHDCT)
 
   // Allocate buffer
- 
+#define NBODY
+#ifdef NBODY 
+  float *buffer1 = NULL;
+  if (CommunicationDirection == COMMUNICATION_RECEIVE)
+    buffer1 = CommunicationReceiveBuffer[CommunicationReceiveIndex];
+  else	   
+    buffer1 = new float[TransferSize];
+	float *buffer2 = NULL;
+  if (CommunicationDirection == COMMUNICATION_RECEIVE)
+    buffer2 = CommunicationReceiveBuffer1[CommunicationReceiveIndex];
+  else	   
+    buffer2 = new float[TransferSize];
+#endif
   float *buffer = NULL;
   if (CommunicationDirection == COMMUNICATION_RECEIVE)
     buffer = CommunicationReceiveBuffer[CommunicationReceiveIndex];
@@ -177,6 +188,22 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
     } // if(UseMHDCT && SendField == ALL_FIELDS)
  
     if (SendField == GRAVITATING_MASS_FIELD_PARTICLES)
+#ifdef NBODY
+      FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles[0], buffer1,
+			   GravitatingMassFieldParticlesDimension,
+			   GravitatingMassFieldParticlesDimension+1,
+			   GravitatingMassFieldParticlesDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+      FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles[1], buffer2,
+			   GravitatingMassFieldParticlesDimension,
+			   GravitatingMassFieldParticlesDimension+1,
+			   GravitatingMassFieldParticlesDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+#else
       FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles, buffer,
 			   GravitatingMassFieldParticlesDimension,
 			   GravitatingMassFieldParticlesDimension+1,
@@ -184,8 +211,25 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 			   RegionDim, RegionDim+1, RegionDim+2,
 			   Zero, Zero+1, Zero+2,
 			   RegionStart, RegionStart+1, RegionStart+2);
+#endif
  
     if (SendField == GRAVITATING_MASS_FIELD)
+#ifdef NBODY
+      FORTRAN_NAME(copy3d)(GravitatingMassField[0], buffer1,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+      FORTRAN_NAME(copy3d)(GravitatingMassField[1], buffer2,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+#else
       FORTRAN_NAME(copy3d)(GravitatingMassField, buffer,
 			   GravitatingMassFieldDimension,
 			   GravitatingMassFieldDimension+1,
@@ -193,8 +237,25 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 			   RegionDim, RegionDim+1, RegionDim+2,
 			   Zero, Zero+1, Zero+2,
 			   RegionStart, RegionStart+1, RegionStart+2);
+#endif
  
     if (SendField == POTENTIAL_FIELD)
+#ifdef NBODY
+      FORTRAN_NAME(copy3d)(PotentialField[0], buffer1,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+      FORTRAN_NAME(copy3d)(PotentialField[1], buffer2,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   RegionStart, RegionStart+1, RegionStart+2);
+#else
       FORTRAN_NAME(copy3d)(PotentialField, buffer,
 			   GravitatingMassFieldDimension,
 			   GravitatingMassFieldDimension+1,
@@ -202,14 +263,28 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 			   RegionDim, RegionDim+1, RegionDim+2,
 			   Zero, Zero+1, Zero+2,
 			   RegionStart, RegionStart+1, RegionStart+2);
+#endif
  
     if (SendField == ACCELERATION_FIELDS)
       for (dim = 0; dim < GridRank; dim++) {
+#ifdef NBODY
+	FORTRAN_NAME(copy3d)(AccelerationField[dim][0], &buffer1[index],
+			     GridDimension, GridDimension+1, GridDimension+2,
+			     RegionDim, RegionDim+1, RegionDim+2,
+			     Zero, Zero+1, Zero+2,
+			     RegionStart, RegionStart+1, RegionStart+2);
+	FORTRAN_NAME(copy3d)(AccelerationField[dim][1], &buffer2[index],
+			     GridDimension, GridDimension+1, GridDimension+2,
+			     RegionDim, RegionDim+1, RegionDim+2,
+			     Zero, Zero+1, Zero+2,
+			     RegionStart, RegionStart+1, RegionStart+2);
+#else
 	FORTRAN_NAME(copy3d)(AccelerationField[dim], &buffer[index],
 			     GridDimension, GridDimension+1, GridDimension+2,
 			     RegionDim, RegionDim+1, RegionDim+2,
 			     Zero, Zero+1, Zero+2,
 			     RegionStart, RegionStart+1, RegionStart+2);
+#endif
 	index += RegionSize;
       }
   }
@@ -237,8 +312,21 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 	fprintf(tracePtr, "CSR Sending %"ISYM" floats from %"ISYM" to %"ISYM"\n", 
 		TransferSize, MyProcessorNumber, ToProcessor);
 #endif
+#ifdef NBODY
+			if (SendField == ACCELERATION_FIELDS || SendField == GRAVITATING_MASS_FIELD
+					|| SendField == GRAVITATING_MASS_FIELD_PARTICLES) {
+				CommunicationBufferedSend(buffer1, TransferSize, DataType, ToProcessor, 
+						MPI_SENDREGION_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+				CommunicationBufferedSend(buffer2, TransferSize, DataType, ToProcessor, 
+						MPI_SENDREGION_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+			} else {
+				CommunicationBufferedSend(buffer, TransferSize, DataType, ToProcessor, 
+						MPI_SENDREGION_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+			}
+#else
       CommunicationBufferedSend(buffer, TransferSize, DataType, ToProcessor, 
-				MPI_SENDREGION_TAG, enzo_comm, BUFFER_IN_PLACE);
+				MPI_SENDREGION_TAG, MPI_COMM_WORLD, BUFFER_IN_PLACE);
+#endif
     }
 
     if (MyProcessorNumber == ToProcessor) {
@@ -256,22 +344,62 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 //	       "comm index %"ISYM"\n", ProcessorNumber, TransferSize, 
 //	       CommunicationReceiveIndex);
 
-	MPI_Irecv(buffer, TransferSize, DataType, ProcessorNumber, 
-		  MPI_SENDREGION_TAG, enzo_comm, 
-		  CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
-	CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer;
-	CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
-	  CommunicationReceiveCurrentDependsOn;
-	CommunicationReceiveIndex++;
-      }
+#ifdef NBODY
+				if (SendField == ACCELERATION_FIELDS || SendField == GRAVITATING_MASS_FIELD
+						|| SendField == GRAVITATING_MASS_FIELD_PARTICLES) {
+					MPI_Irecv(buffer1, TransferSize, DataType, ProcessorNumber, 
+							MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+							CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
+					CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer1;
+					CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
+						MPI_Irecv(buffer2, TransferSize, DataType, ProcessorNumber, 
+								MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+								CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
+					CommunicationReceiveBuffer1[CommunicationReceiveIndex] = buffer2;
+					CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
+						CommunicationReceiveCurrentDependsOn;
+					CommunicationReceiveIndex++;
+				} else {
+					MPI_Irecv(buffer, TransferSize, DataType, ProcessorNumber, 
+							MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+							CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
+					CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer;
+					CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
+						CommunicationReceiveCurrentDependsOn;
+					CommunicationReceiveIndex++;		
+				}
+
+#else
+				MPI_Irecv(buffer, TransferSize, DataType, ProcessorNumber, 
+						MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+						CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
+				CommunicationReceiveBuffer[CommunicationReceiveIndex] = buffer;
+				CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
+					CommunicationReceiveCurrentDependsOn;
+				CommunicationReceiveIndex++;
+#endif
+			}
 
       /* If in send-receive mode, then wait for the message now. */
 
-      if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
-	MPI_Recv(buffer, TransferSize, DataType, ProcessorNumber, 
-		 MPI_SENDREGION_TAG, enzo_comm, &Status);
-
-    } // ENDIF ToProcessor
+      if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
+#ifdef NBODY
+				if (SendField == ACCELERATION_FIELDS || SendField == GRAVITATING_MASS_FIELD
+						|| SendField == GRAVITATING_MASS_FIELD_PARTICLES) {
+					MPI_Recv(buffer1, TransferSize, DataType, ProcessorNumber, 
+							MPI_SENDREGION_TAG, MPI_COMM_WORLD, &Status);
+					MPI_Recv(buffer2, TransferSize, DataType, ProcessorNumber, 
+							MPI_SENDREGION_TAG, MPI_COMM_WORLD, &Status);
+				} else {
+					MPI_Recv(buffer, TransferSize, DataType, ProcessorNumber, 
+							MPI_SENDREGION_TAG, MPI_COMM_WORLD, &Status);
+				}
+#else
+			MPI_Recv(buffer, TransferSize, DataType, ProcessorNumber, 
+					MPI_SENDREGION_TAG, MPI_COMM_WORLD, &Status);
+#endif
+			}
+		} // ENDIF ToProcessor
 
  
 #ifdef MPI_INSTRUMENTATION
@@ -366,6 +494,22 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
     } // if( UseMHDCT && SendField == ALL_FIELDS )
 
     if (SendField == GRAVITATING_MASS_FIELD_PARTICLES) {
+#ifdef NBODY
+      delete ToGrid->GravitatingMassFieldParticles;
+      ToGrid->GravitatingMassFieldParticles = new float*[2];
+      ToGrid->GravitatingMassFieldParticles[0] = new float[RegionSize];
+      ToGrid->GravitatingMassFieldParticles[1] = new float[RegionSize];
+      FORTRAN_NAME(copy3d)(buffer1, ToGrid->GravitatingMassFieldParticles[0],
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   Zero, Zero+1, Zero+2);
+      FORTRAN_NAME(copy3d)(buffer2, ToGrid->GravitatingMassFieldParticles[1],
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   Zero, Zero+1, Zero+2);
+#else
       delete ToGrid->GravitatingMassFieldParticles;
       ToGrid->GravitatingMassFieldParticles = new float[RegionSize];
       FORTRAN_NAME(copy3d)(buffer, ToGrid->GravitatingMassFieldParticles,
@@ -373,9 +517,27 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 			   RegionDim, RegionDim+1, RegionDim+2,
 			   Zero, Zero+1, Zero+2,
 			   Zero, Zero+1, Zero+2);
+#endif
     }
  
     if (SendField == GRAVITATING_MASS_FIELD) {
+#ifdef NBODY
+      delete ToGrid->GravitatingMassField;
+      ToGrid->GravitatingMassField = new float*[2];
+      ToGrid->GravitatingMassField[0] = new float[RegionSize];
+      ToGrid->GravitatingMassField[1] = new float[RegionSize];
+      FORTRAN_NAME(copy3d)(buffer1, ToGrid->GravitatingMassField[1],
+    			   RegionDim, RegionDim+1, RegionDim+2,
+    			   RegionDim, RegionDim+1, RegionDim+2,
+    			   Zero, Zero+1, Zero+2,
+    			   Zero, Zero+1, Zero+2);
+      FORTRAN_NAME(copy3d)(buffer2, ToGrid->GravitatingMassField[1],
+    			   RegionDim, RegionDim+1, RegionDim+2,
+    			   RegionDim, RegionDim+1, RegionDim+2,
+    			   Zero, Zero+1, Zero+2,
+    			   Zero, Zero+1, Zero+2);
+
+#else
       delete ToGrid->GravitatingMassField;
       ToGrid->GravitatingMassField = new float[RegionSize];
       FORTRAN_NAME(copy3d)(buffer, ToGrid->GravitatingMassField,
@@ -383,9 +545,26 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
     			   RegionDim, RegionDim+1, RegionDim+2,
     			   Zero, Zero+1, Zero+2,
     			   Zero, Zero+1, Zero+2);
+#endif
     }
  
     if (SendField == POTENTIAL_FIELD) {
+#ifdef NBODY
+      delete ToGrid->PotentialField;
+      ToGrid->PotentialField = new float*[2];
+      ToGrid->PotentialField[0] = new float[RegionSize];
+      ToGrid->PotentialField[1] = new float[RegionSize];
+      FORTRAN_NAME(copy3d)(buffer1, ToGrid->PotentialField[0],
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   Zero, Zero+1, Zero+2);
+      FORTRAN_NAME(copy3d)(buffer2, ToGrid->PotentialField[1],
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   RegionDim, RegionDim+1, RegionDim+2,
+			   Zero, Zero+1, Zero+2,
+			   Zero, Zero+1, Zero+2);
+#else
       delete ToGrid->PotentialField;
       ToGrid->PotentialField = new float[RegionSize];
       FORTRAN_NAME(copy3d)(buffer, ToGrid->PotentialField,
@@ -393,19 +572,37 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 			   RegionDim, RegionDim+1, RegionDim+2,
 			   Zero, Zero+1, Zero+2,
 			   Zero, Zero+1, Zero+2);
+#endif
     }
  
     if (SendField == ACCELERATION_FIELDS)
-      for (dim = 0; dim < GridRank; dim++) {
-	delete ToGrid->AccelerationField[dim];
-	ToGrid->AccelerationField[dim] = new float[RegionSize];
-	FORTRAN_NAME(copy3d)(&buffer[index], ToGrid->AccelerationField[dim],
-			     RegionDim, RegionDim+1, RegionDim+2,
-			     RegionDim, RegionDim+1, RegionDim+2,
-			     Zero, Zero+1, Zero+2,
-			     Zero, Zero+1, Zero+2);
-	index += RegionSize;
-      }
+			for (dim = 0; dim < GridRank; dim++) {
+#ifdef NBODY
+				delete ToGrid->AccelerationField[dim];
+				ToGrid->AccelerationField[dim] = new float*[2];
+				ToGrid->AccelerationField[dim][0] = new float[RegionSize];
+				ToGrid->AccelerationField[dim][1] = new float[RegionSize];
+				FORTRAN_NAME(copy3d)(&buffer1[index], ToGrid->AccelerationField[dim][0],
+						RegionDim, RegionDim+1, RegionDim+2,
+						RegionDim, RegionDim+1, RegionDim+2,
+						Zero, Zero+1, Zero+2,
+						Zero, Zero+1, Zero+2);
+				FORTRAN_NAME(copy3d)(&buffer2[index], ToGrid->AccelerationField[dim][1],
+						RegionDim, RegionDim+1, RegionDim+2,
+						RegionDim, RegionDim+1, RegionDim+2,
+						Zero, Zero+1, Zero+2,
+						Zero, Zero+1, Zero+2);
+#else
+				delete ToGrid->AccelerationField[dim];
+				ToGrid->AccelerationField[dim] = new float[RegionSize];
+				FORTRAN_NAME(copy3d)(&buffer[index], ToGrid->AccelerationField[dim],
+						RegionDim, RegionDim+1, RegionDim+2,
+						RegionDim, RegionDim+1, RegionDim+2,
+						Zero, Zero+1, Zero+2,
+						Zero, Zero+1, Zero+2);
+#endif
+				index += RegionSize;
+			}
 
     /* Only delete the buffer if we're in receive mode (in send mode
        it will be deleted by CommunicationBufferedSend and if we're in

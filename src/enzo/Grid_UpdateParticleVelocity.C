@@ -78,8 +78,11 @@ int grid::UpdateParticleVelocity(float TimeStep)
 	 drag-like term and add the acceleration. The acceleration has
 	 already been divided by a(t). */
  
-      for (i = 0; i < NumberOfParticles; i++) {
- 
+			for (i = 0; i < NumberOfParticles; i++) {
+				// by YS Jo
+				//if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
+						//&& GridLevel != MaximumRefinementLevel )
+					 
 #ifdef VELOCITY_METHOD1
  
         /* i) partially time-centered. */
@@ -87,8 +90,13 @@ int grid::UpdateParticleVelocity(float TimeStep)
 	VelocityMidStep = ParticleVelocity[dim][i] +
 	                  ParticleAcceleration[dim][i]*0.5*TimeStep;
  
+#ifdef NBODY
+	ParticleVelocity[dim][i] +=
+	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][0][i]) * TimeStep;
+#else
 	ParticleVelocity[dim][i] +=
 	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][i]) * TimeStep;
+#endif
  
 #endif /* VELOCITY_METHOD1 */
  
@@ -98,17 +106,28 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
 	VelocityMidStep = ParticleVelocity[dim][i] ;
  
+#ifdef NBODY
+	ParticleVelocity[dim][i] +=
+	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][0][i]) * TimeStep;
+#else
 	ParticleVelocity[dim][i] +=
 	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][i]) * TimeStep;
+#endif
+	//ParticleVelocity[dim][i] +=
+	//  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][i]) * TimeStep;
  
 #endif /* VELOCITY_METHOD2 */
  
 #ifdef VELOCITY_METHOD3
  
         /* iii) Semi-implicit way */
- 
+#ifdef NBODY 
+        ParticleVelocity[dim][i] = (coef1*ParticleVelocity[dim][i] +
+                                    ParticleAcceleration[dim][0][i]*TimeStep)*coef2;
+#else
         ParticleVelocity[dim][i] = (coef1*ParticleVelocity[dim][i] +
                                     ParticleAcceleration[dim][i]*TimeStep)*coef2;
+#endif
 
  
 #endif /* VELOCITY_METHOD3 */
@@ -119,8 +138,13 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
       /* Otherwise, just add the acceleration. */
  
-      for (i = 0; i < NumberOfParticles; i++)
+      for (i = 0; i < NumberOfParticles; i++) {
+#ifdef NBODY
+	ParticleVelocity[dim][i] += ParticleAcceleration[dim][0][i] * TimeStep;
+#else
 	ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
+#endif
+			}
  
   }
 

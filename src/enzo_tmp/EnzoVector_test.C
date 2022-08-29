@@ -30,6 +30,7 @@
 #include "global_data.h"
 
 #include "EnzoVector.h"
+#include "communicators.h"
 
 int EnzoVector::test()
 {

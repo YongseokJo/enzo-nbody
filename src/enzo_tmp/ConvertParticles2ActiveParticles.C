@@ -29,6 +29,7 @@
 #include "ImplicitProblemABC.h"
 #endif
 #include "CosmologyParameters.h"
+#include "communicators.h"
 
 #define DEBUG 0
 void CollectParticleTypes(char **active_particle_types, int numparticles);
