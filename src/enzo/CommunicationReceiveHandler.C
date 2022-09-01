@@ -77,6 +77,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 		float time1 = ReturnWallTime();
 
+		fprintf(stdout,"4-3-1\n");  // by YS
 		MPI_Waitsome(TotalReceives, CommunicationReceiveMPI_Request,
 				&NumberOfCompleteRequests, ListOfIndices, ListOfStatuses);
 		//    printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
@@ -92,6 +93,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		}
 #endif
 
+		fprintf(stdout,"4-3-2\n");  // by YS
 		/* Should loop over newly received completions and check error msgs now. */
 		for (index = 0; index < NumberOfCompleteRequests; index++)
 			if (ListOfStatuses[index].MPI_ERROR != 0) {
@@ -127,6 +129,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 			}
 		}
 
+		fprintf(stdout,"4-3-3\n");  // by YS
 		/* Loop over the receive handles, looking for completed (i.e. null)
 			 requests associated with unprocessed (i.e. non-null) grids. 
 			 It's insufficient to just loop over newly completed receives because
@@ -160,6 +163,9 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 				grid_one = CommunicationReceiveGridOne[index];
 				grid_two = CommunicationReceiveGridTwo[index];
 				CommunicationReceiveIndex = index;
+#ifdef NBODY
+				CommunicationReceiveIndex1 = index;
+#endif
 
 				/* Copy out the argument if needed */
 
@@ -318,6 +324,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 				}
 
+				fprintf(stdout,"4-3-4\n");  // by YS
 				/* Mark this receive complete. */
 
 				// if this is a g:CSAPs recv, mark ALL g:CSAPs done, including this one.
@@ -343,6 +350,9 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 	} // end: while loop waiting for all receives to be processed
 
 	CommunicationReceiveIndex = 0;
+#ifdef NBODY
+	CommunicationReceiveIndex1 = 0;
+#endif
 
 	/* Reset the communication mode. */
 

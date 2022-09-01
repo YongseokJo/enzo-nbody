@@ -149,47 +149,47 @@ c     3D
 c
       if (ndim .eq. 3) then
 c     
-         do n=1, npositions
+        do n=1, npositions
 c     
 c     Compute the position of the central cell
 c     
-            xpos = min(max((posx(n) - leftedge(1))*fact, half),edge1)
-            ypos = min(max((posy(n) - leftedge(2))*fact, half),edge2)
-            zpos = min(max((posz(n) - leftedge(3))*fact, half),edge3)
+        xpos = min(max((posx(n) - leftedge(1))*fact, half),edge1)
+        ypos = min(max((posy(n) - leftedge(2))*fact, half),edge2)
+        zpos = min(max((posz(n) - leftedge(3))*fact, half),edge3)
 c     
 c     Convert this into an INTG_PREC index
 c     
-            i1  = int(xpos - shift,IKIND) + 1
-            j1  = int(ypos - shift,IKIND) + 1
-            k1  = int(zpos - shift,IKIND) + 1
+        i1  = int(xpos - shift,IKIND) + 1
+        j1  = int(ypos - shift,IKIND) + 1
+        k1  = int(zpos - shift,IKIND) + 1
 c     
 c     Compute the weights
 c     
-            dx = min((REAL(i1,RKIND)+shift-xpos)*refine, 1.0_RKIND)
-            dy = min((REAL(j1,RKIND)+shift-ypos)*refine, 1.0_RKIND)
-            dz = min((REAL(k1,RKIND)+shift-zpos)*refine, 1.0_RKIND)
+        dx = min((REAL(i1,RKIND)+shift-xpos)*refine, 1.0_RKIND)
+        dy = min((REAL(j1,RKIND)+shift-ypos)*refine, 1.0_RKIND)
+        dz = min((REAL(k1,RKIND)+shift-zpos)*refine, 1.0_RKIND)
 c     
 c     Interpolate from field into sumfield
 c     
-            field(i1  ,j1  ,k1  ) = field(i1  ,j1  ,k1  ) +
+        field(i1  ,j1  ,k1  ) = field(i1  ,j1  ,k1  ) +
      &              mass(n)*     dx *     dy *    dz
-            field(i1+1,j1  ,k1  ) = field(i1+1,j1  ,k1  ) +
+        field(i1+1,j1  ,k1  ) = field(i1+1,j1  ,k1  ) +
      &              mass(n)*(1._RKIND-dx)*     dy *    dz
-            field(i1  ,j1+1,k1  ) = field(i1  ,j1+1,k1  ) + 
+        field(i1  ,j1+1,k1  ) = field(i1  ,j1+1,k1  ) + 
      &              mass(n)*     dx *(1._RKIND-dy)*    dz
-            field(i1+1,j1+1,k1  ) = field(i1+1,j1+1,k1  ) +
+        field(i1+1,j1+1,k1  ) = field(i1+1,j1+1,k1  ) +
      &              mass(n)*(1._RKIND-dx)*(1._RKIND-dy)*    dz
-            field(i1  ,j1  ,k1+1) = field(i1  ,j1  ,k1+1) +
+        field(i1  ,j1  ,k1+1) = field(i1  ,j1  ,k1+1) +
      &              mass(n)*     dx *     dy *(1._RKIND-dz)
-            field(i1+1,j1  ,k1+1) = field(i1+1,j1  ,k1+1) +
+        field(i1+1,j1  ,k1+1) = field(i1+1,j1  ,k1+1) +
      &              mass(n)*(1._RKIND-dx)*     dy *(1._RKIND-dz)
-            field(i1  ,j1+1,k1+1) = field(i1  ,j1+1,k1+1) + 
+        field(i1  ,j1+1,k1+1) = field(i1  ,j1+1,k1+1) + 
      &              mass(n)*     dx *(1._RKIND-dy)*(1._RKIND-dz)
-            field(i1+1,j1+1,k1+1) = field(i1+1,j1+1,k1+1) +
+        field(i1+1,j1+1,k1+1) = field(i1+1,j1+1,k1+1) +
      &              mass(n)*(1._RKIND-dx)*(1._RKIND-dy)*(1._RKIND-dz)
 c     
-         enddo
-      
+        enddo
+
       endif
 c
       return

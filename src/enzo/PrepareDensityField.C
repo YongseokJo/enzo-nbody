@@ -145,7 +145,11 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
     /* First, generate the receive calls. */
 
+	fprintf(stdout,"4-1\n");  // by YS
     CommunicationReceiveIndex = 0;
+#ifdef NBODY
+    CommunicationReceiveIndex1 = 0;
+#endif
     CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
     CommunicationDirection = COMMUNICATION_POST_RECEIVE;
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
@@ -161,12 +165,14 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
  
     /* Next, send data and process grids on the same processor. */
 
+	fprintf(stdout,"4-2\n");  // by YS
     CommunicationDirection = COMMUNICATION_SEND;
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
       DepositParticleMassField(Grids[grid1], EvaluateTime);
 
     /* Finally, receive the data and process it. */
     
+	fprintf(stdout,"4-3\n");  // by YS
     CommunicationReceiveHandler();
 
   } // ENDFOR grid batches
@@ -201,17 +207,20 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
     CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
     CommunicationDirection = COMMUNICATION_POST_RECEIVE;
  
+	fprintf(stdout,"4-4\n");  // by YS
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
       PrepareGravitatingMassField1(Grids[grid1]);
 
     /* Next, send data and process grids on the same processor. */
 
+	fprintf(stdout,"4-5\n");  // by YS
     CommunicationDirection = COMMUNICATION_SEND;
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
       PrepareGravitatingMassField1(Grids[grid1]);
 
     /* Finally, receive the data and process it. */
     
+	fprintf(stdout,"4-6\n");  // by YS
     CommunicationReceiveHandler();
 
   } // ENDFOR grid batches
@@ -242,6 +251,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
     CommunicationDirection = COMMUNICATION_POST_RECEIVE;
 #endif
       
+	fprintf(stdout,"4-7\n");  // by YS
 #ifdef FAST_SIB
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
       PrepareGravitatingMassField2a(Grids[grid1], grid1, SiblingList,
@@ -255,6 +265,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #ifndef BITWISE_IDENTICALITY
     /* Next, send data and process grids on the same processor. */
 
+	fprintf(stdout,"4-8\n");  // by YS
     CommunicationDirection = COMMUNICATION_SEND;
 #ifdef FAST_SIB
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
@@ -265,6 +276,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
       PrepareGravitatingMassField2a(Grids[grid1], MetaData, LevelArray,
 				   level, When);
 #endif
+	fprintf(stdout,"4-9\n");  // by YS
 
     CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */

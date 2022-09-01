@@ -347,7 +347,6 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
       ENZO_FAIL("Error in SetBoundaryConditions (SlowSib)");
 #endif
   }
- 
   Grids[0]->GridData->SetNumberOfColours();
   /* Clear the boundary fluxes for all Grids (this will be accumulated over
      the subcycles below (i.e. during one current grid step) and used to by the
@@ -428,6 +427,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
       TopGridTimeStep = LevelArray[0]->GridData->ReturnTimeStep();
 
     }
+	fprintf(stdout,"1\n");  //by YS
 
     /* Streaming movie output (write after all parent grids are
        updated) */
@@ -440,9 +440,11 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
                              level);
     
     Star *AllStars = NULL;
+	fprintf(stdout,"2\n");  // by YS
     StarParticleInitialize(Grids, MetaData, NumberOfGrids, LevelArray,
 			   level, AllStars, TotalStarParticleCountPrevious);
 
+	fprintf(stdout,"3\n");  // by YS
     /* Calculate ClusterSMBHColdGasMass */
 
     ClusterSMBHSumGasMass(Grids, NumberOfGrids, level);
@@ -468,6 +470,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
  
     CreateFluxes(Grids,SubgridFluxesEstimate,NumberOfGrids,NumberOfSubgrids);
 
+	fprintf(stdout,"4\n");  // by YS
     if ((HydroMethod == MHD_RK) && (level == 0))
       ComputeDednerWaveSpeeds(MetaData, LevelArray, level, dt0);
 	
@@ -486,6 +489,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #endif  // end FAST_SIB
  
  
+	fprintf(stdout,"5\n");  // by YS
     /* Prepare normalization for random forcing. Involves top grid only. */
  
     ComputeRandomForcingNormalization(LevelArray, 0, MetaData,
@@ -543,6 +547,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef SAB
     } // End of loop over grids
 
+	fprintf(stdout,"6\n");  // by YS
     //Ensure the consistency of the AccelerationField
     SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
             Exterior, LevelArray[level], LevelCycleCount[level]);
