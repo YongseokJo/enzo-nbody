@@ -124,10 +124,9 @@ class grid
   int    NumberOfParticles;
   FLOAT *ParticlePosition[MAX_DIMENSION];  // pointers to position arrays
   float *ParticleVelocity[MAX_DIMENSION];  // pointers to velocity arrays
-#ifdef NBODY
-	float **ParticleAcceleration[MAX_DIMENSION+1];  // 
-#else
 	float *ParticleAcceleration[MAX_DIMENSION+1];  // 
+#ifdef NBODY
+	float *StarBackGroundAcceleration[MAX_DIMENSION+1];  // 
 #endif
 	float *ParticleMass;                     // pointer to mass array
   PINT  *ParticleNumber;                   // unique identifier
@@ -162,10 +161,10 @@ class grid
 // 
 
 #ifdef NBODY
-	float **PotentialField;
-  float **AccelerationField[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
-	float **GravitatingMassField; 
-  float **GravitatingMassFieldParticles;     // for particles only // by YS Jo
+	float *PotentialField[2];
+  float *AccelerationField[MAX_DIMENSION][2]; // cell cntr acceleration at n+1/2
+	float *GravitatingMassField[2]; 
+  float *GravitatingMassFieldParticles[2];     // for particles only // by YS Jo
 #else
 	float *PotentialField;
   float *AccelerationField[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
@@ -1166,15 +1165,21 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Gravity: allocate & clear the GravitatingMassField. */
 
    int ClearGravitatingMassField();
+#ifdef NBODY
+   int ClearGravitatingMassFieldNoStar();
+#endif
 
 /* Gravity & baryons: Copy the parent density field to the extra boundary
       region of GravitatingMassField (if any). */
 
-   int CopyParentToGravitatingFieldBoundary(grid *ParentGrid);
+   int CopyParentToGravitatingFieldBoundary(grid *ParentGrid, bool NoStar);
 
 /* Gravity & Particles: allocate & clear the GravitatingMassFieldParticles. */
 
    int ClearGravitatingMassFieldParticles();
+#ifdef NBODY
+   int ClearGravitatingMassFieldParticlesNoStar();
+#endif
 
 /* Baryons: add the baryon mass to the GravitatingMassField. */
 
@@ -1248,6 +1253,7 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Particles + Gravity: Clear ParticleAccleration. */
 
    int ClearParticleAccelerations();
+   int ClearParticleAccelerationsNoStar();
 
 /* Baryons + Gravity: Interpolate the AccelerationField in FromGrid to
              AccelerationFieldForCells at the GridPositions in this grid. */
@@ -1271,15 +1277,16 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Gravity: Delete GravitatingMassField. */
 
    void DeleteGravitatingMassField() {
-     delete [] GravitatingMassField; 
-     GravitatingMassField = NULL;
+     delete [] *GravitatingMassField; 
+     GravitatingMassField[0] = NULL;
+     GravitatingMassField[1] = NULL;
    };
 
 /* Gravity: Init GravitatingMassField. */
 
    void InitGravitatingMassField(int size) {
 #ifdef NBODY
-     GravitatingMassField = new float*[2];
+     //GravitatingMassField = new float*[2];
      GravitatingMassField[0] = new float[size];
      GravitatingMassField[1] = new float[size];
 #else
@@ -1298,8 +1305,14 @@ gradient force to gravitational force for one-zone collapse test. */
    void DeleteAccelerationField() {
      if (!((SelfGravity || UniformGravity || PointSourceGravity || ExternalGravity))) return;
      for (int dim = 0; dim < GridRank; dim++) {
-       delete [] AccelerationField[dim];
+       delete [] AccelerationField[dim][0]; 
+       delete [] AccelerationField[dim][1]; 
+#ifdef NBODY
+       AccelerationField[dim][0] = NULL;
+       AccelerationField[dim][1] = NULL;
+#else
        AccelerationField[dim] = NULL;
+#endif
      }
    };
 
@@ -1309,7 +1322,7 @@ gradient force to gravitational force for one-zone collapse test. */
 
 /* Gravity: deposit baryons into target GravitatingMassField. */
 
-   int DepositBaryons(grid *TargetGrid, FLOAT DepositTime);
+   int DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar); // by YS
 
 // -------------------------------------------------------------------------
 // Functions for accessing various grid-based information
@@ -1517,8 +1530,15 @@ gradient force to gravitational force for one-zone collapse test. */
    void DeleteParticleAcceleration() {
      if (!((SelfGravity || UniformGravity || PointSourceGravity))) return;
      for (int dim = 0; dim < GridRank+ComputePotential; dim++) {
+#ifdef NBODY
+       delete [] ParticleAcceleration[dim][1];
+       delete [] ParticleAcceleration[dim][0];
+       ParticleAcceleration[dim][0] = NULL;
+       ParticleAcceleration[dim][1] = NULL;
+#else
        delete [] ParticleAcceleration[dim];
        ParticleAcceleration[dim] = NULL;
+#endif
        delete [] ActiveParticleAcceleration[dim];
        ActiveParticleAcceleration[dim] = NULL;
      }
@@ -1527,8 +1547,10 @@ gradient force to gravitational force for one-zone collapse test. */
 /* Particles & Gravity: Delete GravitatingMassField. */
 
    void DeleteGravitatingMassFieldParticles() {
-     delete [] GravitatingMassFieldParticles; 
-     GravitatingMassFieldParticles = NULL;
+     delete [] GravitatingMassFieldParticles[1]; 
+     delete [] GravitatingMassFieldParticles[0]; 
+     GravitatingMassFieldParticles[0] = NULL;
+     GravitatingMassFieldParticles[1] = NULL;
      GravitatingMassFieldParticlesCellSize = FLOAT_UNDEFINED;
    };
 

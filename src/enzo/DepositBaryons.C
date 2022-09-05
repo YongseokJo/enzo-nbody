@@ -32,9 +32,9 @@
 /* function prototypes */
  
 int DepositBaryonsChildren(HierarchyEntry *DepositGrid,
-			   HierarchyEntry *Grid, FLOAT Time);
+			   HierarchyEntry *Grid, FLOAT Time, bool NoStar);
  
-int DepositBaryons(HierarchyEntry *Grid, FLOAT When)
+int DepositBaryons(HierarchyEntry *Grid, FLOAT When, bool NoStar) //by YS
 {
    /* Get the time and dt for this grid.  Compute time+1/2 dt. */
  
@@ -59,14 +59,14 @@ int DepositBaryons(HierarchyEntry *Grid, FLOAT When)
  
   /* Deposit baryons to GravitatingMassField in this grid. */
  
-  if (Grid->GridData->DepositBaryons(Grid->GridData, TimeMidStep) == FAIL) {
+  if (Grid->GridData->DepositBaryons(Grid->GridData, TimeMidStep, NoStar) == FAIL) {
     ENZO_FAIL("Error in grid->DepositBaryons.\n");
   }
  
   /* Recursively deposit baryons in children (at TimeMidStep). */
  
   if (Grid->NextGridNextLevel != NULL)
-    if (DepositBaryonsChildren(Grid, Grid->NextGridNextLevel, TimeMidStep)
+    if (DepositBaryonsChildren(Grid, Grid->NextGridNextLevel, TimeMidStep, NoStar)
 	== FAIL) {
       ENZO_FAIL("Error in DepositBaryonsChildren.\n");
     }
@@ -76,7 +76,7 @@ int DepositBaryons(HierarchyEntry *Grid, FLOAT When)
  
  
 int DepositBaryonsChildren(HierarchyEntry *DepositGrid,
-			   HierarchyEntry *Grid, FLOAT DepositTime)
+			   HierarchyEntry *Grid, FLOAT DepositTime, bool NoStar)
 {
  
   /* Set the field indicating if a cell is refined or not. */
@@ -96,7 +96,7 @@ int DepositBaryonsChildren(HierarchyEntry *DepositGrid,
  
   /* Deposit baryons in Grid into DepositGrid at the given time. */
  
-  if (Grid->GridData->DepositBaryons(DepositGrid->GridData, DepositTime)
+  if (Grid->GridData->DepositBaryons(DepositGrid->GridData, DepositTime, NoStar)
       == FAIL) {
     ENZO_FAIL("Error in grid->DepositBaryons.\n");
   }
@@ -105,7 +105,7 @@ int DepositBaryonsChildren(HierarchyEntry *DepositGrid,
  
   if (Grid->NextGridThisLevel != NULL)
     if (DepositBaryonsChildren(DepositGrid, Grid->NextGridThisLevel,
-			       DepositTime) == FAIL) {
+			       DepositTime, NoStar) == FAIL) {
       ENZO_FAIL("Error in DepositBaryonsChildren(1).\n");
     }
  
@@ -113,7 +113,7 @@ int DepositBaryonsChildren(HierarchyEntry *DepositGrid,
  
   if (Grid->NextGridNextLevel != NULL)
     if (DepositBaryonsChildren(DepositGrid, Grid->NextGridNextLevel,
-			       DepositTime) == FAIL) {
+			       DepositTime,NoStar) == FAIL) {
       ENZO_FAIL("Error in DepositBaryonsChildren(2).\n");
 
     }

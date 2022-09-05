@@ -40,7 +40,7 @@ int CommunicationBufferPurge(void);
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 		int NumberOfSubgrids[] = NULL,
 		int FluxFlag = FALSE,
-		TopGridData* MetaData = NULL);
+		TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 
 int CopyZonesFromOldGrids(LevelHierarchyEntry *OldGrids, 
 		TopGridData *MetaData,

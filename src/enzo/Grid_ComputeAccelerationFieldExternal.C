@@ -67,7 +67,7 @@ int grid::ComputeAccelerationFieldExternal()
   if (AccelerationField[0] == NULL)
     for (dim = 0; dim < GridRank; dim++) {
 #ifdef NBODY
-      AccelerationField[dim] = new float*[2];
+      //AccelerationField[dim] = new float*[2];
       AccelerationField[dim][0] = new float[size];
       AccelerationField[dim][1] = new float[size];
       for (i = 0; i < size; i++){

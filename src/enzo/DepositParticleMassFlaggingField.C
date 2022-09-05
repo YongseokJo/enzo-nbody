@@ -49,7 +49,7 @@ int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 int CommunicationBufferPurge(void);
 Eint32 compare_proc1(const void *a, const void *b);
 Eint32 compare_grid1(const void *a, const void *b);

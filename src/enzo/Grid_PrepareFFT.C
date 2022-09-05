@@ -128,8 +128,15 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
       //      GravitatingMassField = NULL;
     }
     if (Field == POTENTIAL_FIELD) {
+#ifdef NBODY
+      delete FieldPointer;
+      delete FieldPointerNoStar;
+      PotentialField[0] = NULL;
+      PotentialField[1] = NULL;
+#else
       delete FieldPointer;
       PotentialField = NULL;
+#endif
     }
  
   } // end: if (MyProcessorNumber == ...)

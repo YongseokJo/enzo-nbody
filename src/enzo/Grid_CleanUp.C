@@ -31,14 +31,28 @@ void grid::CleanUp()
   int i;
  
   for (i = 0; i < MAX_DIMENSION; i++) {
+#ifdef NBODY
+    delete [] ParticleAcceleration[i][1];
+    delete [] ParticleAcceleration[i][0];
+    ParticleAcceleration[i][0]      = NULL;
+    ParticleAcceleration[i][1]      = NULL;
+#else
     delete [] ParticleAcceleration[i];
+    ParticleAcceleration[i]      = NULL;
+#endif
 //    delete [] AccelerationField[i];
  
-    ParticleAcceleration[i]      = NULL;
 //    AccelerationField[i]         = NULL;
   }
+#ifdef NBODY
+  delete [] ParticleAcceleration[MAX_DIMENSION][0];
+  delete [] ParticleAcceleration[MAX_DIMENSION][1];
+  ParticleAcceleration[MAX_DIMENSION][0] = NULL;
+  ParticleAcceleration[MAX_DIMENSION][1] = NULL;
+#else
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
+#endif
  
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] OldBaryonField[i];
@@ -47,9 +61,16 @@ void grid::CleanUp()
  
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
- 
+
+#ifdef NBODY	
+  GravitatingMassField[0]          = NULL;
+  GravitatingMassField[1]          = NULL;
+  GravitatingMassFieldParticles[0] = NULL;
+  GravitatingMassFieldParticles[1] = NULL;
+#else
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
+#endif
 
 #ifdef SAB
   for (i = 0; i < MAX_DIMENSION; i++)

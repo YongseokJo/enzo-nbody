@@ -78,10 +78,16 @@ int grid::PreparePotentialField(grid *ParentGrid)
   // grids are on the same processor.
   if (MyProcessorNumber == ProcessorNumber &&
       CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
-    if (PotentialField != NULL)
-      delete [] PotentialField;
+    if (PotentialField != NULL) {
 #ifdef NBODY
-    PotentialField = new float*[2];
+      delete [] PotentialField[1];
+      delete [] PotentialField[0];
+#else
+      delete [] PotentialField;
+#endif
+		}
+#ifdef NBODY
+    //PotentialField = new float*[2];
     PotentialField[0] = new float[size];
     PotentialField[1] = new float[size];
 #else
@@ -224,8 +230,13 @@ int grid::PreparePotentialField(grid *ParentGrid)
 
   float maxPot=-1e30, minPot=1e30;    
   for (int i=0;i<size; i++) {
+#ifdef NBODY
+    maxPot = max(maxPot,PotentialField[i][0]);
+    minPot = min(minPot,PotentialField[i][0]);
+#else
     maxPot = max(maxPot,PotentialField[i]);
     minPot = min(minPot,PotentialField[i]);
+#endif
   }
   if (debug1) printf("PreparePotential: Potential minimum: %g \t maximum: %g\n", minPot, maxPot);
 #endif
@@ -234,8 +245,15 @@ int grid::PreparePotentialField(grid *ParentGrid)
  
   if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
 
+#ifdef NBODY
+    delete [] ParentGrid->PotentialField[1];
+    delete [] ParentGrid->PotentialField[0];
+    ParentGrid->PotentialField[0] = NULL;
+    ParentGrid->PotentialField[1] = NULL;
+#else
     delete [] ParentGrid->PotentialField;
     ParentGrid->PotentialField = NULL;
+#endif
   }
  
   return SUCCESS;

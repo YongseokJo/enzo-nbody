@@ -41,7 +41,7 @@ int LoadBalanceHilbertCurve(grid *GridPointers[], int NumberOfGrids,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 double ReturnWallTime(void);
 int FindField(int field, int farray[], int numfields);
 void fpcol(Eflt32 *x, int n, int m, FILE *log_fptr);

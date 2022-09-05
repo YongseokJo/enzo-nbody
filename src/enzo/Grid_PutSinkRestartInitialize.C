@@ -90,9 +90,18 @@ int grid::PutSinkRestartInitialize(int level, int *NumberOfCellsSet)
 	  ParticleVelocity[0][l] = 0.0;
 	  ParticleVelocity[1][l] = 0.0;
 	  ParticleVelocity[2][l] = 0.0;
+#ifdef NBODY
+	  ParticleAcceleration[0][0] = NULL;
+	  ParticleAcceleration[1][0] = NULL;
+	  ParticleAcceleration[2][0] = NULL;
+	  ParticleAcceleration[0][1] = NULL;
+	  ParticleAcceleration[1][1] = NULL;
+	  ParticleAcceleration[2][1] = NULL;
+#else
 	  ParticleAcceleration[0] = NULL;
 	  ParticleAcceleration[1] = NULL;
 	  ParticleAcceleration[2] = NULL;
+#endif
 	  ParticleAttribute[0][l] = 0.0; // creation time             
 	  ParticleAttribute[1][l] = t_dyn_m; // t_dyn
 	  ParticleAttribute[2][l] = mass_m;

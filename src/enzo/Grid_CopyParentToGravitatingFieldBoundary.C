@@ -46,7 +46,7 @@ extern "C" void FORTRAN_NAME(prolong)(float *source, float *dest, int *ndim,
  
 /* InterpolateBoundaryFromParent function */
  
-int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
+int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid, bool NoStar)
 {
   //  return SUCCESS;
   /* If this doesn't concern us, return. */
@@ -164,13 +164,13 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
 				GravitatingMassFieldDimension[0];
 			for (i = 0; i < GravitatingMassFieldDimension[0]; i++, gravityindex++) {
 				iparent = nint((i+ParentOffset[0])/Refinement[0]);
-
 #ifdef NBODY
-				GravitatingMassField[0][gravityindex] =
-					ParentGrid->GravitatingMassField[0][parentindex+iparent];
-
-				GravitatingMassField[1][gravityindex] =
-					ParentGrid->GravitatingMassField[1][parentindex+iparent];
+				if (NoStar == TRUE) 
+					GravitatingMassField[1][gravityindex] =
+						ParentGrid->GravitatingMassField[1][parentindex+iparent];
+				else
+					GravitatingMassField[0][gravityindex] =
+						ParentGrid->GravitatingMassField[0][parentindex+iparent];
 #else	
 				GravitatingMassField[gravityindex] =
 					ParentGrid->GravitatingMassField[parentindex+iparent];
@@ -185,8 +185,15 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
   /* Clean up parent. */
  
   if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
+#ifdef NBODY
+    delete [] ParentGrid->GravitatingMassField[0];
+    delete [] ParentGrid->GravitatingMassField[1];
+    ParentGrid->GravitatingMassField[0] = NULL;
+    ParentGrid->GravitatingMassField[1] = NULL;
+#else
     delete [] ParentGrid->GravitatingMassField;
     ParentGrid->GravitatingMassField = NULL;
+#endif
   }
  
   /* Add one to field to account for one subtracted in ComovingSourceTerm. */
@@ -194,38 +201,43 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
   if (ComovingCoordinates)
     for (i = 0; i < size; i++) {
 #ifdef NBODY
-      GravitatingMassField[0][i] += 1.0;
-      GravitatingMassField[1][i] += 1.0;
+			if (NoStar == NOSTAR_YES)
+				GravitatingMassField[1][i] += 1.0;
+			else
+				GravitatingMassField[0][i] += 1.0;
 #else
       GravitatingMassField[i] += 1.0;
 #endif
 		}
   /* Clear the region of GMF that will overlap with real grid points
      (i.e. clear the region that we shouldn't have set in the above loop). */
- 
-  for (k = SubGridExtra[2];
-       k < GravitatingMassFieldDimension[2]-SubGridExtra[2]; k++)
-    for (j = SubGridExtra[1];
-	 j < GravitatingMassFieldDimension[1]-SubGridExtra[1]; j++) {
-      gravityindex = (k*GravitatingMassFieldDimension[1] + j)*
-	                GravitatingMassFieldDimension[0]
-	           + SubGridExtra[0];
-      //      if (j == GravitatingMassFieldDimension[1]/2 &&
-      //	  k == GravitatingMassFieldDimension[2]/2)
-      //	for (i = 0; i < GravitatingMassFieldDimension[0]; i++)
-      //	  printf("%"ISYM" %"GSYM"\n", i,
-      //		 GravitatingMassField[gravityindex-SubGridExtra[0]+i]);
-      for (i = SubGridExtra[0];
-	   i < GravitatingMassFieldDimension[0]-SubGridExtra[0];
-	   i++, gravityindex++)
+
+	for (k = SubGridExtra[2];
+			k < GravitatingMassFieldDimension[2]-SubGridExtra[2]; k++)
+		for (j = SubGridExtra[1];
+				j < GravitatingMassFieldDimension[1]-SubGridExtra[1]; j++) {
+			gravityindex = (k*GravitatingMassFieldDimension[1] + j)*
+				GravitatingMassFieldDimension[0]
+				+ SubGridExtra[0];
+			//      if (j == GravitatingMassFieldDimension[1]/2 &&
+			//	  k == GravitatingMassFieldDimension[2]/2)
+			//	for (i = 0; i < GravitatingMassFieldDimension[0]; i++)
+			//	  printf("%"ISYM" %"GSYM"\n", i,
+			//		 GravitatingMassField[gravityindex-SubGridExtra[0]+i]);
+			for (i = SubGridExtra[0];
+					i < GravitatingMassFieldDimension[0]-SubGridExtra[0];
+					i++, gravityindex++) {
 #ifdef NBODY
-	GravitatingMassField[1][gravityindex] = 0;
-	GravitatingMassField[0][gravityindex] = 0;
+				if (NoStar == NOSTAR_YES)
+					GravitatingMassField[1][gravityindex] = 0;
+				else
+					GravitatingMassField[0][gravityindex] = 0;
 #else
-	GravitatingMassField[gravityindex] = 0;
+				GravitatingMassField[gravityindex] = 0;
 #endif
-    }
- 
-  return SUCCESS;
- 
+			}
+		}
+
+	return SUCCESS;
+
 }

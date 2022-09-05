@@ -38,7 +38,7 @@ double ReturnWallTime(void);
 
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		int NumberOfSubgrids[],
-		int FluxFlag, TopGridData* MetaData)
+		int FluxFlag, TopGridData* MetaData, bool NoStar)
 {
 
 #ifdef USE_MPI
@@ -62,6 +62,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 	TotalReceives = CommunicationReceiveIndex;
 	int gCSAPs_count, gCSAPs_done;
 	int SendField;
+	int ierr, errclass; // by YS
 #ifdef TRANSFER
 	PhotonPackageEntry *PP;
 #endif
@@ -78,10 +79,34 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		float time1 = ReturnWallTime();
 
 		fprintf(stdout,"4-3-1\n");  // by YS
-		MPI_Waitsome(TotalReceives, CommunicationReceiveMPI_Request,
+		
+		fprintf(stdout,"TotalReceives:%d\n",TotalReceives);  // by YS
+		fprintf(stdout,"Request:%d\n",CommunicationReceiveMPI_Request);  // by YS
+		fprintf(stdout,"NumberOfCompleteRequests:%d\n",NumberOfCompleteRequests);  // by YS
+		fprintf(stdout,"ListOfIndices:%d\n",ListOfIndices);  // by YS
+		fprintf(stdout,"ListOfStatuses:%d\n",ListOfStatuses);  // by YS
+		ierr = MPI_Waitsome(TotalReceives, CommunicationReceiveMPI_Request,
 				&NumberOfCompleteRequests, ListOfIndices, ListOfStatuses);
-		//    printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
-		//	   ReceivesCompletedToDate, NumberOfCompleteRequests);
+		if (ierr != MPI_SUCCESS) {
+			MPI_Error_class(ierr,&errclass);
+			if (errclass == MPI_ERR_REQUEST) {
+				fprintf(stdout,"MPI_ERR_REQUEST\n");
+				//fprintf(stderr,"Invalid rank used in MPI send call\n");
+				//MPI_Error_string(ierr,err_buffer,&resultlen);
+				//fprintf(stderr,err_buffer);
+				MPI_Finalize();             /* abort*/
+			}
+			if (errclass== MPI_ERR_IN_STATUS) {
+				fprintf(stdout,"MPI_ERR_IN_STATUS\n");
+				//fprintf(stderr,"Invalid rank used in MPI send call\n");
+				//MPI_Error_string(ierr,err_buffer,&resultlen);
+				//fprintf(stderr,err_buffer);
+				MPI_Finalize();             /* abort*/
+			}
+		}
+		printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
+				ReceivesCompletedToDate, NumberOfCompleteRequests);
+		fprintf(stdout,"4-3-1-1\n");  // by YS
 
 		CommunicationTime += ReturnWallTime() - time1;
 
@@ -163,9 +188,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 				grid_one = CommunicationReceiveGridOne[index];
 				grid_two = CommunicationReceiveGridTwo[index];
 				CommunicationReceiveIndex = index;
-#ifdef NBODY
-				CommunicationReceiveIndex1 = index;
-#endif
 
 				/* Copy out the argument if needed */
 
@@ -191,12 +213,12 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 						break;
 
 					case 4:
-						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two);
+						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two,NoStar);
 						break;
 
 					case 5:
 						errcode = grid_one->DepositBaryons(grid_two,
-								CommunicationReceiveArgument[0][index]);
+								CommunicationReceiveArgument[0][index],NoStar);
 						break;
 
 					case 6:
@@ -350,9 +372,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 	} // end: while loop waiting for all receives to be processed
 
 	CommunicationReceiveIndex = 0;
-#ifdef NBODY
-	CommunicationReceiveIndex1 = 0;
-#endif
 
 	/* Reset the communication mode. */
 

@@ -417,6 +417,10 @@ typedef long long int   HDF5_hid_t;
 #define ELECTRIC_FIELD                   -9
 #define nBfields 3
 
+#define NOSTAR_YES 1
+#define NOSTAR_NO 0
+#define GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR -100 // by YS for nbody
+#define GRAVITATING_MASS_FIELD_NO_STAR -99 // by YS for nbody
 #define INTERPOLATED_FIELDS              -8
 #define PARTICLE_MASS_FLAGGING_FIELD     -7
 #define MASS_FLAGGING_FIELD              -6

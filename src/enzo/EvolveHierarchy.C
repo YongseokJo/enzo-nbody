@@ -111,7 +111,7 @@ int ReduceFragmentation(HierarchyEntry &TopGrid, TopGridData &MetaData,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 		int NumberOfSubgrids[] = NULL,
 		int FluxFlag = FALSE,
-		TopGridData* MetaData = NULL);
+		TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 double ReturnWallTime(void);
 int Enzo_Dims_create(int nnodes, int ndims, int *dims);
 int FOF(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[], 

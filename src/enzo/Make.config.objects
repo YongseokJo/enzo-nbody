@@ -786,6 +786,7 @@ OBJS_CONFIG_LIB = \
         power_of_2.o \
         prefort2.o \
 	PrepareDensityField.o \
+	PrepareDensityFieldNoStar.o \
         PrepareGravitatingMassField.o \
         PrepareIsolatedGreensFunction.o \
         PressurelessCollapseInitialize.o \

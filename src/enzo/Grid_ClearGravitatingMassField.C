@@ -51,26 +51,70 @@ int grid::ClearGravitatingMassField()
   //  if (GravitatingMassField != NULL)
   //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
-  if (GravitatingMassField == NULL)
+  if (GravitatingMassField[0] == NULL) {
 #ifdef NBODY
-     GravitatingMassField = new float*[2];
+     //GravitatingMassField = new float*[2];
      GravitatingMassField[0] = new float[size];
-     GravitatingMassField[1] = new float[size];
 #else
     GravitatingMassField = new float[size];
 #endif
-  if (GravitatingMassField == NULL) {
+		}
+  if (GravitatingMassField[0] == NULL) {
     ENZO_FAIL("malloc error (out of memory?)\n");
 
   }
  
-  for (i = 0; i < size; i++)
+  for (i = 0; i < size; i++) {
 #ifdef NBODY
     GravitatingMassField[0][i] = 0.0;
-    GravitatingMassField[1][i] = 0.0;
+    //GravitatingMassField[1][i] = 0.0;
 #else
     GravitatingMassField[i] = 0.0;
 #endif
+	}
+  return SUCCESS;
+}
+
+#ifdef NBODY
+int grid::ClearGravitatingMassFieldNoStar()
+{
+ 
+  /* Return is this is not the right processor. */
+ 
+  if (MyProcessorNumber != ProcessorNumber)
+    return SUCCESS;
+ 
+  /* Error check. */
+ 
+  if (GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
+    ENZO_FAIL("GravitatingMassField uninitialized.\n");
+  }
+ 
+  /* compute size of the gravitating mass field */
+ 
+  int i, dim, size = 1;
+  for (dim = 0; dim < GridRank; dim++)
+    size *= GravitatingMassFieldDimension[dim];
+ 
+  /* allocate and clear the field */
+ 
+  //  if (GravitatingMassField != NULL)
+  //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+ 
+  if (GravitatingMassField[1] == NULL) {
+     //GravitatingMassField = new float*[2];
+     GravitatingMassField[1] = new float[size];
+     //GravitatingMassField[1] = new float[size];
+	}
+  if (GravitatingMassField[1] == NULL) {
+    ENZO_FAIL("malloc error (out of memory?)\n");
+
+  }
+ 
+  for (i = 0; i < size; i++) {
+    GravitatingMassField[1][i] = 0.0;
+	}
  
   return SUCCESS;
 }
+#endif

@@ -133,12 +133,14 @@ int grid::InterpolateAccelerations(grid *FromGrid)
   /* Allocate acceleration fields. */
  
   for (dim = 0; dim < GridRank; dim++) {
-    delete [] AccelerationField[dim];
 #ifdef NBODY
-    AccelerationField[dim] = new float*[2];
+    delete [] AccelerationField[dim][0];
+    delete [] AccelerationField[dim][1];
+    //AccelerationField[dim] = new float*[2];
     AccelerationField[dim][0] = new float[size];
     AccelerationField[dim][0] = new float[size];
 #else
+    delete [] AccelerationField[dim];
     AccelerationField[dim] = new float[size];
 #endif
   }

@@ -153,7 +153,7 @@ int grid::AddOverlappingParticleMassField(grid *OtherGrid,
 			otherindex = ((k + StartOther[2])*OtherDim[1] +
 					(j + StartOther[1])        )*OtherDim[0] +
 				(0 + StartOther[0]);
-			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++)
+			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
 #ifdef NBODY
 				GravitatingMassField[0][thisindex] +=
 					OtherGrid->GravitatingMassFieldParticles[0][otherindex];
@@ -163,6 +163,7 @@ int grid::AddOverlappingParticleMassField(grid *OtherGrid,
 				GravitatingMassField[thisindex] +=
 					OtherGrid->GravitatingMassFieldParticles[otherindex];
 #endif
+			}
 		}
 
 	/* Clean up if we have transfered data. */

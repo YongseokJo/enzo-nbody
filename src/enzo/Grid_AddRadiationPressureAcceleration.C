@@ -47,7 +47,7 @@ int grid::AddRadiationPressureAcceleration()
   if (AccelerationField[0] == NULL) {
 #ifdef NBODY
     for (dim = 0; dim < GridRank; dim++) {
-      AccelerationField[dim] = new float*[2];
+      //AccelerationField[dim] = new float*[2];
       AccelerationField[dim][0] = new float[size];
       AccelerationField[dim][1] = new float[size];
       for (i = 0; i < size; i++) {
@@ -74,28 +74,28 @@ int grid::AddRadiationPressureAcceleration()
 
   /* Add acceleration fields from radiation pressure */
   index = 0;
-  for (k = GridStartIndex[2]; k <= GridEndIndex[2]; k++)
-    for (j = GridStartIndex[1]; j <= GridEndIndex[1]; j++) {
-      index = (k*GridDimension[1] + j)*GridDimension[0] + GridStartIndex[0];
-      for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++, index++)
-	for (dim = 0; dim < GridRank; dim++) {
+	for (k = GridStartIndex[2]; k <= GridEndIndex[2]; k++)
+		for (j = GridStartIndex[1]; j <= GridEndIndex[1]; j++) {
+			index = (k*GridDimension[1] + j)*GridDimension[0] + GridStartIndex[0];
+			for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++, index++)
+				for (dim = 0; dim < GridRank; dim++) {
 #ifdef NBODY
-	  AccelerationField[dim][0][index] += BaryonField[RPresNum1+dim][index];
-	  AccelerationField[dim][1][index] += BaryonField[RPresNum1+dim][index];
+					AccelerationField[dim][0][index] += BaryonField[RPresNum1+dim][index];
+					AccelerationField[dim][1][index] += BaryonField[RPresNum1+dim][index];
 #else
-	  AccelerationField[dim][index] += BaryonField[RPresNum1+dim][index];
+					AccelerationField[dim][index] += BaryonField[RPresNum1+dim][index];
 #endif
-	  /*
-	  if (fabs(BaryonField[RPresNum1+dim][index]) > 
+					/*
+						 if (fabs(BaryonField[RPresNum1+dim][index]) > 
 
-	      fabs(0.05*AccelerationField[dim][index]))  
-	    fprintf(stdout, "AddRPAccel[dim %"ISYM" :: %"ISYM" %"ISYM" %"ISYM"]: "
-		    "Accel = %"GSYM", RPAccel = %"GSYM"\n", 
-		    dim, i, j, k, AccelerationField[dim][index],
-		    BaryonField[RPresNum1+dim][index]);  
-	  */
-	}
-    }  // ENDFOR j
+						 fabs(0.05*AccelerationField[dim][index]))  
+						 fprintf(stdout, "AddRPAccel[dim %"ISYM" :: %"ISYM" %"ISYM" %"ISYM"]: "
+						 "Accel = %"GSYM", RPAccel = %"GSYM"\n", 
+						 dim, i, j, k, AccelerationField[dim][index],
+						 BaryonField[RPresNum1+dim][index]);  
+						 */
+				}
+		}  // ENDFOR j
 
 
   return SUCCESS;

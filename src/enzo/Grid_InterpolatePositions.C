@@ -43,13 +43,14 @@ int grid::InterpolatePositions(FLOAT *Position[], int dim, float *Field[],
 #else
   float *InterpolationField = AccelerationField[dim];
 #endif
-  if (dim == GridRank)
+  if (dim == GridRank) {
 #ifdef NBODY
     InterpolationField = PotentialField[0];
     InterpolationFieldNoStar = PotentialField[1];
 #else
     InterpolationField = PotentialField;
 #endif
+	}
  
   /* Error check. */
  

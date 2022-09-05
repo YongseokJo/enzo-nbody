@@ -27,7 +27,13 @@
  
 int DepositParticleMassFieldChildren(HierarchyEntry *DepositGrid,
 				     HierarchyEntry *Grid, FLOAT Time);
- 
+#define NBODY 
+#ifdef NBODY
+int DepositParticleMassFieldNoStar(HierarchyEntry *Grid, FLOAT TimeMidStep);
+int DepositParticleMassFieldNoStarChildren(HierarchyEntry *DepositGrid,
+				     HierarchyEntry *Grid, FLOAT Time);
+#endif
+
 int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
 {
  
@@ -56,6 +62,7 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
     if (Grid->GridData->ClearGravitatingMassFieldParticles() == FAIL) {
       ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
     }
+		fprintf(stdout,"4-1-1\n"); // by YS
  
 //  fprintf(stderr, "--DepositParticleMassField (Send) Initialize & Clear\n");
  
@@ -69,6 +76,8 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
 				 GRAVITATING_MASS_FIELD_PARTICLES) == FAIL) {
     ENZO_FAIL("Error in grid->DepositParticlePositions.\n");
   }
+
+		fprintf(stdout,"4-1-2\n"); // by YS
  
   /* Recursively deposit particles in children (at TimeMidStep). */
  
@@ -116,3 +125,96 @@ int DepositParticleMassFieldChildren(HierarchyEntry *DepositGrid,
  
   return SUCCESS;
 }
+
+
+#ifdef NBODY
+int DepositParticleMassFieldNoStar(HierarchyEntry *Grid, FLOAT TimeMidStep)
+{
+ 
+  /* Get the time and dt for this grid.  Compute time+1/2 dt. */
+ 
+  if (TimeMidStep < 0)
+    TimeMidStep =     Grid->GridData->ReturnTime() +
+                  0.5*Grid->GridData->ReturnTimeStep();
+ 
+  /* Initialize the gravitating mass field only if in send-receive mode
+     (i.e. this routine is called only once) or if in the first of the
+     three communication modes (post-receive). */
+
+  if (CommunicationDirection == COMMUNICATION_POST_RECEIVE ||
+			CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
+
+		/* Initialize the gravitating mass field parameters (if necessary). */
+
+		/* if (Grid->GridData->InitializeGravitatingMassFieldParticles(RefineBy)
+			 == FAIL) {
+			 ENZO_FAIL("Error in grid->InitializeGravitatingMassFieldParticles.\n");
+			 } */
+
+		/* Clear the GravitatingMassFieldParticles. */
+
+		if (Grid->GridData->ClearGravitatingMassFieldParticles() == FAIL) {
+			ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
+		}
+
+		//  fprintf(stderr, "--DepositParticleMassField (Send) Initialize & Clear\n");
+
+	} // end: if (CommunicationDirection != COMMUNICATION_SEND)
+ 
+  /* Deposit particles to GravitatingMassFieldParticles in this grid. */
+ 
+//  fprintf(stderr, "--DepositParticleMassField Call DepositParticlePositions\n");
+ 
+  if (Grid->GridData->DepositParticlePositions(Grid->GridData, TimeMidStep,
+				 GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR) == FAIL) {
+    ENZO_FAIL("Error in grid->DepositParticlePositions.\n");
+  }
+ 
+  /* Recursively deposit particles in children (at TimeMidStep). */
+ 
+	if (Grid->NextGridNextLevel != NULL)
+		if (DepositParticleMassFieldNoStarChildren(Grid, Grid->NextGridNextLevel,
+					TimeMidStep)
+				== FAIL) {
+			ENZO_FAIL("Error in DepositParticleMassFieldChildren.\n");
+		}
+
+	return SUCCESS;
+}
+ 
+ 
+ 
+ 
+int DepositParticleMassFieldNoStarChildren(HierarchyEntry *DepositGrid,
+				     HierarchyEntry *Grid, FLOAT DepositTime)
+{
+ 
+  /* Deposit particles in Grid into DepositGrid at the given time. */
+ 
+  if (Grid->GridData->DepositParticlePositions(DepositGrid->GridData,
+		     DepositTime, GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR) == FAIL) {
+    ENZO_FAIL("Error in grid->DepositParticlePositions.\n");
+  }
+ 
+  /* Next grid on this level. */
+ 
+  if (Grid->NextGridThisLevel != NULL)
+    if (DepositParticleMassFieldNoStarChildren(DepositGrid, Grid->NextGridThisLevel,
+					 DepositTime) == FAIL) {
+      ENZO_FAIL("Error in DepositParticleMassFieldChildren(1).\n");
+    }
+ 
+  /* Recursively deposit particles in children. */
+ 
+  if (Grid->NextGridNextLevel != NULL)
+    if (DepositParticleMassFieldNoStarChildren(DepositGrid, Grid->NextGridNextLevel,
+					 DepositTime) == FAIL) {
+      ENZO_FAIL("Error in DepositParticleMassFieldChildren(2).\n");
+
+    }
+ 
+ 
+  return SUCCESS;
+}
+
+#endif

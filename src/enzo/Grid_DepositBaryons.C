@@ -69,7 +69,7 @@ int RK2SecondStepBaryonDeposit = 0;
 /* InterpolateBoundaryFromParent function */
 int FindField(int field, int farray[], int numfields);
  
-int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime)
+int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar)
 {
  
   /* If this doesn't concern us, return. */
@@ -380,13 +380,16 @@ int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime)
       gmindex = (j+GridOffset[1] +
                (k+GridOffset[2])*TargetGrid->GravitatingMassFieldDimension[1])*
 	      TargetGrid->GravitatingMassFieldDimension[0] + GridOffset[0];
-      for (i = 0; i < RegionDim[0]; i++, gmindex++, index++)
+      for (i = 0; i < RegionDim[0]; i++, gmindex++, index++) {
 #ifdef NBODY
-	TargetGrid->GravitatingMassField[1][gmindex] += dens_field[index];
-	TargetGrid->GravitatingMassField[0][gmindex] += dens_field[index];
+				if (NoStar == NOSTAR_YES) 
+					TargetGrid->GravitatingMassField[1][gmindex] += dens_field[index];
+				else
+					TargetGrid->GravitatingMassField[0][gmindex] += dens_field[index];
 #else
-	TargetGrid->GravitatingMassField[gmindex] += dens_field[index];
+				TargetGrid->GravitatingMassField[gmindex] += dens_field[index];
 #endif
+			}
     }
  
   /* Clean up */

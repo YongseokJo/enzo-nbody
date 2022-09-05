@@ -50,7 +50,7 @@ int grid::PrepareGreensFunction()
     size *= GravitatingMassFieldDimension[dim];
  
 #ifdef NBODY
-  PotentialField = new float*[2];
+  //PotentialField = new float*[2];
   PotentialField[0] = new float[size];
   PotentialField[1] = new float[size];
 #else

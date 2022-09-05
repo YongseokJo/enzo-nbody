@@ -59,9 +59,15 @@ grid::grid()
     CellWidth[i]                     = NULL;
     ParticlePosition[i]              = NULL;
     ParticleVelocity[i]              = NULL;
-    ParticleAcceleration[i]          = NULL;
     ActiveParticleAcceleration[i]    = NULL;
+#ifdef NBODY
+    ParticleAcceleration[i][1]          = NULL;
+    ParticleAcceleration[i][0]          = NULL;
+    AccelerationField[i][0]          = NULL;
+    AccelerationField[i][1]          = NULL;
+#else
     AccelerationField[i]             = NULL;
+#endif
     GravitatingMassFieldDimension[i] = 0;
     RandomForcingField[i]            = NULL;
     PhaseFctMultEven[i]              = NULL; // WS
@@ -88,7 +94,12 @@ grid::grid()
       FltUB[i] = NULL;
   }
 
+#ifdef NBODY
+  ParticleAcceleration[MAX_DIMENSION][0]      = NULL;
+  ParticleAcceleration[MAX_DIMENSION][1]      = NULL;
+#else
   ParticleAcceleration[MAX_DIMENSION]      = NULL;
+#endif
   ActiveParticleAcceleration[MAX_DIMENSION] = NULL;	
  
   /* clear MAX_NUMBER_OF_BARYON_FIELDS vectors & [][MAX_DIMENSION] matricies */
@@ -122,9 +133,18 @@ grid::grid()
   ParticleMass                  = NULL;
   ParticleNumber                = NULL;
   ParticleType                  = NULL;
+#ifdef NBODY
+  PotentialField[0]             = NULL;
+  PotentialField[1]             = NULL;
+  GravitatingMassField[1]       = NULL;
+  GravitatingMassField[0]       = NULL;
+  GravitatingMassFieldParticles[0] = NULL;
+  GravitatingMassFieldParticles[1] = NULL;
+#else
   PotentialField                = NULL;
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
+#endif
   GravityBoundaryType           = GravityUndefined;
   for (i = 0; i < MAX_NUMBER_OF_PARTICLE_ATTRIBUTES; i++)
     ParticleAttribute[i] = NULL;

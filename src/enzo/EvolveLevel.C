@@ -132,12 +132,21 @@ int CallProblemSpecificRoutines(TopGridData * MetaData, HierarchyEntry *ThisGrid
 				int GridNum, float *norm, float TopGridTimeStep, 
 				int level, int LevelCycleCount[]);  
 
+#define NBODY
 #ifdef FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
+#ifdef NBODY
+int PrepareDensityFieldNoStar(LevelHierarchyEntry *LevelArray[],
+			int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
+#endif
 #else  // !FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
                         int level, TopGridData *MetaData, FLOAT When);
+#ifdef NBODY
+int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
+                        int level, TopGridData *MetaData, FLOAT When);
+#endif
 #endif  // end FAST_SIB
  
 #ifdef FAST_SIB
@@ -483,9 +492,18 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     When = 0.5;
 
 #ifdef FAST_SIB
-     PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+		fprintf(stdout,"Prepare Density Field Starts.\n");  // by YS
+		PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+		fprintf(stdout,"Prepare Density Field Done.\n");  // by YS
+#ifdef NBODY
+		fprintf(stdout,"Prepare Density Field No Star Starts.\n");  // by YS
+		PrepareDensityFieldNoStar(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+#endif
 #else   // !FAST_SIB
      PrepareDensityField(LevelArray, level, MetaData, When);
+#ifdef NBODY
+     PrepareDensityFieldNoStar(LevelArray, level, MetaData, When);
+#endif
 #endif  // end FAST_SIB
  
  

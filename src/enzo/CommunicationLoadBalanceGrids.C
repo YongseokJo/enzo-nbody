@@ -35,7 +35,7 @@
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 		int NumberOfSubgrids[] = NULL,
 		int FluxFlag = FALSE,
-		TopGridData* MetaData = NULL);
+		TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 void WriteListOfFloats(FILE *fptr, int N, float floats[]);
 void fpcol(float *x, int n, int m, FILE *fptr);
 double ReturnWallTime(void);
