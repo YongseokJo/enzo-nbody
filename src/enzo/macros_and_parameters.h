@@ -609,6 +609,12 @@ typedef long long int   HDF5_hid_t;
 
 #define IMF_TABLE_ENTRIES 1000
 
+#define NBODY
+#ifdef NBODY
+#define HERMITE_ORDER 4
+#endif
+
+
 #ifdef USE_MPI
 #else /* USE_MPI */
 //#undef MEM_TRACE

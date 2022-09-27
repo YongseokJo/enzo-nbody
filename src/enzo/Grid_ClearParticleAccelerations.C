@@ -27,7 +27,7 @@
 int grid::ClearParticleAccelerations()
 {
  
-  int i, dim;
+  int i, j, dim;
  
   if (NumberOfParticles > 0)
  
@@ -38,26 +38,29 @@ int grid::ClearParticleAccelerations()
       /* Error check. */
  
       if (ParticleAcceleration[dim][0] != NULL)
-	fprintf(stderr, "ClearParticleAccelerations: Field not NULL.\n");
+				fprintf(stderr, "ClearParticleAccelerations: Field not NULL.\n");
  
-      /* Allocate accleration field. */
+			/* Allocate accleration field. */
 #ifdef NBODY 
-      //ParticleAcceleration[dim] = new float*[2];
-      ParticleAcceleration[dim][0] = new float[NumberOfParticles];
-      //ParticleAcceleration[dim][1] = new float[NumberOfParticles];
-#else
-      ParticleAcceleration[dim] = new float[NumberOfParticles];
+			for (j = 0; j < HERMITE_ORDER; j++) {
+				StarBackGroundAcceleration[dim][j] = new float[NumberOfStars]; //by YS, we have to change this to
+																																			 //number of nbody stars
+			}
 #endif
- 
-      /* Clear it. */
- 
-      for (i = 0; i < NumberOfParticles; i++) {
+			ParticleAcceleration[dim] = new float[NumberOfParticles];
+
+			/* Clear it. */
 #ifdef NBODY
-				ParticleAcceleration[dim][1][i] = 0.0;
-				//ParticleAcceleration[dim][0][i] = 0.0;
-#else
-				ParticleAcceleration[dim][i] = 0.0;
+			for (i = 0; i < NumberOfStars; i++) {
+				for (j = 0; j < HERMITE_ORDER; j++) {
+					StarBackGroundAcceleration[dim][j][i] = 0.0; //by YS, we have to change this to
+																																				 //number of nbody stars
+				}
+			}
 #endif
+
+			for (i = 0; i < NumberOfParticles; i++) {
+				ParticleAcceleration[dim][i] = 0.0;
 			}
  
     }
@@ -92,7 +95,7 @@ int grid::ClearParticleAccelerations()
 int grid::ClearParticleAccelerationsNoStar()
 {
  
-  int i, dim;
+  int i, j, dim;
  
   if (NumberOfParticles > 0)
  
@@ -106,23 +109,22 @@ int grid::ClearParticleAccelerationsNoStar()
 	fprintf(stderr, "ClearParticleAccelerations: Field not NULL.\n");
  
       /* Allocate accleration field. */
-#ifdef NBODY 
-      //ParticleAcceleration[dim] = new float*[2];
-      ParticleAcceleration[dim][1] = new float[NumberOfParticles];
-      //ParticleAcceleration[dim][1] = new float[NumberOfParticles];
-#else
+			for (j = 0; j < HERMITE_ORDER; j++) {
+				StarBackGroundAcceleration[dim][j] = new float[NumberOfStars]; //by YS, we have to change this to
+																																			 //number of nbody stars
+			}
       ParticleAcceleration[dim] = new float[NumberOfParticles];
-#endif
  
       /* Clear it. */
+			for (i = 0; i < NumberOfStars; i++) {
+				for (j = 0; j < HERMITE_ORDER; j++) {
+					StarBackGroundAcceleration[dim][j][i] = 0; //by YS, we have to change this to
+																										 //number of nbody stars
+				}
+			}
  
       for (i = 0; i < NumberOfParticles; i++) {
-#ifdef NBODY
-				ParticleAcceleration[dim][1][i] = 0.0;
-				//ParticleAcceleration[dim][0][i] = 0.0;
-#else
 				ParticleAcceleration[dim][i] = 0.0;
-#endif
 			}
  
     }

@@ -92,9 +92,6 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
 #ifdef NBODY
 	ParticleVelocity[dim][i] +=
-	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][0][i]) * TimeStep;
-#else
-	ParticleVelocity[dim][i] +=
 	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][i]) * TimeStep;
 #endif
  
@@ -108,9 +105,6 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
 #ifdef NBODY
 	ParticleVelocity[dim][i] +=
-	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][0][i]) * TimeStep;
-#else
-	ParticleVelocity[dim][i] +=
 	  (-VelocityMidStep*dadt/a + ParticleAcceleration[dim][i]) * TimeStep;
 #endif
 	//ParticleVelocity[dim][i] +=
@@ -122,9 +116,6 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
         /* iii) Semi-implicit way */
 #ifdef NBODY 
-        ParticleVelocity[dim][i] = (coef1*ParticleVelocity[dim][i] +
-                                    ParticleAcceleration[dim][0][i]*TimeStep)*coef2;
-#else
         ParticleVelocity[dim][i] = (coef1*ParticleVelocity[dim][i] +
                                     ParticleAcceleration[dim][i]*TimeStep)*coef2;
 #endif
@@ -140,8 +131,6 @@ int grid::UpdateParticleVelocity(float TimeStep)
  
       for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
-	ParticleVelocity[dim][i] += ParticleAcceleration[dim][0][i] * TimeStep;
-#else
 	ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
 #endif
 			}

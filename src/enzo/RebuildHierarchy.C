@@ -345,6 +345,7 @@ int RebuildHierarchy(TopGridData *MetaData,
 					delete Temp->GridHierarchyEntry;
 				Temp = Temp->NextGridThisLevel;
 			} // end: if (i > level)
+			fprintf(stderr, "Why0-3?"); //by YS
 
 		} // end: loop over levels
 
@@ -386,6 +387,7 @@ int RebuildHierarchy(TopGridData *MetaData,
 				GridHierarchyPointer[grids++] = Temp->GridHierarchyEntry;
 				Temp                          = Temp->NextGridThisLevel;
 			}
+			fprintf(stderr, "Why0-4?"); //by YS
 
 			/* 3b.1) Loop over grids, creating the particle mass flagging
 				 field by considering particles on all processors.  They
@@ -415,6 +417,7 @@ refinement on large numbers of particles
 			tt1 = ReturnWallTime();
 			RHperf[3] += tt1-tt0;
 
+			fprintf(stderr, "Why0-5?"); //by YS
 			/* 3b.2) Loop over grids creating new (but empty!) subgrids
 				 (This also properly fills out the GridHierarchy tree). */
 
@@ -447,6 +450,7 @@ refinement on large numbers of particles
 				}
 			}
 
+			fprintf(stderr, "Why0-6?"); //by YS
 			/* Share the new grids among processors. */
 
 			tt0 = ReturnWallTime();
@@ -481,6 +485,7 @@ refinement on large numbers of particles
 			tt1 = ReturnWallTime();
 			RHperf[7] += tt1-tt0;
 
+			fprintf(stderr, "Why0-7?"); //by YS
 			/* 3d) Create an array of the new subgrids. */
 
 			subgrids = 0;
@@ -502,6 +507,7 @@ refinement on large numbers of particles
 				}
 			}
 
+			fprintf(stderr, "Why0-8?"); //by YS
 			/* 3e) For each new subgrid, interpolate from parent and then
 				 copy from old subgrids.  For each old subgrid, decrement the
 				 Overlap counter, deleting the grid which it reaches zero. */
@@ -530,9 +536,11 @@ refinement on large numbers of particles
 
 				SubgridHierarchyPointer[j]->GridData->DebugCheck("Rebuild child");
 			}
+
 			tt1 = ReturnWallTime();
 			RHperf[8] += tt1-tt0;
 
+			fprintf(stderr, "Why0-8-1\n?"); //by YS
 			/* 3f) Loop over the old grids and copy the data into the new grids.
 				 This is done in two steps in order to speed up the search,
 				 first we generate a chaining mesh with a linked list that lists
@@ -547,6 +555,7 @@ refinement on large numbers of particles
 			tt1 = ReturnWallTime();
 			RHperf[9] += tt1-tt0;
 
+			fprintf(stderr, "Why0-8-1-1\n?"); //by YS
 			/*  Add all the new subgrids to the chaining mesh. */
 
 			if (dbx) fprintf(stderr, "RH: FSL AddGrid entry \n");
@@ -561,6 +570,7 @@ refinement on large numbers of particles
 
 			/* Copy data from old to new grids */
 
+			fprintf(stderr, "Why0-8-1-2\n?"); //by YS
 			tt0 = ReturnWallTime();
 			CopyZonesFromOldGrids(TempLevelArray[i+1], MetaData, ChainingMesh);
 			tt1 = ReturnWallTime();
@@ -568,8 +578,10 @@ refinement on large numbers of particles
 
 			/* Clean up chaining mesh. */
 
+			fprintf(stderr, "Why0-8-1-3\n?"); //by YS
 			FastSiblingLocatorFinalize(&ChainingMesh);
 
+			fprintf(stderr, "Why0-8-2\n?"); //by YS
 			tt0 = ReturnWallTime();
 			/* Redistribute grids over processors to Load balance. */
 			switch( LoadBalancing ){
@@ -591,6 +603,8 @@ refinement on large numbers of particles
 			tt1 = ReturnWallTime();
 			RHperf[13] += tt1-tt0;
 
+
+			fprintf(stderr, "Why0-8-3\n?"); //by YS
 			/* If this is the finest level with static subgrids, the grids
 				 should be distributed enough to collect the particles on each
 				 host processor. */
@@ -608,6 +622,7 @@ refinement on large numbers of particles
 			/* 3h) Clean up the LevelHierarchy entries for the old subgrids.
 				 Also, we can check to see if any old subgrids were missed. */
 
+			fprintf(stderr, "Why0-8-4\n?"); //by YS
 			while (TempLevelArray[i+1] != NULL) {
 				Temp = TempLevelArray[i+1]->NextGridThisLevel;
 
@@ -619,12 +634,14 @@ refinement on large numbers of particles
 				delete TempLevelArray[i+1];
 				TempLevelArray[i+1] = Temp;
 			}
+			fprintf(stderr, "Why0-8-5?"); //by YS
 
 		} // end: loop over levels
 
 	} // end: if (StaticHierarchy == FALSE)
 
 
+	fprintf(stderr, "Why0-9?"); //by YS
 
 	/* --------------------------------------------------------------------- */
 	/* Redistribute particles: for each grid, move the particles that belong in

@@ -272,6 +272,8 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
   FILE *fptr, *BCfptr, *Outfptr;
   int dim, i;
  
+
+
   // Open parameter file
  
   if ((fptr = fopen(filename, "r")) == NULL) {
@@ -302,6 +304,7 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
   if (ReadParameterFile(fptr, MetaData, Initialdt) == FAIL) {
     ENZO_FAIL("Error in ReadParameterFile.");
   }
+
 
   //Ensure old style MHD_CT parameter files still work.
   if( MHDCT_ParameterJuggle() == FAIL ){
@@ -351,6 +354,8 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
       MetaData.TopGridDims[dim] = (MetaData.TopGridDims[dim] > 1) ?
 	MetaData.TopGridDims[dim] + 2*NumberOfGhostZones : 1;
     }
+
+
  
     // Create the top grid, prepare it, set the time and parameters
     

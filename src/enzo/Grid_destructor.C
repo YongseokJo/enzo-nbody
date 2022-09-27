@@ -65,6 +65,10 @@ grid::~grid()
     delete [] RandomForcingField[i];
     if (PhaseFctMultEven[i] != NULL) delete[] PhaseFctMultEven[i];
     if (PhaseFctMultOdd[i] != NULL) delete[] PhaseFctMultOdd[i];
+
+		for (j = 0; j < HERMITE_ORDER; j++) {
+			delete StarBackGroundAcceleration[i][j];
+		}
   }
  
   if (PhaseFctInitEven != NULL) delete[] PhaseFctInitEven;
@@ -107,13 +111,12 @@ grid::~grid()
       FltUB[i] = NULL;
     }
   }
-#ifdef NBODY
-  delete ParticleAcceleration[MAX_DIMENSION][0];
-  delete ParticleAcceleration[MAX_DIMENSION][1];
-#else
   delete ParticleAcceleration[MAX_DIMENSION];
+#ifdef NBODY
+ for (j = 0; j < HERMITE_ORDER; j++) {
+			delete StarBackGroundAcceleration[MAX_DIMENSION][j];
+		}
 #endif
- 
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];
     delete [] OldBaryonField[i];

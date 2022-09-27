@@ -236,10 +236,8 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
   	array = new EnzoArray<float>(2, dims, sindex, eindex);
   	for(i = 0; i < this->GridRank; i++){
 #ifdef NBODY
-  	  array->Vector[i] = this->ParticleAcceleration[i][0];
-#else
-  	  array->Vector[i] = this->ParticleAcceleration[i];
 #endif
+  	  array->Vector[i] = this->ParticleAcceleration[i];
   	}
       }
       break;

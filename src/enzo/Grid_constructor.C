@@ -27,6 +27,8 @@
 #include "Grid.h"
 #include "hydro_rk/SuperNova.h"
  
+#define NBODY
+
 grid::grid()
 {
  
@@ -60,9 +62,11 @@ grid::grid()
     ParticlePosition[i]              = NULL;
     ParticleVelocity[i]              = NULL;
     ActiveParticleAcceleration[i]    = NULL;
+    ParticleAcceleration[i]          = NULL;
 #ifdef NBODY
-    ParticleAcceleration[i][1]          = NULL;
-    ParticleAcceleration[i][0]          = NULL;
+		for (j =0; j < HERMITE_ORDER;j++) {
+			StarBackGroundAcceleration[i][j]       = NULL;
+		}
     AccelerationField[i][0]          = NULL;
     AccelerationField[i][1]          = NULL;
 #else
@@ -95,11 +99,11 @@ grid::grid()
   }
 
 #ifdef NBODY
-  ParticleAcceleration[MAX_DIMENSION][0]      = NULL;
-  ParticleAcceleration[MAX_DIMENSION][1]      = NULL;
-#else
-  ParticleAcceleration[MAX_DIMENSION]      = NULL;
+		for (j =0; j < HERMITE_ORDER;j++) {
+			StarBackGroundAcceleration[MAX_DIMENSION][j]       = NULL;
+		}
 #endif
+  ParticleAcceleration[MAX_DIMENSION]      = NULL;
   ActiveParticleAcceleration[MAX_DIMENSION] = NULL;	
  
   /* clear MAX_NUMBER_OF_BARYON_FIELDS vectors & [][MAX_DIMENSION] matricies */

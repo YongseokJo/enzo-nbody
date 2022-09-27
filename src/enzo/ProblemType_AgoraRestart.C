@@ -267,9 +267,10 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 
 			this->InitializeParticles(TopGrid.GridData, TopGrid, MetaData);
 
-			fprintf(stdout, "Why10?"); //by YS
 			/* Convert minimum initial overdensity for refinement to mass
 				 (unless MinimumMass itself was actually set). */
+
+
 
 			if (MinimumMassForRefinement[0] == FLOAT_UNDEFINED) {
 				MinimumMassForRefinement[0] = MinimumOverDensityForRefinement[0];
@@ -308,6 +309,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				} // end: loop over levels
 			}
 
+			fprintf(stderr, "Why1?\n"); //by YS
 
 
 			/* set up field names and units */
@@ -731,7 +733,6 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			int *Type = new int[nParticles];
 			FLOAT *Position[MAX_DIMENSION];
 			float *Velocity[MAX_DIMENSION];
-			fprintf(stdout, "Why1?"); //by YS
 			for (int i = 0; i < thisgrid->GridRank; i++)
 			{
 				Position[i] = new FLOAT[nParticles];
@@ -739,40 +740,31 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			}
 			float *Mass = new float[nParticles];
 			float *Attribute[MAX_NUMBER_OF_PARTICLE_ATTRIBUTES];
-			fprintf(stdout, "Why2?"); //by YS
 			for (int i = 0; i < NumberOfParticleAttributes; i++)
 			{
 				Attribute[i] = new float[nParticles];
 				for (int j = 0; j < nParticles; j++)
 					Attribute[i][j] = FLOAT_UNDEFINED;
 			}
-			fprintf(stdout, "Why3?"); //by YS
 
 			FLOAT dx = thisgrid->CellWidth[0][0];
 
 			// Read them in and assign them as we go
 			int count = 0;
-			fprintf(stdout, "Why4?"); //by YS
 			this->ReadParticlesFromFile(
 					Number, Type, Position, Velocity, Mass,
 					"bulge.dat", PARTICLE_TYPE_STAR, count, dx);
-			fprintf(stdout, "Why5?"); //by YS
 			this->ReadParticlesFromFile(
 					Number, Type, Position, Velocity, Mass,
 					"disk.dat", PARTICLE_TYPE_STAR, count, dx);
-			fprintf(stdout, "Why5-1?"); //by YS
 			this->ReadParticlesFromFile(
 					Number, Type, Position, Velocity, Mass,
 					"halo.dat", PARTICLE_TYPE_DARK_MATTER, count, dx);
-			fprintf(stdout, "Why6?"); //by YS
 
 			thisgrid->SetNumberOfParticles(count);
-			fprintf(stdout, "Why7?"); //by YS
 			thisgrid->SetParticlePointers(Mass, Number, Type, Position,
 					Velocity, Attribute);
-			fprintf(stdout, "Why8?"); //by YS
 			MetaData.NumberOfParticles = count;
-			fprintf(stdout, "Why9?"); //by YS
 			if(debug) fprintf(stderr, "InitializeParticles: Set Number of Particles %"ISYM"\n", count);
 
 		}

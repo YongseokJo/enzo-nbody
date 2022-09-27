@@ -27,7 +27,7 @@
 void grid::DeleteAllButParticles()
 {
  
-  int i;
+  int i, j;
  
   //  this->DeleteParticles();
  
@@ -35,10 +35,12 @@ void grid::DeleteAllButParticles()
 #ifdef NBODY
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
-    delete [] ParticleAcceleration[i][1];
-    delete [] ParticleAcceleration[i][0];
-    ParticleAcceleration[i][1]      = NULL;
-    ParticleAcceleration[i][0]      = NULL;
+    delete [] ParticleAcceleration[i];
+		for (j = 0; j < HERMITE_ORDER; j++) {
+			delete [] StarBackGroundAcceleration[i][j];
+			StarBackGroundAcceleration[i][j] = NULL;
+		}
+    ParticleAcceleration[i]      = NULL;
     AccelerationField[i][0]         = NULL;
     AccelerationField[i][1]         = NULL;
 #else
@@ -49,10 +51,12 @@ void grid::DeleteAllButParticles()
 #endif
   }
 #ifdef NBODY
-  delete [] ParticleAcceleration[MAX_DIMENSION][1];
-  delete [] ParticleAcceleration[MAX_DIMENSION][0];
-  ParticleAcceleration[MAX_DIMENSION][1] = NULL;
-  ParticleAcceleration[MAX_DIMENSION][0] = NULL;
+  delete [] ParticleAcceleration[MAX_DIMENSION];
+  ParticleAcceleration[MAX_DIMENSION] = NULL;
+	for (j = 0; j < HERMITE_ORDER; j++) {
+		delete [] StarBackGroundAcceleration[MAX_DIMENSION][j];
+		StarBackGroundAcceleration[MAX_DIMENSION][j] = NULL;
+	}
 #else
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;

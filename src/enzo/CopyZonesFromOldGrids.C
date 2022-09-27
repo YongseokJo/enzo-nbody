@@ -143,6 +143,8 @@ int CopyZonesFromOldGrids(LevelHierarchyEntry *OldGrids,
 		if (CommunicationReceiveHandler() == FAIL)
 			ENZO_FAIL("CommunicationReceiveHandler() failed!\n");
 
+		CommunicationBarrier(); // by YS
+		fprintf(stderr, "Why0-8-1-2-9\n?"); //by YS
 
 		/* Delete old grids and increase total grid count and then advance
 			 FirstGrid pointer */
@@ -150,11 +152,12 @@ int CopyZonesFromOldGrids(LevelHierarchyEntry *OldGrids,
 		for (Temp = FirstGrid, gridcount = 0; 
 				Temp && gridcount < EndGrid; 
 				Temp = Temp->NextGridThisLevel, gridcount++) {
-			delete Temp->GridData;
+			//delete  Temp->GridData;
 			Temp->GridData = NULL;
 			totalcount++;
 		}
 
+		fprintf(stderr, "Why0-8-1-2-10\n?"); //by YS
 		FirstGrid = Temp;
 #ifdef USE_MPI
 		CommunicationBufferPurge();

@@ -367,18 +367,13 @@ int grid::ComputeAccelerationFieldExternal()
 	
 
 	/* Apply force. */
-#ifdef NBODY	
-	ParticleAcceleration[0][i][0] -= accel*xpos;
-	ParticleAcceleration[1][i][0] -= accel*ypos;
-	ParticleAcceleration[2][i][0] -= accel*zpos;
-
-	ParticleAcceleration[0][i][1] -= accel*xpos;
-	ParticleAcceleration[1][i][1] -= accel*ypos;
-	ParticleAcceleration[2][i][1] -= accel*zpos;
-#else
 	ParticleAcceleration[0][i] -= accel*xpos;
 	ParticleAcceleration[1][i] -= accel*ypos;
 	ParticleAcceleration[2][i] -= accel*zpos;
+#ifdef NBODY	
+	StarBackGroundAcceleration[0][i][0] = ParticleAcceleration[0][i];
+	StarBackGroundAcceleration[1][i][0] = ParticleAcceleration[1][i];
+	StarBackGroundAcceleration[2][i][0] = ParticleAcceleration[2][i];
 #endif
       } // end: loop over number of particles
       
@@ -596,26 +591,7 @@ int grid::ComputeAccelerationFieldExternal()
          accelcylR = (rcyl   ==0.0?0.0:fabs(accelcylR)/(rcyl/LengthUnits)/AccelUnits);
          accelcylz = (zheight==0.0?0.0:fabs(accelcylz)*zheight/fabs(zheight)/AccelUnits);
 
-#ifdef NBODY
-        ParticleAcceleration[0][0][i] -= (   accelsph*xpos
-                                        + accelcylR*xdisk
-                                        + accelcylz*AngularMomentumx);
-        ParticleAcceleration[1][0][i] -= (   accelsph*ypos
-                                        + accelcylR*ydisk
-                                        + accelcylz*AngularMomentumy);
-        ParticleAcceleration[2][0][i] -= (   accelsph*zpos
-                                        + accelcylR*zdisk
-                                        + accelcylz*AngularMomentumz);
-        ParticleAcceleration[0][1][i] -= (   accelsph*xpos
-                                        + accelcylR*xdisk
-                                        + accelcylz*AngularMomentumx);
-        ParticleAcceleration[1][1][i] -= (   accelsph*ypos
-                                        + accelcylR*ydisk
-                                        + accelcylz*AngularMomentumy);
-        ParticleAcceleration[2][1][i] -= (   accelsph*zpos
-                                        + accelcylR*zdisk
-                                        + accelcylz*AngularMomentumz);
-#else
+
         ParticleAcceleration[0][i] -= (   accelsph*xpos
                                         + accelcylR*xdisk
                                         + accelcylz*AngularMomentumx);
@@ -625,7 +601,10 @@ int grid::ComputeAccelerationFieldExternal()
         ParticleAcceleration[2][i] -= (   accelsph*zpos
                                         + accelcylR*zdisk
                                         + accelcylz*AngularMomentumz);
-
+#ifdef NBODY
+        StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
+        StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
+        StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
 #endif
 
 
@@ -753,17 +732,13 @@ int grid::ComputeAccelerationFieldExternal()
       }
       g = GravConst*M/POW(r*LengthUnits,2);
       g /= AccelerationUnits;
-#ifdef NBODY
-      ParticleAcceleration[0][0][i] += -g*xpos/r;
-      ParticleAcceleration[1][0][i] += -g*ypos/r;
-      ParticleAcceleration[2][0][i] += -g*zpos/r;
-      ParticleAcceleration[0][1][i] += -g*xpos/r;
-      ParticleAcceleration[1][1][i] += -g*ypos/r;
-      ParticleAcceleration[2][1][i] += -g*zpos/r;
-#else
       ParticleAcceleration[0][i] += -g*xpos/r;
       ParticleAcceleration[1][i] += -g*ypos/r;
       ParticleAcceleration[2][i] += -g*zpos/r;
+#ifdef NBODY
+      StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
+      StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
+      StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
 #endif
     }
     
@@ -838,19 +813,13 @@ int grid::ComputeAccelerationFieldExternal()
 	}  
 
 	for (i = 0; i < NumberOfParticles; i++){
-#ifdef NBODY
-	  ParticleAcceleration[0][0][i] += accel_field[0][i];
-	  ParticleAcceleration[1][0][i] += accel_field[1][i];
-	  ParticleAcceleration[2][0][i] += accel_field[2][i];
-	  ParticleAcceleration[0][1][i] += accel_field[0][i];
-	  ParticleAcceleration[1][1][i] += accel_field[1][i];
-	  ParticleAcceleration[2][1][i] += accel_field[2][i];
-#else
-
-
 	  ParticleAcceleration[0][i] += accel_field[0][i];
 	  ParticleAcceleration[1][i] += accel_field[1][i];
 	  ParticleAcceleration[2][i] += accel_field[2][i];
+#ifdef NBODY
+	  StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
+	  StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
+	  StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
 #endif
 	}
 

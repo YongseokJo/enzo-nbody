@@ -27,7 +27,7 @@
 void grid::DeleteAllFields()
 {
  
-  int i;
+  int i, j;
  
   this->DeleteParticles();
  
@@ -35,10 +35,12 @@ void grid::DeleteAllFields()
 #ifdef NBODY
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
-    delete [] ParticleAcceleration[i][1];
-    delete [] ParticleAcceleration[i][0];
-    ParticleAcceleration[i][0]      = NULL;
-    ParticleAcceleration[i][1]      = NULL;
+    delete [] ParticleAcceleration[i];
+		for (j = 0; j < HERMITE_ORDER; j++) {
+			delete [] StarBackGroundAcceleration[i][j];
+			StarBackGroundAcceleration[i][j] = NULL;
+		}
+    ParticleAcceleration[i]         = NULL;
     AccelerationField[i][0]         = NULL;
     AccelerationField[i][1]         = NULL;
 #else
@@ -49,15 +51,17 @@ void grid::DeleteAllFields()
 #endif
   }
 #ifdef NBODY
-  delete [] ParticleAcceleration[MAX_DIMENSION][1];
-  delete [] ParticleAcceleration[MAX_DIMENSION][0];
-  ParticleAcceleration[MAX_DIMENSION][1] = NULL;
-  ParticleAcceleration[MAX_DIMENSION][0] = NULL;
+  delete [] ParticleAcceleration[MAX_DIMENSION];
+  ParticleAcceleration[MAX_DIMENSION] = NULL;
+	for (j = 0; j < HERMITE_ORDER; j++) {
+		delete [] StarBackGroundAcceleration[MAX_DIMENSION][j];
+		StarBackGroundAcceleration[MAX_DIMENSION][j] = NULL;
+	}
 #else
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
 #endif
- 
+
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];
     delete [] OldBaryonField[i];
