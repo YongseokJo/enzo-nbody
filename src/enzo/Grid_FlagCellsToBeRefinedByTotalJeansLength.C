@@ -108,7 +108,7 @@ int grid::FlagCellsToBeRefinedByTotalJeansLength()
     Phi[i] = BaryonField[GPotNum][i];
   //    Phi[i] = BaryonField[GPotNum][i];
   
-
+#define NBODY
   int Off[3];
   for (int dim = 0; dim < GridRank; dim++)
     Off[dim] = (GravitatingMassFieldDimension[dim] - GridDimension[dim])/2;
@@ -119,7 +119,11 @@ int grid::FlagCellsToBeRefinedByTotalJeansLength()
       for (j = 0; j < GridDimension[1]; j++) {
 	index = (((k+Off[2])*GravitatingMassFieldDimension[1]) + (j+Off[1]))*GravitatingMassFieldDimension[0] + Off[0] ;
 	for (i = 0; i < GridDimension[0]; i++, index++)
+#ifdef NBODY
+	  Phi[jj++] = PotentialField[0][index];
+#else
 	  Phi[jj++] = PotentialField[index];
+#endif
       }
 
 

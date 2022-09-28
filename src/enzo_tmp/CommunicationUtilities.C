@@ -10,6 +10,8 @@
 /
 ************************************************************************/
  
+
+
 #ifdef USE_MPI
 #include "mpi.h"
 #endif /* USE_MPI */
@@ -28,6 +30,7 @@
 #include "TopGridData.h"
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
+#include "communicators.h"
 
 #ifdef MPI_INSTRUMENTATION
 #define START_TIMING starttime = MPI_Wtime();

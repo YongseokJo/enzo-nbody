@@ -207,7 +207,56 @@ int grid::CopyPotentialField(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSION])
       if (OnlyBoundary == TRUE && OnBoundary == FALSE) {
  
 	/* Only copy the endpoints. */
+#ifdef NBODY 
+	if (CopyPotentialFieldAverage == 2) {
+	  if (Start[0] == 0) {
+	    PotentialField[0][thisindex] = 0.5*(PotentialField[0][thisindex] +
+		  		   OtherGrid->PotentialField[0][otherindex]);
+	    PotentialField[1][thisindex] = 0.5*(PotentialField[1][thisindex] +
+		  		   OtherGrid->PotentialField[1][otherindex]);
+		}
+	  if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
+	    PotentialField[0][thisindex+Dim[0]-1] =
+	      0.5*(PotentialField[0][thisindex+Dim[0]-1] +
+		   OtherGrid->PotentialField[0][otherindex+Dim[0]-1]);
+
+	    PotentialField[1][thisindex+Dim[0]-1] =
+	      0.5*(PotentialField[1][thisindex+Dim[0]-1] +
+		   OtherGrid->PotentialField[1][otherindex+Dim[0]-1]);
+		}
+	} else {
+	  if (Start[0] == 0) {
+	    PotentialField[0][thisindex] = OtherGrid->PotentialField[0][otherindex];
+	    PotentialField[1][thisindex] = OtherGrid->PotentialField[1][otherindex];
+		}
+	  if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
+	    PotentialField[0][thisindex+Dim[0]-1] =
+	      OtherGrid->PotentialField[0][otherindex+Dim[0]-1];
+	    PotentialField[1][thisindex+Dim[0]-1] =
+	      OtherGrid->PotentialField[1][otherindex+Dim[0]-1];
+		}
+	}
  
+      } else {
+	
+	/* Copy the whole line. */
+ 
+	if (CopyPotentialFieldAverage == 2)
+	  for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++){
+	    PotentialField[0][thisindex] = 0.5*(PotentialField[0][thisindex] +
+		  		   OtherGrid->PotentialField[0][otherindex]);
+	    PotentialField[1][thisindex] = 0.5*(PotentialField[1][thisindex] +
+		  		   OtherGrid->PotentialField[1][otherindex]);
+		}
+	else
+	  for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
+	    PotentialField[0][thisindex] = OtherGrid->PotentialField[0][otherindex];
+	    PotentialField[1][thisindex] = OtherGrid->PotentialField[1][otherindex];
+		}
+ 
+      }
+    }
+#else
 	if (CopyPotentialFieldAverage == 2) {
 	  if (Start[0] == 0)
 	    PotentialField[thisindex] = 0.5*(PotentialField[thisindex] +
@@ -238,6 +287,7 @@ int grid::CopyPotentialField(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSION])
  
       }
     }
+#endif
  
   /* Clean up if we have transfered data. */
  

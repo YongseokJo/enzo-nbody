@@ -53,11 +53,22 @@ grid::~grid()
     delete [] CellWidth[i];
     delete [] ParticlePosition[i];
     delete [] ParticleVelocity[i];
+#ifdef NumberOfParticles
+    delete [] ParticleAcceleration[i][1];
+    delete [] ParticleAcceleration[i][0];
+    delete [] AccelerationField[i][0];
+    delete [] AccelerationField[i][1];
+#else
     delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i];
+#endif
     delete [] RandomForcingField[i];
     if (PhaseFctMultEven[i] != NULL) delete[] PhaseFctMultEven[i];
     if (PhaseFctMultOdd[i] != NULL) delete[] PhaseFctMultOdd[i];
+
+		for (j = 0; j < HERMITE_ORDER; j++) {
+			delete StarBackGroundAcceleration[i][j];
+		}
   }
  
   if (PhaseFctInitEven != NULL) delete[] PhaseFctInitEven;
@@ -100,9 +111,12 @@ grid::~grid()
       FltUB[i] = NULL;
     }
   }
-
   delete ParticleAcceleration[MAX_DIMENSION];
- 
+#ifdef NBODY
+ for (j = 0; j < HERMITE_ORDER; j++) {
+			delete StarBackGroundAcceleration[MAX_DIMENSION][j];
+		}
+#endif
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];
     delete [] OldBaryonField[i];
@@ -124,9 +138,18 @@ grid::~grid()
   delete [] ParticleMass;
   delete [] ParticleNumber;
   delete [] ParticleType;
+#ifdef NumberOfParticles
+  delete [] PotentialField[0];
+  delete [] GravitatingMassField[0];
+  delete [] GravitatingMassFieldParticles[0];
+  delete [] PotentialField[1];
+  delete [] GravitatingMassField[1];
+  delete [] GravitatingMassFieldParticles[1];
+#else
   delete [] PotentialField;
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
+#endif
   delete [] FlaggingField;
   delete [] MassFlaggingField;
   delete [] ParticleMassFlaggingField;

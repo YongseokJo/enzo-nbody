@@ -44,6 +44,7 @@
 #include "Hierarchy.h"
 #include "TopGridData.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 void my_exit(int status);
 
 // HDF5 function prototypes

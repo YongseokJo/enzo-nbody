@@ -32,6 +32,7 @@
 #include "CosmologyParameters.h"
 #include "communication.h"
 #include "phys_constants.h"
+#include "communicators.h"
 
 #include "FOF_allvars.h"
 #include "FOF_nrutil.h"

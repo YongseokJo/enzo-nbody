@@ -56,7 +56,6 @@
 #ifdef TRANSFER
 #include "ImplicitProblemABC.h"
 #endif
-#include "communicators.h"
 
 // function prototypes
 
@@ -112,7 +111,7 @@ int ReduceFragmentation(HierarchyEntry &TopGrid, TopGridData &MetaData,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 		int NumberOfSubgrids[] = NULL,
 		int FluxFlag = FALSE,
-		TopGridData* MetaData = NULL);
+		TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 double ReturnWallTime(void);
 int Enzo_Dims_create(int nnodes, int ndims, int *dims);
 int FOF(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[], 
@@ -130,6 +129,7 @@ void PrintMemoryUsage(char *str);
 int SetEvolveRefineRegion(FLOAT time);
 
 int SetStellarMassThreshold(FLOAT time);
+int SetStellarFeedbackEfficiency(FLOAT time);
 
 #ifdef MEM_TRACE
 Eint64 mused(void);
@@ -162,9 +162,6 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 	double tlev0, tlev1, treb0, treb1, tloop0, tloop1, tentry, texit;
 	LevelHierarchyEntry *Temp;
 	double LastCPUTime;
-	float dtProc   = huge_number;
-
-	if (nbody_comm != MPI_COMM_NULL)  goto START; //by YS, skip for nbody comms
 
 	LCAPERF_BEGIN("EL");
 	LCAPERF_START("EvolveHierarchy");
@@ -275,7 +272,6 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 		 }
 		 */
 
-
 	/* Particle Splitter. Split particles into 13 (=1+12) child
 		 particles. The hierarchy is rebuilt inside this routine. */
 
@@ -331,11 +327,9 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 
 	/* ====== MAIN LOOP ===== */
 
-START: //by YS, start for nbody comms
 	bool FirstLoop = true;
 	while (!Stop) {
 
-		if (nbody_comm != MPI_COMM_NULL)  goto START2; //by YS, skip for nbody comms
 		TIMER_START("Total");
 
 #ifdef USE_LCAPERF
@@ -357,7 +351,6 @@ START: //by YS, start for nbody comms
 		PrintMemoryUsage("Top");
 
 		/* Load balance the root grids if this isn't the initial call */
-
 		if ((CheckpointRestart == FALSE) && (!FirstLoop))
 			CommunicationLoadBalanceRootGrids(LevelArray, MetaData.TopGridRank, 
 					MetaData.CycleNumber);
@@ -380,9 +373,10 @@ START: //by YS, start for nbody comms
 
 		/* Compute minimum timestep on the top level. */
 
+		float dtProc   = huge_number;
 		Temp = LevelArray[0];
 
-		// Start skipping
+														// Start skipping
 		if(CheckpointRestart == FALSE) {
 			while (Temp != NULL) {
 				float dtProcTemp = Temp->GridData->ComputeTimeStep();
@@ -480,6 +474,12 @@ START: //by YS, start for nbody comms
 				ENZO_FAIL("Error in SetStellarMassThreshold.");
 		}
 
+		/* Set evolving feedback efficiency */
+		if (StarFeedbackThermalEfficiencyRamp > 0) {
+			if (SetStellarFeedbackEfficiency(MetaData.Time) == FAIL) 
+				ENZO_FAIL("Error in SetStellarFeedbackEfficiency.");
+		}
+
 		/* Evolve the stochastic forcing spectrum and add
 		 *  the force to the acceleration fields */
 		if (DrivenFlowProfile)
@@ -508,7 +508,6 @@ START: //by YS, start for nbody comms
 			 */
 #endif
 
-START2:
 		if (EvolveLevel(&MetaData, LevelArray, 0, dt, Exterior
 #ifdef TRANSFER
 					, ImplicitSolver
@@ -528,7 +527,6 @@ START2:
 			}
 			return FAIL;
 		}
-		if (nbody_comm != MPI_COMM_NULL)  continue; //by YS, skip for nbody comms
 
 
 
@@ -655,9 +653,9 @@ START2:
 			 MPI_Arg Count = 1;
 			 MPI_Arg stat;
 
-			 stat = MPI_Comm_size(enzo_comm, &TaskCount);
-			 stat = MPI_Comm_rank(enzo_comm, &ThisTask);
-			 stat = MPI_Allgather(&MemInUse, Count, DataTypeInt, TaskMemory, Count, DataTypeInt, enzo_comm);
+			 stat = MPI_Comm_size(MPI_COMM_WORLD, &TaskCount);
+			 stat = MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
+			 stat = MPI_Allgather(&MemInUse, Count, DataTypeInt, TaskMemory, Count, DataTypeInt, MPI_COMM_WORLD);
 
 			 if (ThisTask == 0 ) {
 			 for ( i = 0; i < TaskCount; i++) {

@@ -417,6 +417,10 @@ typedef long long int   HDF5_hid_t;
 #define ELECTRIC_FIELD                   -9
 #define nBfields 3
 
+#define NOSTAR_YES 1
+#define NOSTAR_NO 0
+#define GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR -100 // by YS for nbody
+#define GRAVITATING_MASS_FIELD_NO_STAR -99 // by YS for nbody
 #define INTERPOLATED_FIELDS              -8
 #define PARTICLE_MASS_FLAGGING_FIELD     -7
 #define MASS_FLAGGING_FIELD              -6
@@ -482,6 +486,7 @@ typedef long long int   HDF5_hid_t;
 #define MPI_SENDPART_TAG 23
 #define MPI_SENDMARKER_TAG 24
 #define MPI_SGMARKER_TAG 25
+#define MPI_SENDREGION_NOSTAR_TAG 26 // by YS
 
 /* The Active Particle tag is this big to ensure that the sends and
    recvs in grid::CommunicationSendActiveParticles match up and that the AP
@@ -603,6 +608,12 @@ typedef long long int   HDF5_hid_t;
 /* Number of entries in the Pop III IMF lookup table */
 
 #define IMF_TABLE_ENTRIES 1000
+
+#define NBODY
+#ifdef NBODY
+#define HERMITE_ORDER 4
+#endif
+
 
 #ifdef USE_MPI
 #else /* USE_MPI */

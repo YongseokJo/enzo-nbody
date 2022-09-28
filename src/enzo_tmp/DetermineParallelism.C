@@ -38,6 +38,7 @@
 #include "Grid.h"
 #include "Hierarchy.h"
 #include "TopGridData.h"
+#include "communicators.h"
 
 int DetermineParallelism(HierarchyEntry *TopGrid, TopGridData &MetaData)
 {

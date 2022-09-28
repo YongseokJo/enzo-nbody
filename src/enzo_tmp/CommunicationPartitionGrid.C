@@ -32,6 +32,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
  
 // Function prototypes
  

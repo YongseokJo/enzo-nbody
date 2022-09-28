@@ -132,12 +132,21 @@ int CallProblemSpecificRoutines(TopGridData * MetaData, HierarchyEntry *ThisGrid
 				int GridNum, float *norm, float TopGridTimeStep, 
 				int level, int LevelCycleCount[]);  
 
+#define NBODY
 #ifdef FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
+#ifdef NBODY
+int PrepareDensityFieldNoStar(LevelHierarchyEntry *LevelArray[],
+			int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
+#endif
 #else  // !FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
                         int level, TopGridData *MetaData, FLOAT When);
+#ifdef NBODY
+int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
+                        int level, TopGridData *MetaData, FLOAT When);
+#endif
 #endif  // end FAST_SIB
  
 #ifdef FAST_SIB
@@ -315,15 +324,10 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
   /* Create a SUBling list of the subgrids */
   LevelHierarchyEntry **SUBlingList;
 
-  
-	/* Initialize the chaining mesh used in the FastSiblingLocator. */
+  /* Initialize the chaining mesh used in the FastSiblingLocator. */
 
   if (dbx) fprintf(stderr, "EL: Initialize FSL \n"); 
   SiblingGridList *SiblingList = new SiblingGridList[NumberOfGrids];
-
-	Star *AllStars = NULL;
-
-	if (nbody_comm != MPI_COMM_NULL) goto NBODY; //by YS, go to nbody part for nbody comms.
   SiblingGridListStorage[level] = SiblingList;
   CreateSiblingList(Grids, NumberOfGrids, SiblingList, StaticLevelZero,MetaData,level);
   
@@ -352,7 +356,6 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
       ENZO_FAIL("Error in SetBoundaryConditions (SlowSib)");
 #endif
   }
- 
   Grids[0]->GridData->SetNumberOfColours();
   /* Clear the boundary fluxes for all Grids (this will be accumulated over
      the subcycles below (i.e. during one current grid step) and used to by the
@@ -433,6 +436,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
       TopGridTimeStep = LevelArray[0]->GridData->ReturnTimeStep();
 
     }
+	fprintf(stdout,"1\n");  //by YS
 
     /* Streaming movie output (write after all parent grids are
        updated) */
@@ -444,9 +448,12 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
     ActiveParticleInitialize(Grids, MetaData, NumberOfGrids, LevelArray,
                              level);
     
+    Star *AllStars = NULL;
+	fprintf(stdout,"2\n");  // by YS
     StarParticleInitialize(Grids, MetaData, NumberOfGrids, LevelArray,
 			   level, AllStars, TotalStarParticleCountPrevious);
 
+	fprintf(stdout,"3\n");  // by YS
     /* Calculate ClusterSMBHColdGasMass */
 
     ClusterSMBHSumGasMass(Grids, NumberOfGrids, level);
@@ -472,6 +479,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
  
     CreateFluxes(Grids,SubgridFluxesEstimate,NumberOfGrids,NumberOfSubgrids);
 
+	fprintf(stdout,"4\n");  // by YS
     if ((HydroMethod == MHD_RK) && (level == 0))
       ComputeDednerWaveSpeeds(MetaData, LevelArray, level, dt0);
 	
@@ -483,14 +491,23 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
     When = 0.5;
 
-		// by YS, here we should add some lines that prohibit some types of particle masses from depositing to a cell. 
 #ifdef FAST_SIB
-     PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+		fprintf(stdout,"Prepare Density Field Starts.\n");  // by YS
+		PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+		fprintf(stdout,"Prepare Density Field Done.\n");  // by YS
+#ifdef NBODY
+		fprintf(stdout,"Prepare Density Field No Star Starts.\n");  // by YS
+		PrepareDensityFieldNoStar(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+#endif
 #else   // !FAST_SIB
      PrepareDensityField(LevelArray, level, MetaData, When);
+#ifdef NBODY
+     PrepareDensityFieldNoStar(LevelArray, level, MetaData, When);
+#endif
 #endif  // end FAST_SIB
  
  
+	fprintf(stdout,"5\n");  // by YS
     /* Prepare normalization for random forcing. Involves top grid only. */
  
     ComputeRandomForcingNormalization(LevelArray, 0, MetaData,
@@ -547,19 +564,8 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
            */
 #ifdef SAB
     } // End of loop over grids
-		
 
-NBODY: // by YS, run N-body code, here
-		if (nbody_comm != MPI_COMM_NULL) {
-			fprintf(stderr, "I am a NBODY process (%d).", MyProcessorNumber);
-			//CalculateNbody(ParticlesInfo(pos,mass,vel), ExpansionFactor, dtNow);	
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		if (nbody_comm != MPI_COMM_NULL) goto NEXT;
-
-
-
-
+	fprintf(stdout,"6\n");  // by YS
     //Ensure the consistency of the AccelerationField
     SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
             Exterior, LevelArray[level], LevelCycleCount[level]);
@@ -606,41 +612,38 @@ NBODY: // by YS, run N-body code, here
 
     if( HydroMethod == HD_RK || HydroMethod == MHD_RK ){
 #ifdef FAST_SIB
-			SetBoundaryConditions(Grids, NumberOfGrids, SiblingList, level, MetaData, Exterior, LevelArray[level]);
+        SetBoundaryConditions(Grids, NumberOfGrids, SiblingList, level, MetaData, Exterior, LevelArray[level]);
 #else
-			SetBoundaryConditions(Grids, NumberOfGrids, level, MetaData, Exterior, LevelArray[level]);
+        SetBoundaryConditions(Grids, NumberOfGrids, level, MetaData, Exterior, LevelArray[level]);
 #endif
 
 
-			RK2SecondStepBaryonDeposit = 1; // set this to (0/1) to (not use/use) this extra step  //#####
-			if (RK2SecondStepBaryonDeposit && SelfGravity && UseHydro) {  
+        RK2SecondStepBaryonDeposit = 1; // set this to (0/1) to (not use/use) this extra step  //#####
+        if (RK2SecondStepBaryonDeposit && SelfGravity && UseHydro) {  
 
-				When = 0.5;
+            When = 0.5;
 #ifdef FAST_SIB
-				PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+            PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
 #else  
-				PrepareDensityField(LevelArray, level, MetaData, When);
+            PrepareDensityField(LevelArray, level, MetaData, When);
 #endif  // end FAST_SIB
 
 
-				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
+            for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
 
-					/* Gravity: compute acceleration field for grid and particles. */
-					if (RK2SecondStepBaryonDeposit && SelfGravity) {
-						int Dummy;
-						if (level <= MaximumGravityRefinementLevel) {
-							if (level > 0) 
-								Grids[grid1]->GridData->SolveForPotential(level) ;
-							Grids[grid1]->GridData->ComputeAccelerations(level) ;
-						}
-					} // end: if (SelfGravity)
+                /* Gravity: compute acceleration field for grid and particles. */
+                if (RK2SecondStepBaryonDeposit && SelfGravity) {
+                    int Dummy;
+                    if (level <= MaximumGravityRefinementLevel) {
+                        if (level > 0) 
+                            Grids[grid1]->GridData->SolveForPotential(level) ;
+                        Grids[grid1]->GridData->ComputeAccelerations(level) ;
+                    }
+                } // end: if (SelfGravity)
 
-					Grids[grid1]->GridData->ComputeAccelerationFieldExternal() ;
+                Grids[grid1]->GridData->ComputeAccelerationFieldExternal() ;
 
-				} // End of loop over grids
-
- 
-
+            } // End of loop over grids
 
 
 #ifdef SAB    
@@ -683,8 +686,8 @@ NBODY: // by YS, run N-body code, here
     }//RK hydro
     
       /* Solve the cooling and species rate equations. */
-
-		for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
+ 
+    for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
       Grids[grid1]->GridData->MultiSpeciesHandler();
 
       /* Update particle positions (if present). */
@@ -834,8 +837,7 @@ NBODY: // by YS, run N-body code, here
         for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
           Grids[grid1]->GridData->SetTimeStep(dtThisLevel[level]);
     }
-		
-NEXT: //by YS, right after NBODY calculations for nbody process 
+
     if (LevelArray[level+1] != NULL) {
       if (EvolveLevel(MetaData, LevelArray, level+1, dtThisLevel[level], Exterior
 #ifdef TRANSFER
@@ -846,7 +848,6 @@ NEXT: //by YS, right after NBODY calculations for nbody process
 	ENZO_VFAIL("Error in EvolveLevel (%"ISYM").\n", level)
       }
     }
-		if (nbody_comm != MPI_COMM_NULL) break;//goto END;
 
 #ifdef USE_LCAPERF
     // Update lcaperf "level" attribute
@@ -1038,7 +1039,7 @@ NEXT: //by YS, right after NBODY calculations for nbody process
     delete [] SiblingList;
     SiblingGridListStorage[level] = NULL;
   }
-//END: // by YS, after EvolveLevel for nbody comms.
+
   return SUCCESS;
  
 }

@@ -112,7 +112,11 @@ int grid::yEulerSweep(int i, int NumberOfSubgrids, fluxes *SubgridFluxes[],
     if (GravityOn)
       for (j = 0; j < GridDimension[1]; j++) {
 	index3 = (k*GridDimension[1] + j) * GridDimension[0] + i;
+#ifdef NBODY
+	grslice[index2+j] = AccelerationField[dim][0][index3];
+#else
 	grslice[index2+j] = AccelerationField[dim][index3];
+#endif
       }
 
     if (DualEnergyFormalism)

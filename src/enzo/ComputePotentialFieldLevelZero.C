@@ -74,7 +74,7 @@ int CosmologyComputeExpansionFactor(FLOAT time, FLOAT *a, FLOAT *dadt);
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 
 int PrepareIsolatedGreensFunction(region *GreensFunction, int proc, 
 				  int DomainDim[], TopGridData *MetaData);

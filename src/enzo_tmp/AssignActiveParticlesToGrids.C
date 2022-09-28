@@ -16,8 +16,10 @@
 /
 ************************************************************************/
 
+
 #ifdef USE_MPI
-#endif 
+#endif /* USE_MPI */
+ 
 
 #include "preincludes.h"
 
@@ -35,6 +37,7 @@
 #include "TopGridData.h"
 #include "CommunicationUtilities.h"
 #include "phys_constants.h"
+#include "communicators.h"
 
 #define NO_DEBUG_ASSIGN
 

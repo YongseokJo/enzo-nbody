@@ -32,6 +32,7 @@
 /* This controls the maximum particle mass which will be deposited in
    the MASS_FLAGGING_FIELD.  Only set in Grid_SetFlaggingField. */
  
+#define NBODY
 extern float DepositParticleMaximumParticleMass;
  
 int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
@@ -42,6 +43,9 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
  
   int dim, i, size;
   float MassFactor = 1.0, *ParticleMassTemp, *ParticleMassPointer;
+//#ifdef NBODY
+//  float *ParticleMassTempNoStar, *ParticleMassPointerNoStar;
+//#endif
  
   /* If there are no particles, don't deposit anything. */
  
@@ -58,13 +62,39 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
  
   /* If required, Change the mass of particles in this grid. */
  
-  if (MassFactor != 1.0) {
-    ParticleMassTemp = new float[NumberOfParticles];
-    for (i = 0; i < NumberOfParticles; i++)
-      ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
-    ParticleMassPointer = ParticleMassTemp;
-  } else
-    ParticleMassPointer = ParticleMass;
+	if (MassFactor != 1.0) {
+		ParticleMassTemp = new float[NumberOfParticles];
+		//#ifdef NBODY
+		//		ParticleMassTempNoStar = new float[NumberOfParticles];
+		//#endif
+		for (i = 0; i < NumberOfParticles; i++) {
+			ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
+			/*#ifdef NBODY
+				if ( ParticleType == PARTICLE_TYPE_STAR)
+				ParticleMassTempNoStar[i] = 0;
+				else
+				ParticleMassTempNoStar[i] = ParticleMass[i]*MassFactor;
+				#endif */
+		}
+		ParticleMassPointer = ParticleMassTemp;
+		//#ifdef NBODY
+		//		ParticleMassPointerNoStar = ParticleMassTempNoStar;
+		//#endif
+
+	} else
+		/*#ifdef NBODY
+			{
+			ParticleMassPointer = ParticleMass;
+			for (i = 0; i < NumberOfParticles; i++) {
+			if ( ParticleType == PARTICLE_TYPE_STAR)
+			ParticleMassTempNoStar[i] = 0;
+			else
+			ParticleMassTempNoStar[i] = ParticleMass[i];
+			}
+			}
+			#else*/
+		ParticleMassPointer = ParticleMass;
+	//#endif
 
   /* Allocate and fill the ActiveParticleMassPointer, obtain
      ActiveParticlePosition from the grid object */
@@ -104,11 +134,17 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
   /* Deposit particles. */
  
 //  fprintf(stderr, "----DPP Call this->DepositPositions with NP = %"ISYM"\n", NumberOfParticles);
- 
+/*#ifdef NBODY 
+  if (this->DepositPositions(ParticlePosition, ParticleMassPointer, ParticleMassPointerNoStar,
+			     NumberOfParticles, DepositField) == FAIL) {
+    ENZO_FAIL("Error in grid->DepositPositions\n");
+  }
+#else*/
   if (this->DepositPositions(ParticlePosition, ParticleMassPointer,
 			     NumberOfParticles, DepositField) == FAIL) {
     ENZO_FAIL("Error in grid->DepositPositions\n");
   }
+//#endif
 
   if (this->DepositPositions(ActiveParticlePosition, ActiveParticleMassPointer,
                  NumberOfActiveParticles, DepositField) == FAIL) {
@@ -116,16 +152,24 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
   }
 
   /* If requested, only consider cells that have already been flagged. */
-
+#define NBODY
   if (BothFlags) {
 
     float *DepositFieldPointer;
     switch (DepositField) {
     case GRAVITATING_MASS_FIELD:
+#ifdef NBODY
+      DepositFieldPointer = GravitatingMassField[0];
+#else
       DepositFieldPointer = GravitatingMassField;
+#endif
       break;
     case GRAVITATING_MASS_FIELD_PARTICLES:
+#ifdef NBODY
+      DepositFieldPointer = GravitatingMassFieldParticles[0];
+#else
       DepositFieldPointer = GravitatingMassFieldParticles;
+#endif
       break;
     case MASS_FLAGGING_FIELD:
       DepositFieldPointer = MassFlaggingField;

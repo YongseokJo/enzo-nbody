@@ -33,7 +33,6 @@
 #include "LevelHierarchy.h"
 #include "communication.h"
 #include "SortCompareFunctions.h"
-#include "communicators.h"
 
 /* Because we're basically doing a non-blocking MPI_Reduce(MPI_SUM),
    we need to allocate buffers for each on all processors.  Split up
@@ -50,7 +49,7 @@ int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 int CommunicationBufferPurge(void);
 Eint32 compare_proc1(const void *a, const void *b);
 Eint32 compare_grid1(const void *a, const void *b);
@@ -218,7 +217,7 @@ int DepositParticleMassFlaggingField(LevelHierarchyEntry* LevelArray[],
 #endif
 
     stat = MPI_Alltoall(NumberOfSends, 1, DataTypeInt,
-			RecvListCount, 1, DataTypeInt, enzo_comm);
+			RecvListCount, 1, DataTypeInt, MPI_COMM_WORLD);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
     TotalNumberOfRecv = 0;
@@ -256,7 +255,7 @@ int DepositParticleMassFlaggingField(LevelHierarchyEntry* LevelArray[],
     stat = MPI_Alltoallv(SendList, MPI_SendListCount, MPI_SendListDisplacements,
 			   MPI_TwoInt,
 			 SharedList, MPI_RecvListCount, MPI_RecvListDisplacements,
-			   MPI_TwoInt, enzo_comm);
+			   MPI_TwoInt, MPI_COMM_WORLD);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
 #ifdef TIMING

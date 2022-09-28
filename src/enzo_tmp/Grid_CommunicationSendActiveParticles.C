@@ -29,6 +29,7 @@
 #include "communication.h"
 #include "CommunicationUtilities.h"
 #include "ActiveParticle.h"
+#include "communicators.h"
 
 #ifdef USE_MPI
 int CommunicationBufferedSend(void *buffer, int size, MPI_Datatype Type, 

@@ -21,6 +21,7 @@
 #include "macros_and_parameters.h"
 #include "typedefs.h"
 #include "global_data.h"
+#include "communicators.h"
 
 int CommunicationBroadcastValue(int *Value, int BroadcastProcessor);
 

@@ -655,7 +655,12 @@ int grid::TurbulenceInitializeGrid(float CloudDensity, float CloudSoundSpeed, FL
     }
 
     for (i = 0; i< MAX_DIMENSION+1; i++){
+#ifdef NBODY
+      ParticleAcceleration[i][1] = NULL;
+      ParticleAcceleration[i][0] = NULL;
+#else
       ParticleAcceleration[i] = NULL;
+#endif
     }
     this->ClearParticleAccelerations();
 
@@ -703,9 +708,18 @@ int grid::TurbulenceInitializeGrid(float CloudDensity, float CloudSoundSpeed, FL
 	  ParticleVelocity[0][l] = 0.0;
 	  ParticleVelocity[1][l] = 0.0;
 	  ParticleVelocity[2][l] = 0.0;
+#ifdef NBODY
+	  ParticleAcceleration[0][0] = NULL;
+	  ParticleAcceleration[1][0] = NULL;
+	  ParticleAcceleration[2][0] = NULL;
+	  ParticleAcceleration[0][1] = NULL;
+	  ParticleAcceleration[1][1] = NULL;
+	  ParticleAcceleration[2][1] = NULL;
+#else
 	  ParticleAcceleration[0] = NULL;
 	  ParticleAcceleration[1] = NULL;
 	  ParticleAcceleration[2] = NULL;
+#endif
 
 	  ParticleAttribute[0][l] = 0.001; // creation time             
 	  ParticleAttribute[1][l] = t_dyn_m; // t_dyn
@@ -762,9 +776,18 @@ int grid::TurbulenceInitializeGrid(float CloudDensity, float CloudSoundSpeed, FL
 	  ParticleVelocity[0][l] = 0.0;
 	  ParticleVelocity[1][l] = 0.0;
 	  ParticleVelocity[2][l] = 0.0;
+#ifdef NBODY
+	  ParticleAcceleration[0][0] = NULL;
+	  ParticleAcceleration[1][0] = NULL;
+	  ParticleAcceleration[2][0] = NULL;
+	  ParticleAcceleration[0][1] = NULL;
+	  ParticleAcceleration[1][1] = NULL;
+	  ParticleAcceleration[2][1] = NULL;
+#else
 	  ParticleAcceleration[0] = NULL;
 	  ParticleAcceleration[1] = NULL;
 	  ParticleAcceleration[2] = NULL;
+#endif
 
 	  ParticleAttribute[0][l] = 0.0; // creation time             
 	  ParticleAttribute[1][l] = 0.0; //t_dyn_m; // t_dyn

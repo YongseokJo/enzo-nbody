@@ -40,7 +40,7 @@ Eint32 compare_hkey(const void *a, const void *b);
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 double ReturnWallTime(void);
 void fpcol(float *x, int n, int m, FILE *fptr);
 

@@ -52,7 +52,7 @@ int CommunicationBufferPurge(void);
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar=NOSTAR_NO);
 
 int ActiveParticleDepositMass(HierarchyEntry *Grids[], TopGridData *MetaData,
                int NumberOfGrids, LevelHierarchyEntry *LevelArray[],
@@ -154,6 +154,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #ifdef FORCE_MSG_PROGRESS 
     CommunicationBarrier();
 #endif
+    CommunicationBarrier();// by Jo
 
     if (traceMPI) 
       fprintf(tracePtr, "PrepareDensityField: Enter DepositParticleMassField"
@@ -161,12 +162,14 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
  
     /* Next, send data and process grids on the same processor. */
 
+		fprintf(stdout,"4-1\n"); // by YS
     CommunicationDirection = COMMUNICATION_SEND;
     for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
       DepositParticleMassField(Grids[grid1], EvaluateTime);
 
     /* Finally, receive the data and process it. */
     
+		fprintf(stdout,"4-2\n"); // by YS
     CommunicationReceiveHandler();
 
   } // ENDFOR grid batches
@@ -211,8 +214,10 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
       PrepareGravitatingMassField1(Grids[grid1]);
 
     /* Finally, receive the data and process it. */
+		fprintf(stdout,"4-3"); // by YS
     
     CommunicationReceiveHandler();
+		fprintf(stdout,"4-4"); // by YS
 
   } // ENDFOR grid batches
   LCAPERF_STOP("PrepareGravitatingMassField1");
@@ -251,6 +256,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
       PrepareGravitatingMassField2a(Grids[grid1], MetaData, LevelArray,
 				    level, When);
 #endif
+		fprintf(stdout,"4-5"); // by YS
 
 #ifndef BITWISE_IDENTICALITY
     /* Next, send data and process grids on the same processor. */
@@ -266,8 +272,10 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 				   level, When);
 #endif
 
+		fprintf(stdout,"4-6"); // by YS
     CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */
+		fprintf(stdout,"4-7"); // by YS
 
   } // ENDFOR grid batches
   LCAPERF_STOP("PrepareGravitatingMassField2a");

@@ -241,6 +241,27 @@ int grid::CopyActiveZonesFromGrid(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSIO
                         Start, Start+1, Start+2);
            }
       } else if (SendField == GRAVITATING_MASS_FIELD) {
+#define NBODY
+#ifdef NBODY
+        FORTRAN_NAME(copy3drel)(OtherGrid->GravitatingMassField[0],
+                    GravitatingMassField[0],
+                    Dim, Dim+1, Dim+2,
+                    OtherDim, OtherDim+1, OtherDim+2,
+                    GravitatingMassFieldDimension,
+                    GravitatingMassFieldDimension+1,
+                    GravitatingMassFieldDimension+2,
+                    StartOther, StartOther+1, StartOther+2,
+                    Start, Start+1, Start+2);
+        FORTRAN_NAME(copy3drel)(OtherGrid->GravitatingMassField[1],
+                    GravitatingMassField[1],
+                    Dim, Dim+1, Dim+2,
+                    OtherDim, OtherDim+1, OtherDim+2,
+                    GravitatingMassFieldDimension,
+                    GravitatingMassFieldDimension+1,
+                    GravitatingMassFieldDimension+2,
+                    StartOther, StartOther+1, StartOther+2,
+                    Start, Start+1, Start+2);
+#else
         FORTRAN_NAME(copy3drel)(OtherGrid->GravitatingMassField,
                     GravitatingMassField,
                     Dim, Dim+1, Dim+2,
@@ -250,6 +271,7 @@ int grid::CopyActiveZonesFromGrid(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSIO
                     GravitatingMassFieldDimension+2,
                     StartOther, StartOther+1, StartOther+2,
                     Start, Start+1, Start+2);
+#endif
       }
       
       /* Clean up if we have transfered data. */

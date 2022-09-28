@@ -89,12 +89,24 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
   if (MyProcessorNumber == InitialRegion->Processor) {
  
     /* Set FieldPointer to the appropriate field. */
- 
+#ifdef NBODY
+    float *FieldPointer = NULL;
+    float *FieldPointerNoStar = NULL;
+    if (Field == GRAVITATING_MASS_FIELD) {
+      FieldPointer = GravitatingMassField[0];
+      FieldPointerNoStar = GravitatingMassField[1];
+		}
+    if (Field == POTENTIAL_FIELD) {
+      FieldPointer = PotentialField[0];
+      FieldPointerNoStar = PotentialField[1];
+		}
+#else
     float *FieldPointer = NULL;
     if (Field == GRAVITATING_MASS_FIELD)
       FieldPointer = GravitatingMassField;
     if (Field == POTENTIAL_FIELD)
       FieldPointer = PotentialField;
+#endif
     if (FieldPointer == NULL) {
       ENZO_VFAIL("Field type %"ISYM" not recognized.\n", Field)
     }
@@ -116,8 +128,15 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
       //      GravitatingMassField = NULL;
     }
     if (Field == POTENTIAL_FIELD) {
+#ifdef NBODY
+      delete FieldPointer;
+      delete FieldPointerNoStar;
+      PotentialField[0] = NULL;
+      PotentialField[1] = NULL;
+#else
       delete FieldPointer;
       PotentialField = NULL;
+#endif
     }
  
   } // end: if (MyProcessorNumber == ...)

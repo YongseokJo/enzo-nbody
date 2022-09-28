@@ -30,6 +30,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "communication.h"
+#include "communicators.h"
 void my_exit(int status);
  
  

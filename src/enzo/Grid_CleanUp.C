@@ -28,28 +28,53 @@
 void grid::CleanUp()
 {
  
-  int i;
+  int i, j;
  
   for (i = 0; i < MAX_DIMENSION; i++) {
+#ifdef NBODY
+		for (j = 0; j < HERMITE_ORDER;j++) {
+			delete [] StarBackGroundAcceleration[i][j];
+			StarBackGroundAcceleration[i][j] = NULL; 
+		}
+#endif
     delete [] ParticleAcceleration[i];
+    ParticleAcceleration[i]      = NULL;
 //    delete [] AccelerationField[i];
  
-    ParticleAcceleration[i]      = NULL;
 //    AccelerationField[i]         = NULL;
   }
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
+#ifdef NBODY
+		for (j = 0; j < HERMITE_ORDER;j++) {
+			delete [] StarBackGroundAcceleration[MAX_DIMENSION][j];
+			StarBackGroundAcceleration[MAX_DIMENSION][j] = NULL; 
+		}
+#endif
  
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] OldBaryonField[i];
     OldBaryonField[i] = NULL;
   }
  
+
+#ifdef NBODY	
+  delete [] GravitatingMassField[0];
+  delete [] GravitatingMassField[1];
+  delete [] GravitatingMassFieldParticles[0];
+  delete [] GravitatingMassFieldParticles[1];
+
+  GravitatingMassField[0]          = NULL;
+  GravitatingMassField[1]          = NULL;
+  GravitatingMassFieldParticles[0] = NULL;
+  GravitatingMassFieldParticles[1] = NULL;
+#else
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
- 
+
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
+#endif
 
 #ifdef SAB
   for (i = 0; i < MAX_DIMENSION; i++)

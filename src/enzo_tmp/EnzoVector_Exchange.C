@@ -36,6 +36,7 @@
 #include "global_data.h"
 
 #include "EnzoVector.h"
+#include "communicators.h"
 
 //  Vector Boundary Communication Routine
 //  (may be used for parallelism, or even for single-proc. periodic BCs)

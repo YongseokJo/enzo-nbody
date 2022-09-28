@@ -58,6 +58,7 @@
 #include "performance.h"
 #include "InexactNewton.h"
 #include "global_data.h"
+#include "communicators.h"
 
 
 int InexactNewtonSolver::Solve(NonlinearProblemABC *prob, EnzoVector *x)

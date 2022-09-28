@@ -34,6 +34,7 @@
 #include "Hierarchy.h"
 #include "LevelHierarchy.h"
 #include "phys_constants.h"
+#include "communicators.h"
 
 /* function prototypes */
 

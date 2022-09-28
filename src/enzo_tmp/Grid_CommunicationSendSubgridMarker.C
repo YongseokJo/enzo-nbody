@@ -30,6 +30,7 @@
 #include "Grid.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
+#include "communicators.h"
 
 #define LEVEL_BIT_OFFSET 24
  

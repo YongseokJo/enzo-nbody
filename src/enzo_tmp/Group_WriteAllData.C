@@ -50,6 +50,7 @@
 #ifdef TRANSFER
 #include "ImplicitProblemABC.h"
 #endif
+#include "communicators.h"
 
 void my_exit(int status);
  

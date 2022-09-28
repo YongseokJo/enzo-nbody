@@ -257,7 +257,12 @@ void ActiveParticleType::ConstructData(grid *_grid,
         StartIndex[dim] =
           nint((_grid->CellLeftEdge[dim][0] - _grid->GravitatingMassFieldParticlesLeftEdge[dim])/
               _grid->GravitatingMassFieldParticlesCellSize);
+#define NBODY
+#ifdef NBODY
+      FORTRAN_NAME(copy3d)(_grid->GravitatingMassFieldParticles[0], dmfield,
+#else
       FORTRAN_NAME(copy3d)(_grid->GravitatingMassFieldParticles, dmfield,
+#endif
           _grid->GravitatingMassFieldParticlesDimension,
           _grid->GravitatingMassFieldParticlesDimension+1,
           _grid->GravitatingMassFieldParticlesDimension+2,

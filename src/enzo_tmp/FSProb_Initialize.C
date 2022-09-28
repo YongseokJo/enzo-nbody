@@ -30,6 +30,7 @@
 #ifdef TRANSFER
 #include "FSProb.h"
 #include "CosmologyParameters.h"
+#include "communicators.h"
 
 // character strings
 EXTERN char outfilename[];

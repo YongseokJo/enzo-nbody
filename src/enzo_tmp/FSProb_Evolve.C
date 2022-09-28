@@ -31,6 +31,7 @@
 #ifdef TRANSFER
 #include "FSProb.h"
 #include "CosmologyParameters.h"
+#include "communicators.h"
 
 /* function prototypes */
 int CosmologyComputeExpansionFactor(FLOAT time, FLOAT *a, FLOAT *dadt);

@@ -30,7 +30,6 @@
 #include "LevelHierarchy.h"
 #include "communication.h"
 #include "CommunicationUtilities.h"
-#include "communicators.h"
 
 #define LOAD_BALANCE_RATIO 1.05
 #define MIN_LEVEL 1
@@ -42,7 +41,7 @@ int LoadBalanceHilbertCurve(grid *GridPointers[], int NumberOfGrids,
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 				int NumberOfSubgrids[] = NULL,
 				int FluxFlag = FALSE,
-				TopGridData* MetaData = NULL);
+				TopGridData* MetaData = NULL, bool NoStar = NOSTAR_NO);
 double ReturnWallTime(void);
 int FindField(int field, int farray[], int numfields);
 void fpcol(Eflt32 *x, int n, int m, FILE *log_fptr);
@@ -178,7 +177,7 @@ int CommunicationLoadBalancePhotonGrids(HierarchyEntry **Grids[], int *NumberOfG
   MPI_Arg Root = ROOT_PROCESSOR;
   MPI_Arg Count = TotalNumberOfGrids;
   MPI_Bcast ((void*) NewProcessorNumber, Count, IntDataType,
-	     Root, enzo_comm);
+	     Root, MPI_COMM_WORLD);
 #endif
 
   /* Now we know where the grids are going, transfer them. */

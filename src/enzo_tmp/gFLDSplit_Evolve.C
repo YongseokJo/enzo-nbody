@@ -27,6 +27,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 //#define FAIL_ON_NAN
 #define NO_FAIL_ON_NAN

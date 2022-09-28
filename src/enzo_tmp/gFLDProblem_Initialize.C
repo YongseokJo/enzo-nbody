@@ -30,6 +30,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 // character strings
 EXTERN char outfilename[];

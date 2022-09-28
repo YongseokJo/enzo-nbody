@@ -17,6 +17,7 @@
 
 #include "FOF_allvars.h"
 #include "FOF_proto.h"
+#include "communicators.h"
 
 /************************************************************************/
 

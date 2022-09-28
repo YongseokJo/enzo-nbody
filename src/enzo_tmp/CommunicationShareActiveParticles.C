@@ -28,6 +28,7 @@
 #include "ActiveParticle.h"
 #include "CommunicationUtilities.h"
 #include "SortCompareFunctions.h"
+#include "communicators.h"
 
 void my_exit(int status);
 

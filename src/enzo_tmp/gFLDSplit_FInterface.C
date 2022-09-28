@@ -20,6 +20,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDSplit.h"
+#include "communicators.h"
 
 /* Fortran function prototypes */
 extern "C" void FORTRAN_NAME(gfldsplit_setupsystem)(

@@ -37,7 +37,6 @@ extern "C" void PFORTRAN_NAME(smooth_deposit)(FLOAT *posx, FLOAT *posy,
                         int *dim1, int *dim2, int *dim3, float *cellsize,
 			       float *rsmooth);
  
- 
 int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
 			   int DepositField)
 {
@@ -47,13 +46,18 @@ int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
      Dimension, CellSize, DepositFieldPointer according to it. */
  
   float *DepositFieldPointer, CellSize, CloudSize;
+
   FLOAT LeftEdge[MAX_DIMENSION];
   int   dim, Dimension[MAX_DIMENSION];
  
   /* 1) GravitatingMassField. */
  
   if (DepositField == GRAVITATING_MASS_FIELD) {
+#ifdef NBODY
+    DepositFieldPointer = GravitatingMassField[0];
+#else
     DepositFieldPointer = GravitatingMassField;
+#endif
     CellSize            = float(GravitatingMassFieldCellSize);
     for (dim = 0; dim < GridRank; dim++) {
       LeftEdge[dim]  = GravitatingMassFieldLeftEdge[dim];
@@ -64,7 +68,11 @@ int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
   /* 2) GravitatingMassFieldParticles. */
  
   else if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES) {
+#ifdef NBODY
+    DepositFieldPointer = GravitatingMassFieldParticles[0];
+#else
     DepositFieldPointer = GravitatingMassFieldParticles;
+#endif
     CellSize            = float(GravitatingMassFieldParticlesCellSize);
     for (dim = 0; dim < GridRank; dim++) {
       LeftEdge[dim]  = GravitatingMassFieldParticlesLeftEdge[dim];
@@ -118,7 +126,6 @@ int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
  
 //  fprintf(stderr, "------DP Call Fortran cic_deposit with CellSize = %"GSYM"\n", CellSize);
     float CloudSize = CellSize;  // we assume deposit is only on self
- 
     PFORTRAN_NAME(cic_deposit)(Position[0], Position[1], Position[2], &GridRank,
 			      &Number, Mass, DepositFieldPointer, LeftEdge,
 			      Dimension, Dimension+1, Dimension+2,

@@ -29,6 +29,7 @@
 ************************************************************************/
 #ifdef TRANSFER
 #include "gFLDProblem.h"
+#include "communicators.h"
 
 
 

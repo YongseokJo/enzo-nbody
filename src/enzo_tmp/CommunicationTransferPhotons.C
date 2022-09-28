@@ -32,6 +32,7 @@
 #include "LevelHierarchy.h"
 #include "GroupPhotonList.h"
 #include "PhotonCommunication.h"
+#include "communicators.h"
 
 PhotonPackageEntry* DeletePhotonPackage(PhotonPackageEntry *PP);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,

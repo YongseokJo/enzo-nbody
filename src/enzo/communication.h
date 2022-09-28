@@ -25,6 +25,7 @@
 #include "mpi.h"
 #endif /* USE_MPI */
 
+#define NBODY
 /* Set maximum number of receive buffers */
 
 #define MAX_RECEIVE_BUFFERS 150000
@@ -93,6 +94,15 @@ EXTERN int CommunicationReceiveIndex;
 EXTERN int          CommunicationReceiveCallType[MAX_RECEIVE_BUFFERS];
 EXTERN MPI_Request  CommunicationReceiveMPI_Request[MAX_RECEIVE_BUFFERS];
 EXTERN float       *CommunicationReceiveBuffer[MAX_RECEIVE_BUFFERS];
+#ifdef NBODY
+EXTERN float       *CommunicationReceiveBuffer1[MAX_RECEIVE_BUFFERS];
+#endif
+/***
+EXTERN MPI_Request  CommunicationReceiveMPI_Request1[MAX_RECEIVE_BUFFERS];
+EXTERN int          CommunicationReceiveDependsOn1[MAX_RECEIVE_BUFFERS];
+EXTERN int CommunicationReceiveCurrentDependsOn1;
+EXTERN int CommunicationReceiveIndex1;
+***/
 EXTERN grid        *CommunicationReceiveGridOne[MAX_RECEIVE_BUFFERS];
 EXTERN grid        *CommunicationReceiveGridTwo[MAX_RECEIVE_BUFFERS];
 EXTERN int          CommunicationReceiveDependsOn[MAX_RECEIVE_BUFFERS];

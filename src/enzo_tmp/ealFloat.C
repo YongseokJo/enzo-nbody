@@ -10,6 +10,7 @@
 #include "macros_and_parameters.h"
 #include "typedefs.h"
 #include "ealFloat.h"
+#include "communicators.h"
 
 void my_exit(int exit_status);
 

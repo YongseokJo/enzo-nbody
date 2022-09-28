@@ -37,7 +37,7 @@ extern "C" void FORTRAN_NAME(int_grid_cic)(float *source,
 				   float *start1, float *start2, float *start3,
 				   int *refine1, int *refine2, int *refine3);
  
- 
+#define NBODY 
 /* EvolveHierarchy function */
  
 int grid::InterpolateAccelerations(grid *FromGrid)
@@ -133,8 +133,16 @@ int grid::InterpolateAccelerations(grid *FromGrid)
   /* Allocate acceleration fields. */
  
   for (dim = 0; dim < GridRank; dim++) {
+#ifdef NBODY
+    delete [] AccelerationField[dim][0];
+    delete [] AccelerationField[dim][1];
+    //AccelerationField[dim] = new float*[2];
+    AccelerationField[dim][0] = new float[size];
+    AccelerationField[dim][0] = new float[size];
+#else
     delete [] AccelerationField[dim];
     AccelerationField[dim] = new float[size];
+#endif
   }
  
   /* --------------------------------------------------- */
@@ -181,7 +189,26 @@ int grid::InterpolateAccelerations(grid *FromGrid)
 				CellWidth[dim][0])/CellWidth[dim][0];
  
       /* Call a fortran routine to do the work. */
- 
+#ifdef NBODY 
+      FORTRAN_NAME(int_grid_cic)(FromGrid->AccelerationField[dim][0],
+				 AccelerationField[dim][0], &GridRank,
+				 FromGrid->GridDimension,
+				 FromGrid->GridDimension+1,
+				 FromGrid->GridDimension+2,
+				 GridDimension, GridDimension+1,
+				     GridDimension+2,
+				 GridOffset, GridOffset+1, GridOffset+2,
+				 Refinement, Refinement+1, Refinement+2);
+      FORTRAN_NAME(int_grid_cic)(FromGrid->AccelerationField[dim][1],
+				 AccelerationField[dim][1], &GridRank,
+				 FromGrid->GridDimension,
+				 FromGrid->GridDimension+1,
+				 FromGrid->GridDimension+2,
+				 GridDimension, GridDimension+1,
+				     GridDimension+2,
+				 GridOffset, GridOffset+1, GridOffset+2,
+				 Refinement, Refinement+1, Refinement+2);
+#else
       FORTRAN_NAME(int_grid_cic)(FromGrid->AccelerationField[dim],
 				 AccelerationField[dim], &GridRank,
 				 FromGrid->GridDimension,
@@ -191,6 +218,7 @@ int grid::InterpolateAccelerations(grid *FromGrid)
 				     GridDimension+2,
 				 GridOffset, GridOffset+1, GridOffset+2,
 				 Refinement, Refinement+1, Refinement+2);
+#endif
  
       /* Shift back, if necessary. */
  
