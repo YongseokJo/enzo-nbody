@@ -43,9 +43,12 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;
-
+#ifdef NBODY
+  if (GravitatingMassField[0] == NULL)  // if this is not set we have nothing to do.
+#else
   if (GravitatingMassField == NULL)  // if this is not set we have nothing to do.
-    return SUCCESS;
+#endif
+		return SUCCESS;
 
   LCAPERF_START("grid_SolveForPotential");
  
@@ -90,10 +93,21 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #define NO_SMOOTH_SOURCE
 #ifdef SMOOTH_SOURCE
  
-  FORTRAN_NAME(smooth2)(GravitatingMassField, rhs, &GridRank,
+#ifdef NBODY
+	FORTRAN_NAME(smooth2)(GravitatingMassField[0], rhs, &GridRank,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);
+	FORTRAN_NAME(smooth2)(GravitatingMassField[1], rhs, &GridRank,
+			GravitatingMassFieldDimension,
+			GravitatingMassFieldDimension+1,
+			GravitatingMassFieldDimension+2);
+#else
+	FORTRAN_NAME(smooth2)(GravitatingMassField, rhs, &GridRank,
+			GravitatingMassFieldDimension,
+			GravitatingMassFieldDimension+1,
+			GravitatingMassFieldDimension+2);
+#endif
 #if 0
   FORTRAN_NAME(smooth2)(rhs, GravitatingMassField, &GridRank,
 			GravitatingMassFieldDimension,
@@ -173,15 +187,26 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #ifdef POTENTIALDEBUGOUTPUT
   for (int i=0;i<GridDimension[0]; i++) {
     int igrid = GRIDINDEX_NOGHOST(i,(GridEndIndex[0]+GridStartIndex[0])/2,(GridEndIndex[0]+GridStartIndex[0])/2);
-    printf("i: %i \t SolvedSub %g\n", i, PotentialField[igrid]);
-  }
+#ifdef NBODY
+		printf("i: %i \t SolvedSub %g\n", i, PotentialField[0][igrid]);
+#else
+		printf("i: %i \t SolvedSub %g\n", i, PotentialField[igrid]);
+#endif
+	}
   float maxPot=-1e30, minPot=1e30;    
   float maxGM=-1e30, minGM=1e30;
   for (int i=0;i<size; i++) {
-    maxPot = max(maxPot,PotentialField[i]);
-    minPot = min(minPot,PotentialField[i]);
+#ifdef NBODY
+		maxPot = max(maxPot,PotentialField[0][i]);
+		minPot = min(minPot,PotentialField[0][i]);
+    maxGM = max(maxGM,GravitatingMassField[0][i]);
+    minGM = min(minGM,GravitatingMassField[0][i]);
+#else
+		maxPot = max(maxPot,PotentialField[i]);
+		minPot = min(minPot,PotentialField[i]);
     maxGM = max(maxGM,GravitatingMassField[i]);
     minGM = min(minGM,GravitatingMassField[i]);
+#endif
   }
   if (debug1) printf("SolvedPotential: Potential minimum: %g \t maximum: %g\n", minPot, maxPot);
   if (debug1) printf("SolvedPotential: GM minimum: %g \t maximum: %g\n", minGM, maxGM);

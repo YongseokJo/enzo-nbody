@@ -103,8 +103,11 @@ int grid::CopyBaryonFieldToOldBaryonField()
   if( (SelfGravity || UniformGravity || PointSourceGravity || DiskGravity ) && (NumberOfBaryonFields > 0) ) {
 
     for(field = 0; field < GridRank; field++) {
-
+#ifdef NBODY
+      if(AccelerationField[field][0] != NULL) {
+#else
       if(AccelerationField[field] != NULL) {
+#endif
         if( OldAccelerationField[field] == NULL ) {
           OldAccelerationField[field] = new float[size];
         }

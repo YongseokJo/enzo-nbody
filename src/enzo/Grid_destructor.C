@@ -53,11 +53,13 @@ grid::~grid()
     delete [] CellWidth[i];
     delete [] ParticlePosition[i];
     delete [] ParticleVelocity[i];
-#ifdef NumberOfParticles
-    delete [] ParticleAcceleration[i][1];
-    delete [] ParticleAcceleration[i][0];
+#ifdef NBODY
+    delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
+		for (j = 0; j < HERMITE_ORDER; j++) {
+			delete StarBackGroundAcceleration[i][j];
+		}
 #else
     delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i];
@@ -66,9 +68,6 @@ grid::~grid()
     if (PhaseFctMultEven[i] != NULL) delete[] PhaseFctMultEven[i];
     if (PhaseFctMultOdd[i] != NULL) delete[] PhaseFctMultOdd[i];
 
-		for (j = 0; j < HERMITE_ORDER; j++) {
-			delete StarBackGroundAcceleration[i][j];
-		}
   }
  
   if (PhaseFctInitEven != NULL) delete[] PhaseFctInitEven;
@@ -138,7 +137,7 @@ grid::~grid()
   delete [] ParticleMass;
   delete [] ParticleNumber;
   delete [] ParticleType;
-#ifdef NumberOfParticles
+#ifdef NBODY
   delete [] PotentialField[0];
   delete [] GravitatingMassField[0];
   delete [] GravitatingMassFieldParticles[0];

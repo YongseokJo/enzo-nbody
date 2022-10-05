@@ -78,11 +78,12 @@ int grid::PreparePotentialField(grid *ParentGrid)
   // grids are on the same processor.
   if (MyProcessorNumber == ProcessorNumber &&
       CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
-    if (PotentialField != NULL) {
 #ifdef NBODY
+    if (PotentialField[0] != NULL) {
       delete [] PotentialField[1];
       delete [] PotentialField[0];
 #else
+    if (PotentialField != NULL) {
       delete [] PotentialField;
 #endif
 		}
@@ -174,8 +175,9 @@ int grid::PreparePotentialField(grid *ParentGrid)
   float *Temp1 = new float[size1];
   float *Temp2 = new float[size2];
  
-  FORTRAN_NAME(int_spline)(ParentGrid->PotentialField,
-			   PotentialField, &GridRank,
+#ifdef NBODY
+	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField[0],
+			PotentialField[0], &GridRank,
 			   ParentDim, ParentDim+1, ParentDim+2,
 			   GravitatingMassFieldDimension,
 			   GravitatingMassFieldDimension+1,
@@ -183,6 +185,26 @@ int grid::PreparePotentialField(grid *ParentGrid)
 			   ParentOffset, ParentOffset+1, ParentOffset+2,
 			   Refinement, Refinement+1, Refinement+2,
 			   Temp1, Temp2);
+	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField[1],
+			PotentialField[1], &GridRank,
+			   ParentDim, ParentDim+1, ParentDim+2,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   ParentOffset, ParentOffset+1, ParentOffset+2,
+			   Refinement, Refinement+1, Refinement+2,
+			   Temp1, Temp2);
+#else
+	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField,
+			PotentialField, &GridRank,
+			   ParentDim, ParentDim+1, ParentDim+2,
+			   GravitatingMassFieldDimension,
+			   GravitatingMassFieldDimension+1,
+			   GravitatingMassFieldDimension+2,
+			   ParentOffset, ParentOffset+1, ParentOffset+2,
+			   Refinement, Refinement+1, Refinement+2,
+			   Temp1, Temp2);
+#endif
  
   delete [] Temp1;
   delete [] Temp2;
@@ -225,8 +247,12 @@ int grid::PreparePotentialField(grid *ParentGrid)
   for (int i=0;i<GridDimension[0]+6; i++) {
     int igrid = GRIDINDEX_NOGHOST(i,(6+GridDimension[0])/2,(6+GridDimension[0])/2);
     int igrid2 =  ( 18 * (*(ParentDim+1)) + 18 ) * (*ParentDim)+i;
-    printf("i: %i \tParent %g  \t Sub %g\n", i, ParentGrid->PotentialField[igrid2], PotentialField[igrid]);
-  }
+#ifdef NBODY
+		printf("i: %i \tParent %g  \t Sub %g\n", i, ParentGrid->PotentialField[0][igrid2], PotentialField[0][igrid]);
+#else
+		printf("i: %i \tParent %g  \t Sub %g\n", i, ParentGrid->PotentialField[igrid2], PotentialField[igrid]);
+#endif
+	}
 
   float maxPot=-1e30, minPot=1e30;    
   for (int i=0;i<size; i++) {

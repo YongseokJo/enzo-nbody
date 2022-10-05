@@ -852,7 +852,11 @@ int grid::ReadExtraFields(hid_t group_id)
         size *= GravitatingMassFieldDimension[dim];
         GMFOutDims[GridRank-dim-1] = GravitatingMassFieldDimension[dim];
     }
-      if(this->GravitatingMassField != NULL) {
+#ifdef NBODY
+		if(this->GravitatingMassField[0] != NULL) {
+#else
+		if(this->GravitatingMassField != NULL) {
+#endif
 #ifdef NBODY
         delete this->GravitatingMassField[0];
         delete this->GravitatingMassField[1];
@@ -882,7 +886,11 @@ int grid::ReadExtraFields(hid_t group_id)
         size *= GravitatingMassFieldDimension[dim];
         GMFOutDims[GridRank-dim-1] = GravitatingMassFieldDimension[dim];
     }
-      if(this->PotentialField != NULL) {
+#ifdef NBODY
+		if(this->PotentialField[0] != NULL) {
+#else
+		if(this->PotentialField != NULL) {
+#endif
 #ifdef NBODY
         delete this->PotentialField[1];
         delete this->PotentialField[0];

@@ -110,9 +110,10 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 		buffer1 = CommunicationReceiveBuffer[CommunicationReceiveIndex];
 	else	   
 		buffer1 = new float[TransferSize];
+
 	float *buffer2 = NULL;
 	if (CommunicationDirection == COMMUNICATION_RECEIVE)
-		buffer2 = CommunicationReceiveBuffer1[CommunicationReceiveIndex];
+		buffer2 = CommunicationReceiveBufferNoStar[CommunicationReceiveIndex];
 	else	   
 		buffer2 = new float[TransferSize];
 #endif
@@ -358,7 +359,7 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 						MPI_Irecv(buffer2, TransferSize, DataType, ProcessorNumber, 
 								MPI_SENDREGION_NOSTAR_TAG, MPI_COMM_WORLD, 
 								CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
-					CommunicationReceiveBuffer1[CommunicationReceiveIndex] = buffer2;
+					CommunicationReceiveBufferNoStar[CommunicationReceiveIndex] = buffer2;
 					CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
 						CommunicationReceiveCurrentDependsOn;
 					CommunicationReceiveIndex++;

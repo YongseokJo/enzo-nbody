@@ -630,13 +630,20 @@ int grid::WriteCube(char *base_name, int grid_id, int TGdims[])
     if (SelfGravity && NumberOfParticles > 0) {
       this->InitializeGravitatingMassFieldParticles(RefineBy);
       this->ClearGravitatingMassFieldParticles();
-      this->DepositParticlePositions(this, Time, GRAVITATING_MASS_FIELD_PARTICLES);
+#ifdef NBODY
+      this->ClearGravitatingMassFieldParticlesNoStar();
+#endif
+			this->DepositParticlePositions(this, Time, GRAVITATING_MASS_FIELD_PARTICLES);
     }
  
     // If present, write out the GravitatingMassFieldParticles
  
-    if (GravitatingMassFieldParticles != NULL) {
- 
+#ifdef NBODY
+		if (GravitatingMassFieldParticles[0] != NULL) {
+#else
+		if (GravitatingMassFieldParticles != NULL) {
+#endif
+
       int GravStartIndex[] = {0,0,0}, GravEndIndex[] = {0,0,0};
  
       for (dim = 0; dim < GridRank; dim++) {
@@ -699,6 +706,7 @@ int grid::WriteCube(char *base_name, int grid_id, int TGdims[])
       for (k = GravStartIndex[2]; k <= GravEndIndex[2]; k++)
 	for (j = GravStartIndex[1]; j <= GravEndIndex[1]; j++)
 	  for (i = GravStartIndex[0]; i <= GravEndIndex[0]; i++)
+#ifdef NBODY
 	    temp[(i-GravStartIndex[0])                           +
 	         (j-GravStartIndex[1])*ActiveDim[0]              +
 	         (k-GravStartIndex[2])*ActiveDim[0]*ActiveDim[1] ] =
@@ -708,6 +716,17 @@ int grid::WriteCube(char *base_name, int grid_id, int TGdims[])
 			       k*GravitatingMassFieldParticlesDimension[0]*
 			         GravitatingMassFieldParticlesDimension[1]]
 			     );
+#else
+	    temp[(i-GravStartIndex[0])                           +
+	         (j-GravStartIndex[1])*ActiveDim[0]              +
+	         (k-GravStartIndex[2])*ActiveDim[0]*ActiveDim[1] ] =
+		     float32(
+			     GravitatingMassFieldParticles[0][ i +
+			       j*GravitatingMassFieldParticlesDimension[0] +
+			       k*GravitatingMassFieldParticlesDimension[0]*
+			         GravitatingMassFieldParticlesDimension[1]]
+			     );
+#endif
  
  
       // write dataset

@@ -51,7 +51,11 @@ int grid::CopyPotentialToBaryonField()
  
   // Check to make sure PotentialField exists
  
+#ifdef NBODY
+  if (PotentialField[0] == NULL) {
+#else
   if (PotentialField == NULL) {
+#endif
     ENZO_FAIL("PotentialField missing.\n");
   }
  

@@ -328,8 +328,11 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 			/* Clean up our reference here */
 
 			H5Gclose(old_fields);
-
+#ifdef NBODY
+			if(AccelerationField[0][0] != NULL) {
+#else
 			if(AccelerationField[0] != NULL) {
+#endif
 				acc_node = H5Gcreate(group_id, "Acceleration", 0);
 				if(acc_node == h5_error)ENZO_FAIL("Couldn't create Acceleration node!");
 
@@ -345,12 +348,21 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 
 				H5Gclose(acc_node);
 			}
+#ifdef NBODY
+			if(GravitatingMassField[0] != NULL) {
+#else
 			if(GravitatingMassField != NULL) {
+#endif
+
 				this->write_dataset(GridRank, GMFOutDims, "GravitatingMassField",
 						group_id, file_type_id, (VOIDP) GravitatingMassField,
 						FALSE);
 			}
+#ifdef NBODY
+			if(PotentialField[0] != NULL) {
+#else
 			if(PotentialField != NULL) {
+#endif
 				this->write_dataset(GridRank, GMFOutDims, "PotentialField",
 						group_id, file_type_id, (VOIDP) PotentialField,
 						FALSE);
@@ -638,13 +650,20 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 			if (SelfGravity && NumberOfParticles > 0) {
 				this->InitializeGravitatingMassFieldParticles(RefineBy);
 				this->ClearGravitatingMassFieldParticles();
+#ifdef NBODY
+				this->ClearGravitatingMassFieldParticlesNoStar();
+#endif
 				this->DepositParticlePositions(this, Time,
 						GRAVITATING_MASS_FIELD_PARTICLES);
 			}
 
 			/* If present, write out the GravitatingMassFieldParticles. */
 
+#ifdef NBODY
+			if (GravitatingMassFieldParticles[0] != NULL) {
+#else
 			if (GravitatingMassFieldParticles != NULL) {
+#endif
 
 				/* Set dimensions. */
 

@@ -239,6 +239,7 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 
 	PrintMemoryUsage("Bdry set");
 
+
 	/* Remove RandomForcingFields from BaryonFields when BCs are set. */
 
 	if (RandomForcing) { //AK
@@ -375,6 +376,8 @@ int EvolveHierarchy(HierarchyEntry &TopGrid, TopGridData &MetaData,
 
 		float dtProc   = huge_number;
 		Temp = LevelArray[0];
+
+
 
 														// Start skipping
 		if(CheckpointRestart == FALSE) {

@@ -4,3 +4,4 @@
 *.exe
 *.swp
 *.compile
+bin/enzo

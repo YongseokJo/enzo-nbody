@@ -62,6 +62,12 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
     if (Grid->GridData->ClearGravitatingMassFieldParticles() == FAIL) {
       ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
     }
+
+#ifdef NBODY
+		if (Grid->GridData->ClearGravitatingMassFieldParticlesNoStar() == FAIL) {
+			ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
+    }
+#endif
 		fprintf(stdout,"4-1-1\n"); // by YS
  
 //  fprintf(stderr, "--DepositParticleMassField (Send) Initialize & Clear\n");

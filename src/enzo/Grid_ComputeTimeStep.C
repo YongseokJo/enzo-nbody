@@ -110,6 +110,7 @@ float grid::ComputeTimeStep()
 		CosmologyComputeExpansionFactor(Time, &a, &dadt);
 	float afloat = float(a);
 
+
 	/* 1) Compute Courant condition for baryons. */
 
 	if (NumberOfBaryonFields > 0 && (HydroMethod != HD_RK) && (HydroMethod != MHD_RK)) {
@@ -413,7 +414,11 @@ float grid::ComputeTimeStep()
 
 	if (SelfGravity) {
 		for (dim = 0; dim < GridRank; dim++) 
+#ifdef NBODY
+			if (AccelerationField[dim][0]) 
+#else
 			if (AccelerationField[dim]) 
+#endif
 
 				for (i = 0; i < size; i++) {
 #ifdef NBODY
@@ -503,7 +508,11 @@ float grid::ComputeTimeStep()
 
 		dtQuantum *= CourantSafetyNumber;
 
+#ifdef NBODY
+		if (SelfGravity && (PotentialField[0] != NULL)){
+#else
 		if (SelfGravity && (PotentialField != NULL)){
+#endif
 			int gsize = GravitatingMassFieldDimension[0]*GravitatingMassFieldDimension[1]*GravitatingMassFieldDimension[2];
 
 			for (int i=0; i<gsize; ++i){

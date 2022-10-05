@@ -44,8 +44,8 @@ int grid::AddRadiationPressureAcceleration()
 
   /* Check if acceleration field exists.  If not create it and zero it. */
 
-  if (AccelerationField[0] == NULL) {
 #ifdef NBODY
+  if (AccelerationField[0][0] == NULL) {
     for (dim = 0; dim < GridRank; dim++) {
       //AccelerationField[dim] = new float*[2];
       AccelerationField[dim][0] = new float[size];
@@ -56,6 +56,7 @@ int grid::AddRadiationPressureAcceleration()
 			}
     }
 #else
+  if (AccelerationField[0] == NULL) {
     for (dim = 0; dim < GridRank; dim++) {
       AccelerationField[dim] = new float[size];
       for (i = 0; i < size; i++)

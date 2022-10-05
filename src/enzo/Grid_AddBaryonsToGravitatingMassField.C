@@ -49,8 +49,11 @@ int grid::AddBaryonsToGravitatingMassField()
   }
  
   /* Error check. */
- 
+#ifdef NBODY 
+  if (GravitatingMassField[0] == NULL) {
+#else
   if (GravitatingMassField == NULL) {
+#endif
     ENZO_FAIL("GravitatingMassField not allocated.\n");
   }
  

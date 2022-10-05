@@ -496,14 +496,11 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 		PrepareDensityField(LevelArray,  level, MetaData, When, SiblingGridListStorage);
 		fprintf(stdout,"Prepare Density Field Done.\n");  // by YS
 #ifdef NBODY
-		fprintf(stdout,"Prepare Density Field No Star Starts.\n");  // by YS
-		PrepareDensityFieldNoStar(LevelArray,  level, MetaData, When, SiblingGridListStorage);
+		//fprintf(stdout,"Prepare Density Field No Star Starts.\n");  // by YS
+		//PrepareDensityFieldNoStar(LevelArray,  level, MetaData, When, SiblingGridListStorage);
 #endif
 #else   // !FAST_SIB
      PrepareDensityField(LevelArray, level, MetaData, When);
-#ifdef NBODY
-     PrepareDensityFieldNoStar(LevelArray, level, MetaData, When);
-#endif
 #endif  // end FAST_SIB
  
  

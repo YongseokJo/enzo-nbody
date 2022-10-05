@@ -57,7 +57,8 @@ int PrepareGravitatingMassField1(HierarchyEntry *Grid)
       ENZO_FAIL("Error in grid->InitializeGravitatingMassField.\n");
     }
     CurrentGrid->ClearGravitatingMassField();
-  }
+    CurrentGrid->ClearGravitatingMassFieldNoStar();
+	}
 
   /* Baryons: copy parent density (no interpolation) to regions in
      GravitatingMassField which are beyond the boundary of the current grid. */

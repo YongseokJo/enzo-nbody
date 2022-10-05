@@ -649,9 +649,14 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
  
   float *dmfield = new float[size];
   int StartIndex[MAX_DIMENSION], Zero[] = {0,0,0};
+#ifdef NBODY
   if (level <= MaximumGravityRefinementLevel &&
-      GravitatingMassFieldParticles != NULL) {
-    for (dim = 0; dim < MAX_DIMENSION; dim++)
+			GravitatingMassFieldParticles[0] != NULL) {
+#else
+  if (level <= MaximumGravityRefinementLevel &&
+			GravitatingMassFieldParticles != NULL) {
+#endif
+		for (dim = 0; dim < MAX_DIMENSION; dim++)
       StartIndex[dim] =
       nint((CellLeftEdge[dim][0] - GravitatingMassFieldParticlesLeftEdge[dim])/
 	   GravitatingMassFieldParticlesCellSize);

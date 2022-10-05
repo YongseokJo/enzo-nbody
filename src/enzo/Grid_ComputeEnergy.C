@@ -88,7 +88,11 @@ int grid::ComputeEnergy(float EnergySum[])
 #ifdef UNUSED
 	  if (SelfGravity && ComputePotential)
 //	    if (BaryonField[NumberOfBaryonFields][index] == 0)
-	      EnergySum[3] += mass*AccelerationField[GridRank][index];
+#ifdef NBODY   
+			EnergySum[3] += mass*AccelerationField[GridRank][0][index];
+#else
+			EnergySum[3] += mass*AccelerationField[GridRank][index];
+#endif
 #endif /* UNUSED */
 	
 	  }

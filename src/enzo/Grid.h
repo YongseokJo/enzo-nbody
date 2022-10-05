@@ -1270,7 +1270,7 @@ class grid
 
 		/* Generic routine for interpolating particles/grid. */
 		//#ifdef NBODY
-		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field[], 
+		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field[],  //by YS
 				int Number);
 		//#else
 		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field, 
@@ -1540,14 +1540,6 @@ class grid
 		void DeleteParticleAcceleration() {
 			if (!((SelfGravity || UniformGravity || PointSourceGravity))) return;
 			for (int dim = 0; dim < GridRank+ComputePotential; dim++) {
-				/*
-#ifdef NBODY
-delete [] ParticleAcceleration[dim][1];
-delete [] ParticleAcceleration[dim][0];
-ParticleAcceleration[dim][0] = NULL;
-ParticleAcceleration[dim][1] = NULL;
-#else
-*/
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
@@ -2707,11 +2699,20 @@ ParticleAcceleration[dim][1] = NULL;
 
 
 								/* Calculate the potential across the grid. */
+#ifdef NBODY
+								void CalculatePotentialField(float *PotentialField[], int DensNum, float DensityUnits,
+										float TimeUnits, float LengthUnits);
+#else
 								void CalculatePotentialField(float *PotentialField, int DensNum, float DensityUnits,
 										float TimeUnits, float LengthUnits);
+#endif
 
 								/* Find the minumum of the potential in a given region */
+#ifdef NBODY
+								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField[]);
+#else
 								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField);
+#endif
 
 								/* Find the Jeans mass for the grid */
 								float CalculateJeansMass(int DensNum, float *T, float DensityUnits);

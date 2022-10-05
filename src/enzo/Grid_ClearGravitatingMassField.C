@@ -98,8 +98,8 @@ int grid::ClearGravitatingMassFieldNoStar()
  
   /* allocate and clear the field */
  
-  //  if (GravitatingMassField != NULL)
-  //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+  if (GravitatingMassField[1] != NULL)
+		fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
   if (GravitatingMassField[1] == NULL) {
      //GravitatingMassField = new float*[2];

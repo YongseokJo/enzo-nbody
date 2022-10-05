@@ -95,7 +95,7 @@ EXTERN int          CommunicationReceiveCallType[MAX_RECEIVE_BUFFERS];
 EXTERN MPI_Request  CommunicationReceiveMPI_Request[MAX_RECEIVE_BUFFERS];
 EXTERN float       *CommunicationReceiveBuffer[MAX_RECEIVE_BUFFERS];
 #ifdef NBODY
-EXTERN float       *CommunicationReceiveBuffer1[MAX_RECEIVE_BUFFERS];
+EXTERN float       *CommunicationReceiveBufferNoStar[MAX_RECEIVE_BUFFERS];
 #endif
 /***
 EXTERN MPI_Request  CommunicationReceiveMPI_Request1[MAX_RECEIVE_BUFFERS];

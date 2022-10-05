@@ -157,6 +157,10 @@ int grid::AddOverlappingParticleMassField(grid *OtherGrid,
 #ifdef NBODY
 				GravitatingMassField[0][thisindex] +=
 					OtherGrid->GravitatingMassFieldParticles[0][otherindex];
+				if (GravitatingMassField[1] == NULL)
+					fprintf(stdout,"Mass Field!!!!");
+				if (GravitatingMassFieldParticles[1] == NULL)
+					fprintf(stdout,"Mass Field Particles!!!!");
 				GravitatingMassField[1][thisindex] +=
 					OtherGrid->GravitatingMassFieldParticles[1][otherindex];
 #else

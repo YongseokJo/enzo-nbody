@@ -260,7 +260,11 @@ int ActiveParticleType_SmartStar::EvaluateFormation
 #endif
 #if MINIMUMPOTENTIAL
 #if CALCDIRECTPOTENTIAL
+#ifdef NBODY
+	if(PotentialField[0] == NULL) {
+#else
 	if(PotentialField == NULL) {
+#endif
 	  PotentialField = new float[size];
 	  thisGrid->CalculatePotentialField(PotentialField, data.DensNum, data.DensityUnits, data.TimeUnits,data.LengthUnits);
 	}

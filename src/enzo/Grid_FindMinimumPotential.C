@@ -21,7 +21,11 @@
 #include "Hierarchy.h"
 #include "phys_constants.h"
 
+#ifdef NBODY
+float grid::FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField[])
+#else
 float grid::FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField)
+#endif
 {
 
   int i = 0, j = 0, k = 0;
@@ -35,8 +39,15 @@ float grid::FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialF
     for (j = GridStartIndex[1]; j <= GridEndIndex[1]; j++) {
       for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++) {
 	index = GRIDINDEX_NOGHOST(i, j, k);
+#ifdef NBODY
+	if(PotentialField[0][index] != PotentialField[0][index])
+		PotentialField[0][index] = 0.0;
+	if(PotentialField[1][index] != PotentialField[1][index])
+		PotentialField[1][index] = 0.0;
+#else
 	if(PotentialField[index] != PotentialField[index])
-	  PotentialField[index] = 0.0;
+		PotentialField[index] = 0.0;
+#endif
 	pos[0] = CellLeftEdge[0][i] + 0.5*CellWidth[0][i];
 	pos[1] = CellLeftEdge[1][j] + 0.5*CellWidth[1][j];
 	pos[2] = CellLeftEdge[2][k] + 0.5*CellWidth[2][k];
@@ -46,8 +57,13 @@ float grid::FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialF
 		(cellpos[1] - pos[1])*(cellpos[1] - pos[1]) +
 		(cellpos[2] - pos[2])*(cellpos[2] - pos[2])) <= radius)
 	{
-	  if(PotentialField[index] < GravitationalMinimum)
-	    GravitationalMinimum = PotentialField[index];
+#ifdef NBODY
+		if(PotentialField[0][index] < GravitationalMinimum)
+			GravitationalMinimum = PotentialField[0][index];
+#else
+		if(PotentialField[index] < GravitationalMinimum)
+			GravitationalMinimum = PotentialField[index];
+#endif
 	}
       }
     }
@@ -61,8 +77,13 @@ float grid::FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialF
  * This is an N^2 problem - be careful how frequently you call it. 
  * Phi = -G m_j / (x - x_j)
  */
+#ifdef NBODY
+void grid::CalculatePotentialField(float *PotentialField[], int DensNum, float DensityUnits,
+		float TimeUnits, float LengthUnits)
+#else
 void grid::CalculatePotentialField(float *PotentialField, int DensNum, float DensityUnits,
-				   float TimeUnits, float LengthUnits)
+		float TimeUnits, float LengthUnits)
+#endif
 {
   int i = 0, j = 0, k = 0, ii = 0, jj = 0, kk = 0;
   FLOAT sep = 0;
@@ -97,8 +118,13 @@ void grid::CalculatePotentialField(float *PotentialField, int DensNum, float Den
 	      if(index == lindex) {
 		sep = CellWidth[0][ii]/2.0;
 	      }
-	      PotentialField[index] += -G * mass_j/sep;
-	    }
+#ifdef NBODY
+				PotentialField[0][index] += -G * mass_j/sep;
+				PotentialField[1][index] += -G * mass_j/sep;
+#else
+				PotentialField[index] += -G * mass_j/sep;
+#endif
+			}
 	  }
 	}
       }

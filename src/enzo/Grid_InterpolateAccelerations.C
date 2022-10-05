@@ -126,7 +126,11 @@ int grid::InterpolateAccelerations(grid *FromGrid)
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;
  
+#ifdef NBODY
+  if (FromGrid->AccelerationField[0][0] == NULL) {
+#else
   if (FromGrid->AccelerationField[0] == NULL) {
+#endif
         ENZO_FAIL("FromGrid->AccelerationField is NULL.");
   }
  
@@ -138,7 +142,7 @@ int grid::InterpolateAccelerations(grid *FromGrid)
     delete [] AccelerationField[dim][1];
     //AccelerationField[dim] = new float*[2];
     AccelerationField[dim][0] = new float[size];
-    AccelerationField[dim][0] = new float[size];
+    AccelerationField[dim][1] = new float[size];
 #else
     delete [] AccelerationField[dim];
     AccelerationField[dim] = new float[size];

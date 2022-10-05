@@ -30,8 +30,11 @@ int grid::SetIsolatedPotentialBoundary()
 
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;
-
+#ifdef NBODY
+  if (PotentialField[0] == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
+#else
   if (PotentialField == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
+#endif
     ENZO_FAIL("Potential NULL or gravity unitialized.\n");
 
   }

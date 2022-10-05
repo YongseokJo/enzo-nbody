@@ -68,16 +68,18 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 		float *FieldPointerNoStar;
 #endif
 		if (Field == POTENTIAL_FIELD) {
-			if (PotentialField == NULL)
 #ifdef NBODY
+			if (PotentialField[0] == NULL)  {
 				//PotentialField = new float*[2];
 				PotentialField[0] = new float[size];
 				PotentialField[1] = new float[size];
+			}
 				FieldPointer = PotentialField[0];
 				FieldPointerNoStar = PotentialField[1];
 #else
+			if (PotentialField == NULL)
 				PotentialField = new float[size]();
-				FieldPointer = PotentialField;
+			FieldPointer = PotentialField;
 #endif
 		} else {
 			ENZO_VFAIL("Field %"ISYM" not recognized.\n", Field)

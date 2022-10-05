@@ -63,6 +63,8 @@
 
 #include "Grid.h"
 
+#define NBODY
+
 int FindField(int field, int farray[], int numfields);
 
 struct field_map{
@@ -235,8 +237,6 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 
   	array = new EnzoArray<float>(2, dims, sindex, eindex);
   	for(i = 0; i < this->GridRank; i++){
-#ifdef NBODY
-#endif
   	  array->Vector[i] = this->ParticleAcceleration[i];
   	}
       }
@@ -260,8 +260,12 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
       break;
       
     case gPotentialField:
-      if(this->PotentialField){
-  	for(i = 0; i < this->GridRank; i++){
+#ifdef NBODY
+			if(this->PotentialField[0]){
+#else
+			if(this->PotentialField){
+#endif
+				for(i = 0; i < this->GridRank; i++){
   	  cell_width[i] = GravitatingMassFieldCellSize;
    	  sindex[i] = this->GridStartIndex[i] + GRAVITY_BUFFER_SIZE;
    	  eindex[i] = this->GridEndIndex[i] + GRAVITY_BUFFER_SIZE;
@@ -271,7 +275,6 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       sindex, eindex,
 			       cell_width);
 	
-#define NBODY
 #ifdef NBODY
   	array->Array = this->PotentialField[0];
 #else
@@ -281,7 +284,11 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
       break;
       
     case gAccelerationField:
+#ifdef NBODY
+      if(this->AccelerationField[0][0]){
+#else
       if(this->AccelerationField[0]){
+#endif
 	array = new EnzoArray<float>(this->GridRank,
 			       this->GridDimension,
 			       this->GridStartIndex,
@@ -299,8 +306,12 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
       break;
       
     case gGravitatingMassField:
-      if(this->GravitatingMassField){
-        for(i = 0; i < this->GridRank; i++){
+#ifdef NBODY
+			if(this->GravitatingMassField[0]){
+#else
+			if(this->GravitatingMassField){
+#endif
+				for(i = 0; i < this->GridRank; i++){
 	  cell_width[i] = GravitatingMassFieldCellSize;
 	  sindex[i] = this->GridStartIndex[i] + GRAVITY_BUFFER_SIZE;
 	  eindex[i] = this->GridEndIndex[i] + GRAVITY_BUFFER_SIZE;

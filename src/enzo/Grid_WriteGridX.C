@@ -401,14 +401,21 @@ int grid::WriteGridX(FILE *fptr, char *base_name, int grid_id)
     if (SelfGravity && NumberOfParticles > 0) {
       this->InitializeGravitatingMassFieldParticles(RefineBy);
       this->ClearGravitatingMassFieldParticles();
-      this->DepositParticlePositions(this, Time,
+#ifdef NBODY
+      this->ClearGravitatingMassFieldParticlesNoStar();
+#endif
+			this->DepositParticlePositions(this, Time,
 				     GRAVITATING_MASS_FIELD_PARTICLES);
     }
  
     /* If present, write out the GravitatingMassFieldParticles. */
  
-    if (GravitatingMassFieldParticles != NULL) {
- 
+#ifdef NBODY
+		if (GravitatingMassFieldParticles[0] != NULL) {
+#else
+		if (GravitatingMassFieldParticles != NULL) {
+#endif
+
       /* Set dimensions. */
  
       int StartIndex[] = {0,0,0}, EndIndex[] = {0,0,0};
