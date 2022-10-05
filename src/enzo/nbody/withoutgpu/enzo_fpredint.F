@@ -3,7 +3,7 @@
 *
 *
 *     Force Calculation of Particles w/o GPU
-*     Modification complete on 2022.08.16
+*     Written on 2022.08.16
 *     --------------------
 
 *     Common variables (inputs and outputs)
@@ -62,7 +62,7 @@
                END IF
 
                DR2I = 1.0/RIJ2
-               DR3I = BODY(J)*DR2I*SQRT(DR2I)
+               DR3I = G*BODY(J)*DR2I*SQRT(DR2I)
                DRDV = A1*DV(1) + A2*DV(2) + A3*DV(3)
                DRDP = 3.0*DRDV*DR2I
     

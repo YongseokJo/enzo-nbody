@@ -3,7 +3,7 @@
 *
 *
 *     Force Correction of Particles w/o GPU
-*     Modification complete on 2022.08.16
+*     Written on 2022.08.16
 *     --------------------
 *     Common variables (inputs and outputs)
 
