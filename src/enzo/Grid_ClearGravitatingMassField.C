@@ -30,6 +30,7 @@ int grid::ClearGravitatingMassField()
 {
  
   /* Return is this is not the right processor. */
+	fprintf(stdout,"Proc:%d, In Clear\n", MyProcessorNumber); // by YS
  
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;
@@ -46,12 +47,15 @@ int grid::ClearGravitatingMassField()
   for (dim = 0; dim < GridRank; dim++)
     size *= GravitatingMassFieldDimension[dim];
  
+	fprintf(stdout,"Proc:%d, Size: %d\n", MyProcessorNumber, size); // by YS
   /* allocate and clear the field */
  
   //  if (GravitatingMassField != NULL)
   //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
+	fprintf(stdout,"Proc:%d, Grav: %d\n", MyProcessorNumber, GravitatingMassField[0]); // by YS
   if (GravitatingMassField[0] == NULL) {
+	fprintf(stdout,"Proc:%d, is this NULL\n", MyProcessorNumber); // by YS
 #ifdef NBODY
      //GravitatingMassField = new float*[2];
      GravitatingMassField[0] = new float[size];

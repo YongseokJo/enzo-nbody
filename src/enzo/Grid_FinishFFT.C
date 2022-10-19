@@ -63,6 +63,7 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 
 		/* Set FieldPointer to the appropriate field. */
 
+		fprintf(stdout,"4-10-6-1\n"); // by YS
 		float *FieldPointer;
 #ifdef NBODY
 		float *FieldPointerNoStar;
@@ -71,11 +72,11 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 #ifdef NBODY
 			if (PotentialField[0] == NULL)  {
 				//PotentialField = new float*[2];
-				PotentialField[0] = new float[size];
-				PotentialField[1] = new float[size];
+				PotentialField[0] = new float[size]();
+				PotentialField[1] = new float[size]();
 			}
-				FieldPointer = PotentialField[0];
-				FieldPointerNoStar = PotentialField[1];
+			FieldPointer       = PotentialField[0];
+			FieldPointerNoStar = PotentialField[1];
 #else
 			if (PotentialField == NULL)
 				PotentialField = new float[size]();
@@ -111,6 +112,7 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 			 Zero, Zero+1, Zero+2);
 #endif
  
+		fprintf(stdout,"4-10-6-2\n"); // by YS
     /* Delete old field. */
  
     delete [] InitialRegion->Data;

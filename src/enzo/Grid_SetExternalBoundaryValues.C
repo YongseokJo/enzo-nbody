@@ -110,7 +110,7 @@ int grid::SetExternalBoundaryValues(ExternalBoundary *Exterior)
       ENZO_FAIL("Error in Exterior->SetExternalBoundary.\n");
     }
  
-  }
+  } // field ends
 
   /*If there's a magnetic field, set it as well.
     It is still unclear if this is a valid way to do things: 

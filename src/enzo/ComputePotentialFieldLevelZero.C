@@ -143,6 +143,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 #endif
 {
 
+	CommunicationBarrier();// by YS
 	fprintf(stdout,"4-10-0\n"); // by YS
 	/* Static declarations (for Green's function). */
 
@@ -181,6 +182,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 	/* If we have load balanced the root grids, then we have to
 		 recalculate the Green's function. */
 
+	CommunicationBarrier();
 	fprintf(stdout,"4-10-1\n"); // by YS
 	if (NumberOfProcessors > 1 && LoadBalancing > 1 &&
 			MetaData->CycleNumber % LoadBalancingCycleSkip == 0 &&
@@ -210,7 +212,6 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 			region *TempRegion = new region[NumberOfProcessors];
 
 			/* Generate Greens function in real space. */
-
 			int proc;
 			for (proc = 0; proc < NumberOfProcessors; proc++)
 				if (PrepareIsolatedGreensFunction(&TempRegion[proc], proc, DomainDim,
@@ -219,6 +220,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 					ENZO_FAIL("Error in PrepareIsolatedGreensFunction.");
 				}
 
+			CommunicationBarrier();
 			fprintf(stdout,"4-10-2\n"); // by YS
 			/* Forward FFT Greens function. */
 
@@ -229,6 +231,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 						FFT_FORWARD, TransposeOnCompletion) == FAIL) {
 				ENZO_FAIL("Error in CommunicationParallelFFT.");
 			}
+			CommunicationBarrier();
 			fprintf(stdout,"4-10-3\n"); // by YS
 
 			/* Clean up. */
@@ -242,7 +245,8 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 
 	} // end: if (FirstCall)
 
-	fprintf(stdout,"4-10-3\n"); // by YS
+	CommunicationBarrier();
+	fprintf(stdout,"4-10-30\n"); // by YS
 	/* ------------------------------------------------------------------- */
 	/* Generate FFT regions for density field. */
 
@@ -253,6 +257,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 			ENZO_FAIL("Error in grid->PrepareFFT.");
 		}
 
+	CommunicationBarrier();
 	fprintf(stdout,"4-10-4\n"); // by YS
 	/* If doing isolated BC's then double the domain size. */
 
@@ -302,7 +307,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 				}
 			}
 
-			fprintf(stdout,"4-10-6\n"); // by YS
+			//fprintf(stdout,"4-10-6\n"); // by YS
 			/* In the isolated case, we have compute the Greens function by transforming
 				 a real function so we must do a proper complex multiplication (this is a
 				 convolution with the real function defined in PrepareIsolatedGreensFunction). */

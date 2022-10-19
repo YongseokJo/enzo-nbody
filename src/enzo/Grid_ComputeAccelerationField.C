@@ -78,19 +78,16 @@ int grid::ComputeAccelerationField(int DifferenceType, int level)
     /* Allocate acceleration field. */
  
 #ifdef NBODY
-    if (AccelerationField[dim][0] != NULL) {
-      delete [] AccelerationField[dim][1];
+    if (AccelerationField[dim][0] != NULL) 
       delete [] AccelerationField[dim][0];
-#else
-    if (AccelerationField[dim] != NULL) {
-      delete [] AccelerationField[dim];
-#endif
-    }
-#ifdef NBODY 
-    //AccelerationField[dim] = new float*[2];
+    if (AccelerationField[dim][1] != NULL) 
+      delete [] AccelerationField[dim][1];
     AccelerationField[dim][0] = new float[size];
     AccelerationField[dim][1] = new float[size];
 #else
+    if (AccelerationField[dim] != NULL) {
+      delete [] AccelerationField[dim];
+    }
     AccelerationField[dim] = new float[size];
 #endif
  
@@ -98,12 +95,16 @@ int grid::ComputeAccelerationField(int DifferenceType, int level)
  
   /* Difference potential. */
 #ifdef NBODY 
+
+	fprintf(stdout,"level: %d", level); // by YS
+	fprintf(stdout,"Okay?1"); // by YS
   FORTRAN_NAME(comp_accel)(PotentialField[0], AccelerationField[0][0],
       AccelerationField[1][0], AccelerationField[2][0], &GridRank, &DifferenceType,
 	    GravitatingMassFieldDimension, GravitatingMassFieldDimension+1,
 	      GravitatingMassFieldDimension+2,
 	    GridDimension, GridDimension+1, GridDimension+2,
             Offset, Offset+1, Offset+2, CellSize, CellSize+1, CellSize+2);
+	fprintf(stdout,"Okay?2"); // by YS
 	
   FORTRAN_NAME(comp_accel)(PotentialField[1], AccelerationField[0][1],
       AccelerationField[1][1], AccelerationField[2][1], &GridRank, &DifferenceType,
@@ -111,6 +112,7 @@ int grid::ComputeAccelerationField(int DifferenceType, int level)
 	      GravitatingMassFieldDimension+2,
 	    GridDimension, GridDimension+1, GridDimension+2,
             Offset, Offset+1, Offset+2, CellSize, CellSize+1, CellSize+2);
+	fprintf(stdout,"Okay?3"); // by YS
 
 #else
   FORTRAN_NAME(comp_accel)(PotentialField, AccelerationField[0],

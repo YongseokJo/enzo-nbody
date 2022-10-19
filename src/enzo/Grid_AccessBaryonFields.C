@@ -295,6 +295,43 @@ float* grid::AccessAcceleration2() {
   return BaryonField[Acceleration2Num];
 }
 
+#ifdef NBODY
+// Gravitational Potential field 
+float* grid::AccessGravPotentialNoStar() {
+  int GravPotNoStarNum = -1;
+  if ((GravPotNoStarNum = FindField(GravPotentialNoStar, FieldType, NumberOfBaryonFields))<0) 
+    return NULL;
+  return BaryonField[GravPotNoStarNum];
+}
+
+// Acceleration0 field 
+float* grid::AccessAcceleration0NoStar() {
+  int Acceleration0NoStarNum = -1;
+  if ((Acceleration0NoStarNum = FindField(Acceleration0NoStar, FieldType, 
+				    NumberOfBaryonFields))<0) 
+    return NULL;
+  return BaryonField[Acceleration0NoStarNum];
+}
+
+// Acceleration1 field 
+float* grid::AccessAcceleration1NoStar() {
+  int Acceleration1NoStarNum = -1;
+  if ((Acceleration1NoStarNum = FindField(Acceleration1NoStar, FieldType, 
+				    NumberOfBaryonFields))<0) 
+    return NULL;
+  return BaryonField[Acceleration1NoStarNum];
+}
+
+// Acceleration2 Density field 
+float* grid::AccessAcceleration2NoStar() {
+  int Acceleration2NoStarNum = -1;
+  if ((Acceleration2NoStarNum = FindField(Acceleration2NoStar, FieldType, 
+				    NumberOfBaryonFields))<0) 
+    return NULL;
+  return BaryonField[Acceleration2NoStarNum];
+}
+#endif
+
 // Radiation Pressure0 field 
 float* grid::AccessRadPressure0() {
   int RadPressure0Num = -1;

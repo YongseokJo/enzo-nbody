@@ -183,12 +183,14 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
   delete [] rhs;
 
-#define NO_POTENTIALDEBUGOUTPUT
+//#define NO_POTENTIALDEBUGOUTPUT
+#define POTENTIALDEBUGOUTPUT
 #ifdef POTENTIALDEBUGOUTPUT
   for (int i=0;i<GridDimension[0]; i++) {
     int igrid = GRIDINDEX_NOGHOST(i,(GridEndIndex[0]+GridStartIndex[0])/2,(GridEndIndex[0]+GridStartIndex[0])/2);
 #ifdef NBODY
 		printf("i: %i \t SolvedSub %g\n", i, PotentialField[0][igrid]);
+		printf("i: %i \t SolvedSub %g\n", i, PotentialField[1][igrid]);
 #else
 		printf("i: %i \t SolvedSub %g\n", i, PotentialField[igrid]);
 #endif

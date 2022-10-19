@@ -425,6 +425,11 @@ class grid
 		void SetGridID(int id) { ID = id; };
 		int GetGridID(void) { return ID; };
 
+
+#ifdef NBODY
+		float **GetPotentialField(void) {return PotentialField;};
+#endif
+
 		/* Return, set level of this grid */
 		int GetLevel() { return GridLevel; };
 		int SetLevel(int level) {
@@ -1411,6 +1416,12 @@ class grid
 		float* AccessAcceleration0();
 		float* AccessAcceleration1();
 		float* AccessAcceleration2();
+#ifdef NBODY
+		float* AccessGravPotentialNoStar();
+		float* AccessAcceleration0NoStar();
+		float* AccessAcceleration1NoStar();
+		float* AccessAcceleration2NoStar();
+#endif
 		float* AccessRadPressure0();
 		float* AccessRadPressure1();
 		float* AccessRadPressure2();
@@ -1884,7 +1895,13 @@ class grid
 
 		/* Identify potential field */
 		int IdentifyPotentialField(int &PotenNum);
+#ifdef NBODY
+		int IdentifyPotentialField(int &PotenNum, int &Acce1Num, int &Acce2Num, int &Acce3Num,
+				int &PotenNoStarNum, int &Acce1NoStarNum, int &Acce2NoStarNum, int &Acce3NoStarNum);
+		int IdentifyPotentialField(int &PotenNum, int &PotenNoStarNum);
+#else
 		int IdentifyPotentialField(int &PotenNum, int &Acce1Num, int &Acce2Num, int &Acce3Num);
+#endif
 
 		/* Identify colour field */
 

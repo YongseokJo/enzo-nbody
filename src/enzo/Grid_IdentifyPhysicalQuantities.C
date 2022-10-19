@@ -283,7 +283,11 @@ int grid::IdentifyDrivingFields(int &Drive1Num, int &Drive2Num, int &Drive3Num)
   return SUCCESS;
 }
 
-int grid::IdentifyPotentialField(int &PotenNum, int &Acce1Num, int &Acce2Num, int &Acce3Num)
+int grid::IdentifyPotentialField(int &PotenNum, int &Acce1Num, int &Acce2Num, int &Acce3Num
+#ifdef NBODY	
+		,int &PotenNoStarNum, int &Acce1NoStarNum, int &Acce2NoStarNum, int &Acce3NoStarNum
+#endif
+		)
 {
 
   PotenNum = 0;
@@ -304,6 +308,26 @@ int grid::IdentifyPotentialField(int &PotenNum, int &Acce1Num, int &Acce2Num, in
         ENZO_FAIL("Cannot find AccelerationField.");
   }
 
+#ifdef NBODY
+  if ((PotenNoStarNum = FindField(GravPotentialNoStar, FieldType, NumberOfBaryonFields)) < 0) {
+        ENZO_FAIL("Cannot find PotentialField.");
+  }
+
+  if ((Acce1NoStarNum = FindField(AccelerationField1NoStar, FieldType, NumberOfBaryonFields)) < 0) {
+        ENZO_FAIL("Cannot find AccelerationField.");
+  }
+
+  if ((Acce2NoStarNum = FindField(AccelerationField2NoStar, FieldType, NumberOfBaryonFields)) < 0) {
+        ENZO_FAIL("Cannot find AccelerationField.");
+  }
+
+  if ((Acce3NoStarNum = FindField(AccelerationField3NoStar, FieldType, NumberOfBaryonFields)) < 0) {
+        ENZO_FAIL("Cannot find AccelerationField.");
+  }
+#endif
+
+
+
   return SUCCESS;
 }
 
@@ -316,3 +340,19 @@ int grid::IdentifyPotentialField(int &PotenNum)
   }
   return SUCCESS;
 }
+
+#ifdef NBODY
+int grid::IdentifyPotentialField(int &PotenNum, int &PotenNoStarNum)
+{
+  PotenNum = 0;
+
+  if ((PotenNum = FindField(GravPotential, FieldType, NumberOfBaryonFields)) < 0) {
+    ENZO_FAIL("Cannot find PotentialField.");
+  }
+
+  if ((PotenNoStarNum = FindField(GravPotentialNoStar, FieldType, NumberOfBaryonFields)) < 0) {
+    ENZO_FAIL("Cannot find PotentialField.");
+  }
+  return SUCCESS;
+}
+#endif

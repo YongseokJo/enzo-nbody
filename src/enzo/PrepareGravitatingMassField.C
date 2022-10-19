@@ -50,16 +50,20 @@ int PrepareGravitatingMassField1(HierarchyEntry *Grid)
   grid *CurrentGrid = Grid->GridData;
 
   /* Gravity: initialize and clear the gravitating mass field. */
+		fprintf(stdout,"Proc:%d, 4-3-1\n",MyProcessorNumber); // by YS
 
   if (CommunicationDirection == COMMUNICATION_POST_RECEIVE ||
       CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
+		fprintf(stdout,"Proc:%d, 4-3-2\n",MyProcessorNumber); // by YS
     if (CurrentGrid->InitializeGravitatingMassField(RefinementFactor) == FAIL){
       ENZO_FAIL("Error in grid->InitializeGravitatingMassField.\n");
     }
     CurrentGrid->ClearGravitatingMassField();
     CurrentGrid->ClearGravitatingMassFieldNoStar();
+		fprintf(stdout,"Proc:%d, 4-3-3\n",MyProcessorNumber); // by YS
 	}
 
+		fprintf(stdout,"Proc:%d, 4-3-4\n",MyProcessorNumber); // by YS
   /* Baryons: copy parent density (no interpolation) to regions in
      GravitatingMassField which are beyond the boundary of the current grid. */
 
@@ -69,7 +73,7 @@ int PrepareGravitatingMassField1(HierarchyEntry *Grid)
    if (CurrentGrid->CopyParentToGravitatingFieldBoundary(
 				         Grid->ParentGrid->GridData,NOSTAR_NO) == FAIL) {
      ENZO_FAIL("Error in grid->CopyParentToGravitatingFieldBoundary.\n");
-   }
+   } 
   //  if (CommunicationReceiveIndex != CommunicationReceiveIndexLast)
   //    CommunicationReceiveCurrentDependsOn = CommunicationReceiveIndex-1;
 

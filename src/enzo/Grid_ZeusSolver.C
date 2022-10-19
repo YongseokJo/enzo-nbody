@@ -244,8 +244,8 @@ int grid::ZeusSolver(float *gamma, int igamfield, int nhy,
 					ZEUSQuadraticArtificialViscosity,
 					gamma, dtFixed, dx, dy, dz, gravity, 
 #ifdef NBODY
-					AccelerationField[0][0], AccelerationField[1][0],
-					AccelerationField[2][0],
+					AccelerationField[0][0], AccelerationField[0][1],
+					AccelerationField[0][2],
 #else
 					AccelerationField[0], AccelerationField[1],
 					AccelerationField[2],
@@ -266,8 +266,8 @@ int grid::ZeusSolver(float *gamma, int igamfield, int nhy,
 					ZEUSQuadraticArtificialViscosity, PressureFree,
 					gamma, dtFixed, pmin, dx, dy, dz, gravity, 
 #ifdef NBODY
-					AccelerationField[0][0], AccelerationField[1][0],
-					AccelerationField[2][0],
+					AccelerationField[0][0], AccelerationField[0][1],
+					AccelerationField[0][2],
 #else
 					AccelerationField[0], AccelerationField[1],
 					AccelerationField[2],

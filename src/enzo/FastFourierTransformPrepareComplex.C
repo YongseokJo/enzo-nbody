@@ -70,7 +70,6 @@ int FastFourierTransformPrepareComplex(float *buffer, int Rank,
  
   /* a) real-to-complex or reverse.  This uses a complex-to-complex
         FFT so we must convert real part to complex; done in prefort */
- 
   if (type == REAL_TO_COMPLEX) {
  
     // Allocate temporary buffer.

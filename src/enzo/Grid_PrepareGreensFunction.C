@@ -34,7 +34,11 @@ int grid::PrepareGreensFunction()
  
   /* Error check. */
  
+#ifdef NBODY
+  if (PotentialField[0] != NULL) {
+#else
   if (PotentialField != NULL) {
+#endif
     ENZO_FAIL("Potential field not null.\n");
   }
  

@@ -79,14 +79,15 @@ int grid::PreparePotentialField(grid *ParentGrid)
   if (MyProcessorNumber == ProcessorNumber &&
       CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
 #ifdef NBODY
-    if (PotentialField[0] != NULL) {
+    if (PotentialField[0] != NULL) 
       delete [] PotentialField[1];
+    if (PotentialField[0] != NULL) 
       delete [] PotentialField[0];
 #else
-    if (PotentialField != NULL) {
+    if (PotentialField != NULL) 
       delete [] PotentialField;
 #endif
-		}
+		
 #ifdef NBODY
     //PotentialField = new float*[2];
     PotentialField[0] = new float[size];
