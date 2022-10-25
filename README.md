@@ -33,5 +33,3 @@ List of people who (will) have contributed to the development of ENZO-NBODY:
    * Yongseok Jo               kerex@snu.ac.kr
    * Seoyoung Kim              mintlux@snu.ac.kr
    * Ji-hoon Kim               mornkr@snu.ac.kr
-
-aa
