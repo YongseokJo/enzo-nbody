@@ -311,11 +311,16 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			//ParticleMassPointer = new float[NumberOfParticles];
 			ParticleMassPointerNoStar = new float[NumberOfParticles];
 			for (i = 0; i < NumberOfParticles; i++) {
+#define NBODY_NOSTAR_GRAVITY
+#ifdef NBODY_NOSTAR_GRAVITY
 				if (ParticleType[i] == PARTICLE_TYPE_STAR) {
 					ParticleMassPointerNoStar[i] = 0.0;
 				} else {
 					ParticleMassPointerNoStar[i] = ParticleMass[i]*MassFactor;
 				}
+#elif
+				ParticleMassPointerNoStar[i] = ParticleMass[i]*MassFactor;
+#endif
 			}
 		}
 #endif

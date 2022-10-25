@@ -53,11 +53,16 @@ int grid::CopyPotentialToBaryonField()
  
 #ifdef NBODY
   if (PotentialField[0] == NULL) {
-#else
-  if (PotentialField == NULL) {
-#endif
     ENZO_FAIL("PotentialField missing.\n");
   }
+  if (PotentialField[1] == NULL) {
+    ENZO_FAIL("PotentialField missing.\n");
+  }
+#else
+  if (PotentialField == NULL) {
+    ENZO_FAIL("PotentialField missing.\n");
+  }
+#endif
  
   /* Well, it appears that currently GravitatingMassField is larger
      than active BaryonField by 2*max(BufferSize, NumberOfGhostZones) = 12

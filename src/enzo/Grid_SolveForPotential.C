@@ -45,10 +45,13 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
     return SUCCESS;
 #ifdef NBODY
   if (GravitatingMassField[0] == NULL)  // if this is not set we have nothing to do.
+		return SUCCESS;
+  if (GravitatingMassField[1] == NULL)  // if this is not set we have nothing to do.
+		return SUCCESS;
 #else
   if (GravitatingMassField == NULL)  // if this is not set we have nothing to do.
-#endif
 		return SUCCESS;
+#endif
 
   LCAPERF_START("grid_SolveForPotential");
  
@@ -94,11 +97,11 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #ifdef SMOOTH_SOURCE
  
 #ifdef NBODY
-	FORTRAN_NAME(smooth2)(GravitatingMassField[0], rhs, &GridRank,
+	FORTRAN_NAME(smooth2)(GravitatingMassField[0], rhs[0], &GridRank,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);
-	FORTRAN_NAME(smooth2)(GravitatingMassField[1], rhs, &GridRank,
+	FORTRAN_NAME(smooth2)(GravitatingMassField[1], rhs[1], &GridRank,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);

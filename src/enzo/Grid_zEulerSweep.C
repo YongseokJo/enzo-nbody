@@ -29,6 +29,7 @@
 #include "Grid.h"
 #include "euler_sweep.h"
 //#include "fortran.def"
+#define NBODY
 
 int grid::zEulerSweep(int j, int NumberOfSubgrids, fluxes *SubgridFluxes[], 
 		      Elong_int GridGlobalStart[], float *CellWidthTemp[], 

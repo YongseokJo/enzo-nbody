@@ -78,13 +78,13 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 		float time1 = ReturnWallTime();
 
-		fprintf(stdout,"4-3-1\n");  // by YS
+		//fprintf(stdout,"4-3-1\n");  // by YS
 		
-		fprintf(stdout,"TotalReceives:%d\n",TotalReceives);  // by YS
-		fprintf(stdout,"Request:%d\n",CommunicationReceiveMPI_Request);  // by YS
-		fprintf(stdout,"NumberOfCompleteRequests:%d\n",NumberOfCompleteRequests);  // by YS
-		fprintf(stdout,"ListOfIndices:%d\n",ListOfIndices);  // by YS
-		fprintf(stdout,"ListOfStatuses:%d\n",ListOfStatuses);  // by YS
+		//fprintf(stdout,"TotalReceives:%d\n",TotalReceives);  // by YS
+		//fprintf(stdout,"Request:%d\n",CommunicationReceiveMPI_Request);  // by YS
+		//fprintf(stdout,"NumberOfCompleteRequests:%d\n",NumberOfCompleteRequests);  // by YS
+		//fprintf(stdout,"ListOfIndices:%d\n",ListOfIndices);  // by YS
+		//fprintf(stdout,"ListOfStatuses:%d\n",ListOfStatuses);  // by YS
 		ierr = MPI_Waitsome(TotalReceives, CommunicationReceiveMPI_Request,
 				&NumberOfCompleteRequests, ListOfIndices, ListOfStatuses);
 		if (ierr != MPI_SUCCESS) {
@@ -106,7 +106,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		}
 		printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
 				ReceivesCompletedToDate, NumberOfCompleteRequests);
-		fprintf(stdout,"4-3-1-1\n");  // by YS
+		//fprintf(stdout,"4-3-1-1\n");  // by YS
 
 		CommunicationTime += ReturnWallTime() - time1;
 
@@ -118,7 +118,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		}
 #endif
 
-		fprintf(stdout,"4-3-2\n");  // by YS
+		//fprintf(stdout,"4-3-2\n");  // by YS
 		/* Should loop over newly received completions and check error msgs now. */
 		for (index = 0; index < NumberOfCompleteRequests; index++)
 			if (ListOfStatuses[index].MPI_ERROR != 0) {
@@ -154,7 +154,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 			}
 		}
 
-		fprintf(stdout,"4-3-3\n");  // by YS
+		//fprintf(stdout,"4-3-3\n");  // by YS
 		/* Loop over the receive handles, looking for completed (i.e. null)
 			 requests associated with unprocessed (i.e. non-null) grids. 
 			 It's insufficient to just loop over newly completed receives because
@@ -346,7 +346,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 				}
 
-				fprintf(stdout,"4-3-4\n");  // by YS
+				//fprintf(stdout,"4-3-4\n");  // by YS
 				/* Mark this receive complete. */
 
 				// if this is a g:CSAPs recv, mark ALL g:CSAPs done, including this one.

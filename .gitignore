@@ -4,4 +4,6 @@
 *.exe
 *.swp
 *.compile
+*.dat
 bin/enzo
+method-paper-joss-2019

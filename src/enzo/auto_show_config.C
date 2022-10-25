@@ -2,7 +2,7 @@
 void auto_show_config(FILE *fp) {
    fprintf (fp,"\n");
    fprintf (fp,"   MACHINE: Generic Ubuntu 8.04\n");
-   fprintf (fp,"   MACHINE-NAME: linux-mpich\n");
+   fprintf (fp,"   MACHINE-NAME: rusty\n");
    fprintf (fp,"\n");
    fprintf (fp,"   PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000\n");
    fprintf (fp,"   PARAMETER_MAX_BARYONS  [max-baryons-###]                  : 30\n");
