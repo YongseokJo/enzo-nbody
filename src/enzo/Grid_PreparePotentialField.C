@@ -97,6 +97,16 @@ int grid::PreparePotentialField(grid *ParentGrid)
 #endif
 	}
 
+
+#define NBODY_NOSTAR_GRAVITY
+#ifdef NBODY_NOSTAR_GRAVITY
+	float diff=0.0;
+	for (int i=0; i<size; i++) {
+		diff = GravitatingMassField[0][i] - GravitatingMassField[1][i];
+		if (diff != 0.0) fprintf(stdout, "diff=%f\n",diff);
+	}
+#endif
+
 	/* Declarations. */
 
 	int ParentOffset[MAX_DIMENSION], ParentStartIndex[MAX_DIMENSION],

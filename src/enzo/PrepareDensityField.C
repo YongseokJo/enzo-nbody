@@ -343,9 +343,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 
 
-
-
-
 	/************************************************************************/
 	/* Copy overlapping mass fields to ensure consistency and B.C.'s. */
 

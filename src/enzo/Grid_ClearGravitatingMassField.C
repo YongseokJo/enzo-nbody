@@ -102,22 +102,17 @@ int grid::ClearGravitatingMassFieldNoStar()
  
   /* allocate and clear the field */
  
-  if (GravitatingMassField[1] != NULL)
-		fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+  //if (GravitatingMassField[1] != NULL)
+		//fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
-  if (GravitatingMassField[1] == NULL) {
-     //GravitatingMassField = new float*[2];
+  if (GravitatingMassField[1] == NULL) 
      GravitatingMassField[1] = new float[size];
-     //GravitatingMassField[1] = new float[size];
-	}
-  if (GravitatingMassField[1] == NULL) {
-    ENZO_FAIL("malloc error (out of memory?)\n");
 
-  }
+  if (GravitatingMassField[1] == NULL) 
+    ENZO_FAIL("malloc error (out of memory?)\n");
  
-  for (i = 0; i < size; i++) {
+  for (i = 0; i < size; i++) 
     GravitatingMassField[1][i] = 0.0;
-	}
  
   return SUCCESS;
 }
