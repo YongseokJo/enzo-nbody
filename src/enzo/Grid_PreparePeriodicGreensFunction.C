@@ -69,7 +69,7 @@ int grid::PreparePeriodicGreensFunction(region *GreensRegion)
 
 	/* Set processor number where data lives. */
 
-	fprintf(stdout, "PN:%d",ProcessorNumber);
+	//fprintf(stdout, "PN:%d",ProcessorNumber); //by YS
 	GreensRegion->Processor = ProcessorNumber;
 	GreensRegion->Data      = NULL;
 

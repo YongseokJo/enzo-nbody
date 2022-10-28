@@ -239,7 +239,8 @@ EXTERN int NumberOfBufferZones;
 
 /* The left and right boundaries of the entire computational domain. */
 
-EXTERN FLOAT DomainLeftEdge[MAX_DIMENSION], DomainRightEdge[MAX_DIMENSION];
+EXTERN FLOAT DomainLeftEdge[MAX_DIMENSION];
+EXTERN FLOAT DomainRightEdge[MAX_DIMENSION];
 
 /* Velocity of entire computational domain. */
 

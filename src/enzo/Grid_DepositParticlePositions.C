@@ -239,14 +239,15 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
 				DepositFieldPointerNoStar = new float[size];
 #endif
-			if (MyProcessorNumber == ProcessorNumber)
+			if (MyProcessorNumber == ProcessorNumber) {
 				for (i = 0; i < size; i++) {
-					DepositFieldPointer[i] = 0;
+					DepositFieldPointer[i] = 0.0;
 #ifdef NBODY
 					if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-						DepositFieldPointerNoStar[i] = 0;
+						DepositFieldPointerNoStar[i] = 0.0;
 #endif
 				}
+			}
 		}
 #endif /* USE_MPI */
 
@@ -511,10 +512,11 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 	} // ENDIF this processor
 
-	/* If on different processors, copy deposited field back to the
-		 target grid and add to the correct field. */
 
 	fprintf(stdout,"4-2-4\n");  // by YS
+
+	/* If any girds are on different processors, copy deposited field back to the
+		 target grid and add to the correct field. */
 	if (ProcessorNumber != TargetGrid->ProcessorNumber) {
 
 #ifdef USE_MPI

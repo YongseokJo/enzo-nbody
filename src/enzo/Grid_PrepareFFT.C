@@ -26,8 +26,11 @@ extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
 		int *sstart1, int *sstart2, int *sstart3,
 		int *dstart1, int *dstart2, int *dststart3);
 
-
+#ifdef NBODY
+int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar)
+#else
 int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
+#endif
 {
 
 	int dim, size;
@@ -86,8 +89,8 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 	InitialRegion->Processor = ProcessorNumber;
 	InitialRegion->Data      = NULL;
 
-	fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[0]); // by YS
-	fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[1]); // by YS
+	//fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[0]); // by YS
+	//fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[1]); // by YS
 	//fprintf(stdout,"Proc:%d,GravitatingMassField: %f\n", MyProcessorNumber, GravitatingMassField[0][0]); // by YS
 	//fprintf(stdout,"Proc:%d,GravitatingMassField: %f\n", MyProcessorNumber, GravitatingMassField[1][0]); // by YS
 	//fprintf(stdout,"GravitatingMassField: %f\n", GravitatingMassField[0][1]); // by YS
@@ -102,14 +105,19 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 		/* Set FieldPointer to the appropriate field. */
 #ifdef NBODY
 		float *FieldPointer = NULL;
-		float *FieldPointerNoStar = NULL;
 		if (Field == GRAVITATING_MASS_FIELD) {
-			FieldPointer = GravitatingMassField[0];
-			FieldPointerNoStar = GravitatingMassField[1];
+			if (NoStar) {
+				FieldPointer = GravitatingMassField[1];
+			} else {
+				FieldPointer = GravitatingMassField[0];
+			}
 		}
 		if (Field == POTENTIAL_FIELD) {
-			FieldPointer = PotentialField[0];
-			FieldPointerNoStar = PotentialField[1];
+			if (NoStar) {
+				FieldPointer = PotentialField[1];
+			} else {
+				FieldPointer = PotentialField[0];
+			}
 		}
 #else
 		float *FieldPointer = NULL;
@@ -133,16 +141,6 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 				InitialRegion->RegionDim+2,
 				Zero, Zero+1, Zero+2,
 				GravStart, GravStart+1, GravStart+2);
-#ifdef FixNeeded
-	fprintf(stdout,"4-10-30-51\n"); // by YS
-		FORTRAN_NAME(copy3d)(FieldPointerNoStar, InitialRegion->Data,
-				GravDim, GravDim+1, GravDim+2,
-				InitialRegion->RegionDim,
-				InitialRegion->RegionDim+1,
-				InitialRegion->RegionDim+2,
-				Zero, Zero+1, Zero+2,
-				GravStart, GravStart+1, GravStart+2);
-#endif
 
 	fprintf(stdout,"4-10-30-6\n"); // by YS
 		/* Delete old field. */
@@ -154,9 +152,11 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 		if (Field == POTENTIAL_FIELD) {
 #ifdef NBODY
 			delete FieldPointer;
-			delete FieldPointerNoStar;
-			PotentialField[0] = NULL;
-			PotentialField[1] = NULL;
+			if (NoStar) {
+				PotentialField[1] = NULL;
+			} else {
+				PotentialField[0] = NULL;
+			}
 #else
 			delete FieldPointer;
 			PotentialField = NULL;

@@ -428,6 +428,8 @@ class grid
 
 #ifdef NBODY
 		float **GetPotentialField(void) {return PotentialField;};
+		float **GetGravitatingMassFieldParticles(void) {return GravitatingMassFieldParticles;};
+		float **GetGravitatingMassField(void) {return GravitatingMassField;};
 #endif
 
 		/* Return, set level of this grid */
@@ -1236,8 +1238,8 @@ class grid
 
 		/* Gravity: Copy potential/density into/out of FFT regions. */
 
-		int PrepareFFT(region *InitialRegion, int Field, int DomainDim[]);
-		int FinishFFT(region *InitialRegion, int Field, int DomainDim[]);
+		int PrepareFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar);
+		int FinishFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar);
 
 		/* Gravity: set the potential boundary for isolated BC's */
 

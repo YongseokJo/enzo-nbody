@@ -204,6 +204,11 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	CommunicationBarrier();
 #endif
 
+	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
+		fprintf(stdout,"\nGrav Field Part: %e\n", Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[0][0]); //by YS
+		fprintf(stdout,"Grav Field Part: %e\n", Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[1][0]);//by YS
+	}
+
 	/******************************************************************/
 	/* Grids: compute the GravitatingMassField (baryons & particles). */
 	/*   This is now split into two section. */
@@ -417,6 +422,10 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
 
 
+	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
+		fprintf(stdout,"\nGrav Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[0][0]); //by YS
+		fprintf(stdout,"Grav Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[1][0]);//by YS
+	}
 
 	/************************************************************************/
 	/* Here Active particles have the opportunity to deposit mass into the
@@ -430,9 +439,9 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	/************************************************************************/
 	/* Compute the potential for the top grid. */
 
-	fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
+	//fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
 	CommunicationBarrier(); //by YS 
-	fprintf(stdout,"Proc:%d, Post barrier\n",MyProcessorNumber);//by YS 
+	//fprintf(stdout,"Proc:%d, Post barrier\n",MyProcessorNumber);//by YS 
 
 	if (level == 0) {
 		TIME_MSG("ComputePotentialFieldLevelZero");
@@ -646,8 +655,14 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // end: if (reallevel > MaximumGravityRefinementLevel)
 
-	CommunicationBarrier();// by Jo
+	CommunicationBarrier();// by YS Jo
 	fprintf(stdout,"4-16"); // by YS
+	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
+		fprintf(stdout,"\nPotential Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[0][0]); //by YS
+		fprintf(stdout,"Potential Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[1][0]); //by YS
+	}
+
+
 	// --------------------------------------------------
 	// MEMORY LEAK FIX
 	//
@@ -657,10 +672,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	// Adding missing delete [] () for Grids[] allocated in
 	// GenerateGridArray()
 	// --------------------------------------------------
-	//fprintf(stdout,"0. Potential Field: %f", Grids[0]->GridData->GetPotentialField()[0]); //by YS
-	//fprintf(stdout,"0-0. Potential Field: %f", Grids[0]->GridData->GetPotentialField()[0][0]); //by YS
-	//fprintf(stdout,"1. Potential Field: %f", Grids[0]->GridData->GetPotentialField()[1]);//by YS
-	//fprintf(stdout,"1-0. Potential Field: %f", Grids[0]->GridData->GetPotentialField()[1][0]);//by YS
 	delete [] Grids;
 
 	// --------------------------------------------------
