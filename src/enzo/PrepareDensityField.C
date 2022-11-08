@@ -46,13 +46,18 @@
 
 /* function prototypes */
 
-int DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0);
+int DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time, bool NoStar);
+int DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0, bool NoStar=FALSE);
 
 int CommunicationBufferPurge(void);
+int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
+		int NumberOfSubgrids[],
+		int FluxFlag,
+		TopGridData* MetaData, bool NoStar);
 int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[] = NULL,
 		int NumberOfSubgrids[] = NULL,
 		int FluxFlag = FALSE,
-		TopGridData* MetaData = NULL, bool NoStar=NOSTAR_NO);
+		TopGridData* MetaData = NULL, bool NoStar=FALSE);
 
 int ActiveParticleDepositMass(HierarchyEntry *Grids[], TopGridData *MetaData,
 		int NumberOfGrids, LevelHierarchyEntry *LevelArray[],
@@ -169,7 +174,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
 		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
-			DepositParticleMassField(Grids[grid1], EvaluateTime);
+			DepositParticleMassField(Grids[grid1], EvaluateTime, FALSE);
 
 #ifdef FORCE_MSG_PROGRESS 
 		CommunicationBarrier();
@@ -185,7 +190,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		fprintf(stdout,"4-1\n"); // by YS
 		CommunicationDirection = COMMUNICATION_SEND;
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
-			DepositParticleMassField(Grids[grid1], EvaluateTime);
+			DepositParticleMassField(Grids[grid1], EvaluateTime, FALSE);
 
 		/* Finally, receive the data and process it. */
 
@@ -194,7 +199,9 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("DepositParticleMassField");
+	fprintf(stdout,"\nProc:%d 4-2 ends.\n", MyProcessorNumber); //by YS
 
+	CommunicationBarrier(); //by YS
 
 #ifdef FORCE_BUFFER_PURGE
 	CommunicationBufferPurge();
@@ -204,10 +211,66 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	CommunicationBarrier();
 #endif
 
-	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
-		fprintf(stdout,"\nGrav Field Part: %e\n", Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[0][0]); //by YS
-		fprintf(stdout,"Grav Field Part: %e\n", Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[1][0]);//by YS
+
+	////////////// GravitatingMassFieldParticles for No Star
+#ifdef NBODY
+	TIME_MSG("Depositing particle mass field");
+	LCAPERF_START("DepositParticleMassField");
+	for (StartGrid = 0; StartGrid < NumberOfGrids; StartGrid += GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		/* First, generate the receive calls. */
+
+		CommunicationReceiveIndex = 0;
+		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			DepositParticleMassField(Grids[grid1], EvaluateTime, TRUE);
+
+#ifdef FORCE_MSG_PROGRESS 
+		CommunicationBarrier();
+#endif
+		CommunicationBarrier();// by Jo
+
+		if (traceMPI) 
+			fprintf(tracePtr, "PrepareDensityField: Enter DepositParticleMassField"
+					" (Receive)\n");
+
+		/* Next, send data and process grids on the same processor. */
+
+		fprintf(stdout,"\nProc:%d 4-10\n", MyProcessorNumber); // by YS
+		CommunicationDirection = COMMUNICATION_SEND;
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			DepositParticleMassField(Grids[grid1], EvaluateTime, TRUE);
+
+		/* Finally, receive the data and process it. */
+
+		fprintf(stdout,"\nProc:%d 4-20\n", MyProcessorNumber); // by YS
+		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
+
+	} // ENDFOR grid batches
+	LCAPERF_STOP("DepositParticleMassField");
+
+
+#endif
+	////////////// GravitatingMassFieldParticles for No Star Ends
+
+	fprintf(stdout,"\nProc:%d 4-20 ends.\n", MyProcessorNumber); //by YS
+	fprintf(stdout,"\nProc:%d # of grids:%d.\n", MyProcessorNumber,NumberOfGrids); //by YS
+	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+			//fprintf(stdout,"\nProc:%d, Grav Field Part: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[0][0]); //by YS
+			//fprintf(stdout,"Proc:%d, Grav Field Part NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[1][0]);//by YS
+		}
 	}
+	fprintf(stdout,"Proc:%d, Go to 4-3?\n",MyProcessorNumber); // by YS
+
+	CommunicationBarrier(); //by YS
+
+
+
+
 
 	/******************************************************************/
 	/* Grids: compute the GravitatingMassField (baryons & particles). */
@@ -241,7 +304,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			PrepareGravitatingMassField1(Grids[grid1]);
 
 		/* Finally, receive the data and process it. */
-	fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
+		fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
 
 		CommunicationReceiveHandler();
 
@@ -302,7 +365,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		fprintf(stdout,"4-6"); // by YS
 		CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */
-	fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
+		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField2a");
@@ -348,6 +411,179 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 
 
+#ifdef NBODY
+	/*******************************************************************************/
+	// No Star Starts
+	/******************************************************************/
+	/* Grids: compute the GravitatingMassField (baryons & particles). */
+	/*   This is now split into two section. */
+
+	if (traceMPI) 
+		fprintf(tracePtr, "PrepareDensityField: P(%"ISYM"): PGMF1 (send)\n", 
+				MyProcessorNumber);
+
+	TIME_MSG("PrepareGravitatingMassField1");
+	LCAPERF_START("PrepareGravitatingMassField1");
+	for (StartGrid = 0; StartGrid < NumberOfGrids; StartGrid += GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		/* ----- section 1 ---- */
+		/* First, generate the receive calls. */
+
+		CommunicationReceiveIndex = 0;
+		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+
+		fprintf(stdout,"Proc:%d, 4-30\n",MyProcessorNumber); // by YS
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar1(Grids[grid1]);
+
+		fprintf(stdout,"Proc:%d, 4-31\n",MyProcessorNumber); // by YS
+		/* Next, send data and process grids on the same processor. */
+
+		CommunicationDirection = COMMUNICATION_SEND;
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar1(Grids[grid1]);
+
+		/* Finally, receive the data and process it. */
+		fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
+
+		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
+
+	} // ENDFOR grid batches
+	LCAPERF_STOP("PrepareGravitatingMassField1");
+	fprintf(stdout,"Proc:%d, 4-4\n", MyProcessorNumber); // by YS
+
+
+#ifdef FORCE_MSG_PROGRESS 
+	CommunicationBarrier();
+#endif
+
+	if (traceMPI) 
+		fprintf(tracePtr, "PrepareDensityField: P(%"ISYM"): PGMF2 (receive)\n", 
+				MyProcessorNumber);
+
+	TIME_MSG("PrepareGravitatingMassField2");
+	LCAPERF_START("PrepareGravitatingMassField2a");
+	for (StartGrid = 0; StartGrid < NumberOfGrids; StartGrid += GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		/* ----- section 2 ---- */
+		/* First, generate the receive calls. */
+
+		CommunicationReceiveIndex = 0;
+		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+#ifdef BITWISE_IDENTICALITY
+		CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
+#else
+		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+#endif
+
+#ifdef FAST_SIB
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2a(Grids[grid1], grid1, SiblingList,
+					MetaData, level, When);
+#else
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2a(Grids[grid1], MetaData, LevelArray,
+					level, When);
+#endif
+		fprintf(stdout,"4-5"); // by YS
+
+#ifndef BITWISE_IDENTICALITY
+		/* Next, send data and process grids on the same processor. */
+
+		CommunicationDirection = COMMUNICATION_SEND;
+#ifdef FAST_SIB
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2a(Grids[grid1], grid1, SiblingList,
+					MetaData, level, When);
+#else
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2a(Grids[grid1], MetaData, LevelArray,
+					level, When);
+#endif
+
+		fprintf(stdout,"4-6"); // by YS
+		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
+#endif /* BITWISE_IDENTICALITY */
+		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
+
+	} // ENDFOR grid batches
+	LCAPERF_STOP("PrepareGravitatingMassField2a");
+
+#ifdef FORCE_BUFFER_PURGE
+	CommunicationBufferPurge();
+#endif
+
+#ifdef FORCE_MSG_PROGRESS 
+	CommunicationBarrier();
+#endif
+
+	/************************************************************************/
+	LCAPERF_START("PrepareGravitatingMassField2b");
+	for (StartGrid = 0; StartGrid < NumberOfGrids; StartGrid += GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		/* ----- section 2 ---- */
+		/* First, generate the receive calls. */
+
+		CommunicationReceiveIndex = 0;
+		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2b(Grids[grid1], level);
+
+		/* Next, send data and process grids on the same processor. */
+
+		CommunicationDirection = COMMUNICATION_SEND;
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			PrepareGravitatingMassFieldNoStar2b(Grids[grid1], level);
+
+		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
+
+	} // ENDFOR grid batches
+	LCAPERF_STOP("PrepareGravitatingMassField2b");
+
+	fprintf(stdout,"Proc:%d, 4-8\n", MyProcessorNumber); // by YS
+
+	/*******************************************************************************/
+	// No Star Done
+	/*******************************************************************************/
+#endif
+
+
+	CommunicationBarrier();
+
+
+	//CommunicationBarrier(); //by YS
+
+	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+			if (Grids[grid1]->GridData->GetGravitatingMassField()[0]==NULL) 
+				fprintf(stdout,"\nProc:%d, Grav Field is Null.\n", MyProcessorNumber); //by YS
+			else
+				fprintf(stdout,"\nProc:%d, Grav Field: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassField()[0][0]); //by YS
+			if (Grids[grid1]->GridData->GetGravitatingMassField()[1]==NULL) 
+				fprintf(stdout,"\nProc:%d, Grav Field No Star is Null.\n", MyProcessorNumber); //by YS
+			else
+				fprintf(stdout,"Proc:%d, Grav Field NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassField()[1][0]);//by YS
+		}
+	}
+
+
+
+
+
+
+
+	CommunicationBarrier(); //by YS
+
+
+
+
 	/************************************************************************/
 	/* Copy overlapping mass fields to ensure consistency and B.C.'s. */
 
@@ -366,6 +602,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		CommunicationReceiveIndex = 0;
 		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
 
+		fprintf(stdout,"4-8'\n"); // by YS
 #ifdef FAST_SIB
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
@@ -384,7 +621,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 							MetaData->RightFaceBoundaryCondition,
 							&grid::CopyOverlappingMassField);
 #endif
-	fprintf(stdout,"4-9\n"); // by YS
+		fprintf(stdout,"4-9\n"); // by YS
 
 		CommunicationDirection = COMMUNICATION_SEND;
 #ifdef FAST_SIB
@@ -411,6 +648,93 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	LCAPERF_STOP("CopyOverlappingMassField");
 	fprintf(stdout,"4-10\n"); // by YS
 
+
+#ifdef NBODY
+	/************************************************************************/
+	// No Star Starts
+	/************************************************************************/
+	/* Copy overlapping mass fields to ensure consistency and B.C.'s. */
+
+	//  if (level > 0)
+
+	if (traceMPI) 
+		fprintf(tracePtr, "PrepareDensityField: P(%"ISYM"): COMF1 (send)\n", 
+				MyProcessorNumber);
+
+	TIME_MSG("CopyOverlappingMassField");
+	LCAPERF_START("CopyOverlappingMassField");
+	for (StartGrid = 0; StartGrid < NumberOfGrids; StartGrid += GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+		CommunicationReceiveIndex = 0;
+		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+
+#ifdef FAST_SIB
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
+				Grids[grid1]->GridData->
+					CheckForOverlap(SiblingList[grid1].GridList[grid2],
+
+							MetaData->LeftFaceBoundaryCondition,
+							MetaData->RightFaceBoundaryCondition,
+							&grid::CopyOverlappingMassFieldNoStar);
+#else
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			for (grid2 = 0; grid2 < NumberOfGrids; grid2++)
+				Grids[grid1]->GridData->
+					CheckForOverlap(Grids[grid2]->GridData,
+							MetaData->LeftFaceBoundaryCondition,
+							MetaData->RightFaceBoundaryCondition,
+							&grid::CopyOverlappingMassFieldNoStar);
+#endif
+		fprintf(stdout,"4-9\n"); // by YS
+
+		CommunicationDirection = COMMUNICATION_SEND;
+#ifdef FAST_SIB
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
+				Grids[grid1]->GridData->
+					CheckForOverlap(SiblingList[grid1].GridList[grid2],
+							MetaData->LeftFaceBoundaryCondition,
+							MetaData->RightFaceBoundaryCondition,
+							&grid::CopyOverlappingMassFieldNoStar);
+#else
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+			for (grid2 = 0; grid2 < NumberOfGrids; grid2++)
+				Grids[grid1]->GridData->
+					CheckForOverlap(Grids[grid2]->GridData,
+							MetaData->LeftFaceBoundaryCondition,
+							MetaData->RightFaceBoundaryCondition,
+							&grid::CopyOverlappingMassFieldNoStar);
+#endif
+
+		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
+
+	} // ENDFOR grid batches
+	LCAPERF_STOP("CopyOverlappingMassField");
+	fprintf(stdout,"4-10\n"); // by YS
+
+	/************************************************************************/
+	// No Star Ends
+	/************************************************************************/
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #ifdef FORCE_BUFFER_PURGE
 	CommunicationBufferPurge();
 #endif
@@ -422,10 +746,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
 
 
-	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
-		fprintf(stdout,"\nGrav Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[0][0]); //by YS
-		fprintf(stdout,"Grav Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[1][0]);//by YS
-	}
+
 
 	/************************************************************************/
 	/* Here Active particles have the opportunity to deposit mass into the
@@ -462,9 +783,30 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	CommunicationBarrier();// by Jo
 	fprintf(stdout,"4-11"); // by YS
+
+
+
+	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+			if (Grids[grid1]->GridData->GetPotentialField()[0]==NULL) 
+				fprintf(stdout,"\nProc:%d, Grav Field is Null.\n", MyProcessorNumber); //by YS
+			else
+				fprintf(stdout,"\nProc:%d, Grav Field: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetPotentialField()[0][0]); //by YS
+			if (Grids[grid1]->GridData->GetPotentialField()[1]==NULL) 
+				fprintf(stdout,"\nProc:%d, Grav Field No Star is Null.\n", MyProcessorNumber); //by YS
+			else
+				fprintf(stdout,"Proc:%d, Grav Field NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetPotentialField()[1][0]);//by YS
+		}
+	}
+
+
+
+
+
+
 	/************************************************************************/
 	/* Compute a first iteration of the potential and share BV's. */
-
 	int iterate;
 	if (level > 0) {
 		LCAPERF_START("SolveForPotential");
@@ -481,13 +823,16 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 				if (CopyGravPotential)
 					Grids[grid1]->GridData->CopyPotentialToBaryonField();
 			}
-	fprintf(stdout,"4-12"); // by YS
+			fprintf(stdout,"4-12"); // by YS
 
 			if (traceMPI) fprintf(tracePtr, "ITPOT post-recv\n");
 
 #ifdef FORCE_MSG_PROGRESS 
 			CommunicationBarrier();
 #endif
+
+
+
 
 			TIME_MSG("CopyPotentialField");
 			for (StartGrid = 0; StartGrid < NumberOfGrids; 
@@ -532,7 +877,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 									&grid::CopyPotentialField);
 #endif
 
-	fprintf(stdout,"4-13"); // by YS
+				fprintf(stdout,"4-13"); // by YS
 #ifndef BITWISE_IDENTICALITY
 #ifdef FORCE_MSG_PROGRESS 
 				CommunicationBarrier();
@@ -577,12 +922,121 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 				CommunicationReceiveHandler();
 #endif
 
+
+
+
+
+#ifdef NBODY
+/******************************************************************************************/
+				//No Star Starts
+/******************************************************************************************/
+#ifdef BITWISE_IDENTICALITY
+				CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
+#else
+				CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+#endif
+				CommunicationReceiveIndex = 0;
+				CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+#ifdef FAST_SIB
+				for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+
+					//fprintf(stderr, "#SIBSend on cpu %"ISYM": %"ISYM"\n", MyProcessorNumber, SiblingList[grid1].NumberOfSiblings);
+
+					// for (grid2 = SiblingList[grid1].NumberOfSiblings-1; grid2 = 0; grid2--)
+					for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
+						Grids[grid1]->GridData->
+							CheckForOverlap(SiblingList[grid1].GridList[grid2],
+									MetaData->LeftFaceBoundaryCondition,
+									MetaData->RightFaceBoundaryCondition,
+									&grid::CopyPotentialFieldNoStar);
+
+					grid2 = grid1;
+					Grids[grid1]->GridData->
+						CheckForOverlap(Grids[grid2]->GridData,
+								MetaData->LeftFaceBoundaryCondition,
+								MetaData->RightFaceBoundaryCondition,
+								&grid::CopyPotentialFieldNoStar);
+
+				} // ENDFOR grid1
+#else
+				for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+					for (grid2 = 0; grid2 < NumberOfGrids; grid2++)
+						Grids[grid1]->GridData->
+							CheckForOverlap(Grids[grid2]->GridData,
+									MetaData->LeftFaceBoundaryCondition,
+									MetaData->RightFaceBoundaryCondition,
+									&grid::CopyPotentialFieldNoStar);
+#endif
+
+				fprintf(stdout,"4-13"); // by YS
+#ifndef BITWISE_IDENTICALITY
+#ifdef FORCE_MSG_PROGRESS 
+				CommunicationBarrier();
+#endif
+
+				if (traceMPI) fprintf(tracePtr, "ITPOT send\n");
+
+				CommunicationDirection = COMMUNICATION_SEND;
+
+
+#ifdef FAST_SIB
+				for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+
+					//fprintf(stderr, "#SIBRecv on cpu %"ISYM": %"ISYM"\n", MyProcessorNumber, SiblingList[grid1].NumberOfSiblings);
+
+					// for (grid2 = SiblingList[grid1].NumberOfSiblings-1; grid2 = 0; grid2--)
+					for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
+						Grids[grid1]->GridData->
+							CheckForOverlap(SiblingList[grid1].GridList[grid2],
+									MetaData->LeftFaceBoundaryCondition,
+									MetaData->RightFaceBoundaryCondition,
+									&grid::CopyPotentialFieldNoStar);
+
+					grid2 = grid1;
+					Grids[grid1]->GridData->
+						CheckForOverlap(Grids[grid2]->GridData,
+								MetaData->LeftFaceBoundaryCondition,
+								MetaData->RightFaceBoundaryCondition,
+								&grid::CopyPotentialFieldNoStar);
+
+				} // ENDFOR grid1
+#else
+				for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
+					for (grid2 = 0; grid2 < NumberOfGrids; grid2++)
+						Grids[grid1]->GridData->
+							CheckForOverlap(Grids[grid2]->GridData,
+									MetaData->LeftFaceBoundaryCondition,
+									MetaData->RightFaceBoundaryCondition,
+									&grid::CopyPotentialFieldNoStar);
+#endif
+
+				CommunicationReceiveHandler();
+#endif
+
+
+
+/******************************************************************************************/
+				//No Star Ends
+/******************************************************************************************/
+#endif // ENDIF nbody
 			} // ENDFOR grid batches
 		} // ENDFOR iterations
 		CopyPotentialFieldAverage = 0;
 		TIMER_STOP("SolveForPotential");
 		LCAPERF_STOP("SolveForPotential");
 	} // ENDIF level > 0
+
+
+
+
+
+
+
+
+
+
+
+
 
 	fprintf(stdout,"4-14"); // by YS
 	/* if level > MaximumGravityRefinementLevel, then do final potential
@@ -606,7 +1060,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 						 DIFFERENCE_TYPE_NORMAL, MaximumGravityRefinementLevel);
 			}
 
-	fprintf(stdout,"4-15"); // by YS
+		fprintf(stdout,"4-15"); // by YS
 		/* Interpolate potential for reallevel grids from coarser grids. */
 
 		if (!CopyGravPotential) {
@@ -657,10 +1111,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	CommunicationBarrier();// by YS Jo
 	fprintf(stdout,"4-16"); // by YS
-	for (grid1 = 0; grid1< NumberOfGrids; grid1++) {
-		fprintf(stdout,"\nPotential Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[0][0]); //by YS
-		fprintf(stdout,"Potential Field: %e\n", Grids[grid1]->GridData->GetPotentialField()[1][0]); //by YS
-	}
 
 
 	// --------------------------------------------------

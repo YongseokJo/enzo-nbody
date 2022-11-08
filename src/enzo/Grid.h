@@ -1112,6 +1112,10 @@ class grid
 
 		int CopyPotentialField(grid *GridOnSameLevel, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
+#ifdef NBODY
+		int CopyPotentialFieldNoStar(grid *GridOnSameLevel, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
 
 		/* baryons: check for coincident zone from the (old) grid in the argument
 			 (gg #7).  Return SUCCESS or FAIL. */
@@ -1182,7 +1186,10 @@ class grid
 		/* Gravity & baryons: Copy the parent density field to the extra boundary
 			 region of GravitatingMassField (if any). */
 
-		int CopyParentToGravitatingFieldBoundary(grid *ParentGrid, bool NoStar);
+		int CopyParentToGravitatingFieldBoundary(grid *ParentGrid);
+#ifdef NBODY
+		int CopyParentToGravitatingFieldBoundaryNoStar(grid *ParentGrid);
+#endif
 
 		/* Gravity & Particles: allocate & clear the GravitatingMassFieldParticles. */
 
@@ -1223,9 +1230,17 @@ class grid
 		int CopyOverlappingMassField(grid *TargetGrid, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
 
+#ifdef NBODY
+		int CopyOverlappingMassFieldNoStar(grid *TargetGrid, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
+
 		/* Gravity: Allocate and make initial guess for PotentialField. */
 
 		int PreparePotentialField(grid *ParentGrid);
+#ifdef NBODY
+		int PreparePotentialFieldNoStar(grid *ParentGrid);
+#endif
 
 		/* Gravity: Allocate and make initial guess for PotentialField. */
 
@@ -1493,9 +1508,13 @@ class grid
 
 		/* Particles: Deposit particles in the specified field (DepositField) of the
 			 TargetGrid at the given time. */
-
+#ifdef NBODY
+		int DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime, 
+				int DepositField, bool NoStar);
+#else
 		int DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime, 
 				int DepositField);
+#endif
 
 		int DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
 				bool BothFlags);
@@ -1505,6 +1524,10 @@ class grid
 
 		int AddOverlappingParticleMassField(grid *TargetGrid, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
+#ifdef NBODY
+		int AddOverlappingParticleMassFieldNoStar(grid *TargetGrid, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
 
 		/* Particles: Apply particle acceleration to velocity for particles in this 
 			 grid
@@ -2684,6 +2707,9 @@ class grid
 								/* Adjust the gravity source terms for comoving coordinates. */
 
 								int ComovingGravitySourceTerm();
+#ifdef NBODY
+								int ComovingGravitySourceTermNoStar();
+#endif
 
 								/* Star Particle handler routine. */
 

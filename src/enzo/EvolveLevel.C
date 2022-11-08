@@ -136,10 +136,6 @@ int CallProblemSpecificRoutines(TopGridData * MetaData, HierarchyEntry *ThisGrid
 #ifdef FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
-#ifdef NBODY
-int PrepareDensityFieldNoStar(LevelHierarchyEntry *LevelArray[],
-		int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);
-#endif
 #else  // !FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		int level, TopGridData *MetaData, FLOAT When);

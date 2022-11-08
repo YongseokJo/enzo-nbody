@@ -105,7 +105,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 			}
 		}
 		printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
-				ReceivesCompletedToDate, NumberOfCompleteRequests);
+				ReceivesCompletedToDate, NumberOfCompleteRequests); //by YS
 		//fprintf(stdout,"4-3-1-1\n");  // by YS
 
 		CommunicationTime += ReturnWallTime() - time1;
@@ -207,18 +207,23 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 						break;
 
 					case 3:
+#ifdef NBODY
 						errcode = grid_one->DepositParticlePositions(grid_two,
 								CommunicationReceiveArgument[0][index],
-								CommunicationReceiveArgumentInt[0][index]);
+								CommunicationReceiveArgumentInt[0][index], NoStar);
+#endif
 						break;
 
-					case 4:
-						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two,NoStar);
-						break;
 
 					case 5:
 						errcode = grid_one->DepositBaryons(grid_two,
 								CommunicationReceiveArgument[0][index],NoStar);
+						break;
+
+
+//
+					case 4:
+						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two);
 						break;
 
 					case 6:
@@ -237,6 +242,29 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 					case 9:
 						errcode = grid_one->CopyPotentialField(grid_two, EdgeOffset);
 						break;
+
+#ifdef NBODY
+					case 104:
+						errcode = grid_one->CopyParentToGravitatingFieldBoundaryNoStar(grid_two);
+						break;
+
+					case 106:
+						errcode = grid_one->AddOverlappingParticleMassFieldNoStar(grid_two,
+								EdgeOffset);
+						break;
+
+					case 107:
+						errcode = grid_one->PreparePotentialFieldNoStar(grid_two);
+						break;
+
+					case 108:
+						errcode = grid_one->CopyOverlappingMassFieldNoStar(grid_two, EdgeOffset);
+						break;
+
+					case 109:
+						errcode = grid_one->CopyPotentialFieldNoStar(grid_two, EdgeOffset);
+						break;
+#endif
 
 					case 10:
 						errcode = grid_one->InterpolateAccelerations(grid_two);

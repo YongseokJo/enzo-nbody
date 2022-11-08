@@ -41,7 +41,7 @@ void my_exit(int status);
  
 int WriteStringAttr(hid_t dset_id, char *Alabel, char *String, FILE *log_fptr);
  
-int  DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0);
+int  DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0, bool NoStar=FALSE);
 int  CopyOverlappingZones(grid* CurrentGrid, TopGridData *MetaData,
 			 LevelHierarchyEntry *LevelArray[], int level);
 int  CopyOverlappingParticleMassFields(grid* CurrentGrid,
@@ -236,7 +236,7 @@ int OutputAsParticleData(TopGridData &MetaData,
 	CopyOverlappingParticleMassFields(Temp->GridData, &MetaData,
 					  LevelArray, level);
 	if (Temp->GridHierarchyEntry->ParentGrid != NULL)
-	  Temp->GridHierarchyEntry->ParentGrid->GridData->DepositParticlePositions(Temp->GridData, Temp->GridHierarchyEntry->ParentGrid->GridData->ReturnTime(), GRAVITATING_MASS_FIELD_PARTICLES);
+	  Temp->GridHierarchyEntry->ParentGrid->GridData->DepositParticlePositions(Temp->GridData, Temp->GridHierarchyEntry->ParentGrid->GridData->ReturnTime(), GRAVITATING_MASS_FIELD_PARTICLES, FALSE);
       }
  
       /* Initialize the UNDER_SUBGRID_FIELD for this grid. */

@@ -65,9 +65,13 @@ double ReturnWallTime(void);
 	 the MASS_FLAGGING_FIELD.  Only set in Grid_SetFlaggingField. */
 
 float DepositParticleMaximumParticleMass = 0;
-
+#ifdef NBODY
+int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
+		int DepositField, bool NoStar)
+#else
 int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		int DepositField)
+#endif
 {
 
 	/* Return if this doesn't concern us. */
@@ -91,10 +95,8 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	float TimeDifference = 0;
 	FLOAT LeftEdge[MAX_DIMENSION], OriginalLeftEdge[MAX_DIMENSION];
 	float *DepositFieldPointer, *OriginalDepositFieldPointer;
-#ifdef NBODY
-	float *DepositFieldPointerNoStar, *OriginalDepositFieldPointerNoStar; // by YS Jo
-	float *ParticleMassPointerNoStar;    
-#endif
+	int NoStarIndex = NoStar ? 1 : 0;
+
 
 
 	/* 1) GravitatingMassField. */
@@ -104,8 +106,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassField(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer       = TargetGrid->GravitatingMassField[0];
-		DepositFieldPointerNoStar = TargetGrid->GravitatingMassField[1];
+		DepositFieldPointer       = TargetGrid->GravitatingMassField[NoStarIndex];
 #else
 		DepositFieldPointer       = TargetGrid->GravitatingMassField;
 #endif
@@ -124,8 +125,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassFieldParticles(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer       = TargetGrid->GravitatingMassFieldParticles[0];
-		DepositFieldPointerNoStar = TargetGrid->GravitatingMassFieldParticles[1];
+		DepositFieldPointer       = TargetGrid->GravitatingMassFieldParticles[NoStarIndex];
 #else
 		DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles;
 #endif
@@ -181,10 +181,6 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			OriginalDimension[dim] = Dimension[dim];
 		}
 		OriginalDepositFieldPointer = DepositFieldPointer;
-#ifdef NBODY
-		if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-			OriginalDepositFieldPointerNoStar = DepositFieldPointerNoStar;
-#endif
 
 
 		/* Resize the deposit region so it is just big enough to contain the
@@ -229,23 +225,11 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		if (CommunicationDirection == COMMUNICATION_RECEIVE) {
 			DepositFieldPointer = 
 				CommunicationReceiveBuffer[CommunicationReceiveIndex];
-#ifdef NBODY
-		if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-				DepositFieldPointerNoStar = CommunicationReceiveBufferNoStar[CommunicationReceiveIndex];
-#endif
 		} else {
 			DepositFieldPointer = new float[size];
-#ifdef NBODY
-			if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-				DepositFieldPointerNoStar = new float[size];
-#endif
 			if (MyProcessorNumber == ProcessorNumber) {
 				for (i = 0; i < size; i++) {
 					DepositFieldPointer[i] = 0.0;
-#ifdef NBODY
-					if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-						DepositFieldPointerNoStar[i] = 0.0;
-#endif
 				}
 			}
 		}
@@ -253,7 +237,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 	} // ENDIF different processors
 
-	fprintf(stdout,"4-2-1\n");  // by YS
+	fprintf(stdout,"\nProc:%d 4-2-1\n", MyProcessorNumber); // by YS
 	if (MyProcessorNumber == ProcessorNumber) {
 
 		/* If using CIC-mode deposit, then set cloudsize equal to cellsize. */
@@ -301,30 +285,27 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
 			ParticleMassPointer = ParticleMassTemp;
 		}
-		else
-			ParticleMassPointer = ParticleMass;
 #ifdef NBODY
-		if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES
-				|| DepositField == GRAVITATING_MASS_FIELD) {
-			/* ---------------------------------------------------- */
-			/* Here, I set the masses of star particles to zero so that
-			 * they cannot contribute to the gravitational calculation*/
-			//ParticleMassPointer = new float[NumberOfParticles];
-			ParticleMassPointerNoStar = new float[NumberOfParticles];
-			for (i = 0; i < NumberOfParticles; i++) {
+		else if (NoStar) {
 #define NBODY_NOSTAR_GRAVITY
 #ifdef NBODY_NOSTAR_GRAVITY
-				ParticleMassPointerNoStar[i] = ParticleMass[i]*MassFactor;
+			ParticleMassPointer = ParticleMass;
 #else
+			ParticleMassPointer = new float[NumberOfParticles];
+			for (i = 0; i < NumberOfParticles; i++) {
 				if (ParticleType[i] == PARTICLE_TYPE_STAR) {
-					ParticleMassPointerNoStar[i] = 0.0;
+					ParticleMassPointer[i] = 0.0;
 				} else {
-					ParticleMassPointerNoStar[i] = ParticleMass[i]*MassFactor;
+					ParticleMassPointer[i] = ParticleMass[i]*MassFactor;
 				}
-#endif
 			}
+#endif
 		}
 #endif
+		else {
+			ParticleMassPointer = ParticleMass;
+		}
+
 
 
 		/* If the target field is MASS_FLAGGING_FIELD, then set masses of
@@ -347,7 +328,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		//MyProcessor == Target->ProcessorNumber != this->ProcessorNumber
 		this->UpdateParticlePosition(TimeDifference, TRUE);
 
-		fprintf(stdout,"4-2-2\n");  // by YS
+		fprintf(stdout,"\nProc:%d 4-2-2\n", MyProcessorNumber); // by YS
 		/*
 
 			 Right now all active particles are unsmoothed.
@@ -392,7 +373,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 		}
 
-		fprintf(stdout,"4-2-3\n");  // by YS
+		fprintf(stdout,"\nProc:%d 4-2-3\n", MyProcessorNumber); // by YS
 		/* Deposit particles. */
 
 		if (SmoothField == FALSE) {
@@ -408,28 +389,12 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 					(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
 					 &GridRank, &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, 
 					 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize);
-#ifdef NBODY
-					if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-						PFORTRAN_NAME(ngp_deposit)
-							(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
-							 &GridRank, &NumberOfParticles, ParticleMassPointerNoStar, DepositFieldPointerNoStar, 
-							 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize);
-#endif
 			} else {
 				fprintf(stdout,"4-2-3-2\n");  // by YS
 				PFORTRAN_NAME(cic_deposit)
 					(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
 					 &GridRank, &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, 
 					 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize, &FCloudSize);
-#ifdef NBODY
-					if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) {
-						fprintf(stdout,"4-2-3-2Nostar\n");  // by YS
-						PFORTRAN_NAME(cic_deposit)
-							(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
-							 &GridRank, &NumberOfParticles, ParticleMassPointerNoStar, DepositFieldPointerNoStar, 
-							 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize, &FCloudSize);
-					}
-#endif
 			}
 
 		} else {
@@ -445,13 +410,6 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				 &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, LeftEdge, 
 				 Dimension, Dimension+1, Dimension+2, &FCellSize, 
 				 &DepositPositionsParticleSmoothRadius);
-#ifdef NBODY
-					if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-						PFORTRAN_NAME(smooth_deposit)
-							(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
-							 &GridRank, &NumberOfParticles, ParticleMassPointerNoStar, DepositFieldPointerNoStar, 
-							 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize, &DepositPositionsParticleSmoothRadius);
-#endif
 		}
 		fprintf(stdout,"4-2-3-4\n");  // by YS
 
@@ -513,7 +471,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	} // ENDIF this processor
 
 
-	fprintf(stdout,"4-2-4\n");  // by YS
+		fprintf(stdout,"\nProc:%d 4-2-4\n", MyProcessorNumber); // by YS
 
 	/* If any girds are on different processors, copy deposited field back to the
 		 target grid and add to the correct field. */
@@ -545,23 +503,11 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			CommunicationBufferedSend(DepositFieldPointer, Count, DataType, 
 					Dest, MPI_SENDREGION_TAG, 
 					MPI_COMM_WORLD, BUFFER_IN_PLACE);
-#ifdef NBODY
-			if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-				CommunicationBufferedSend(DepositFieldPointerNoStar, Count, DataType, 
-						Dest, MPI_SENDREGION_NOSTAR_TAG, 
-						MPI_COMM_WORLD, BUFFER_IN_PLACE);
-#endif
 		}
 		if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
 				CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
 			MPI_Recv(DepositFieldPointer, Count, DataType, Source, 
 					MPI_SENDREGION_TAG, MPI_COMM_WORLD, &status);
-
-#ifdef NBODY
-			if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD) 
-			MPI_Recv(DepositFieldPointerNoStar, Count, DataType, Source, 
-					MPI_SENDREGION_NOSTAR_TAG, MPI_COMM_WORLD, &status);
-#endif
 		}
 
 		if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
@@ -573,19 +519,9 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				DepositFieldPointer;
 			CommunicationReceiveDependsOn[CommunicationReceiveIndex] =
 				CommunicationReceiveCurrentDependsOn;
-#ifdef NBODY
-			if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD)  {
-				MPI_Irecv(DepositFieldPointerNoStar, Count, DataType, Source, 
-						MPI_SENDREGION_NOSTAR_TAG, MPI_COMM_WORLD, 
-						CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
-				CommunicationReceiveBufferNoStar[CommunicationReceiveIndex] = 
-					DepositFieldPointerNoStar;
-
-			}
-#endif
 			CommunicationReceiveIndex++;
 		}
-		fprintf(stdout,"4-2-5\n");  // by YS
+		fprintf(stdout,"\nProc:%d 4-2-5\n", MyProcessorNumber); // by YS
 
 
 		CommunicationTime += ReturnWallTime() - time1;
@@ -603,24 +539,14 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 					for (i = 0; i < Dimension[0]; i++) {
 						OriginalDepositFieldPointer[index2++] +=
 							DepositFieldPointer[index1++];
-#ifdef NBODY
-						if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES || DepositField == GRAVITATING_MASS_FIELD)  {
-							OriginalDepositFieldPointerNoStar[index2++] +=
-								DepositFieldPointerNoStar[index1++];
-						}
-#endif
-
 					}
 				}
 
 			delete [] DepositFieldPointer;
-#ifdef NBODY
-			delete [] DepositFieldPointerNoStar;
-#endif
 		} // end: if (MyProcessorNumber == TargetGrid->ProcessorNumber)
 
 	} // end: If (ProcessorNumber != TargetGrid->ProcessorNumber)
-	fprintf(stdout,"4-2-6\n");  // by YS
+	fprintf(stdout,"\nProc:%d 4-2-6\n", MyProcessorNumber); // by YS
 
 	if (MyProcessorNumber == ProcessorNumber) {
 

@@ -44,7 +44,7 @@
 
 int ReadMetalCoolingRatios(char *filename);
 void WriteListOfFloats(FILE *fptr, int N, float floats[]);
-int  DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0);
+int  DepositParticleMassField(HierarchyEntry *Grid, FLOAT Time = -1.0, bool NoStar=FALSE);
 int  CopyOverlappingZones(grid* CurrentGrid, TopGridData *MetaData, 
 			 LevelHierarchyEntry *LevelArray[], int level);
 int  CopyOverlappingParticleMassFields(grid* CurrentGrid, 

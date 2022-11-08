@@ -653,8 +653,13 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 #ifdef NBODY
 				this->ClearGravitatingMassFieldParticlesNoStar();
 #endif
+#ifdef NBODY
+				this->DepositParticlePositions(this, Time,
+						GRAVITATING_MASS_FIELD_PARTICLES, FALSE);
+#else
 				this->DepositParticlePositions(this, Time,
 						GRAVITATING_MASS_FIELD_PARTICLES);
+#endif
 			}
 
 			/* If present, write out the GravitatingMassFieldParticles. */
