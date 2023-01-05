@@ -127,8 +127,7 @@ class grid
 		float *ParticleAcceleration[MAX_DIMENSION+1];  // 
 																									 //
 #ifdef NBODY
-#define HERMITE_ORDER 4 //by YS
-		float *StarBackGroundAcceleration[MAX_DIMENSION+1][HERMITE_ORDER];  //  by YS
+		float *ParticleAccelerationNoStar[MAX_DIMENSION+1];  //  by YS
 #endif
 		float *ParticleMass;                     // pointer to mass array
 		PINT  *ParticleNumber;                   // unique identifier
@@ -1291,13 +1290,12 @@ class grid
 		int InterpolateParticlePositions(grid *FromGrid, int DifferenceType);
 
 		/* Generic routine for interpolating particles/grid. */
-		//#ifdef NBODY
-		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field[],  //by YS
-				int Number);
-		//#else
 		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field, 
 				int Number);
-		//#endif
+#ifdef NBODY
+		int InterpolatePositionsNoStar(FLOAT *Positions[], int dim, float *Field, 
+				int Number);
+#endif
 
 		/* Gravity: Delete GravitatingMassField. */
 
@@ -1579,10 +1577,8 @@ class grid
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
-				for (int j = 0; j < HERMITE_ORDER; j++) {
-					delete [] StarBackGroundAcceleration[dim][j];
-					StarBackGroundAcceleration[dim][j] = NULL;
-				}
+				delete [] ParticleAccelerationNoStar[dim];
+				ParticleAccelerationNoStar[dim] = NULL;
 #endif
 				//#endif
 				delete [] ActiveParticleAcceleration[dim];
@@ -1751,6 +1747,83 @@ class grid
 
 		int ChangeParticleTypeBeforeSN(int _type, int level, 
 				int *ParticleBufferSize=NULL);
+
+
+#ifdef NBODY
+		int ReturnNumberOfNbodyParticles(void){
+			int i, count=0;
+			//fprintf(stderr,"In the Return\n");
+			//fprintf(stderr,"NOP=%d\n", NumberOfParticles);
+			if (MyProcessorNumber == ProcessorNumber) {
+				for (i=0; i<NumberOfParticles; i++) {
+					//fprintf(stderr,"ParticleType: %d", ParticleType[i]);
+					if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+						count++;
+					}
+				}
+			}
+			return count;
+		}
+
+
+		// This routine may take some times
+		int CopyNbodyParticles(int *count, int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[],
+				float *NbodyParticleAccelerationTemp[MAX_DIMENSION][HERMITE_ORDER]) {
+
+			fprintf(stderr,"In the Copy1\n");
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			fprintf(stderr,"In the Copy2\n");
+			for (int i=0; i < NumberOfParticles; i++) {
+
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					fprintf(stderr,"here1? count =%d\n",*count);
+					fprintf(stderr,"here1? part =%f\n",ParticleMass[i]);
+					fprintf(stderr,"here1? nbody =%f\n",NbodyParticleMassTemp[*count]);
+					NbodyParticleMassTemp[*count] = ParticleMass[i];
+					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					fprintf(stderr,"here2?\n");
+
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+
+						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i];
+						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
+						fprintf(stderr,"here3?\n");
+						if (ParticleAcceleration[dim] == NULL) 
+							fprintf(stderr,"Why the hell is it NULL!!!\n");
+						fprintf(stderr,"here3? nbody =%f\n",ParticleAcceleration[dim][i]);
+						fprintf(stderr,"here3? nbody =%f\n",ParticleAccelerationNoStar[dim][i]);
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAccelerationNoStar[dim][i];
+						fprintf(stderr,"here4?\n");
+
+					} // ENDFOR dimensions
+
+					// Find ID and copy it to temp array for matching particles
+					for (int j=0; j < NumberOfNbodyParticles; j++) {
+
+						if (ParticleNumber[i] == NbodyParticleID[j]) {
+
+							for (int dim=0; dim<MAX_DIMENSION; dim++)
+								for (int order=0; order<HERMITE_ORDER;order++)
+									NbodyParticleAccelerationTemp[dim][order][*count] = NbodyParticleAcceleration[dim][order][j];
+
+						} // ENDIF matched nbody particles
+
+					} // ENDFOR number of nbody particles
+
+					*count++;
+
+				} // ENDIF nbody particles
+
+			} // ENDFOR number of particles
+
+			return SUCCESS;
+		}
+
+#endif
+
 
 		// -------------------------------------------------------------------------
 		// Communication functions
@@ -2758,6 +2831,8 @@ class grid
 #else
 								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField);
 #endif
+
+
 
 								/* Find the Jeans mass for the grid */
 								float CalculateJeansMass(int DensNum, float *T, float DensityUnits);

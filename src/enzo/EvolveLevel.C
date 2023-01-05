@@ -109,6 +109,10 @@ void RunEventHooks(char *, HierarchyEntry *Grid[], TopGridData &MetaData) {}
 #define IMPLICIT_MACRO 
 #endif
 
+#ifdef NBODY
+int NbodyParticleFindAll(LevelHierarchyEntry *LevelArray[],int level);
+#endif
+
 #define EXTRA_OUTPUT_MACRO(A,B) ExtraOutput(A,LevelArray,MetaData,level,Exterior IMPLICIT_MACRO,B);
 int ExtraOutput(int output_flag, LevelHierarchyEntry *LevelArray[],TopGridData *MetaData, int level, ExternalBoundary *Exterior
 #ifdef TRANSFER
@@ -454,6 +458,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 				ClusterSMBHSumGasMass(Grids, NumberOfGrids, level);
 
+				fprintf(stdout,"3-1\n");  // by YS
 #ifdef TRANSFER
 				/* Initialize the radiative transfer */
 
@@ -472,6 +477,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #endif /* TRANSFER */
 
 				/* trying to clear Emissivity here after FLD uses it, doesn't work */
+				fprintf(stdout,"3-2\n");  // by YS
 
 				CreateFluxes(Grids,SubgridFluxesEstimate,NumberOfGrids,NumberOfSubgrids);
 
@@ -614,7 +620,6 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #endif
 
 
-					fprintf(stdout,"10\n");  // by YS
 					RK2SecondStepBaryonDeposit = 1; // set this to (0/1) to (not use/use) this extra step  //#####
 					if (RK2SecondStepBaryonDeposit && SelfGravity && UseHydro) {  
 
@@ -682,10 +687,24 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					}//grid
 				}//RK hydro
 
+#ifdef NBODY
+				//if (level == MaximumRefinementLevel) {
+					fprintf(stdout,"10\n");  // by YS
+					fprintf(stderr,"level=%d\n", level);  // by YS
+					fprintf(stderr,"NbodyParticleFindAll\n"); // by YS
+					/* Create a master list of all nbody particles */
+					if (NbodyParticleFindAll(LevelArray, level) == FAIL) {
+						ENZO_FAIL("Error in NbodyParticleFindAll.");
+					}
+				//}
+#endif
+
+
 				/* Solve the cooling and species rate equations. */
 
 				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
 					Grids[grid1]->GridData->MultiSpeciesHandler();
+
 
 					/* Update particle positions (if present). */
 
@@ -781,9 +800,16 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 				/* Finalize (accretion, feedback etc) for Active particles. */
 				ActiveParticleFinalize(Grids, MetaData, NumberOfGrids, LevelArray,
 						level, NumberOfNewActiveParticles);
+
+
+
+
 				/* Finalize (accretion, feedback, etc.) star particles */
 				StarParticleFinalize(Grids, MetaData, NumberOfGrids, LevelArray,
 						level, AllStars, TotalStarParticleCountPrevious, OutputNow);
+
+
+
 
 				/* For each grid: a) interpolate boundaries from the parent grid.
 					 b) copy any overlapping zones from siblings. */

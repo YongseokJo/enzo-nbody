@@ -717,14 +717,20 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				printf("Entering AgoraRestart InitializeParticles\n");
 
 			// Determine the number of particles of each type
-			int nBulge, nDisk, nHalo, nParticles;
+			int nBulge, nDisk, nHalo, nNbody, nParticles;
 			nBulge = nlines("bulge.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Bulge Particles %"ISYM"\n", nBulge);
 			nDisk = nlines("disk.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Disk Particles %"ISYM"\n", nDisk);
 			nHalo = nlines("halo.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Halo Particles %"ISYM"\n", nHalo);
+#ifdef NBODY
+			nNbody = nlines("nbody.dat");
+			if(debug) fprintf(stderr, "InitializeParticles: Number of Nbody Particles %"ISYM"\n", nNbody);
+			nParticles = nBulge + nDisk + nHalo + nNbody;
+#else
 			nParticles = nBulge + nDisk + nHalo;
+#endif
 			if(debug) fprintf(stderr, "InitializeParticles: Total Number of Particles %"ISYM"\n", nParticles);
 
 
@@ -760,6 +766,11 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			this->ReadParticlesFromFile(
 					Number, Type, Position, Velocity, Mass,
 					"halo.dat", PARTICLE_TYPE_DARK_MATTER, count, dx);
+#ifdef NBODY
+			this->ReadParticlesFromFile(
+					Number, Type, Position, Velocity, Mass,
+					"nbody.dat", PARTICLE_TYPE_NBODY, count, dx);
+#endif
 
 			thisgrid->SetNumberOfParticles(count);
 			thisgrid->SetParticlePointers(Mass, Number, Type, Position,
@@ -767,6 +778,25 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			MetaData.NumberOfParticles = count;
 			if(debug) fprintf(stderr, "InitializeParticles: Set Number of Particles %"ISYM"\n", count);
 
+
+			/***
+			#ifdef NBODY2
+			int n=0;
+			for (int i=0;i<count;i++) {
+			if (Type == PARTICLE_TYPE_NBODY) {
+			NbodyStarMass[n] = Mass[i];
+			NbodyStarID[n]   = i;
+			for (int k=0;k<GridRank;j++) {
+			NbodyStarPosition[k][n] = Position[k][i];
+			NbodyStarVelocity[k][n] = Velocity[k][i];
+			}
+			}
+			for (int k=0;k<HERMITE_ORDER;j++)
+			NbodyStarAcceleration[k][n] = 0;
+			n++;
+			}
+			#endif
+			 ***/
 		}
 
 		float gauss_mass(

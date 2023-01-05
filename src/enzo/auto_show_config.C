@@ -28,7 +28,7 @@ void auto_show_config(FILE *fp) {
    fprintf (fp,"   CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : yes\n");
    fprintf (fp,"   CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : aggressive\n");
    fprintf (fp,"   CONFIG_TESTING  [testing-{yes,no}]                        : no\n");
-   fprintf (fp,"   CONFIG_PHOTON  [photon-{yes,no}]                          : yes\n");
+   fprintf (fp,"   CONFIG_PHOTON  [photon-{yes,no}]                          : no\n");
    fprintf (fp,"   CONFIG_HYPRE  [hypre-{yes,no}]                            : no\n");
    fprintf (fp,"   CONFIG_EMISSIVITY  [emissivity-{yes,no}]                  : no\n");
    fprintf (fp,"   CONFIG_USE_HDF4  [use-hdf4-{yes,no}]                      : no\n");

@@ -32,10 +32,8 @@ void grid::CleanUp()
  
   for (i = 0; i < MAX_DIMENSION; i++) {
 #ifdef NBODY
-		for (j = 0; j < HERMITE_ORDER;j++) {
-			delete [] StarBackGroundAcceleration[i][j];
-			StarBackGroundAcceleration[i][j] = NULL; 
-		}
+		delete [] ParticleAccelerationNoStar[i];
+		ParticleAccelerationNoStar[i] = NULL; 
 #endif
     delete [] ParticleAcceleration[i];
     ParticleAcceleration[i]      = NULL;
@@ -46,10 +44,8 @@ void grid::CleanUp()
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
 #ifdef NBODY
-		for (j = 0; j < HERMITE_ORDER;j++) {
-			delete [] StarBackGroundAcceleration[MAX_DIMENSION][j];
-			StarBackGroundAcceleration[MAX_DIMENSION][j] = NULL; 
-		}
+	delete [] ParticleAccelerationNoStar[MAX_DIMENSION];
+	ParticleAccelerationNoStar[MAX_DIMENSION] = NULL; 
 #endif
  
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {

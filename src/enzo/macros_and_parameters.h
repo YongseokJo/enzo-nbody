@@ -514,7 +514,7 @@ typedef long long int   HDF5_hid_t;
 
 /* Particle types (note: gas is a conceptual type) */
 
-#define NUM_PARTICLE_TYPES 11
+#define NUM_PARTICLE_TYPES 13
 
 #define PARTICLE_TYPE_RESET         -1
 #define PARTICLE_TYPE_GAS            0
@@ -529,6 +529,7 @@ typedef long long int   HDF5_hid_t;
 #define PARTICLE_TYPE_COLOR_STAR     9
 #define PARTICLE_TYPE_SIMPLE_SOURCE 10
 #define PARTICLE_TYPE_RAD           11
+#define PARTICLE_TYPE_NBODY         12  //by YS 
 
 #define CHILDRENPERPARENT           12
 
