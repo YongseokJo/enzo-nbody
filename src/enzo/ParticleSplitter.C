@@ -214,12 +214,6 @@ int FindTotalNumberOfParticles(LevelHierarchyEntry *LevelArray[])
 
 
 
-
-
-
-
-
-
 /* Record the star particle number on each grid; 
    mostly used in CommunicationUpdateStarParticleCount */
 

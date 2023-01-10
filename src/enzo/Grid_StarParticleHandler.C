@@ -1454,18 +1454,18 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
       }
  
 
-    /* Move any new particles into their new homes. */
- 
-    if (NumberOfNewParticles > 0) {
- 
-      if (debug)
-	printf("Grid_StarParticleHandler: New StarParticles = %"ISYM"\n", NumberOfNewParticles);
+		/* Move any new particles into their new homes. */
 
-      /* Set the particle numbers.  The correct indices will be assigned in 
-	 CommunicationUpdateStarParticleCount in StarParticleFinalize later.*/
- 
-      for (i = 0; i < NumberOfNewParticles; i++)
- 	tg->ParticleNumber[i] = INT_UNDEFINED;
+		if (NumberOfNewParticles > 0) {
+
+			if (debug)
+				printf("Grid_StarParticleHandler: New StarParticles = %"ISYM"\n", NumberOfNewParticles);
+
+			/* Set the particle numbers.  The correct indices will be assigned in 
+				 CommunicationUpdateStarParticleCount in StarParticleFinalize later.*/
+
+			for (i = 0; i < NumberOfNewParticles; i++)
+				tg->ParticleNumber[i] = INT_UNDEFINED;
  
       /* Move Particles into this grid (set cell size) using the fake grid. */
  

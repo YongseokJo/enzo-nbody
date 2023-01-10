@@ -90,6 +90,9 @@ int StarParticleFinalize(HierarchyEntry *Grids[], TopGridData *MetaData,
     ThisStar->UpdatePositionVelocity();
 
 
+
+
+
   /* Apply any stellar feedback onto the grids and add any gas to the
      accretion rates of the star particles */
 

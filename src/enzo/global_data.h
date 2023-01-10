@@ -39,6 +39,26 @@ class EnzoProblemType;
                           1 = Equalize processor memory count
                          2 = Load balance only on a node
 */
+
+
+
+#ifdef NBODY
+#define HERMITE_ORDER 4
+EXTERN int NumberOfNbodyParticles;
+EXTERN int NumberOfNbodyParticlesOld;
+EXTERN int *NbodyParticleID;
+EXTERN int *NbodyParticleIDOld;
+EXTERN float *NbodyParticleMass;
+EXTERN float *NbodyParticlePosition[MAX_DIMENSION];
+EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];
+EXTERN float *NbodyParticleAcceleration[MAX_DIMENSION][HERMITE_ORDER];
+EXTERN float *NbodyParticleAccelerationOld[MAX_DIMENSION][HERMITE_ORDER];
+EXTERN float *NbodyParticleAccelerationNoStar[MAX_DIMENSION];
+
+EXTERN bool NbodyFirst;
+#endif
+
+
 EXTERN int NumberOfGhostZones;
 EXTERN int LoadBalancing;
 EXTERN int LoadBalancingCycleSkip;
@@ -239,7 +259,8 @@ EXTERN int NumberOfBufferZones;
 
 /* The left and right boundaries of the entire computational domain. */
 
-EXTERN FLOAT DomainLeftEdge[MAX_DIMENSION], DomainRightEdge[MAX_DIMENSION];
+EXTERN FLOAT DomainLeftEdge[MAX_DIMENSION];
+EXTERN FLOAT DomainRightEdge[MAX_DIMENSION];
 
 /* Velocity of entire computational domain. */
 

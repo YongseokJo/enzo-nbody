@@ -53,15 +53,14 @@ grid::~grid()
     delete [] CellWidth[i];
     delete [] ParticlePosition[i];
     delete [] ParticleVelocity[i];
-#ifdef NBODY
     delete [] ParticleAcceleration[i];
+#ifdef NBODY
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
-		for (j = 0; j < HERMITE_ORDER; j++) {
-			delete StarBackGroundAcceleration[i][j];
+		if (ParticleAccelerationNoStar[i] != NULL) {
+			delete [] ParticleAccelerationNoStar[i];
 		}
 #else
-    delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i];
 #endif
     delete [] RandomForcingField[i];
@@ -112,9 +111,7 @@ grid::~grid()
   }
   delete ParticleAcceleration[MAX_DIMENSION];
 #ifdef NBODY
- for (j = 0; j < HERMITE_ORDER; j++) {
-			delete StarBackGroundAcceleration[MAX_DIMENSION][j];
-		}
+	delete ParticleAccelerationNoStar[MAX_DIMENSION];
 #endif
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];

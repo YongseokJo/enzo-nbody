@@ -313,16 +313,21 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
 
   // Set the number of particle attributes, if left unset
  
-  if (NumberOfParticleAttributes == INT_UNDEFINED ||
-      NumberOfParticleAttributes == 0) {
-    if (StarParticleCreation || StarParticleFeedback) {
-      NumberOfParticleAttributes = 3;
-      if (StarMakerTypeIaSNe) NumberOfParticleAttributes++;
-      if (StarMakerTypeIISNeMetalField) NumberOfParticleAttributes++;
-    } else {
-      NumberOfParticleAttributes = 0;
-    }
-  }
+	if (NumberOfParticleAttributes == INT_UNDEFINED ||
+			NumberOfParticleAttributes == 0) {
+		if (StarParticleCreation || StarParticleFeedback) {
+			NumberOfParticleAttributes = 3;
+			if (StarMakerTypeIaSNe) NumberOfParticleAttributes++;
+			if (StarMakerTypeIISNeMetalField) NumberOfParticleAttributes++;
+		} else {
+			NumberOfParticleAttributes = 0;
+		}
+#ifdef NBODY
+		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
+		NumberOfParticleAttributes = NumberOfParticleAttributes + 3; // for Acceleration
+		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
+#endif
+	}
 
   // Give unset parameters their default values
  

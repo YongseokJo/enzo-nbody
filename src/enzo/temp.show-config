@@ -26,7 +26,7 @@
    CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : yes
    CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : aggressive
    CONFIG_TESTING  [testing-{yes,no}]                        : no
-   CONFIG_PHOTON  [photon-{yes,no}]                          : yes
+   CONFIG_PHOTON  [photon-{yes,no}]                          : no
    CONFIG_HYPRE  [hypre-{yes,no}]                            : no
    CONFIG_EMISSIVITY  [emissivity-{yes,no}]                  : no
    CONFIG_USE_HDF4  [use-hdf4-{yes,no}]                      : no

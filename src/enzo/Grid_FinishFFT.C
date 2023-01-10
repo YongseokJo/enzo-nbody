@@ -28,7 +28,11 @@ extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
  
 #define NBODY
  
+#ifdef NBODY
+int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar)
+#else
 int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
+#endif
 {
  
   int dim, size;
@@ -65,18 +69,18 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 
 		fprintf(stdout,"4-10-6-1\n"); // by YS
 		float *FieldPointer;
-#ifdef NBODY
-		float *FieldPointerNoStar;
-#endif
+
 		if (Field == POTENTIAL_FIELD) {
 #ifdef NBODY
-			if (PotentialField[0] == NULL)  {
-				//PotentialField = new float*[2];
-				PotentialField[0] = new float[size]();
-				PotentialField[1] = new float[size]();
+			if (NoStar) {
+				if (PotentialField[1] == NULL)  
+					PotentialField[1] = new float[size]();
+				FieldPointer = PotentialField[1];
+			} else {
+				if (PotentialField[0] == NULL)  
+					PotentialField[0] = new float[size]();
+				FieldPointer = PotentialField[0];
 			}
-			FieldPointer       = PotentialField[0];
-			FieldPointerNoStar = PotentialField[1];
 #else
 			if (PotentialField == NULL)
 				PotentialField = new float[size]();
@@ -87,7 +91,6 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 		}
 
     /* Copy region data into grid. */
-#ifdef NBODY 
     FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointer,
 			 InitialRegion->RegionDim,
 			 InitialRegion->RegionDim+1,
@@ -95,22 +98,6 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 			 GravDim, GravDim+1, GravDim+2,
 			 GravStart, GravStart+1, GravStart+2,
 			 Zero, Zero+1, Zero+2);
-    FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointerNoStar,
-			 InitialRegion->RegionDim,
-			 InitialRegion->RegionDim+1,
-			 InitialRegion->RegionDim+2,
-			 GravDim, GravDim+1, GravDim+2,
-			 GravStart, GravStart+1, GravStart+2,
-			 Zero, Zero+1, Zero+2);
-#else
-    FORTRAN_NAME(copy3d)(InitialRegion->Data, FieldPointer,
-			 InitialRegion->RegionDim,
-			 InitialRegion->RegionDim+1,
-			 InitialRegion->RegionDim+2,
-			 GravDim, GravDim+1, GravDim+2,
-			 GravStart, GravStart+1, GravStart+2,
-			 Zero, Zero+1, Zero+2);
-#endif
  
 		fprintf(stdout,"4-10-6-2\n"); // by YS
     /* Delete old field. */

@@ -145,6 +145,9 @@ struct TopGridData
 
   boundary_type ParticleBoundaryType;
   PINT          NumberOfParticles;
+#ifdef NBODY_yet
+	PINT          NumberOfNbodyParticles;
+#endif
 
   /* Hydro Parameters.  
      These are here out of convenience, the real ones are in the grids. */

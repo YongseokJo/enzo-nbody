@@ -47,7 +47,7 @@ int UpdateParticlePositions(grid *Grid)
  
   Grid->DebugCheck("UpdateParticlePosition step 2");
   if (ProblemType != 23)
-    if (Grid->UpdateParticlePosition(dt) == FAIL) {
+    if (Grid->UpdateParticlePositionNoStar(dt) == FAIL) {
       ENZO_FAIL("Error in grid->UpdateParticlePosition./\n");
     }
  

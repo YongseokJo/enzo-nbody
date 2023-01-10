@@ -80,11 +80,21 @@
 
 #define MAX_REFINE_REGIONS               8000
 
+#define NBODY
+#ifdef NBODY
+#ifdef WINDS 
+#define MAX_NUMBER_OF_PARTICLE_ATTRIBUTES  10
+#else
+#define MAX_NUMBER_OF_PARTICLE_ATTRIBUTES  7
+#endif
+#else
 #ifdef WINDS 
 #define MAX_NUMBER_OF_PARTICLE_ATTRIBUTES  7
 #else
 #define MAX_NUMBER_OF_PARTICLE_ATTRIBUTES  4
 #endif
+#endif
+
 
 #define MAX_TIME_ACTIONS                   10
 
@@ -152,6 +162,7 @@ typedef long long long_int;
 typedef long double long_double;
 typedef unsigned int unsigned_int;
 typedef unsigned long long int unsigned_long_int;
+typedef double FLOAT;
 
 /* Previously in hdf4.h */
 
@@ -283,7 +294,7 @@ typedef long long int   HDF5_hid_t;
 
 #ifdef CONFIG_PFLOAT_8
 #define PFLOAT_EPSILON 1e-12f
-#define FLOAT double
+#define FLOAT double // by YS
 #define PEXP exp
 #define PSYM "lf"
 #define GSYM "g"
@@ -419,8 +430,6 @@ typedef long long int   HDF5_hid_t;
 
 #define NOSTAR_YES 1
 #define NOSTAR_NO 0
-#define GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR -100 // by YS for nbody
-#define GRAVITATING_MASS_FIELD_NO_STAR -99 // by YS for nbody
 #define INTERPOLATED_FIELDS              -8
 #define PARTICLE_MASS_FLAGGING_FIELD     -7
 #define MASS_FLAGGING_FIELD              -6
@@ -428,7 +437,16 @@ typedef long long int   HDF5_hid_t;
 #define POTENTIAL_FIELD                  -4
 #define GRAVITATING_MASS_FIELD           -3
 #define GRAVITATING_MASS_FIELD_PARTICLES -2
+
+#define ACCELERATION_FIELDS_NO_STAR              -105
+#define POTENTIAL_FIELD_NO_STAR                  -104
+#define GRAVITATING_MASS_FIELD_NO_STAR           -103
+#define GRAVITATING_MASS_FIELD_PARTICLES_NO_STAR -102
+
+
+
 #define ALL_FIELDS   -1
+
 
 #define NEW_AND_OLD   0
 #define NEW_ONLY      1
@@ -506,7 +524,7 @@ typedef long long int   HDF5_hid_t;
 
 /* Particle types (note: gas is a conceptual type) */
 
-#define NUM_PARTICLE_TYPES 11
+#define NUM_PARTICLE_TYPES 13
 
 #define PARTICLE_TYPE_RESET         -1
 #define PARTICLE_TYPE_GAS            0
@@ -521,6 +539,7 @@ typedef long long int   HDF5_hid_t;
 #define PARTICLE_TYPE_COLOR_STAR     9
 #define PARTICLE_TYPE_SIMPLE_SOURCE 10
 #define PARTICLE_TYPE_RAD           11
+#define PARTICLE_TYPE_NBODY         12  //by YS 
 
 #define CHILDRENPERPARENT           12
 

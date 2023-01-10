@@ -50,6 +50,8 @@ OBJS_CONFIG_LIB = \
         auto_show_config.o \
         auto_show_flags.o \
         auto_show_version.o \
+				NbodyRoutines.o \
+				PrepareNbodyComputation.o\
         BlockSolve.o \
         bondi_alpha.o \
         calcdiss.o \
@@ -786,7 +788,6 @@ OBJS_CONFIG_LIB = \
         power_of_2.o \
         prefort2.o \
 	PrepareDensityField.o \
-	PrepareDensityFieldNoStar.o \
         PrepareGravitatingMassField.o \
         PrepareIsolatedGreensFunction.o \
         PressurelessCollapseInitialize.o \

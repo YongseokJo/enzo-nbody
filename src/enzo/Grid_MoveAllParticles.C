@@ -251,20 +251,20 @@ int grid::MoveAllParticlesOld(int NumberOfGrids, grid* FromGrid[])
   /* Copy this grid's particles to the new space. */
 
    if (MyProcessorNumber == ProcessorNumber) {
-     for (i = 0; i < NumberOfParticles; i++) {
-       Mass[i]   = ParticleMass[i];
-       Number[i] = ParticleNumber[i];
-       Type[i]   = ParticleType[i];
-     }
-     for (dim = 0; dim < GridRank; dim++)
-       for (i = 0; i < NumberOfParticles; i++) {
-	 Position[dim][i] = ParticlePosition[dim][i];
-	 Velocity[dim][i] = ParticleVelocity[dim][i];
-       }
-     for (j = 0; j < NumberOfParticleAttributes; j++)
-       for (i = 0; i < NumberOfParticles; i++)
-	 Attribute[j][i] = ParticleAttribute[j][i];
-   }
+		 for (i = 0; i < NumberOfParticles; i++) {
+			 Mass[i]   = ParticleMass[i];
+			 Number[i] = ParticleNumber[i];
+			 Type[i]   = ParticleType[i];
+		 }
+		 for (dim = 0; dim < GridRank; dim++)
+			 for (i = 0; i < NumberOfParticles; i++) {
+				 Position[dim][i] = ParticlePosition[dim][i];
+				 Velocity[dim][i] = ParticleVelocity[dim][i];
+			 }
+		 for (j = 0; j < NumberOfParticleAttributes; j++)
+			 for (i = 0; i < NumberOfParticles; i++)
+				 Attribute[j][i] = ParticleAttribute[j][i];
+	 }
 
   /* Delete this grid's particles (now copied). */  
 
@@ -280,65 +280,65 @@ int grid::MoveAllParticlesOld(int NumberOfGrids, grid* FromGrid[])
   /* Copy FromGrids' particles to new space (starting at NumberOfParticles). */
 
   int Index = NumberOfParticles;
-  for (grid = 0; grid < NumberOfGrids; grid++) {
+	for (grid = 0; grid < NumberOfGrids; grid++) {
 
-   /* If on the same processor, just copy. */
+		/* If on the same processor, just copy. */
 
-    if (MyProcessorNumber == ProcessorNumber &&
-        MyProcessorNumber == FromGrid[grid]->ProcessorNumber) {
+		if (MyProcessorNumber == ProcessorNumber &&
+				MyProcessorNumber == FromGrid[grid]->ProcessorNumber) {
 
-      //      fprintf(stderr, "P(%d) copying %d particles\n", MyProcessorNumber,
-      //	     FromGrid[grid]->NumberOfParticles);
+			//      fprintf(stderr, "P(%d) copying %d particles\n", MyProcessorNumber,
+			//	     FromGrid[grid]->NumberOfParticles);
 
-      for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++) {
-	Mass[Index+i] = FromGrid[grid]->ParticleMass[i] * MassDecrease;
-	Number[Index+i] = FromGrid[grid]->ParticleNumber[i];
-	Type[Index+i] = FromGrid[grid]->ParticleType[i];
-      }
+			for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++) {
+				Mass[Index+i] = FromGrid[grid]->ParticleMass[i] * MassDecrease;
+				Number[Index+i] = FromGrid[grid]->ParticleNumber[i];
+				Type[Index+i] = FromGrid[grid]->ParticleType[i];
+			}
 
-      for (dim = 0; dim < GridRank; dim++)
-	for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++) {
-	  Position[dim][Index+i] = FromGrid[grid]->ParticlePosition[dim][i];
-	  Velocity[dim][Index+i] = FromGrid[grid]->ParticleVelocity[dim][i];
+			for (dim = 0; dim < GridRank; dim++)
+				for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++) {
+					Position[dim][Index+i] = FromGrid[grid]->ParticlePosition[dim][i];
+					Velocity[dim][Index+i] = FromGrid[grid]->ParticleVelocity[dim][i];
+				}
+			for (j = 0; j < NumberOfParticleAttributes; j++)
+				for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++)
+					Attribute[j][Index+i] = FromGrid[grid]->ParticleAttribute[j][i];
+		}
+
+		/* Otherwise, communicate. */
+
+		else {
+			if (MyProcessorNumber == ProcessorNumber ||
+					MyProcessorNumber == FromGrid[grid]->ProcessorNumber)
+				if (FromGrid[grid]->CommunicationSendParticles(this, ProcessorNumber,
+							0, FromGrid[grid]->NumberOfParticles, Index) == FAIL) {
+					fprintf(stderr, "Error in grid->CommunicationSendParticles.\n");
+					return FAIL;
+				}
+
+			/* Change mass, as required. */
+
+			if (MyProcessorNumber == ProcessorNumber)
+				for (i = Index; i < Index+FromGrid[grid]->NumberOfParticles; i++)
+					Mass[i] *= MassDecrease;
+
+		}
+
+		Index += FromGrid[grid]->NumberOfParticles;
+
+	} // end: loop over grids.
+
+	NumberOfParticles = TotalNumberOfParticles; 
+
+	/* Delete FromGrid's particles (and set number of particles to zero). */
+
+	for (grid = 0; grid < NumberOfGrids; grid++) {
+		FromGrid[grid]->NumberOfParticles = 0;
+		if (MyProcessorNumber == FromGrid[grid]->ProcessorNumber)
+
+			FromGrid[grid]->DeleteParticles();
 	}
-      for (j = 0; j < NumberOfParticleAttributes; j++)
-	for (i = 0; i < FromGrid[grid]->NumberOfParticles; i++)
-	  Attribute[j][Index+i] = FromGrid[grid]->ParticleAttribute[j][i];
-    }
 
-    /* Otherwise, communicate. */
-
-    else {
-      if (MyProcessorNumber == ProcessorNumber ||
-          MyProcessorNumber == FromGrid[grid]->ProcessorNumber)
-	if (FromGrid[grid]->CommunicationSendParticles(this, ProcessorNumber,
-              0, FromGrid[grid]->NumberOfParticles, Index) == FAIL) {
-	  fprintf(stderr, "Error in grid->CommunicationSendParticles.\n");
-	  return FAIL;
-        }
-
-      /* Change mass, as required. */
-
-      if (MyProcessorNumber == ProcessorNumber)
-	for (i = Index; i < Index+FromGrid[grid]->NumberOfParticles; i++)
-	  Mass[i] *= MassDecrease;
-
-    }
-
-    Index += FromGrid[grid]->NumberOfParticles;
-
-  } // end: loop over grids.
-
-  NumberOfParticles = TotalNumberOfParticles; 
-
-  /* Delete FromGrid's particles (and set number of particles to zero). */
-
-  for (grid = 0; grid < NumberOfGrids; grid++) {
-    FromGrid[grid]->NumberOfParticles = 0;
-    if (MyProcessorNumber == FromGrid[grid]->ProcessorNumber)
-
-      FromGrid[grid]->DeleteParticles();
-  }
-
-  return SUCCESS;
+	return SUCCESS;
 }

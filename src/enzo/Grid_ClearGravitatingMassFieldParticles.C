@@ -50,16 +50,14 @@ int grid::ClearGravitatingMassFieldParticles()
  
  
 #ifdef NBODY
-  if (GravitatingMassFieldParticles[0] != NULL)
-    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+  //if (GravitatingMassFieldParticles[0] != NULL)
+    //fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+	/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
   if (GravitatingMassFieldParticles[0] == NULL) {
-		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
-		//GravitatingMassFieldParticles = new float*[2];
 		GravitatingMassFieldParticles[0] = new float[size];
-		//GravitatingMassFieldParticles[1] = new float[size];
 #else
-  if (GravitatingMassFieldParticles != NULL)
-    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+  //if (GravitatingMassFieldParticles != NULL)
+    //fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
   if (GravitatingMassFieldParticles  == NULL) {
 		GravitatingMassFieldParticles = new float[size];
 #endif
@@ -103,14 +101,12 @@ int grid::ClearGravitatingMassFieldParticlesNoStar()
  
   /* Allocate and clear the field. */
  
-  if (GravitatingMassFieldParticles[1] != NULL)
-    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
+  //if (GravitatingMassFieldParticles[1] != NULL)
+    //fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
 	/*In principle, this field should be initialized in the above function.*/
+	/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
   if (GravitatingMassFieldParticles[1] == NULL) {
-		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
-    //GravitatingMassFieldParticles = new float*[2];
-    //GravitatingMassFieldParticles[0] = new float[size];
     GravitatingMassFieldParticles[1] = new float[size];
 	}
   if (GravitatingMassFieldParticles[1] == NULL) 

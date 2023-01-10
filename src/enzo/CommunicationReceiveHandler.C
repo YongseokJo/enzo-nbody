@@ -78,13 +78,7 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 		float time1 = ReturnWallTime();
 
-		//fprintf(stdout,"4-3-1\n");  // by YS
-		
-		//fprintf(stdout,"TotalReceives:%d\n",TotalReceives);  // by YS
-		//fprintf(stdout,"Request:%d\n",CommunicationReceiveMPI_Request);  // by YS
-		//fprintf(stdout,"NumberOfCompleteRequests:%d\n",NumberOfCompleteRequests);  // by YS
-		//fprintf(stdout,"ListOfIndices:%d\n",ListOfIndices);  // by YS
-		//fprintf(stdout,"ListOfStatuses:%d\n",ListOfStatuses);  // by YS
+
 		ierr = MPI_Waitsome(TotalReceives, CommunicationReceiveMPI_Request,
 				&NumberOfCompleteRequests, ListOfIndices, ListOfStatuses);
 		if (ierr != MPI_SUCCESS) {
@@ -104,9 +98,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 				MPI_Finalize();             /* abort*/
 			}
 		}
-		printf("MPI: %"ISYM" %"ISYM" %"ISYM"\n", TotalReceives, 
-				ReceivesCompletedToDate, NumberOfCompleteRequests);
-		//fprintf(stdout,"4-3-1-1\n");  // by YS
 
 		CommunicationTime += ReturnWallTime() - time1;
 
@@ -118,7 +109,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 		}
 #endif
 
-		//fprintf(stdout,"4-3-2\n");  // by YS
 		/* Should loop over newly received completions and check error msgs now. */
 		for (index = 0; index < NumberOfCompleteRequests; index++)
 			if (ListOfStatuses[index].MPI_ERROR != 0) {
@@ -154,7 +144,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 			}
 		}
 
-		//fprintf(stdout,"4-3-3\n");  // by YS
 		/* Loop over the receive handles, looking for completed (i.e. null)
 			 requests associated with unprocessed (i.e. non-null) grids. 
 			 It's insufficient to just loop over newly completed receives because
@@ -207,18 +196,23 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 						break;
 
 					case 3:
+#ifdef NBODY
 						errcode = grid_one->DepositParticlePositions(grid_two,
 								CommunicationReceiveArgument[0][index],
-								CommunicationReceiveArgumentInt[0][index]);
+								CommunicationReceiveArgumentInt[0][index], NoStar);
+#endif
 						break;
 
-					case 4:
-						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two,NoStar);
-						break;
 
 					case 5:
 						errcode = grid_one->DepositBaryons(grid_two,
 								CommunicationReceiveArgument[0][index],NoStar);
+						break;
+
+
+//
+					case 4:
+						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two);
 						break;
 
 					case 6:
@@ -237,6 +231,29 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 					case 9:
 						errcode = grid_one->CopyPotentialField(grid_two, EdgeOffset);
 						break;
+
+#ifdef NBODY
+					case 104:
+						errcode = grid_one->CopyParentToGravitatingFieldBoundaryNoStar(grid_two);
+						break;
+
+					case 106:
+						errcode = grid_one->AddOverlappingParticleMassFieldNoStar(grid_two,
+								EdgeOffset);
+						break;
+
+					case 107:
+						errcode = grid_one->PreparePotentialFieldNoStar(grid_two);
+						break;
+
+					case 108:
+						errcode = grid_one->CopyOverlappingMassFieldNoStar(grid_two, EdgeOffset);
+						break;
+
+					case 109:
+						errcode = grid_one->CopyPotentialFieldNoStar(grid_two, EdgeOffset);
+						break;
+#endif
 
 					case 10:
 						errcode = grid_one->InterpolateAccelerations(grid_two);
@@ -346,7 +363,6 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 				}
 
-				//fprintf(stdout,"4-3-4\n");  // by YS
 				/* Mark this receive complete. */
 
 				// if this is a g:CSAPs recv, mark ALL g:CSAPs done, including this one.

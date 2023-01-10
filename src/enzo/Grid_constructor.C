@@ -64,9 +64,7 @@ grid::grid()
     ActiveParticleAcceleration[i]    = NULL;
     ParticleAcceleration[i]          = NULL;
 #ifdef NBODY
-		for (j =0; j < HERMITE_ORDER;j++) {
-			StarBackGroundAcceleration[i][j]       = NULL;
-		}
+		ParticleAccelerationNoStar[i]       = NULL;
     AccelerationField[i][0]          = NULL;
     AccelerationField[i][1]          = NULL;
 #else
@@ -99,9 +97,7 @@ grid::grid()
   }
 
 #ifdef NBODY
-		for (j =0; j < HERMITE_ORDER;j++) {
-			StarBackGroundAcceleration[MAX_DIMENSION][j]       = NULL;
-		}
+	ParticleAccelerationNoStar[MAX_DIMENSION]       = NULL;
 #endif
   ParticleAcceleration[MAX_DIMENSION]      = NULL;
   ActiveParticleAcceleration[MAX_DIMENSION] = NULL;	

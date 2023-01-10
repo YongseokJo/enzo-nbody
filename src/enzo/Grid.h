@@ -127,8 +127,8 @@ class grid
 		float *ParticleAcceleration[MAX_DIMENSION+1];  // 
 																									 //
 #ifdef NBODY
-#define HERMITE_ORDER 4 //by YS
-		float *StarBackGroundAcceleration[MAX_DIMENSION+1][HERMITE_ORDER];  //  by YS
+		float *ParticleAccelerationNoStar[MAX_DIMENSION+1];  //  by YS
+		int NumberOfNbodyParticlesInGrid;
 #endif
 		float *ParticleMass;                     // pointer to mass array
 		PINT  *ParticleNumber;                   // unique identifier
@@ -428,6 +428,8 @@ class grid
 
 #ifdef NBODY
 		float **GetPotentialField(void) {return PotentialField;};
+		float **GetGravitatingMassFieldParticles(void) {return GravitatingMassFieldParticles;};
+		float **GetGravitatingMassField(void) {return GravitatingMassField;};
 #endif
 
 		/* Return, set level of this grid */
@@ -1110,6 +1112,10 @@ class grid
 
 		int CopyPotentialField(grid *GridOnSameLevel, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
+#ifdef NBODY
+		int CopyPotentialFieldNoStar(grid *GridOnSameLevel, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
 
 		/* baryons: check for coincident zone from the (old) grid in the argument
 			 (gg #7).  Return SUCCESS or FAIL. */
@@ -1180,7 +1186,10 @@ class grid
 		/* Gravity & baryons: Copy the parent density field to the extra boundary
 			 region of GravitatingMassField (if any). */
 
-		int CopyParentToGravitatingFieldBoundary(grid *ParentGrid, bool NoStar);
+		int CopyParentToGravitatingFieldBoundary(grid *ParentGrid);
+#ifdef NBODY
+		int CopyParentToGravitatingFieldBoundaryNoStar(grid *ParentGrid);
+#endif
 
 		/* Gravity & Particles: allocate & clear the GravitatingMassFieldParticles. */
 
@@ -1221,9 +1230,17 @@ class grid
 		int CopyOverlappingMassField(grid *TargetGrid, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
 
+#ifdef NBODY
+		int CopyOverlappingMassFieldNoStar(grid *TargetGrid, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
+
 		/* Gravity: Allocate and make initial guess for PotentialField. */
 
 		int PreparePotentialField(grid *ParentGrid);
+#ifdef NBODY
+		int PreparePotentialFieldNoStar(grid *ParentGrid);
+#endif
 
 		/* Gravity: Allocate and make initial guess for PotentialField. */
 
@@ -1236,8 +1253,8 @@ class grid
 
 		/* Gravity: Copy potential/density into/out of FFT regions. */
 
-		int PrepareFFT(region *InitialRegion, int Field, int DomainDim[]);
-		int FinishFFT(region *InitialRegion, int Field, int DomainDim[]);
+		int PrepareFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar);
+		int FinishFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar);
 
 		/* Gravity: set the potential boundary for isolated BC's */
 
@@ -1274,13 +1291,12 @@ class grid
 		int InterpolateParticlePositions(grid *FromGrid, int DifferenceType);
 
 		/* Generic routine for interpolating particles/grid. */
-		//#ifdef NBODY
-		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field[],  //by YS
-				int Number);
-		//#else
 		int InterpolatePositions(FLOAT *Positions[], int dim, float *Field, 
 				int Number);
-		//#endif
+#ifdef NBODY
+		int InterpolatePositionsNoStar(FLOAT *Positions[], int dim, float *Field, 
+				int Number);
+#endif
 
 		/* Gravity: Delete GravitatingMassField. */
 
@@ -1491,9 +1507,13 @@ class grid
 
 		/* Particles: Deposit particles in the specified field (DepositField) of the
 			 TargetGrid at the given time. */
-
+#ifdef NBODY
+		int DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime, 
+				int DepositField, bool NoStar);
+#else
 		int DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime, 
 				int DepositField);
+#endif
 
 		int DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
 				bool BothFlags);
@@ -1503,6 +1523,10 @@ class grid
 
 		int AddOverlappingParticleMassField(grid *TargetGrid, 
 				FLOAT EdgeOffset[MAX_DIMENSION]);
+#ifdef NBODY
+		int AddOverlappingParticleMassFieldNoStar(grid *TargetGrid, 
+				FLOAT EdgeOffset[MAX_DIMENSION]);
+#endif
 
 		/* Particles: Apply particle acceleration to velocity for particles in this 
 			 grid
@@ -1514,6 +1538,7 @@ class grid
 			 (for step #13) */
 
 		int UpdateParticlePosition(float TimeStep, int OffProcessorUpdate = FALSE);
+		int UpdateParticlePositionNoStar(float TimeStep, int OffProcessorUpdate = FALSE);
 
 		/* Particles: Move particles from TargetGrid to this grid. */
 
@@ -1554,9 +1579,9 @@ class grid
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
-				for (int j = 0; j < HERMITE_ORDER; j++) {
-					delete [] StarBackGroundAcceleration[dim][j];
-					StarBackGroundAcceleration[dim][j] = NULL;
+				if (ParticleAccelerationNoStar[dim] != NULL) {
+					delete [] ParticleAccelerationNoStar[dim];
+					ParticleAccelerationNoStar[dim] = NULL;
 				}
 #endif
 				//#endif
@@ -1726,6 +1751,92 @@ class grid
 
 		int ChangeParticleTypeBeforeSN(int _type, int level, 
 				int *ParticleBufferSize=NULL);
+
+
+#ifdef NBODY
+		/* */
+		void SetNumberOfNbodyParticles(void){
+			int i, count=0;
+			if (MyProcessorNumber == ProcessorNumber) 
+				for (i=0; i<NumberOfParticles; i++) {
+					//fprintf(stderr,"ParticleType: %d", ParticleType[i]);
+					if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+						count++;
+					}
+				}
+			NumberOfNbodyParticlesInGrid = count;
+		}
+
+		/* */
+		int ReturnNumberOfNbodyParticles(void){
+			if (MyProcessorNumber == ProcessorNumber) 
+				return NumberOfNbodyParticlesInGrid;
+			else
+				return 0;
+		}
+
+
+		/* Reduce ParticleAccelerationNoStar so that it can have only acceleration
+		 * of the Nbody particles. */
+		void CopyAccelerationToAttribute(void){
+			if (MyProcessorNumber != ProcessorNumber) return;
+
+			for (int dim=0; dim<MAX_DIMENSION; dim++ ) {
+				for (int i=0; i<NumberOfParticles; i++) {
+					ParticleAttribute[NumberOfParticleAttributes-3+dim][i] = ParticleAccelerationNoStar[dim][i];
+				}
+				delete [] ParticleAccelerationNoStar[dim];
+				ParticleAccelerationNoStar[dim] = NULL;
+			}
+			return;
+		}
+
+
+
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[]) {
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			for (int i=0; i < NumberOfParticles; i++) {
+
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					NbodyParticleMassTemp[*count] = ParticleMass[i];
+					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i];
+						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+					} // ENDFOR dim
+					(*count)++;
+				} // ENDIF nbody particles
+			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+
+
+		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[],
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			for (int i=0; i < NumberOfParticles; i++) {
+				//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+				if (ParticleNumber[i] == NbodyParticleIDTemp[*count]) {
+					ParticleMass[i] = NbodyParticleMassTemp[*count] ;
+
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count];
+						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];
+					} // ENDFOR dim
+					(*count)++;
+				} // ENDIF partID matched
+			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+#endif
+
 
 		// -------------------------------------------------------------------------
 		// Communication functions
@@ -2682,6 +2793,9 @@ class grid
 								/* Adjust the gravity source terms for comoving coordinates. */
 
 								int ComovingGravitySourceTerm();
+#ifdef NBODY
+								int ComovingGravitySourceTermNoStar();
+#endif
 
 								/* Star Particle handler routine. */
 
@@ -2730,6 +2844,8 @@ class grid
 #else
 								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField);
 #endif
+
+
 
 								/* Find the Jeans mass for the grid */
 								float CalculateJeansMass(int DensNum, float *T, float DensityUnits);

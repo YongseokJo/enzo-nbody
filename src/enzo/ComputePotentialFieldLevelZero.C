@@ -252,7 +252,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 
 	for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
 		if (Grids[grid1]->GridData->PrepareFFT(&InitialRegion[grid1],
-					GRAVITATING_MASS_FIELD, DomainDim)
+					GRAVITATING_MASS_FIELD, DomainDim,FALSE)
 				== FAIL) {
 			ENZO_FAIL("Error in grid->PrepareFFT.");
 		}
@@ -281,7 +281,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 
 	if (NumberOfOutRegions != NumberOfGreensRegions) {
 		ENZO_VFAIL("OutRegion(%"ISYM") != GreensRegion(%"ISYM")\n", NumberOfOutRegions,
-				NumberOfGreensRegions)
+				NumberOfGreensRegions);
 	}
 
 	/* Compute coefficient for Greens function. */
@@ -339,11 +339,123 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 
 	for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
 		if (Grids[grid1]->GridData->FinishFFT(&InitialRegion[grid1], POTENTIAL_FIELD,
-					DomainDim) == FAIL) {
+					DomainDim,FALSE) == FAIL) {
 			ENZO_FAIL("Error in grid->FinishFFT.");
 		}
 
 	fprintf(stdout,"4-10-7\n"); // by YS
+
+
+#ifdef NBODY
+
+
+	/* ------------------------------------------------------------------- */
+	/* Generate FFT regions for density field for no star. */
+
+	// by YS, recovery
+	if (MetaData->GravityBoundary == TopGridIsolated) {
+		for (dim = 0; dim < MetaData->TopGridRank; dim++)
+			DomainDim[dim] /= 2;
+		DomainDim[0] += 2; /* correct for real-to-complex extra 2 */
+	}
+
+	for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
+		if (Grids[grid1]->GridData->PrepareFFT(&InitialRegion[grid1],
+					GRAVITATING_MASS_FIELD, DomainDim, TRUE)
+				== FAIL) {
+			ENZO_FAIL("Error in grid->PrepareFFT.");
+		}
+
+	CommunicationBarrier();
+	fprintf(stdout,"4-10-4 no\n"); // by YS
+	/* If doing isolated BC's then double the domain size. */
+
+	if (MetaData->GravityBoundary == TopGridIsolated) {
+		for (dim = 0; dim < MetaData->TopGridRank; dim++)
+			DomainDim[dim] *= 2;
+		DomainDim[0] -= 2; /* correct for real-to-complex extra 2 */
+	}
+
+	/* Forward FFT density field. */
+	//delete [] OutRegion;
+	OutRegion = NULL;
+	if (CommunicationParallelFFT(InitialRegion, NumberOfRegions,
+				&OutRegion, &NumberOfOutRegions,
+				DomainDim, MetaData->TopGridRank,
+				FFT_FORWARD, TransposeOnCompletion) == FAIL) {
+		ENZO_FAIL("Error in CommunicationParallelFFT.");
+	}
+
+	fprintf(stdout,"4-10-5 no\n"); // by YS
+	/* Quick error check. */
+
+	if (NumberOfOutRegions != NumberOfGreensRegions) {
+		ENZO_VFAIL("OutRegion(%"ISYM") != GreensRegion(%"ISYM")\n", NumberOfOutRegions,
+				NumberOfGreensRegions);
+	}
+
+
+	//  for (int dim = 0; dim < MetaData->TopGridRank; dim++)
+	//     coef *= (DomainRightEdge[dim] - DomainLeftEdge[dim])/float(DomainDim[dim]);
+
+	/* Multiply density by Green's function to get potential. */
+
+	for (i = 0; i < NumberOfGreensRegions; i++)
+		if (OutRegion[i].Data != NULL) {
+			int size = OutRegion[i].RegionDim[0]*OutRegion[i].RegionDim[1]*
+				OutRegion[i].RegionDim[2];
+
+			/* In periodic case, the Greens function is purely real. */
+
+			if (MetaData->GravityBoundary == TopGridPeriodic) {
+				for (n = 0, j = 0; j < size; j += 2, n++) {
+					OutRegion[i].Data[j  ] *= coef*GreensRegion[i].Data[n];
+					OutRegion[i].Data[j+1] *= coef*GreensRegion[i].Data[n];
+				}
+			}
+
+			//fprintf(stdout,"4-10-6\n"); // by YS
+			/* In the isolated case, we have compute the Greens function by transforming
+				 a real function so we must do a proper complex multiplication (this is a
+				 convolution with the real function defined in PrepareIsolatedGreensFunction). */
+
+			if (MetaData->GravityBoundary == TopGridIsolated) {
+				float real_part, imag_part;
+				for (j = 0; j < size; j += 2) {
+					real_part = OutRegion[i].Data[j  ]*GreensRegion[i].Data[j  ] -
+						OutRegion[i].Data[j+1]*GreensRegion[i].Data[j+1];
+					imag_part = OutRegion[i].Data[j+1]*GreensRegion[i].Data[j  ] +
+						OutRegion[i].Data[j  ]*GreensRegion[i].Data[j+1];
+					OutRegion[i].Data[j  ] = real_part;
+					OutRegion[i].Data[j+1] = imag_part;
+				}
+			}
+		}
+
+	/* Inverse FFT potential field. */
+
+	if (CommunicationParallelFFT(InitialRegion, NumberOfRegions,
+				&OutRegion, &NumberOfOutRegions,
+				DomainDim, MetaData->TopGridRank,
+				FFT_INVERSE, TransposeOnCompletion) == FAIL) {
+		ENZO_FAIL("Error in CommunicationParallelFFT.");
+	}
+
+	fprintf(stdout,"4-10-6 no\n"); // by YS
+	/* Copy Potential in active region into while grid. */
+
+	for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
+		if (Grids[grid1]->GridData->FinishFFT(&InitialRegion[grid1], POTENTIAL_FIELD,
+					DomainDim, TRUE) == FAIL) {
+			ENZO_FAIL("Error in grid->FinishFFT.");
+		}
+
+	fprintf(stdout,"4-10-7 no\n"); // by YS
+#endif
+
+
+
+
 	/* Update boundary regions of potential
 		 (first set BCTempL/R which are fluid BC's because that's the format
 		 that CheckForOverlap takes). */
@@ -354,7 +466,6 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 		for (int dim = 0; dim < MAX_DIMENSION; dim++)
 			BCTempLeft[dim] = BCTempRight[dim] = periodic;
 	} else {
-
 		for (int dim = 0; dim < MAX_DIMENSION; dim++)
 			BCTempLeft[dim] = BCTempRight[dim] = reflecting; // doesn't matter as long as not periodic
 		for (grid1 = 0; grid1 < NumberOfGrids; grid1++)

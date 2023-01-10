@@ -371,9 +371,9 @@ int grid::ComputeAccelerationFieldExternal()
 				ParticleAcceleration[1][i] -= accel*ypos;
 				ParticleAcceleration[2][i] -= accel*zpos;
 #ifdef NBODY	
-				StarBackGroundAcceleration[0][i][0] = ParticleAcceleration[0][i];
-				StarBackGroundAcceleration[1][i][0] = ParticleAcceleration[1][i];
-				StarBackGroundAcceleration[2][i][0] = ParticleAcceleration[2][i];
+				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
+				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
+				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
 #endif
 			} // end: loop over number of particles
 
@@ -602,9 +602,9 @@ int grid::ComputeAccelerationFieldExternal()
 						+ accelcylR*zdisk
 						+ accelcylz*AngularMomentumz);
 #ifdef NBODY
-				StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
-				StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
-				StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
+				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
+				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
+				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
 #endif
 
 
@@ -736,9 +736,9 @@ int grid::ComputeAccelerationFieldExternal()
 				ParticleAcceleration[1][i] += -g*ypos/r;
 				ParticleAcceleration[2][i] += -g*zpos/r;
 #ifdef NBODY
-				StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
-				StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
-				StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
+				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
+				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
+				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
 #endif
 			}
 
@@ -817,9 +817,9 @@ int grid::ComputeAccelerationFieldExternal()
 					ParticleAcceleration[1][i] += accel_field[1][i];
 					ParticleAcceleration[2][i] += accel_field[2][i];
 #ifdef NBODY
-					StarBackGroundAcceleration[0][0][i] = ParticleAcceleration[0][i];
-					StarBackGroundAcceleration[1][0][i] = ParticleAcceleration[1][i];
-					StarBackGroundAcceleration[2][0][i] = ParticleAcceleration[2][i];
+					ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
+					ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
+					ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
 #endif
 				}
 

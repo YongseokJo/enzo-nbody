@@ -1,6 +1,6 @@
 /mnt/home/yjo10/packages/enzo_test/src/enzo
-worker3072
-Wed Oct 26 16:21:07 EDT 2022
+worker2002
+Sat Jan  7 18:15:05 EST 2023
 Making enzo on
 /mnt/home/yjo10/packages/enzo_test/src/enzo
 make[1]: Entering directory '/mnt/home/yjo10/packages/enzo_test/src/enzo'
@@ -54,7 +54,7 @@ make[1]: Leaving directory '/mnt/home/yjo10/packages/enzo_test/src/enzo'
 Configure complete.
 
 Due to MODULEPATH changes, the following have been reloaded:
-  1) openblas/threaded-0.3.20     2) openmpi/4.0.7
+  1) openblas/threaded-0.3.20
 
 The following have been reloaded with a version change:
   1) gcc/10.3.0 => gcc/7.5.0
@@ -86,6 +86,8 @@ The following have been reloaded with a version change:
 
    CONFIG_NEW_PROBLEM_TYPES  [new-problem-types-{yes,no}]    : yes
 
+   CONFIG_PHOTON  [photon-{yes,no}]                          : no
+
 
    MACHINE: Generic Ubuntu 8.04
    MACHINE-NAME: rusty
@@ -114,7 +116,7 @@ The following have been reloaded with a version change:
    CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : yes
    CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : aggressive
    CONFIG_TESTING  [testing-{yes,no}]                        : no
-   CONFIG_PHOTON  [photon-{yes,no}]                          : yes
+   CONFIG_PHOTON  [photon-{yes,no}]                          : no
    CONFIG_HYPRE  [hypre-{yes,no}]                            : no
    CONFIG_EMISSIVITY  [emissivity-{yes,no}]                  : no
    CONFIG_USE_HDF4  [use-hdf4-{yes,no}]                      : no
@@ -135,7 +137,7 @@ FC  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpif9
 F90 = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpif90
 LD  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpicxx
 
-DEFINES = -DLINUX -DH5_USE_16_API   -D__max_subgrids=100000 -D__max_baryons=30 -D__max_cpu_per_node=36 -D__memory_pool_size=100000 -DINITS64 -DSMALL_INTS -DCONFIG_PINT_4 -DIO_32   -DNEW_PROBLEM_TYPES -DUSE_MPI   -DCONFIG_PFLOAT_8 -DCONFIG_BFLOAT_8  -DUSE_HDF5_GROUPS   -DTRANSFER   -DNEW_GRID_IO -DFAST_SIB      -DENZO_PERFORMANCE  -DUSE_GRACKLE  -DUSE_UUID -DSAB
+DEFINES = -DLINUX -DH5_USE_16_API   -D__max_subgrids=100000 -D__max_baryons=30 -D__max_cpu_per_node=36 -D__memory_pool_size=100000 -DINITS64 -DSMALL_INTS -DCONFIG_PINT_4 -DIO_32   -DNEW_PROBLEM_TYPES -DUSE_MPI   -DCONFIG_PFLOAT_8 -DCONFIG_BFLOAT_8  -DUSE_HDF5_GROUPS      -DNEW_GRID_IO -DFAST_SIB      -DENZO_PERFORMANCE  -DUSE_GRACKLE  -DUSE_UUID -DSAB
 
 INCLUDES = -I/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22//include  -I/mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include       -I/mnt/home/yjo10/packages/grackle/build/include    -I.
 
@@ -186,6 +188,8 @@ Compiling AssignGridToTaskMap.C
 Compiling auto_show_config.C
 Compiling auto_show_flags.C
 Compiling auto_show_version.C
+Compiling NbodyRoutines.C
+Compiling PrepareNbodyComputation.C
 Compiling BlockSolve.F
 Compiling bondi_alpha.C
 Compiling calcdiss.F
@@ -204,8 +208,8 @@ Compiling CalculatePopIIILifetime.C
 Compiling CalculateSubtractionParameters.C
 Compiling CallProblemSpecificRoutines.C
 Compiling CallPython.C
-Compiling CheckEnergyConservation.C
 Compiling CheckForOutput.C
+Compiling CheckEnergyConservation.C
 Compiling CheckForResubmit.C
 Compiling CheckForTimeAction.C
 Compiling CheckOverlap.C
@@ -294,8 +298,8 @@ Compiling CreateFluxes.C
 Compiling CRShockTubesInitialize.C
 Compiling CRTransportTestInitialize.C
 Compiling InitializeFluxes.C
-Compiling DeleteSUBlingList.C
 Compiling DeleteFluxes.C
+Compiling DeleteSUBlingList.C
 Compiling DepositActiveParticleMassFlaggingField.C
 Compiling DepositBaryons.C
 Compiling DepositParticleMassField.C
@@ -331,8 +335,8 @@ Compiling ExternalBoundary_IdentifyPhysicalQuantities.C
 Compiling ExternalBoundary_InitializeExternalBoundaryFaceIO.C
 Compiling ExternalBoundary_Prepare.C
 Compiling ExternalBoundary_ReadExternalBoundary.C
-Compiling ExternalBoundary_SetExternalBoundaryIO.C
 Compiling ExternalBoundary_SetDoubleMachBoundary.C
+Compiling ExternalBoundary_SetExternalBoundaryIO.C
 Compiling ExternalBoundary_SetExternalBoundaryParticles.C
 Compiling ExternalBoundary_SetShockPoolBoundary.C
 Compiling ExternalBoundary_SetGalaxySimulationBoundary.C
@@ -519,8 +523,8 @@ Compiling Grid_ClearMassFlaggingField.C
 Compiling Grid_ClearParticleAccelerations.C
 Compiling Grid_ClearParticleMassFlaggingField.C
 Compiling Grid_ClusterInitializeGrid.C
-Compiling Grid_ClusterSMBHFeedback.C
 Compiling Grid_ClusterSMBHEachGridGasMass.C
+Compiling Grid_ClusterSMBHFeedback.C
 Compiling Grid_CollapseTestInitializeGrid.C
 Compiling Grid_CollectActiveParticles.C
 Compiling Grid_CollectGridInformation.C
@@ -545,8 +549,8 @@ Compiling Grid_ComputeAccelerationsFromExternalPotential.C
 Compiling Grid_ComputeAnisotropicCRDiffusion.C
 Compiling Grid_ComputeCellCenteredField.C
 Compiling Grid_ComputeConductionTimeStep.C
-Compiling Grid_ComputeCoolingTime.C
 Compiling Grid_ComputeCRDiffusion.C
+Compiling Grid_ComputeCoolingTime.C
 Compiling Grid_ComputeCRDiffusionTimeStep.C
 Compiling Grid_ComputeCRStreaming.C
 Compiling Grid_ComputeCRStreamingTimeStep.C
@@ -637,8 +641,8 @@ Compiling Grid_FlagCellsToBeRefinedByResistiveLength.C
 Compiling Grid_FlagCellsToBeRefinedByShear.C
 Compiling Grid_FlagCellsToBeRefinedByShocks.C
 Compiling Grid_FlagCellsToBeRefinedByShockwaves.C
-Compiling Grid_FlagCellsToBeRefinedBySecondDerivative.C
 Compiling Grid_FlagCellsToBeRefinedBySlope.C
+Compiling Grid_FlagCellsToBeRefinedBySecondDerivative.C
 Compiling Grid_FlagRefinedCells.C
 Compiling Grid_FlagGridArray.C
 Compiling Grid_FreeExpansionInitializeGrid.C
@@ -747,8 +751,8 @@ Compiling Grid_ReturnGridInfo.C
 Compiling Grid_ReturnNumberOfActiveParticlesOfThisType.C
 Compiling Grid_ReturnNumberOfStarParticles.C
 Compiling Grid_ReturnParticleEntry.C
-Compiling Grid_RHIonizationClumpInitializeGrid.C
 Compiling Grid_ReturnStarStatistics.C
+Compiling Grid_RHIonizationClumpInitializeGrid.C
 Compiling Grid_RHIonizationSteepInitializeGrid.C
 Compiling Grid_RHIonizationTestInitializeGrid.C
 Compiling Grid_RotatingCylinderInitialize.C
@@ -780,8 +784,8 @@ Compiling Grid_SortActiveParticlesByNumber.C
 Compiling Grid_SortParticlesByNumber.C
 Compiling Grid_SortParticlesByType.C
 Compiling Grid_SphericalInfallGetProfile.C
-Compiling Grid_SphericalInfallInitializeGrid.C
 Compiling Grid_StarParticleHandler.C
+Compiling Grid_SphericalInfallInitializeGrid.C
 Compiling Grid_StratifiedMediumExplosionInitialize.C
 Compiling Grid_SupernovaRestartInitialize.C
 Compiling Grid_SubtractAccretedMassFromSphere.C
@@ -826,8 +830,8 @@ Compiling Group_WriteDataHierarchy.C
 Compiling h5utilities.C
 Compiling HilbertCurve3D.C
 Compiling Hierarchy_DeleteHierarchyEntry.C
-Compiling ibm_fft64.F
 Compiling HydroShockTubesInitialize.C
+Compiling ibm_fft64.F
 Compiling ibm_st1_fft64.F
 Compiling I_ColumnFormat.C
 Compiling IdentifyNewSubgridsBySignature.C
@@ -922,7 +926,6 @@ Compiling pop3_properties.F
 Compiling power_of_2.F
 Compiling prefort2.F
 Compiling PrepareDensityField.C
-Compiling PrepareDensityFieldNoStar.C
 Compiling PrepareGravitatingMassField.C
 Compiling PrepareIsolatedGreensFunction.C
 Compiling PressurelessCollapseInitialize.C
@@ -936,8 +939,8 @@ Compiling ProcMap.C
 Compiling project.F
 Compiling projectbool.F
 Compiling ProjectToPlane.C
-Compiling projplane.F
 Compiling ProjectToPlane2.C
+Compiling projplane.F
 Compiling prolong.F
 Compiling prolong_tsc.F
 Compiling ProtostellarCollapseInitialize.C
@@ -997,8 +1000,8 @@ Compiling rotate3d.F
 Compiling RotatingCylinderInitialize.C
 Compiling RotatingDiskInitialize.C
 Compiling RotatingSphereInitialize.C
-Compiling s90_st1.F90
 Compiling s66_st1.F90
+Compiling s90_st1.F90
 Compiling SearchUtilities.C
 Compiling SedovBlastInitialize.C
 Compiling select_fft.F90
@@ -1020,8 +1023,8 @@ Compiling smooth_deposit.F
 Compiling smooth_deposit_c.c
 Compiling smooth.F
 Compiling solve_cool.F
-Compiling solve_rate_cool.F
 Compiling solve_rate.F
+Compiling solve_rate_cool.F
 Compiling SortCompareFunctions.C
 Compiling SphericalInfallInitialize.C
 Compiling StarListRoutines.C
@@ -1084,12 +1087,12 @@ Compiling TestGravitySphereInitialize.C
 Compiling TestOrbitInitialize.C
 Compiling TestStarParticleInitialize.C
 Compiling TracerParticleCreation.C
-Compiling TransposeRegionOverlap.C
 Compiling tscint1d.F
+Compiling TransposeRegionOverlap.C
 Compiling tscint2d.F
 Compiling tscint3d.F
-Compiling turboinit.F
 Compiling TurbulenceSimulationInitialize.C
+Compiling turboinit.F
 Compiling twoshock.F
 Compiling UpdateFromFinerGrids.C
 Compiling UpdateLocalDatabase.C
@@ -1183,93 +1186,6 @@ Compiling ParallelFDMCollapseInitialize.C
 Compiling Grid_ParallelFDMCollapseInitialize.C
 Compiling FDMCollapse.C
 Compiling Grid_FDMCollapse.C
-Compiling CommunicationLoadBalancePhotonGrids.C
-Compiling CommunicationNonblockingRoutines.C
-Compiling CommunicationReceiverPhotons.C
-Compiling CommunicationSyncNumberOfPhotons.C
-Compiling CommunicationTransferPhotons.C
-Compiling CreateSourceClusteringTree.C
-Compiling DeletePhotonPackage.C
-Compiling DeleteRadiationSource.C
-Compiling EvolvePhotons.C
-Compiling FindCrossSection.C
-Compiling FindRootGrid.C
-Compiling FindSuperSource.C
-Compiling FindSuperSourceByPosition.C
-Compiling FLDCorrectForImpulses.C
-Compiling Grid_AddH2Dissociation.C
-Compiling Grid_AddH2DissociationFromSources.C
-Compiling Grid_AddH2DissociationFromTree.C
-Compiling Grid_AddRadiationImpulse.C
-Compiling Grid_AddRadiationPressureAcceleration.C
-Compiling Grid_AllocateInterpolatedRadiation.C
-Compiling Grid_CheckSubgridMarker.C
-Compiling Grid_CommunicationSendPhotonPackages.C
-Compiling Grid_CommunicationSendSubgridMarker.C
-Compiling Grid_ComputePhotonTimestep.C
-Compiling Grid_ComputePhotonTimestepHII.C
-Compiling Grid_ComputePhotonTimestepTau.C
-Compiling Grid_ConvertToCellCenteredRadiation.C
-Compiling Grid_CorrectRadiationIncompleteness.C
-Compiling Grid_CreateEmissivityLW.C
-Compiling Grid_DeleteEmissivity.C
-Compiling Grid_DeletePhotonPackages.C
-Compiling Grid_DetectIonizationFrontApprox.C
-Compiling Grid_ElectronFractionEstimate.C
-Compiling Grid_ExtraFunction.C
-Compiling Grid_FinalizeRadiationFields.C
-Compiling Grid_FindPhotonNewGrid.C
-Compiling Grid_FlagCellsToBeRefinedByOpticalDepth.C
-Compiling Grid_IdentifyRadiationPressureFields.C
-Compiling Grid_InitializeRadiativeTransferFields.C
-Compiling Grid_InitializeSource.C
-Compiling Grid_InterpolateRadiationFromParent.C
-Compiling Grid_MergePausedPhotonPackages.C
-Compiling Grid_RegridPausedPhotonPackage.C
-Compiling Grid_MoveAllPhotonPackages.C
-Compiling Grid_PhotonPeriodicBoundary.C
-Compiling Grid_PhotonTestInitializeGrid.C
-Compiling Grid_PhotonTestRestartInitializeGrid.C
-Compiling Grid_PhotonSortLinkedLists.C
-Compiling Grid_ReassignSuperSources.C
-Compiling Grid_ReturnSubgridMarker.C
-Compiling Grid_SetSubgridMarkerFromParent.C
-Compiling Grid_SetSubgridMarkerFromSibling.C
-Compiling Grid_SetSubgridMarkerFromSubgrid.C
-Compiling Grid_SubgridMarkerPostParallel.C
-Compiling Grid_Shine.C
-Compiling Grid_TransportPhotonPackages.C
-Compiling Grid_WalkPhotonPackage.C
-Compiling LinkedListRoutines.C
-Compiling PhotonPackageRoutines.C
-Compiling PhotonTestInitialize.C
-Compiling PhotonTestRestartInitialize.C
-Compiling RadiativeTransferCallFLD.C
-Compiling RadiativeTransferComputeTimestep.C
-Compiling RadiativeTransferHealpixRoutines64.C
-Compiling RadiativeTransferLoadBalanceRevert.C
-Compiling RadiativeTransferInitialize.C
-Compiling RadiativeTransferPrepare.C
-Compiling RadiativeTransferReadParameters.C
-Compiling RadiativeTransferWriteParameters.C
-Compiling RadiativeTransferMoveLocalPhotons.C
-Compiling RadiativeTransferLW.C
-Compiling RadiativeTransferLWShielding.C
-Compiling RadiativeTransferH2II.C
-Compiling RadiativeTransferIR.C
-Compiling RadiativeTransferIonization.C
-Compiling RadiativeTransferXRays.C
-Compiling ReadPhotonSources.C
-Compiling ReadRadiativeTransferSpectrumTable.C
-Compiling ReassignSuperSources.C
-Compiling RestartPhotons.C
-Compiling ReturnValuesFromSpectrumTable.C
-Compiling SetSubgridMarker.C
-Compiling SplitPhotonPackage.C
-Compiling StarParticleRadTransfer.C
-Compiling TemperatureFieldToolsForComptonHeating.C
-Compiling TemperatureFieldToolsH2Shielding.C
-Compiling WritePhotonSources.C
 Compiling hydro_rk/ModifiedBesselFunctions.C
 Compiling hydro_rk/AGNDiskInitialize.C
 Compiling hydro_rk/Collapse1DInitialize.C
@@ -1333,8 +1249,8 @@ Compiling hydro_rk/Grid_MHDSourceTerms.C
 Compiling hydro_rk/Grid_MHDTurbulenceInitializeGrid.C
 Compiling hydro_rk/Grid_MHDDecayingRandomFieldInitializeGrid.C
 Compiling hydro_rk/Grid_ReduceWindBoundary.C
-Compiling hydro_rk/Grid_SaveMHDSubgridFluxes.C
 Compiling hydro_rk/Grid_UpdateMHDPrim.C
+Compiling hydro_rk/Grid_SaveMHDSubgridFluxes.C
 Compiling hydro_rk/Grid_UpdateElectronDensity.C
 Compiling hydro_rk/HLL_PLM_MHD.C
 Compiling hydro_rk/LLF_PLM_MHD.C
@@ -1368,9 +1284,9 @@ Compiling uuid/uuid_time.c
 Linking enzo executable. Type  cat out.compile  in case it fails.
 Success!
 Compiled enzo from 
-Git Branch   master
-Git Revision 590169809529f5011337a7e32e7e4bfc8e643773
+Git Branch   seperateComm
+Git Revision cb8b94c22fbef2939d95892df2cae571133eb96f
 Make done!
 /mnt/home/yjo10/packages/enzo_test/src/enzo
-Wed Oct 26 16:25:44 EDT 2022
-Wed Oct 26 16:25:44 EDT 2022
+Sat Jan  7 18:19:07 EST 2023
+Sat Jan  7 18:19:07 EST 2023

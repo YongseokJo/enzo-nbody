@@ -47,3 +47,30 @@ int CopyOverlappingParticleMassFields(grid* CurrentGrid,
  
   return SUCCESS;
 }
+
+
+#ifdef NBODY
+int CopyOverlappingParticleMassFieldsNoStar(grid* CurrentGrid,
+				      TopGridData *MetaData,
+				      LevelHierarchyEntry *LevelArray[],
+				      int level)
+{
+ 
+  /* Loop over all grids in list (including self). */
+ 
+  LevelHierarchyEntry *Temp = LevelArray[level];
+ 
+  while (Temp != NULL) {
+    if (CurrentGrid->CheckForOverlap(Temp->GridData,
+				     MetaData->LeftFaceBoundaryCondition,
+				     MetaData->RightFaceBoundaryCondition,
+				     &grid::AddOverlappingParticleMassFieldNoStar)
+	== FAIL) {
+      fprintf(stderr, "Error in grid->AddOverlappingParticleMassFields.\n");
+    }
+    Temp = Temp->NextGridThisLevel;
+  }
+ 
+  return SUCCESS;
+}
+#endif
