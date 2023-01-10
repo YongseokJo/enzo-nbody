@@ -23,8 +23,8 @@
 #endif
 #endif
 
-      IF (KZ(22).GT.0)
-     &OPEN (UNIT=10,STATUS='UNKNOWN',FORM='FORMATTED',FILE='dat.10')
+*      IF (KZ(22).GT.0)
+*     &OPEN (UNIT=10,STATUS='UNKNOWN',FORM='FORMATTED',FILE='dat.10')
  
 *
       RETURN
