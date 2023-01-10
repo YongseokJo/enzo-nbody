@@ -42,25 +42,19 @@ class EnzoProblemType;
 
 
 
-#define No_NBODY2
-#ifdef NBODY2 //by YS Jo
-#define MAX_NUMBER_OF_NBODY_STAR 1000000   // 1e6 part
-#define HERMITE_ORDER 4
-EXTERN int NbodyParticleMass[MAX_NUMBER_OF_NBODY_STAR];
-EXTERN int NbodyParticlePosition[MAX_DIMENSION][MAX_NUMBER_OF_NBODY_STAR];
-EXTERN int NbodyParticleVelocity[MAX_DIMENSION][MAX_NUMBER_OF_NBODY_STAR];
-EXTERN int NbodyParticleAcceleration[HERMITE_ORDER][MAX_NUMBER_OF_NBODY_STAR];
-EXTERN int NbodyParticleID[MAX_NUMBER_OF_NBODY_STAR];
-#endif
-
 #ifdef NBODY
+#define HERMITE_ORDER 4
 EXTERN int NumberOfNbodyParticles;
+EXTERN int NumberOfNbodyParticlesOld;
+EXTERN int *NbodyParticleID;
+EXTERN int *NbodyParticleIDOld;
 EXTERN float *NbodyParticleMass;
 EXTERN float *NbodyParticlePosition[MAX_DIMENSION];
 EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];
 EXTERN float *NbodyParticleAcceleration[MAX_DIMENSION][HERMITE_ORDER];
+EXTERN float *NbodyParticleAccelerationOld[MAX_DIMENSION][HERMITE_ORDER];
 EXTERN float *NbodyParticleAccelerationNoStar[MAX_DIMENSION];
-EXTERN int *NbodyParticleID;
+
 EXTERN bool NbodyFirst;
 #endif
 

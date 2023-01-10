@@ -59,13 +59,27 @@ void AMRHDF5Writer::AMRHDF5Create( const char*      fileName,
     {"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
   const char *ParticleOtherLabel[] =
     {"particle_type", "particle_index", "particle_mass"};
+
+#define NBODY
+#ifdef NBODY
 #ifdef WINDS
-  const char *ParticleAttributeLabel[] =
-    {"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
-     "particle_jet_y", "particle_jet_z", "typeia_fraction"};
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
+		"particle_jet_y", "particle_jet_z", "typeia_fraction", "acc_x", "acc_y", "acc_z"};
 #else
-  const char *ParticleAttributeLabel[] = 
-    {"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction"};
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction", 
+		"acc_x", "acc_y", "acc_z"};
+#endif
+#else
+#ifdef WINDS
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
+		"particle_jet_y", "particle_jet_z", "typeia_fraction"};
+#else
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction"};
+#endif
 #endif
 
   int i;

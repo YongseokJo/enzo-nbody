@@ -36,9 +36,11 @@ void grid::DeleteAllFields()
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
     delete [] ParticleAcceleration[i];
+    ParticleAcceleration[i]         = NULL;
+		if (ParticleAccelerationNoStar[i] != NULL) {
 		delete [] ParticleAccelerationNoStar[i];
 		ParticleAccelerationNoStar[i] = NULL;
-    ParticleAcceleration[i]         = NULL;
+		}
     AccelerationField[i][0]         = NULL;
     AccelerationField[i][1]         = NULL;
 #else

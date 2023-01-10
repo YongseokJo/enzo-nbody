@@ -128,6 +128,7 @@ class grid
 																									 //
 #ifdef NBODY
 		float *ParticleAccelerationNoStar[MAX_DIMENSION+1];  //  by YS
+		int NumberOfNbodyParticlesInGrid;
 #endif
 		float *ParticleMass;                     // pointer to mass array
 		PINT  *ParticleNumber;                   // unique identifier
@@ -1537,6 +1538,7 @@ class grid
 			 (for step #13) */
 
 		int UpdateParticlePosition(float TimeStep, int OffProcessorUpdate = FALSE);
+		int UpdateParticlePositionNoStar(float TimeStep, int OffProcessorUpdate = FALSE);
 
 		/* Particles: Move particles from TargetGrid to this grid. */
 
@@ -1577,8 +1579,10 @@ class grid
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
-				delete [] ParticleAccelerationNoStar[dim];
-				ParticleAccelerationNoStar[dim] = NULL;
+				if (ParticleAccelerationNoStar[dim] != NULL) {
+					delete [] ParticleAccelerationNoStar[dim];
+					ParticleAccelerationNoStar[dim] = NULL;
+				}
 #endif
 				//#endif
 				delete [] ActiveParticleAcceleration[dim];
@@ -1750,78 +1754,87 @@ class grid
 
 
 #ifdef NBODY
-		int ReturnNumberOfNbodyParticles(void){
+		/* */
+		void SetNumberOfNbodyParticles(void){
 			int i, count=0;
-			//fprintf(stderr,"In the Return\n");
-			//fprintf(stderr,"NOP=%d\n", NumberOfParticles);
-			if (MyProcessorNumber == ProcessorNumber) {
+			if (MyProcessorNumber == ProcessorNumber) 
 				for (i=0; i<NumberOfParticles; i++) {
 					//fprintf(stderr,"ParticleType: %d", ParticleType[i]);
 					if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 						count++;
 					}
 				}
-			}
-			return count;
+			NumberOfNbodyParticlesInGrid = count;
+		}
+
+		/* */
+		int ReturnNumberOfNbodyParticles(void){
+			if (MyProcessorNumber == ProcessorNumber) 
+				return NumberOfNbodyParticlesInGrid;
+			else
+				return 0;
 		}
 
 
-		// This routine may take some times
-		int CopyNbodyParticles(int *count, int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[],
-				float *NbodyParticleAccelerationTemp[MAX_DIMENSION][HERMITE_ORDER]) {
+		/* Reduce ParticleAccelerationNoStar so that it can have only acceleration
+		 * of the Nbody particles. */
+		void CopyAccelerationToAttribute(void){
+			if (MyProcessorNumber != ProcessorNumber) return;
 
-			fprintf(stderr,"In the Copy1\n");
+			for (int dim=0; dim<MAX_DIMENSION; dim++ ) {
+				for (int i=0; i<NumberOfParticles; i++) {
+					ParticleAttribute[NumberOfParticleAttributes-3+dim][i] = ParticleAccelerationNoStar[dim][i];
+				}
+				delete [] ParticleAccelerationNoStar[dim];
+				ParticleAccelerationNoStar[dim] = NULL;
+			}
+			return;
+		}
+
+
+
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[]) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
-			fprintf(stderr,"In the Copy2\n");
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					fprintf(stderr,"here1? count =%d\n",*count);
-					fprintf(stderr,"here1? part =%f\n",ParticleMass[i]);
-					fprintf(stderr,"here1? nbody =%f\n",NbodyParticleMassTemp[*count]);
 					NbodyParticleMassTemp[*count] = ParticleMass[i];
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
-					fprintf(stderr,"here2?\n");
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-
 						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i];
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
-						fprintf(stderr,"here3?\n");
-						if (ParticleAcceleration[dim] == NULL) 
-							fprintf(stderr,"Why the hell is it NULL!!!\n");
-						fprintf(stderr,"here3? nbody =%f\n",ParticleAcceleration[dim][i]);
-						fprintf(stderr,"here3? nbody =%f\n",ParticleAccelerationNoStar[dim][i]);
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAccelerationNoStar[dim][i];
-						fprintf(stderr,"here4?\n");
-
-					} // ENDFOR dimensions
-
-					// Find ID and copy it to temp array for matching particles
-					for (int j=0; j < NumberOfNbodyParticles; j++) {
-
-						if (ParticleNumber[i] == NbodyParticleID[j]) {
-
-							for (int dim=0; dim<MAX_DIMENSION; dim++)
-								for (int order=0; order<HERMITE_ORDER;order++)
-									NbodyParticleAccelerationTemp[dim][order][*count] = NbodyParticleAcceleration[dim][order][j];
-
-						} // ENDIF matched nbody particles
-
-					} // ENDFOR number of nbody particles
-
-					*count++;
-
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+					} // ENDFOR dim
+					(*count)++;
 				} // ENDIF nbody particles
-
 			} // ENDFOR number of particles
-
 			return SUCCESS;
 		}
 
+
+		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[],
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			for (int i=0; i < NumberOfParticles; i++) {
+				//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+				if (ParticleNumber[i] == NbodyParticleIDTemp[*count]) {
+					ParticleMass[i] = NbodyParticleMassTemp[*count] ;
+
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count];
+						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];
+					} // ENDFOR dim
+					(*count)++;
+				} // ENDIF partID matched
+			} // ENDFOR number of particles
+			return SUCCESS;
+		}
 #endif
 
 

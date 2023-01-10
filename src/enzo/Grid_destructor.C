@@ -57,7 +57,9 @@ grid::~grid()
 #ifdef NBODY
     delete [] AccelerationField[i][0];
     delete [] AccelerationField[i][1];
-		delete [] ParticleAccelerationNoStar[i];
+		if (ParticleAccelerationNoStar[i] != NULL) {
+			delete [] ParticleAccelerationNoStar[i];
+		}
 #else
     delete [] AccelerationField[i];
 #endif

@@ -86,15 +86,28 @@ int grid::Group_ReadGrid(FILE *fptr, int GridID, HDF5_hid_t file_id,
     {"particle_position_x", "particle_position_y", "particle_position_z"};
   char *ParticleVelocityLabel[] =
     {"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
+#define NBODY
+#ifdef NBODY
 #ifdef WINDS
-  char *ParticleAttributeLabel[] =
-    {"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
-     "particle_jet_y", "particle_jet_z", "typeia_fraction"};
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
+		"particle_jet_y", "particle_jet_z", "typeia_fraction", "acc_x", "acc_y", "acc_z"};
 #else
-  char *ParticleAttributeLabel[] = 
-    {"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction"};
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction", 
+		"acc_x", "acc_y", "acc_z"};
 #endif
- 
+#else
+#ifdef WINDS
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 
+		"particle_jet_y", "particle_jet_z", "typeia_fraction"};
+#else
+	char *ParticleAttributeLabel[] = 
+	{"creation_time", "dynamical_time", "metallicity_fraction", "typeia_fraction"};
+#endif
+#endif
+
 #ifdef IO_LOG
   int         io_log = 1;
 #else

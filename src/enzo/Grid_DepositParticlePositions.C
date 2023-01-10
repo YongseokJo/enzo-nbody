@@ -98,7 +98,6 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	int NoStarIndex = NoStar ? 1 : 0;
 
 
-
 	/* 1) GravitatingMassField. */
 
 	if (DepositField == GRAVITATING_MASS_FIELD) {

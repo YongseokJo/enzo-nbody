@@ -746,6 +746,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			}
 			float *Mass = new float[nParticles];
 			float *Attribute[MAX_NUMBER_OF_PARTICLE_ATTRIBUTES];
+			fprintf(stderr,"NumOfAtt in Pro=%d\n",NumberOfParticleAttributes);
 			for (int i = 0; i < NumberOfParticleAttributes; i++)
 			{
 				Attribute[i] = new float[nParticles];

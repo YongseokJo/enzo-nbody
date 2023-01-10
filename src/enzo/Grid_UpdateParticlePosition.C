@@ -114,3 +114,86 @@ int grid::UpdateParticlePosition(float TimeStep, int OffProcessorUpdate)
   }
   return SUCCESS;
 }
+
+#ifdef NBODY
+int grid::UpdateParticlePositionNoStar(float TimeStep, int OffProcessorUpdate)
+{
+
+	/* Return if this doesn't concern us. */
+	/* OffProcessorUpdate defaults to FALSE */
+	if (ProcessorNumber != MyProcessorNumber && OffProcessorUpdate == FALSE)
+		return SUCCESS;
+
+	if (NumberOfParticles == 0 && NumberOfActiveParticles == 0) return SUCCESS;
+
+	FLOAT a = 1.0, dadt;
+	int i, dim;
+
+	//  if (debug)
+	//    printf("UpdateParticlePosition: moving %"ISYM" particles forward by %"FSYM".\n",
+	//	   NumberOfParticles, TimeStep);
+
+	/* If using comoving coordinates, divide the acceleration by a(t) first.
+		 (We use abs(TimeStep) because this routine is occasionally used to
+		 move particles forward dt and then immediately reverse this (-dt);
+		 using abs(dt) keeps things consistent). */
+
+	if (ComovingCoordinates)
+		if (CosmologyComputeExpansionFactor(Time + 0.5*fabs(TimeStep), &a, &dadt)
+				== FAIL) {
+			ENZO_FAIL("Error in CsomologyComputeExpansionFactors.");
+		}
+
+	float Coefficient = TimeStep/a;
+	/* Loop over dimensions. */
+
+	if (NumberOfParticles > 0) {
+		for (dim = 0; dim < GridRank; dim++) {
+
+			/* Error check. */
+
+			if (ParticleVelocity[dim] == NULL) {
+				ENZO_FAIL("No ParticleVelocity present.");
+			}
+
+			/* update velocities. */
+
+
+			for (i = 0; i < NumberOfParticles; i++) {
+				/* Only particle not nbody will be updated */
+				if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
+				//&& GridLevel != MaximumRefinementLevel )
+
+				ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
+
+			} // ENDFOR particles
+				/* wrap particle positions for periodic case.
+					 (now done in CommunicationTransferParticles) */
+
+
+		}
+	}
+
+	if (NumberOfActiveParticles > 0) {
+		for (i = 0; i < NumberOfActiveParticles; i++) {
+
+			FLOAT* appos;
+			float* apvel;
+			appos = ActiveParticles[i]->ReturnPosition();
+			apvel = ActiveParticles[i]->ReturnVelocity();
+
+			for (dim = 0; dim < GridRank; dim++)
+				appos[dim] += Coefficient*apvel[dim];
+
+			ActiveParticles[i]->SetPosition(appos);
+
+			FLOAT period[3];
+			for (dim = 0; dim < 3; dim++) {
+				period[dim] = DomainRightEdge[dim] - DomainLeftEdge[dim];
+			}
+			ActiveParticles[i]->SetPositionPeriod(period);
+		}
+	}
+	return SUCCESS;
+}
+#endif
