@@ -813,6 +813,7 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
   Mu			     = 0.6;
   DivBDampingLength          = 1.;
   UseCUDA		     = 0;
+  UseNBODY		     = 0;
   UseFloor		     = 0;
   UseViscosity		     = 0;
   ViscosityCoefficient       = 0.;

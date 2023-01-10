@@ -945,6 +945,9 @@ EXTERN float DrivingEfficiency;
 /* Parameters to use CUDA extensions */ 
 EXTERN int UseCUDA;
 
+/* Paramters for Nbody comutation */
+EXTERN int UseNBODY;
+
 /* End of Stanford block */
 
 

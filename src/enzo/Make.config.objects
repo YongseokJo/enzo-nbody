@@ -50,9 +50,6 @@ OBJS_CONFIG_LIB = \
         auto_show_config.o \
         auto_show_flags.o \
         auto_show_version.o \
-				NbodyRoutines.o \
-				PrepareNbodyComputation.o\
-				nbody/nbody6.o\
         BlockSolve.o \
         bondi_alpha.o \
         calcdiss.o \
@@ -1241,6 +1238,13 @@ OBJS_ECUDA_ALL = \
 	cuPPM.o \
 	CUDAUtil.o \
 	SaveSubgridFluxCUDA.o 
+
+# Objects for the Nbody6 support 
+OBJS_NBODY_ALL= \
+				NbodyRoutines.o \
+				PrepareNbodyComputation.o\
+				nbody/nbody6.o
+
 
 # Objects to support get_uuid
 POBJS_UUID = \

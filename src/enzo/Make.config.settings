@@ -38,6 +38,7 @@
 #    CONFIG_USE_HDF4	
 #    CONFIG_BITWISE_IDENTICALITY
 #    CONFIG_USE_ECUDA
+#    CONFIG_USE_NBODY
 #    CONFIG_SET_ACCELERATION_BOUNDARY
 #    CONFIG_ENZO_PERFORMANCE
 #    CONFIG_GRACKLE
@@ -297,6 +298,17 @@
 #----------------------------------------------------------------------- 
  
      CONFIG_ECUDA = no
+
+
+#======================================================================= 
+# CONFIG_NBODY
+#======================================================================= 
+#    yes           For direct Nbody computing
+#    no            For most of problems
+#----------------------------------------------------------------------- 
+ 
+     CONFIG_NBODY = no
+
 
 #======================================================================= 
 # CONFIG_GRAVITY_4S

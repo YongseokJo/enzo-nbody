@@ -24,6 +24,7 @@ void auto_show_config(FILE *fp) {
    fprintf (fp,"   CONFIG_PYTHON  [python-{yes,no}]                          : no\n");
    fprintf (fp,"   CONFIG_NEW_PROBLEM_TYPES  [new-problem-types-{yes,no}]    : yes\n");
    fprintf (fp,"   CONFIG_ECUDA  [cuda-{yes,no}]                             : no\n");
+   fprintf (fp,"   CONFIG_NBODY  [nbody-{yes,no}]                             : no\n");
    fprintf (fp,"   CONFIG_OOC_BOUNDARY  [ooc-boundary-{yes,no}]              : no\n");
    fprintf (fp,"   CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : yes\n");
    fprintf (fp,"   CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : aggressive\n");

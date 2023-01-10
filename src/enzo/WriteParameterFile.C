@@ -1159,6 +1159,9 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 #ifdef ECUDA
   fprintf(fptr, "UseCUDA = %"ISYM"\n", UseCUDA);
 #endif
+#ifdef NBODY
+  fprintf(fptr, "UseNBODY = %"ISYM"\n", UseNBODY);
+#endif
 
   /* Poisson Solver */
 
