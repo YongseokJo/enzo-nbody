@@ -15,7 +15,7 @@
 
 MACH_TEXT  = Generic Ubuntu 8.04
 MACH_VALID = 1
-MACH_FILE  = Make.mach.ubuntu-hardy
+MACH_FILE  = Make.mach.rusty
 
 #-----------------------------------------------------------------------
 # Install paths (local variables)
@@ -26,6 +26,9 @@ LOCAL_HDF5_INSTALL = /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8
 #LOCAL_MPI = $(INTEL_PARALLEL_STUDIO_BASE)
 LOCAL_MPI = $(OPENMPI_BASE)
 LOCAL_GRACKLE_INSTALL = $(HOME)/packages/grackle/build
+
+LOCAL_CUDA_INSTALL = /mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/
+
 
 #-----------------------------------------------------------------------
 # Compiler settings
@@ -41,6 +44,8 @@ MACH_CXX_MPI   =  mpicxx    #/home/kerex/intel/bin/icpc
 MACH_FC_MPI    =  mpif90   #/home/kerex/intel/bin/ifort 
 MACH_F90_MPI   =  mpif90   #/home/kerex/intel/bin/ifort
 MACH_LD_MPI    =  mpicxx    #/home/kerex/intel/bin/icpc
+
+MACH_CUDACOMPILER = $(LOCAL_CUDA_INSTALL)/bin/nvcc
 
 #MACH_CC_MPI    =  mpiicc     #/home/kerex/intel/bin/icc 
 #MACH_CXX_MPI   =  mpiicpc    #/home/kerex/intel/bin/icpc
@@ -110,6 +115,7 @@ LOCAL_INCLUDES_PAPI   = # PAPI includes
 LOCAL_INCLUDES_GRACKLE = -I$(LOCAL_GRACKLE_INSTALL)/include
 
 MACH_INCLUDES         = $(LOCAL_INCLUDES_HDF5)
+MACH_LIBS_NBODY    = -I
 
 MACH_INCLUDES_MPI     = $(LOCAL_INCLUDES_MPI)
 MACH_INCLUDES_HYPRE   = $(LOCAL_INCLUDES_HYPRE)
@@ -133,3 +139,5 @@ MACH_LIBS_MPI     = $(LOCAL_LIBS_MPI)
 MACH_LIBS_HYPRE   = $(LOCAL_LIBS_HYPRE)
 MACH_LIBS_PAPI    = $(LOCAL_LIBS_PAPI)
 MACH_LIBS_GRACKLE = $(LOCAL_LIBS_GRACKLE)
+MACH_LIBS_NBODY    = -L$(LOCAL_CUDA_INSTALL)/lib64 -lcudart
+
