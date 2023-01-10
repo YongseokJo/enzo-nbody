@@ -193,7 +193,7 @@ verbose: $(EXE).exe
 # Implicit rules
 #-----------------------------------------------------------------------
 
-.SUFFIXES: .c .C .F .F90 .o .cu .pyx
+.SUFFIXES: .c .C .F .F90 .o .cu .pyx .f
 
 # Inhibit removing any *.o files after compiling
 
@@ -202,6 +202,27 @@ verbose: $(EXE).exe
 #.src.f:
 #	@$(CPP) $(DEFINES) $(CPPFLAGS) $*.src > $*.f
 .F.o:
+	@echo "Compiling $<"
+	@rm -f $@
+	@(if [ $(VERBOSE) -eq 0 ]; then \
+	  $(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.F >& $(OUTPUT) ; \
+	  if [ ! -e $@ ]; then \
+             echo; \
+             echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.F"; \
+             echo; \
+             $(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.F; \
+             echo; \
+             exit 1; \
+          fi ; \
+	else \
+	  $(FC) -c -o $@ $(FFLAGS)  $(DEFINES) $*.F >> $(OUTPUT) 2>&1 ; \
+	  if [ ! -e $@ ]; then \
+	     echo "See $(OUTPUT) for error messages"; \
+	     exit 1; \
+	  fi ; \
+	fi)
+
+.f.o:
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
