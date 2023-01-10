@@ -183,6 +183,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/* Do direct calculation!*/
 
 
+
 			/* Copy ID and Acc to Old arrays!*/
 			CopyNbodyArrayToOld();
 			fprintf(stderr,"Done?2\n");

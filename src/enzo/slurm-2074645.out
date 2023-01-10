@@ -1,6 +1,6 @@
 /mnt/home/yjo10/packages/enzo_test/src/enzo
 worker2004
-Mon Jan  9 19:03:14 EST 2023
+Mon Jan  9 19:25:15 EST 2023
 Making enzo on
 /mnt/home/yjo10/packages/enzo_test/src/enzo
 make[1]: Entering directory '/mnt/home/yjo10/packages/enzo_test/src/enzo'
@@ -194,8 +194,8 @@ Compiling BlockSolve.F
 Compiling bondi_alpha.C
 Compiling calcdiss.F
 Compiling calc_dt.F
-Compiling calc_eigen.F
 Compiling calc_dt_c.c
+Compiling calc_eigen.F
 Compiling calc_photo_rates.F
 Compiling calc_rad.F
 Compiling calc_rates.F
@@ -300,8 +300,8 @@ Compiling CRTransportTestInitialize.C
 Compiling InitializeFluxes.C
 Compiling DeleteFluxes.C
 Compiling DeleteSUBlingList.C
-Compiling DepositBaryons.C
 Compiling DepositActiveParticleMassFlaggingField.C
+Compiling DepositBaryons.C
 Compiling DepositParticleMassField.C
 Compiling DepositParticleMassFlaggingField.C
 Compiling DetermineNumberOfNodes.C
@@ -351,8 +351,8 @@ Compiling FastFourierTransformSGIMATH.C
 Compiling EvolveLevel.C
 Compiling FastSiblingLocatorFinalize.C
 Compiling FastSiblingLocatorInitialize.C
-Compiling feedback_formulae.F
 Compiling FastSiblingLocatorInitializeStaticChainingMesh.C
+Compiling feedback_formulae.F
 Compiling fft66.F
 Compiling fft90.F90
 Compiling ffte4X.F90
@@ -510,8 +510,8 @@ Compiling Grid_ChangeParticleTypeBeforeSN.C
 Compiling Grid_CheckForExternalReflections.C
 Compiling Grid_CheckForOverlap.C
 Compiling Grid_CheckForPossibleOverlap.C
-Compiling grid_cic.F
 Compiling Grid_CheckForSharedFace.C
+Compiling grid_cic.F
 Compiling grid_ngp.F
 Compiling Grid_CleanUpMovedParticles.C
 Compiling Grid_CleanUp.C
@@ -604,8 +604,8 @@ Compiling Grid_DeleteAllButParticles.C
 Compiling Grid_DeleteAllFields.C
 Compiling Grid_DeleteBaryonFields.C
 Compiling Grid_DeleteFlaggingField.C
-Compiling Grid_DepositBaryons.C
 Compiling Grid_DeleteObsoleteFields.C
+Compiling Grid_DepositBaryons.C
 Compiling Grid_DepositMustRefineParticles.C
 Compiling Grid_DepositParticlePositions.C
 Compiling Grid_DepositParticlePositionsLocal.C
@@ -878,8 +878,8 @@ Compiling LoadBalanceHilbertCurve.C
 Compiling LoadBalanceHilbertCurveRootGrids.C
 Compiling LoadBalanceSimulatedAnnealing.C
 Compiling MagneticFieldResetter.C
-Compiling mbh_maker.C
 Compiling mcooling.F
+Compiling mbh_maker.C
 Compiling MakeFieldConservative.C
 Compiling MemoryAllocationRoutines.C
 Compiling MemoryPoolRoutines.C
@@ -988,8 +988,8 @@ Compiling RecalibrateAccretingMass.C
 Compiling RecalibrateMBHFeedbackThermalRadius.C
 Compiling RecordTotalActiveParticleCount.C
 Compiling ReduceFragmentation.C
-Compiling Reduce_Times.C
 Compiling remap.F
+Compiling Reduce_Times.C
 Compiling ReportMemoryUsage.C
 Compiling ReturnWallTime.C
 Compiling RHIonizationClumpInitialize.C
@@ -1198,8 +1198,8 @@ Compiling hydro_rk/Grid_AddViscosity.C
 Compiling hydro_rk/Grid_AGNDiskInitializeGrid.C
 Compiling hydro_rk/Grid_Collapse1DInitializeGrid.C
 Compiling hydro_rk/Grid_Collapse3DInitializeGrid.C
-Compiling hydro_rk/Grid_CopyOldBaryonFieldToBaryonField.C
 Compiling hydro_rk/Grid_GalaxyDiskInitializeGrid.C
+Compiling hydro_rk/Grid_CopyOldBaryonFieldToBaryonField.C
 Compiling hydro_rk/Grid_Hydro3D.C
 Compiling hydro_rk/Grid_ReturnHydroRKPointers.C
 Compiling hydro_rk/Grid_ReturnOldHydroRKPointers.C
@@ -1255,8 +1255,8 @@ Compiling hydro_rk/Grid_UpdateElectronDensity.C
 Compiling hydro_rk/HLL_PLM_MHD.C
 Compiling hydro_rk/LLF_PLM_MHD.C
 Compiling hydro_rk/HLL_PPM_MHD.C
-Compiling hydro_rk/HLLD_Zero_MHD.C
 Compiling hydro_rk/HLLD_PLM_MHD.C
+Compiling hydro_rk/HLLD_Zero_MHD.C
 Compiling hydro_rk/MHD1DTestInitialize.C
 Compiling hydro_rk/MHD1DTestWavesInitialize.C
 Compiling hydro_rk/MHD2DTestInitialize.C
@@ -1274,8 +1274,8 @@ Compiling hydro_rk/SuperNovaSeedField.C
 Compiling uuid/clear.c
 Compiling uuid/compare.c
 Compiling uuid/copy.c
-Compiling uuid/isnull.c
 Compiling uuid/gen_uuid.c
+Compiling uuid/isnull.c
 Compiling uuid/pack.c
 Compiling uuid/parse.c
 Compiling uuid/unparse.c
@@ -1288,5 +1288,5 @@ Git Branch   seperateComm
 Git Revision 29b82063c710e6c8fb8c901a44f4d0033a06eac2
 Make done!
 /mnt/home/yjo10/packages/enzo_test/src/enzo
-Mon Jan  9 19:08:43 EST 2023
-Mon Jan  9 19:08:43 EST 2023
+Mon Jan  9 19:30:45 EST 2023
+Mon Jan  9 19:30:45 EST 2023

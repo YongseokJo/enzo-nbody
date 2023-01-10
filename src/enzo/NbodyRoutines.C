@@ -112,10 +112,13 @@ void CopyNbodyArrayToOld(void) {
 	fprintf(stderr,"Done?1-4\n");
 	/* Assgin */
 	NumberOfNbodyParticlesOld = NumberOfNbodyParticles;
+	fprintf(stderr,"Done?1-5\n");
 	for (int i=0; i<NumberOfNbodyParticles; i++) {
+	fprintf(stderr,"Done?1-6\n");
 		NbodyParticleIDOld[i] = NbodyParticleID[i];
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			for (int order=0; order<HERMITE_ORDER; order++) {
+	fprintf(stderr,"Done?1-7\n");
 				NbodyParticleAccelerationOld[dim][order][i] = NbodyParticleAcceleration[dim][order][i];
 			}
 		}
