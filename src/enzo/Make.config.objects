@@ -52,6 +52,7 @@ OBJS_CONFIG_LIB = \
         auto_show_version.o \
 				NbodyRoutines.o \
 				PrepareNbodyComputation.o\
+				nbody/nbody6.o\
         BlockSolve.o \
         bondi_alpha.o \
         calcdiss.o \

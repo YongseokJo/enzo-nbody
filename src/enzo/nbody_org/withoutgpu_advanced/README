@@ -1,0 +1,8 @@
+How to compile
+
+f77 enzo_nbody.F enzo_forceint.F enzo_fpredint.F enzo_jpredint.f enzo_forcecor.F enzo_zero.f enzo_xvpred.F -o main.exe
+* The original code is written in FORTRAN 77, so I followed the file
+* still have to figure out how to overwrite the original file
+* scaling result must be included
+
+f77 enzo_debug.F enzo_nbody_debug.F enzo_forceint.F enzo_fpredint.F enzo_jpredint.f enzo_forcecor.F enzo_zero.f enzo_xvpred.F enzo_energycheck.f -o main.exe
