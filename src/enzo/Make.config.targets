@@ -275,7 +275,7 @@ show-config:
 	@echo "   CONFIG_PYTHON  [python-{yes,no}]                          : $(CONFIG_PYTHON)"
 	@echo "   CONFIG_NEW_PROBLEM_TYPES  [new-problem-types-{yes,no}]    : $(CONFIG_NEW_PROBLEM_TYPES)"
 	@echo "   CONFIG_ECUDA  [cuda-{yes,no}]                             : $(CONFIG_ECUDA)"
-	@echo "   CONFIG_NBODY  [nbody-{yes,no}]                             : $(CONFIG_NBODY)"
+	@echo "   CONFIG_NBODY  [nbody-{yes,no}]                            : $(CONFIG_NBODY)"
 	@echo "   CONFIG_OOC_BOUNDARY  [ooc-boundary-{yes,no}]              : $(CONFIG_OOC_BOUNDARY)"
 	@echo "   CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : $(CONFIG_ACCELERATION_BOUNDARY)"
 	@echo "   CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : $(CONFIG_OPT)"
