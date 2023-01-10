@@ -1,8 +1,4 @@
-      SUBROUTINE NBODY6(IBODY,IPOS,IVEL,IACC,IHACC)
-
-*     IBODY = initial input mass, IPOS = initial vel
-*     IACC = initial external acceleration
-*     IHACC = initial hermite acceleration
+      PROGRAM NBODY6
 *
 *             N B O D Y 6++
 *             *************
@@ -24,9 +20,6 @@
       INCLUDE 'common6.h'
       INCLUDE 'timing.h'
       include 'omp_lib.h'
-
-      COMMON/INIT/    IBODY,IPOS,IVEL,IACC,IHACC
-
       COMMON/STSTAT/  TINIT,NIR,NIB,NRGL,NKS
 #ifdef DEBUG
 *     --10/03/14 19:40-lwang-debug--------------------------------------*
