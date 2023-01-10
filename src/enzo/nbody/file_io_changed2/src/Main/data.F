@@ -11,7 +11,8 @@
       CHARACTER*1 CHAR(80)
       LOGICAL LREADN,LREADP,LREADF
 *
-#ifdef PARALLEL
+      COMMON/INIT/  IBODY,IPOS,IVEL
+
 #define MPIINIT 1
 #else
 #ifdef ENSEMBLE
@@ -41,11 +42,20 @@
       if(rank.eq.0)then
 *
       IREAD = 0
-      IF (KZ(22).EQ.2.OR.KZ(22).EQ.6.OR.
-     &     KZ(22).EQ.9.OR.KZ(22).EQ.10) THEN
-          DO 5 I = 1,N
-              READ (10,*)  BODY(I), (X(K,I),K=1,3), (XDOT(K,I),K=1,3)
-    5     CONTINUE
+
+      DO 5 I = 1,N
+
+          BODY(I) = IBODY(I)
+
+          X(1,I) = IPOS(1,I)
+          X(2,I) = IPOS(2,I)
+          X(3,I) = IPOS(3,I)
+
+          XDOT(1,I) = IVEL(1,I)
+          XDOT(2,I) = IVEL(2,I)
+          XDOT(3,I) = IVEL(3,I)
+
+    5 CONTINUE
 *
 *       Read tidal radius if cutoff required
 *      IF (KZ(23).GE.3) READ (10,*) RTIDE
