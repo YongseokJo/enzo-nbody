@@ -33,7 +33,7 @@
 
 
 
-extern "C" void FORTRAN_NAME(nbody6)();
+//extern "C" void FORTRAN_NAME(nbody6)();
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
 //int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]);
@@ -44,7 +44,6 @@ int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 //void MatchAccelerationWithIndex(void);
 
 
-#define NBODY
 #ifdef NBODY
 int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 {
@@ -182,7 +181,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			fprintf(stderr,"Done?1-2-2\n");
 
 			/* Do direct calculation!*/
-			nbody6();
+			//nbody6();
 
 
 			/* Copy ID and Acc to Old arrays!*/

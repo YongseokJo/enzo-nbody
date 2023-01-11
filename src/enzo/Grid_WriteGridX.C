@@ -73,7 +73,6 @@ int grid::WriteGridX(FILE *fptr, char *base_name, int grid_id)
   char *ParticleVelocityLabel[] =
      {"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
 
-#define NBODY
 #ifdef NBODY
 	char *ParticleAttributeLabel[] = 
 	{"creation_time", "dynamical_time", "metallicity_fraction", "particle_jet_x", 

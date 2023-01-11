@@ -1940,6 +1940,174 @@ makedepend: warning:  utilities.F includes fortran_types.def more than once!
 Already have
 	fortran.def
 	fortran_types.def
+makedepend: warning:  nbody/irr.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/irr.avx.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/irr.avx.cpp, line 3: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/irr.avx.cpp, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/irr.avx.cpp (reading /usr/include/unistd.h, line 226): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/irr.avx.cpp, line 6: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/irr.avx.cpp (reading nbody/vector3.h, line 8): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/irr.avx.cpp (reading nbody/vector3.h, line 10): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/irr.avx.cpp (reading nbody/vector3.h, line 12): cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/irr.sse.cpp, line 2: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/irr.sse.cpp, line 3: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/irr.sse.cpp, line 4: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/irr.sse.cpp, line 5: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/irr.sse.cpp, line 7: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/pot.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/pot.sse.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.avx.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/reg.avx.cpp, line 3: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/reg.avx.cpp, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/reg.avx.cpp, line 9: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/reg.sse.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.sse.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/reg.sse.cpp, line 3: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/reg.sse.cpp, line 4: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/reg.sse.cpp, line 5: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/reg.sse.cpp, line 6: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/reg.sse.cpp, line 11: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
 makedepend: warning:  FSProb_SetupSystem.F90 includes fortran_types.def more than once!
 Already have
 	fortran.def
@@ -2096,12 +2264,132 @@ makedepend: warning:  hydro_rk/SuperNova.h (reading /usr/include/stdio.h, line 3
 	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
 	not in ./stdarg.h
 	not in /usr/include/stdarg.h
-makedepend: warning:  uuid/uuid.h (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+makedepend: warning:  nbody/initial.h, line 33: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/initial.h, line 34: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/initial.h, line 35: cannot find include file "sstream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/sstream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/sstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/sstream
+	not in ./sstream
+	not in /usr/include/sstream
+makedepend: warning:  nbody/initial.h, line 36: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  nbody/initial.h, line 37: cannot find include file "utility"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/utility
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/utility
+	not in /mnt/home/yjo10/packages/grackle/build/include/utility
+	not in ./utility
+	not in /usr/include/utility
+makedepend: warning:  nbody/initial.h, line 38: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/nb6out3.h, line 81: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/nb6out3.h, line 82: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/uftools.h, line 51: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/uftools.h, line 52: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/uftools.h, line 53: cannot find include file "sstream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/sstream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/sstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/sstream
+	not in ./sstream
+	not in /usr/include/sstream
+makedepend: warning:  nbody/uftools.h, line 54: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/uftools.h, line 55: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/uftools.h, line 56: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/uftools.h (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
 	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
 	not in ./stddef.h
 	not in /usr/include/stddef.h
+makedepend: warning:  nbody/uftools.h, line 59: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/uftools.h (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/uftools.h (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/vector3.h, line 8: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/vector3.h, line 10: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/vector3.h, line 12: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
 makedepend: warning:  uuid/uuid.h (reading /usr/include/time.h, line 29): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
@@ -2120,7 +2408,6 @@ makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /mnt/sw/nix/st
 	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
 	not in ./stddef.h
 	not in /usr/include/stddef.h
-makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/bits/libc-header-start.h), line 28: # error "Never include <bits/libc-header-start.h> directly."
 makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h

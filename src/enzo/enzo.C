@@ -390,7 +390,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
   flow_trace_on                = FALSE;
   char *ParameterFile          = NULL;
   char *myname                 = argv[0];
-#define NBODY
+
 #ifdef  NBODY
 	NbodyFirst = TRUE;
 #endif

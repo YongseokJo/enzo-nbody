@@ -49,7 +49,6 @@ struct HierarchyEntry;
 #include "ProblemType.h"
 #endif
 
-#define NBODY
 //extern int CommunicationDirection;
 
 //struct ParticleEntry {

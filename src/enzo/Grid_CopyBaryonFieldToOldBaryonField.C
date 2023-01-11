@@ -112,7 +112,6 @@ int grid::CopyBaryonFieldToOldBaryonField()
           OldAccelerationField[field] = new float[size];
         }
         for(i=0;i<size;i++) {
-#define NBODY
 #ifdef NBODY
           OldAccelerationField[field][i] = AccelerationField[field][0][i];
 #else

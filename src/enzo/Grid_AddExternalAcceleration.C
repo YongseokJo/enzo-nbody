@@ -86,7 +86,6 @@ int grid::AddExternalAcceleration()
 	      (4.0*pi*rcubed*a);
  
 	    /* Apply force. */
-#define NBODY
 #ifdef NBODY 
 	    AccelerationField[0][0][n] -= accel*xpos;
 	    AccelerationField[0][1][n] -= accel*xpos;

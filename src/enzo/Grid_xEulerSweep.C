@@ -30,7 +30,6 @@
 #include "euler_sweep.h"
 //#include "fortran.def"
 
-#define NBODY
 int grid::xEulerSweep(int k, int NumberOfSubgrids, fluxes *SubgridFluxes[], 
 		Elong_int GridGlobalStart[], float *CellWidthTemp[], 
 		int GravityOn, int NumberOfColours, int colnum[], float *pressure)

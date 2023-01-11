@@ -37,7 +37,6 @@ extern "C" void FORTRAN_NAME(int_grid_cic)(float *source,
 				   float *start1, float *start2, float *start3,
 				   int *refine1, int *refine2, int *refine3);
  
-#define NBODY 
 /* EvolveHierarchy function */
  
 int grid::InterpolateAccelerations(grid *FromGrid)

@@ -1115,6 +1115,7 @@
     	       $(OBJS_PHOTON_LIB) \
     	       $(OBJS_LCAPERF_LIB) \
 	       $(OBJS_HYDRO_RK) \
+	       $(OBJS_NBODY) \
 	       $(OBJS_ECUDA_LIB) \
 	       $(OBJS_NBODY_LIB) \
 	       $(OBJS_PYTHON) \
@@ -1128,6 +1129,7 @@
            $(ASSEMBLE_PYTHON_LIBS) \
            $(ASSEMBLE_NEW_PROBLEM_TYPES_LIBS) \
            $(ASSEMBLE_CUDA_LIBS) \
+           $(ASSEMBLE_NBODY_LIBS) \
            $(ASSEMBLE_GRACKLE_LIBS)
 
 

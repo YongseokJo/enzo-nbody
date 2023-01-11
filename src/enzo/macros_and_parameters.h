@@ -80,7 +80,6 @@
 
 #define MAX_REFINE_REGIONS               8000
 
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS 
 #define MAX_NUMBER_OF_PARTICLE_ATTRIBUTES  10
@@ -628,7 +627,6 @@ typedef long long int   HDF5_hid_t;
 
 #define IMF_TABLE_ENTRIES 1000
 
-#define NBODY
 #ifdef NBODY
 #define HERMITE_ORDER 4
 #endif

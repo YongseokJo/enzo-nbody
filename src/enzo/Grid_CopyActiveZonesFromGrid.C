@@ -241,7 +241,6 @@ int grid::CopyActiveZonesFromGrid(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSIO
                         Start, Start+1, Start+2);
            }
       } else if (SendField == GRAVITATING_MASS_FIELD) {
-#define NBODY
 #ifdef NBODY
         FORTRAN_NAME(copy3drel)(OtherGrid->GravitatingMassField[0],
                     GravitatingMassField[0],

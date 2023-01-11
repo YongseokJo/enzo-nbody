@@ -136,7 +136,6 @@ int CallProblemSpecificRoutines(TopGridData * MetaData, HierarchyEntry *ThisGrid
 		int GridNum, float *norm, float TopGridTimeStep, 
 		int level, int LevelCycleCount[]);  
 
-#define NBODY
 #ifdef FAST_SIB
 int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		int level, TopGridData *MetaData, FLOAT When, SiblingGridList **SiblingGridListStorage);

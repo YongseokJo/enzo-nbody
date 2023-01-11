@@ -27,7 +27,6 @@
 #include "Grid.h"
 #include "hydro_rk/SuperNova.h"
  
-#define NBODY
 
 grid::grid()
 {

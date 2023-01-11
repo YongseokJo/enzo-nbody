@@ -63,7 +63,6 @@
 
 #include "Grid.h"
 
-#define NBODY
 
 int FindField(int field, int farray[], int numfields);
 

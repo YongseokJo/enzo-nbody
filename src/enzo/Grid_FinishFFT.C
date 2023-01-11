@@ -26,7 +26,6 @@ extern "C" void FORTRAN_NAME(copy3d)(float *source, float *dest,
                                    int *sstart1, int *sstart2, int *sstart3,
                                    int *dstart1, int *dstart2, int *dststart3);
  
-#define NBODY
  
 #ifdef NBODY
 int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[], bool NoStar)

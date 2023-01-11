@@ -11,19 +11,10 @@
 #endif
 *     Safe for parallel
       INCLUDE 'galaxy.h'
-      COMMON/INIT/  IACC
-
       REAL*8  XI(3),XIDOT(3),FIRR(3),FREG(3),FD(3),FDR(3),
      &        XG(3),XGDOT(3),FM(3),FMD(3),FS(3),FSD(3)
 *
-      DO 9 K = 1,3
-
-          FREG(K) = FREG(K) + IACC(K)
-          FDR(K) = FDR(K)
-
-    9 CONTINUE
-      
-
+*
 *       See whether to include a linearized galactic tidal force (two cases).
       IF (KZ(14).LE.2) THEN
           FIRR(1) = FIRR(1) + TIDAL(4)*XIDOT(2)

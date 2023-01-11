@@ -28,7 +28,6 @@
 #include "communication.h"
 
 #define NO_SPLINE
-#define NBODY
 
 /* function prototypes */
 

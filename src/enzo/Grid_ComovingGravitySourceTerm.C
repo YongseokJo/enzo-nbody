@@ -23,7 +23,6 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
  
-#define NBODY
  
 int grid::ComovingGravitySourceTerm()
 {

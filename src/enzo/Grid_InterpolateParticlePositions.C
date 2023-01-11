@@ -23,7 +23,6 @@
 #include "Grid.h"
 
 #define APDEBUG 0
-#define NBODY
 
 /* function prototypes */
 void ActiveParticleResetAccelerations(float *ActiveParticleAcceleration);

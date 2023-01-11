@@ -32,7 +32,6 @@
 /* This controls the maximum particle mass which will be deposited in
    the MASS_FLAGGING_FIELD.  Only set in Grid_SetFlaggingField. */
  
-#define NBODY
 extern float DepositParticleMaximumParticleMass;
  
 int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
@@ -152,7 +151,6 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
   }
 
   /* If requested, only consider cells that have already been flagged. */
-#define NBODY
   if (BothFlags) {
 
     float *DepositFieldPointer;

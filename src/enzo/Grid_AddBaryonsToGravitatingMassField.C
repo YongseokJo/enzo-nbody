@@ -28,7 +28,6 @@
 int FindField(int f, int farray[], int n);
  
 #define INCLUDE_GHOST_ZONES
-#define NBODY
  
 int grid::AddBaryonsToGravitatingMassField()
 {

@@ -79,7 +79,6 @@ int grid::ReadGrid(FILE *fptr, int GridID, char DataFilename[],
   char *ParticleVelocityLabel[] =
     {"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
 
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS
 	char *ParticleAttributeLabel[] = 

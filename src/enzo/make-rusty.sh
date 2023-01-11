@@ -19,7 +19,7 @@ module add cuda
 module add hdf5/1.8.22
 
 make machine-rusty
-make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes photon-no nbody-yes opt-cudadebug
+make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes photon-no nbody-yes opt-aggressive cuda-no
 make show-config
 make show-flags
 make -j3

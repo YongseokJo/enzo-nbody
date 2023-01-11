@@ -1,8 +1,4 @@
-      SUBROUTINE NBODY6(IBODY,IPOS,IVEL,IACC,IHACC)
-
-*     IBODY = initial input mass, IPOS = initial vel
-*     IACC = initial external acceleration
-*     IHACC = initial hermite acceleration
+      PROGRAM NBODY6
 *
 *             N B O D Y 6++
 *             *************
@@ -24,9 +20,6 @@
       INCLUDE 'common6.h'
       INCLUDE 'timing.h'
       include 'omp_lib.h'
-
-      COMMON/INIT/    IBODY,IPOS,IVEL,IACC,IHACC
-
       COMMON/STSTAT/  TINIT,NIR,NIB,NRGL,NKS
 #ifdef DEBUG
 *     --10/03/14 19:40-lwang-debug--------------------------------------*
@@ -45,7 +38,7 @@
 #define MPIINIT 0
 #endif
 #endif
-      INTEGER J
+
 *input needed for nbody6.F
 
       KSTART = 1
@@ -273,14 +266,7 @@
       ttks = ttks + (tt2-tt1)*60.
       END IF
 *
-*       Continue integration.
+*       Continue integration
       GO TO 1
-
-      OPEN (19, FILE='particle.10', STATUS = 'REPLACE')
-
-      DO J = 1, NTOT
-      WRITE (3,'(7f20.8)')  BODYS(J),
-     &         (XS(K,J),K=1,3),(VS(K,J),K=1,3)
-      END DO
-*
+     
       END

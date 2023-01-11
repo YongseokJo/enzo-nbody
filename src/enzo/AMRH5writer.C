@@ -60,7 +60,6 @@ void AMRHDF5Writer::AMRHDF5Create( const char*      fileName,
   const char *ParticleOtherLabel[] =
     {"particle_type", "particle_index", "particle_mass"};
 
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS
 	char *ParticleAttributeLabel[] = 

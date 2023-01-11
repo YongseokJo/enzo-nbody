@@ -34,7 +34,6 @@
 #include "hydro_rk/tools.h"
 #include "phys_constants.h"
 
-#define NBODY
 
 /* function prototypes */
 

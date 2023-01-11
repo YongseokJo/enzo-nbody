@@ -22,7 +22,6 @@
 #include "ExternalBoundary.h"
 #include "Grid.h"
 
-#define NBODY
  
 /* function prototypes */
  

@@ -29,7 +29,6 @@
 
 #include "phys_constants.h"
 
-#define NBODY
  
 extern "C" void FORTRAN_NAME(projplane)(
           float *grid1, float *grid2, float *flaggrid, int *iflag,

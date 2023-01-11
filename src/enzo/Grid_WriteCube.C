@@ -120,7 +120,6 @@ int grid::WriteCube(char *base_name, int grid_id, int TGdims[])
   char *ParticleTypeLabel = "particle_type";
   char *ParticleIndexLabel = "particle_index";
 
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS
 	char *ParticleAttributeLabel[] = 

@@ -72,7 +72,6 @@ int grid::ComputeAccelerationField(int DifferenceType, int level)
  
   /* Loop over dimensions and difference acceleration. */
  
-#define NBODY
   for (dim = 0; dim < GridRank; dim++) {
  
     /* Allocate acceleration field. */

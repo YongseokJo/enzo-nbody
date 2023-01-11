@@ -34,7 +34,6 @@
 #include "communication.h"
 
 
-#define NBODY
  
 /* function prototypes */
  

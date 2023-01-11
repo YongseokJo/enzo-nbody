@@ -25,7 +25,6 @@
 #include "mpi.h"
 #endif /* USE_MPI */
 
-#define NBODY
 /* Set maximum number of receive buffers */
 
 #define MAX_RECEIVE_BUFFERS 150000

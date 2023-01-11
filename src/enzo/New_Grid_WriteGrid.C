@@ -97,7 +97,6 @@ int grid::Group_WriteGrid(FILE *fptr, char *base_name, int grid_id, HDF5_hid_t f
 	{"particle_position_x", "particle_position_y", "particle_position_z"};
 	char *ParticleVelocityLabel[] =
 	{"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS
 	char *ParticleAttributeLabel[] = 

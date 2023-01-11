@@ -531,7 +531,7 @@ C         END DO
 *     &         ((XS(K,J),K=1,3),J=1,NTOT), ((VS(K,J),K=1,3),J=1,NTOT),
 *     &         (PHI(J),J=1,NTOT),(NAME(J),J=1,NTOT)
          DO J = 1, NTOT
-            WRITE (3,'(7f20.8)')  BODYS(J),
+              WRITE (3,'(7f20.8)')  BODYS(J),
      &         (XS(K,J),K=1,3),(VS(K,J),K=1,3)
          END DO
 

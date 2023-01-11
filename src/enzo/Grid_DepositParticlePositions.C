@@ -34,7 +34,6 @@
 #include "Grid.h"
 #include "ActiveParticle.h"
 #include "communication.h"
-#define NBODY
 
 /* function prototypes */
 
@@ -286,7 +285,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		}
 #ifdef NBODY
 		else if (NoStar) {
-#define NBODY_NOSTAR_GRAVITY
+#define no_NBODY_NOSTAR_GRAVITY
 #ifdef NBODY_NOSTAR_GRAVITY
 			ParticleMassPointer = ParticleMass;
 #else

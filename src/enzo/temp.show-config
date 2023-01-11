@@ -22,7 +22,7 @@
    CONFIG_PYTHON  [python-{yes,no}]                          : no
    CONFIG_NEW_PROBLEM_TYPES  [new-problem-types-{yes,no}]    : yes
    CONFIG_ECUDA  [cuda-{yes,no}]                             : no
-   CONFIG_NBODY  [nbody-{yes,no}]                            : no
+   CONFIG_NBODY  [nbody-{yes,no}]                            : yes
    CONFIG_OOC_BOUNDARY  [ooc-boundary-{yes,no}]              : no
    CONFIG_ACCELERATION_BOUNDARY  [acceleration-boundary-{yes,no}] : yes
    CONFIG_OPT  [opt-{warn,debug,cudadebug,high,aggressive}]  : aggressive

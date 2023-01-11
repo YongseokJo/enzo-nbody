@@ -86,7 +86,6 @@ int grid::Group_ReadGrid(FILE *fptr, int GridID, HDF5_hid_t file_id,
     {"particle_position_x", "particle_position_y", "particle_position_z"};
   char *ParticleVelocityLabel[] =
     {"particle_velocity_x", "particle_velocity_y", "particle_velocity_z"};
-#define NBODY
 #ifdef NBODY
 #ifdef WINDS
 	char *ParticleAttributeLabel[] = 

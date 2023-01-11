@@ -27,7 +27,6 @@
 #include "Grid.h"
 #include "communication.h"
 
-#define NBODY
 
 int grid::AddOverlappingParticleMassField(grid *OtherGrid,
 		FLOAT EdgeOffset[MAX_DIMENSION])

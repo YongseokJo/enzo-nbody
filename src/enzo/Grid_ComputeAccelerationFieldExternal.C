@@ -32,7 +32,6 @@
 #include "Grid.h"
 #include "phys_constants.h"
 
-#define NBODY
 
 /* function prototypes */
 
