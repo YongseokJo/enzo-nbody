@@ -1,6 +1,6 @@
 
-   MACHINE: Generic Ubuntu 8.04
-   MACHINE-NAME: rusty
+   MACHINE: Generic GNU/Linux machine file. Requires gfortran/gcc/g++, OpenMPI, and a serial HDF5 library. Make sure to set the correct LOCAL_HDF5_INSTALL path in the machine file (e.g., /usr for a system-wide installation or a custom path for local installations).
+   MACHINE-NAME: linux-gnu
 
    PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000
    PARAMETER_MAX_BARYONS  [max-baryons-###]                  : 30

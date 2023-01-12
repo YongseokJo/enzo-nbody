@@ -30,15 +30,16 @@ serial HDF5 library. Make sure to set the correct LOCAL_HDF5_INSTALL path in the
 machine file (e.g., /usr for a system-wide installation or a custom path for local \
 installations).
 MACH_VALID = 1
-MACH_FILE  = Make.mach.linux-gnu
+MACH_FILE  = Make.mach.linux-gnu-me
 
 #-----------------------------------------------------------------------
 # Install paths (local variables)
 #-----------------------------------------------------------------------
 
-LOCAL_HDF5_INSTALL    = /PATH/TO/SERIAL-HDF5/INSTALL # mandatory
-LOCAL_GRACKLE_INSTALL = /PATH/TO/GRACKLE/INSTALL # optional
-LOCAL_HYPRE_INSTALL   = /PATH/TO/HYPRE/INSTALL   # optional
+LOCAL_HDF5_INSTALL    = /home/sykim/local/hdf5-1.12.1 # mandatory
+LOCAL_GRACKLE_INSTALL = /home/sykim/local/grackle # optional
+LOCAL_MPI_INSTALL     = /home/sykim/local/openmpi-4.1.3
+#LOCAL_HYPRE_INSTALL   = /PATH/TO/HYPRE/INSTALL   # optional
 
 #-----------------------------------------------------------------------
 # Compiler settings
@@ -56,11 +57,11 @@ MACH_LD_MPI    = mpic++ # Linker when using MPI
 
 # Without MPI
 
-MACH_CC_NOMPI  = gcc # C compiler when not using MPI
-MACH_CXX_NOMPI = g++ # C++ compiler when not using MPI
-MACH_FC_NOMPI  = gfortran # Fortran 77 compiler when not using MPI
-MACH_F90_NOMPI = gfortran # Fortran 90 compiler when not using MPI
-MACH_LD_NOMPI  = g++ # Linker when not using MPI
+#MACH_CC_NOMPI  = gcc # C compiler when not using MPI
+#MACH_CXX_NOMPI = g++ # C++ compiler when not using MPI
+#MACH_FC_NOMPI  = gfortran # Fortran 77 compiler when not using MPI
+#MACH_F90_NOMPI = gfortran # Fortran 90 compiler when not using MPI
+#MACH_LD_NOMPI  = g++ # Linker when not using MPI
 
 #-----------------------------------------------------------------------
 # Machine-dependent defines
@@ -73,7 +74,7 @@ MACH_DEFINES   = -DLINUX -DH5_USE_16_API
 #-----------------------------------------------------------------------
 
 
-MACH_CPPFLAGS = -P -traditional 
+MACH_CPPFLAGS = # -P -traditional 
 MACH_CFLAGS   = 
 MACH_CXXFLAGS =
 MACH_FFLAGS   = -fno-second-underscore -ffixed-line-length-132
@@ -93,11 +94,11 @@ MACH_OPT_AGGRESSIVE  = -O3 -g
 # Includes
 #-----------------------------------------------------------------------
 
-LOCAL_INCLUDES_MPI    = # MPI includes
-LOCAL_INCLUDES_HDF5   = -I$(LOCAL_HDF5_INSTALL)/include # HDF5 includes
-LOCAL_INCLUDES_HYPRE  = -I$(LOCAL_HYPRE_INSTALL)/include
+LOCAL_INCLUDES_MPI    = -I/home/sykim/local/openmpi-4.1.3/include # MPI includes
+LOCAL_INCLUDES_HDF5   = -I/home/sykim/local/hdf5-1.12.1/include # HDF5 includes
+#LOCAL_INCLUDES_HYPRE  = -I$(LOCAL_HYPRE_INSTALL)/include
 LOCAL_INCLUDES_PAPI   = # PAPI includes
-LOCAL_INCLUDES_GRACKLE = -I$(LOCAL_GRACKLE_INSTALL)/include
+LOCAL_INCLUDES_GRACKLE = -I/home/sykim/local/grackle/include
 
 MACH_INCLUDES         = $(LOCAL_INCLUDES_HDF5)
 MACH_INCLUDES_MPI     = $(LOCAL_INCLUDES_MPI)
@@ -109,12 +110,12 @@ MACH_INCLUDES_GRACKLE  = $(LOCAL_INCLUDES_GRACKLE)
 # Libraries
 #-----------------------------------------------------------------------
 
-LOCAL_LIBS_MPI    = # MPI libraries
-LOCAL_LIBS_HDF5   = -L$(LOCAL_HDF5_INSTALL)/lib -lhdf5 -lz
-LOCAL_LIBS_HYPRE  = -L$(LOCAL_HYPRE_INSTALL)/lib -lHYPRE
+LOCAL_LIBS_MPI    = -L/home/sykim/local/openmpi-4.1.3/lib -lmpi # MPI libraries
+LOCAL_LIBS_HDF5   = -L/home/sykim/local/hdf5-1.12.1//lib -lhdf5 #-lz
+#LOCAL_LIBS_HYPRE  = -L$(LOCAL_HYPRE_INSTALL)/lib -lHYPRE
 LOCAL_LIBS_PAPI   = # PAPI libraries
 LOCAL_LIBS_MACH   = -lgfortran # Machine-dependent libraries
-LOCAL_LIBS_GRACKLE = -L$(LOCAL_GRACKLE_INSTALL)/lib -lgrackle
+LOCAL_LIBS_GRACKLE = -L/home/sykim/local/grackle/lib -lgrackle
 
 MACH_LIBS         = $(LOCAL_LIBS_HDF5) $(LOCAL_LIBS_MACH)
 MACH_LIBS_MPI     = $(LOCAL_LIBS_MPI)

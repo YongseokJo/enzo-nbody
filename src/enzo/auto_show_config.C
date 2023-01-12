@@ -1,8 +1,8 @@
 #include <stdio.h>
 void auto_show_config(FILE *fp) {
    fprintf (fp,"\n");
-   fprintf (fp,"   MACHINE: Generic Ubuntu 8.04\n");
-   fprintf (fp,"   MACHINE-NAME: rusty\n");
+   fprintf (fp,"   MACHINE: Generic GNU/Linux machine file. Requires gfortran/gcc/g++, OpenMPI, and a serial HDF5 library. Make sure to set the correct LOCAL_HDF5_INSTALL path in the machine file (e.g., /usr for a system-wide installation or a custom path for local installations).\n");
+   fprintf (fp,"   MACHINE-NAME: linux-gnu\n");
    fprintf (fp,"\n");
    fprintf (fp,"   PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000\n");
    fprintf (fp,"   PARAMETER_MAX_BARYONS  [max-baryons-###]                  : 30\n");

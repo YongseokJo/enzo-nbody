@@ -2,6 +2,6 @@
 void auto_show_version(FILE *fp) {
    fprintf (fp,"\n");
    fprintf (fp,"Git Branch   master\n");
-   fprintf (fp,"Git Revision 3fb71b3527a0c8700fb46adf1a4de8afd1938b21\n");
+   fprintf (fp,"Git Revision 472d2fb3a0d7410ca6fe340a447d9508a67f6187\n");
    fprintf (fp,"\n");
 }
