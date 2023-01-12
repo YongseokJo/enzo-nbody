@@ -7633,7 +7633,6 @@ hydro_rk/MHDDecayingRandomFieldInitialize.C:55:22: warning: deprecated conversio
 hydro_rk/MHDDecayingRandomFieldInitialize.C:56:22: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
    char *Drive3Name = "DrivingField3";
                       ^
-mpi_base.h:3: Error: Can't open included file 'mpif.h'
 In file included from NbodyRoutines.C:24:0:
 Grid.h:2508:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
        int _GalaxySimulationInitialization = 0;
