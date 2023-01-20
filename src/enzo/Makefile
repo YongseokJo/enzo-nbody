@@ -226,7 +226,7 @@ verbose: $(EXE).exe
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
+	  $(FC) -std=legacy -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f"; \

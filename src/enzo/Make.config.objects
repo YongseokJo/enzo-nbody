@@ -1261,6 +1261,57 @@ OBJS_NBODY_ALL= \
 				PrepareNbodyComputation.o 
 
 OBJS_NBODY= \
+						nbody/adjust.o \
+						nbody/binpop.o \
+						nbody/checkl.o \
+						nbody/cputim.o \
+						nbody/custom_output.o \
+						nbody/custom_output_facility.o \
+						nbody/data.o \
+						nbody/encorr_mdot.o \
+						nbody/energy.o \
+						nbody/energy_mpi.o \
+						nbody/escape.o \
+						nbody/fcorr.o \
+						nbody/ficorr.o \
+						nbody/file_init.o \
+						nbody/fpcorr.o \
+						nbody/fpoly0.o \
+						nbody/gcint.o \
+						nbody/global_output.o \
+						nbody/hipop.o \
+						nbody/hrplot.o \
+						nbody/imbhinit.o \
+						nbody/input.o \
+						nbody/insert.o \
+						nbody/instar.o \
+						nbody/intgrt.o \
+						nbody/jacobi.o \
+						nbody/kick.o \
+						nbody/ksinit.o \
+						nbody/ksparmpi.o \
+						nbody/kspreg.o \
+						nbody/ksreg.o \
+						nbody/ksterm.o \
+						nbody/mdot.o \
+						nbody/modify.o \
+						nbody/mydump.o \
+						nbody/nbint.o \
+						nbody/nbody6.o \
+						nbody/output.o \
+						nbody/regcor_gpu.o \
+						nbody/remove_ks.o \
+						nbody/rename_ks.o \
+						nbody/scale.o \
+						nbody/setup.o \
+						nbody/start.o \
+						nbody/subint.o \
+						nbody/update.o \
+						nbody/util_gpu.o \
+						nbody/xtrnl0.o \
+						nbody/xtrnlf.o \
+						nbody/xtrnlt.o \
+						nbody/xtrnlv.o \
 						nbody/absorb.o \
 						nbody/add_tlist.o \
 						nbody/assess.o \
@@ -1550,4 +1601,4 @@ OBJS_NBODY= \
 						nbody/zare.o \
 						nbody/zcnsts.o \
 						nbody/zero.o \
-						nbody/zfuncs.o \
+						nbody/zfuncs.o 
