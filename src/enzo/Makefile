@@ -249,7 +249,7 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(F77) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) $(DEFINES) $*.for >& $(OUTPUT) ; \
+	  $(F77)  -x f77 -cpp -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for"; \
@@ -259,7 +259,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(F77) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS)  $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
+	  $(F77) -x f77 -cpp -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
