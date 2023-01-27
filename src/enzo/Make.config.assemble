@@ -838,7 +838,7 @@
 
     ifeq ($(CONFIG_NBODY),yes)
         ERROR_NBODY = 0
-	    ASSEMBLE_NBODY_DEFINES = -DNBODY
+	    ASSEMBLE_NBODY_DEFINES = -DNBODY -D GPU -D OMP -D SIMD
 	    ASSEMBLE_NBODY_LIBS = $(MACH_LIBS_NBODY)
 	    ASSEMBLE_NBODY_INCLUDES = $(MACH_LIBS_INCLUDES)
 	    OBJS_NBODY_LIB = $(OBJS_NBODY_ALL)
@@ -1111,15 +1111,15 @@
                $(ASSEMBLE_GRACKLE_INCLUDES) \
                $(MAKEFILE_INCLUDES)   -I.
 
-    OBJS_LIB = $(OBJS_CONFIG_LIB) \
-    	       $(OBJS_PHOTON_LIB) \
-    	       $(OBJS_LCAPERF_LIB) \
-	       $(OBJS_HYDRO_RK) \
-	       $(OBJS_NBODY) \
-	       $(OBJS_ECUDA_LIB) \
-	       $(OBJS_NBODY_LIB) \
-	       $(OBJS_PYTHON) \
-               $(OBJS_UUID)
+    OBJS_LIB = $(OBJS_NBODY) \
+							 $(OBJS_CONFIG_LIB) \
+							 $(OBJS_PHOTON_LIB) \
+							 $(OBJS_LCAPERF_LIB) \
+							 $(OBJS_HYDRO_RK) \
+							 $(OBJS_ECUDA_LIB) \
+							 $(OBJS_NBODY_LIB) \
+							 $(OBJS_PYTHON) \
+							 $(OBJS_UUID)
 
     LIBS = $(MACH_LIBS) \
            $(ASSEMBLE_MPI_LIBS) \

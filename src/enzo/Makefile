@@ -47,6 +47,8 @@ MODULES  =
 VERBOSE  = 1
 ETAGS_COMMAND = "0"
 
+F77 = gfortran
+
 LFLAGS=--header-file=libconfig/scanner.h --prefix=libconfig_yy
 
 #-----------------------------------------------------------------------
@@ -193,7 +195,7 @@ verbose: $(EXE).exe
 # Implicit rules
 #-----------------------------------------------------------------------
 
-.SUFFIXES: .c .C .F .F90 .o .cu .pyx .f .cpp
+.SUFFIXES: .c .C .F .F90 .o .cu .pyx .f .cpp .for
 
 # Inhibit removing any *.o files after compiling
 
@@ -205,7 +207,7 @@ verbose: $(EXE).exe
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.F >& $(OUTPUT) ; \
+	  $(FC) -c -lstdc++ -o $@ $(FFLAGS) $(DEFINES) $*.F >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.F"; \
@@ -215,7 +217,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -c -o $@ $(FFLAGS)  $(DEFINES) $*.F >> $(OUTPUT) 2>&1 ; \
+	  $(FC) -c -fopenmp -lstdc++ -o $@ $(FFLAGS)  $(DEFINES) $*.F >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -226,7 +228,7 @@ verbose: $(EXE).exe
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -std=legacy -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
+	  $(FC) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f"; \
@@ -236,12 +238,34 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
+	  $(FC) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
 	  fi ; \
 	fi)
+
+.for.o:
+	@rm -f $@
+	@echo "Compiling $<"
+	@(if [ $(VERBOSE) -eq 0 ]; then \
+	  $(F77) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) $(DEFINES) $*.for >& $(OUTPUT) ; \
+	  if [ ! -e $@ ]; then \
+             echo; \
+             echo "$(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for"; \
+             echo; \
+             $(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for; \
+             echo; \
+             exit 1; \
+          fi ; \
+	else \
+	  $(F77) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS)  $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
+	  if [ ! -e $@ ]; then \
+	     echo "See $(OUTPUT) for error messages"; \
+	     exit 1; \
+	  fi ; \
+	fi)
+
 
 #.src90.f90:
 #	@echo "Compiling $<"
