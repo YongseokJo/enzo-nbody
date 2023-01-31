@@ -1392,6 +1392,7 @@ OBJS_NBODY= \
 						nbody/indexx.o \
 						nbody/induce.o \
 						nbody/invert.o \
+						nbody/jacobi_transform.o \
 						nbody/jpred.o \
 						nbody/jpred_int.o \
 						nbody/kcpert_cor.o \
@@ -1527,6 +1528,10 @@ OBJS_NBODY= \
 						nbody/tstab.o \
 						nbody/tstep2.o \
 						nbody/tstep.o \
+						nbody/ttcal.o \
+						nbody/ttforce.o \
+						nbody/ttgalaxy.o \
+						nbody/ttinit.o \
 						nbody/units.o \
 						nbody/unpert.o \
 						nbody/vector.o \
@@ -1593,16 +1598,7 @@ OBJS_NBODY= \
 						nbody/xtrnl0.o \
 						nbody/xtrnlf.o \
 						nbody/xtrnlt.o \
-						nbody/xtrnlv.o \
-						nbody/gpunb.velocity.o \
-						nbody/gpupot.gpu.o \
-						nbody/phicor.o \
-						nbody/irr.avx.o \ 
+						nbody/xtrnlv.o 
 						#nbody/fpoly2_mpi.o \
 						#nbody/fpoly1_mpi.o \
 						#nbody/energy_mpi.o \
-						#nbody/jacobi_transform.o \
-						#nbody/ttcal.o \
-						#nbody/ttforce.o \
-						#nbody/ttgalaxy.o \
-						#nbody/ttinit.o \

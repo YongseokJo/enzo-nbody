@@ -4,8 +4,8 @@
 #include <cassert>
 #include <unistd.h>
 #include <omp.h>
-#include "vector3.h"
-#include "simd_define.h"
+#include <vector3.h>
+#include <simd_define.h>
 
 #define NNBMAX 600
 

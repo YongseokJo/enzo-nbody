@@ -1,6 +1,6 @@
 #=======================================================================
 #
-# FILE:        Make.mach.linux-gnu
+# FILE:        Make.mach.linux-gnu-nbody
 #
 # DESCRIPTION: Makefile settings for a linux machine
 #
@@ -30,7 +30,7 @@ serial HDF5 library. Make sure to set the correct LOCAL_HDF5_INSTALL path in the
 machine file (e.g., /usr for a system-wide installation or a custom path for local \
 installations).
 MACH_VALID = 1
-MACH_FILE  = Make.mach.linux-gnu
+MACH_FILE  = Make.mach.linux-gnu-nbody
 
 #-----------------------------------------------------------------------
 # Install paths (local variables)
@@ -39,6 +39,7 @@ MACH_FILE  = Make.mach.linux-gnu
 LOCAL_HDF5_INSTALL    = /home/sykim/local/hdf5-1.12.1 # mandatory
 LOCAL_GRACKLE_INSTALL = /home/sykim/local/grackle # optional
 LOCAL_MPI_INSTALL     = /home/sykim/local/openmpi-4.1.3
+LOCAL_CUDA_INSTALL    = /usr/local/cuda-11.8
 #LOCAL_HYPRE_INSTALL   = /PATH/TO/HYPRE/INSTALL   # optional
 
 #-----------------------------------------------------------------------
@@ -51,9 +52,11 @@ MACH_CPP       = cpp # C preprocessor command
 
 MACH_CC_MPI    = mpicc # C compiler when using MPI
 MACH_CXX_MPI   = mpic++ # C++ compiler when using MPI
-MACH_FC_MPI    = gfortran # Fortran 77 compiler when using MPI
-MACH_F90_MPI   = gfortran # Fortran 90 compiler when using MPI
+MACH_FC_MPI    = mpifort # Fortran 77 compiler when using MPI
+MACH_F90_MPI   = mpifort  # Fortran 90 compiler when using MPI
 MACH_LD_MPI    = mpic++ # Linker when using MPI
+
+MACH_CUDACOMPILER = $(LOCAL_CUDA_INSTALL)/bin/nvcc
 
 # Without MPI
 
@@ -101,6 +104,7 @@ LOCAL_INCLUDES_PAPI   = # PAPI includes
 LOCAL_INCLUDES_GRACKLE = -I/home/sykim/local/grackle/include
 
 MACH_INCLUDES         = $(LOCAL_INCLUDES_HDF5)
+MACH_LIBS_NBODY = -I
 MACH_INCLUDES_MPI     = $(LOCAL_INCLUDES_MPI)
 MACH_INCLUDES_HYPRE   = $(LOCAL_INCLUDES_HYPRE)
 MACH_INCLUDES_PAPI    = $(LOCAL_INCLUDES_PAPI)
@@ -122,3 +126,4 @@ MACH_LIBS_MPI     = $(LOCAL_LIBS_MPI)
 MACH_LIBS_HYPRE   = $(LOCAL_LIBS_HYPRE)
 MACH_LIBS_PAPI    = $(LOCAL_LIBS_PAPI)
 MACH_LIBS_GRACKLE = $(LOCAL_LIBS_GRACKLE)
+MACH_LIBS_NBODY = -L$(LOCAL_CUDA_INSTALL)/lib64

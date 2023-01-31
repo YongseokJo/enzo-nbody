@@ -118,7 +118,7 @@ OBJECTS = $(SOURCE:.f=.o)
 TARGET: $(RESULT) 
 
 $(RESULT): $(OBJECTS) $(EXTRAOBJ)
-	$(FC) $(FFLAGS) $(LDFLAGS) $(OBJECTS) $(EXTRAOBJ)   -lstdc++ -lcudart
+	$(FC) $(FFLAGS) $(LDFLAGS) $(OBJECTS) $(EXTRAOBJ)   -lstdc++ -L/usr/local/cuda-11.8/lib64 -lcudart
 
 libinitial.so: initial.h initial.cpp
 	$(CXX) -shared $(CXXFLAGS) ../src/Tools/initial.cpp -o libinitial.so

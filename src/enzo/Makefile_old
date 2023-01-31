@@ -47,8 +47,6 @@ MODULES  =
 VERBOSE  = 1
 ETAGS_COMMAND = "0"
 
-NCXX = g++
-NVCC = nvcc
 F77 = gfortran
 
 LFLAGS=--header-file=libconfig/scanner.h --prefix=libconfig_yy
@@ -230,7 +228,7 @@ verbose: $(EXE).exe
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -fopenmp -lstdc++ -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
+	  $(FC) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f"; \
@@ -240,7 +238,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -fopenmp -lstdc++ -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
+	  $(FC) -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -251,7 +249,7 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(F77)  -x f77 -cpp -fopenmp -lstdc++-c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
+	  $(F77)  -x f77 -cpp -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for"; \
@@ -261,7 +259,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(F77) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
+	  $(F77) -x f77 -cpp -fopenmp -lstdc++ -lcudart -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -343,18 +341,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NCXX) -fopenmp -march=native -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
+	  $(CXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
 	    >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(NCXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp"; \
+             echo "$(CXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp"; \
              echo; \
-             $(NCXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp;\
+             $(CXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NCXX) -fopenmp -march=native -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
+	  $(CXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
 	    >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
@@ -427,7 +425,6 @@ dep:
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- */*.f) >> out.make.DEPEND 2>&1
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- */*.F) >> out.make.DEPEND 2>&1
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- */*.cpp) >> out.make.DEPEND 2>&1
-	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- */*.cu) >> out.make.DEPEND 2>&1
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- *.F90) >> out.make.DEPEND 2>&1
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- */*.h) >> out.make.DEPEND 2>&1
 	-@(makedepend $(DEFINES) $(INCLUDES) -a -fDEPEND -o.o -m -- -- *.h) >> out.make.DEPEND 2>&1

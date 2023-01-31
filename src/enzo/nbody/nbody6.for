@@ -1,4 +1,4 @@
-      PROGRAM NBODY6
+      SUBROUTINE NBODY6
 *
 *             N B O D Y 6++
 *             *************
