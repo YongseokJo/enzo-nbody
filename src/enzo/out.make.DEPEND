@@ -456,6 +456,7 @@ makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /mnt/sw/nix/st
 	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
 	not in ./stddef.h
 	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/bits/libc-header-start.h), line 28: # error "Never include <bits/libc-header-start.h> directly."
 makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
@@ -2110,7 +2111,6 @@ makedepend: warning:  nbody/reg.sse.cpp, line 11: cannot find include file "omp.
 	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
 	not in ./omp.h
 	not in /usr/include/omp.h
-makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/bits/libc-header-start.h), line 28: # error "Never include <bits/libc-header-start.h> directly."
 makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
@@ -2719,7 +2719,6 @@ Already have
 	error.def
 	fortran.def
 	fortran_types.def
-makedepend: warning:  hydro_rk/SuperNova.h (reading /usr/include/bits/libc-header-start.h), line 28: # error "Never include <bits/libc-header-start.h> directly."
 makedepend: warning:  hydro_rk/SuperNova.h (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h

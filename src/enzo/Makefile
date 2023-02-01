@@ -112,9 +112,9 @@ include Make.config.objects
 all: MACHNOTES MAKETAGS $(EXE).exe
 
 # I believe this has to be done here, as it is target-specific.
-lib: CFLAGS   += $(MACH_SHARED_FLAGS) 
+lib: CFLAGS   += $(MACH_SHARED_FLAGS) -fPIC
 lib: CXXFLAGS += $(MACH_SHARED_FLAGS) -DSHARED_LIBRARY
-lib: FFLAGS   += $(MACH_SHARED_FLAGS)
+lib: FFLAGS   += $(MACH_SHARED_FLAGS) -fPIC
 lib: F90FLAGS += $(MACH_SHARED_FLAGS)
 lib: LDFLAGS  += $(MACH_SHARED_FLAGS) -lstdc++ L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/lib64 -lcudart 
 lib: lib$(EXE)_p$(ASSEMBLE_PARTICLE_NUMBER)_b$(ASSEMBLE_PRECISION_NUMBER).$(MACH_SHARED_EXT)
@@ -164,11 +164,11 @@ MACHNOTES:
 lib%.$(MACH_SHARED_EXT): $(MODULES) autogen dep enzo.o $(OBJS_LIB)
 	@rm -f $@
 	@echo "Linking"
-	-@$(LD) $(LDFLAGS) $(SHARED_OPT) -o $@ enzo.o $(OBJS_LIB) $(LIBS) >& $(OUTPUT)
+	-@$(LD) $(LDFLAGS) -fopenmp $(SHARED_OPT) -o $@ enzo.o $(OBJS_LIB) $(LIBS) >& $(OUTPUT)
 	@(if [ -e $@ ]; then \
 	   echo "Success!"; \
 	else \
-	   echo "$(LD) $(LDFLAGS) $(SHARED_OPT) -o $*.so $*.o $(OBJS_LIB) $(LIBS)" >> temp1; \
+	   echo "$(LD) $(LDFLAGS) -fopenmp $(SHARED_OPT) -o $*.so $*.o $(OBJS_LIB) $(LIBS)" >> temp1; \
 	   cat temp1 $(OUTPUT) > temp2; \
 	   rm -f temp1; \
 	   mv -f temp2 $(OUTPUT); \
@@ -254,9 +254,9 @@ verbose: $(EXE).exe
 	  $(F77)  -x f77 -cpp -fopenmp -lstdc++-c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for"; \
+             echo "$(for) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for"; \
              echo; \
-             $(for) -c -o $@ $(FFLAGS) $(DEFINES) $*.for; \
+             $(for) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for; \
              echo; \
              exit 1; \
           fi ; \
