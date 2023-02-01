@@ -1594,7 +1594,6 @@ OBJS_NBODY= \
 						nbody/xtrnlf.o \
 						nbody/xtrnlt.o \
 						nbody/xtrnlv.o \
-						#nbody/gpunb.velocity.o \
 						nbody/gpupot.gpu.o \
 						nbody/gpunb.gpu.o \
 						#nbody/irr.sse.o  \

@@ -219,7 +219,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -c -fopenmp -lstdc++ -o $@ $(FFLAGS)  $(DEFINES) $*.F >> $(OUTPUT) 2>&1 ; \
+	  $(FC) -c -lstdc++ -o $@ $(FFLAGS)  $(DEFINES) $*.F >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -230,7 +230,7 @@ verbose: $(EXE).exe
 	@echo "Compiling $<"
 	@rm -f $@
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -fopenmp -lstdc++ -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
+	  $(FC) -lstdc++ -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f"; \
@@ -240,7 +240,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -fopenmp -lstdc++ -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
+	  $(FC) -lstdc++ -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -251,17 +251,17 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(F77)  -x f77 -cpp -fopenmp -lstdc++-c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
+	  $(F77)  -x f77 -cpp -lstdc++-c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(for) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for"; \
+             echo "$(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for"; \
              echo; \
-             $(for) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for; \
+             $(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for; \
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(F77) -x f77 -cpp -fopenmp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
+	  $(F77) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -343,18 +343,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NCXX) -fopenmp -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
 	    >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(NCXX) -fopenmp -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp"; \
+             echo "$(NCXX) -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp"; \
              echo; \
-             $(NCXX) -fopenmp -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp;\
+             $(NCXX)-o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NCXX) -fopenmp -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
 	    >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
