@@ -47,7 +47,7 @@ MODULES  =
 VERBOSE  = 1
 ETAGS_COMMAND = "0"
 
-NCXX = g++
+NCXX = cpp #g++
 NVCC = nvcc
 F77 = gfortran
 
@@ -116,7 +116,7 @@ lib: CFLAGS   += $(MACH_SHARED_FLAGS)
 lib: CXXFLAGS += $(MACH_SHARED_FLAGS) -DSHARED_LIBRARY
 lib: FFLAGS   += $(MACH_SHARED_FLAGS)
 lib: F90FLAGS += $(MACH_SHARED_FLAGS)
-lib: LDFLAGS  += $(MACH_SHARED_FLAGS)
+lib: LDFLAGS  += $(MACH_SHARED_FLAGS) -lstdc++ L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/lib64 -lcudart 
 lib: lib$(EXE)_p$(ASSEMBLE_PARTICLE_NUMBER)_b$(ASSEMBLE_PRECISION_NUMBER).$(MACH_SHARED_EXT)
 
 #-----------------------------------------------------------------------
@@ -343,18 +343,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NCXX) -fopenmp -march=native -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
+	  $(NCXX) -fopenmp -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
 	    >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(NCXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp"; \
+             echo "$(NCXX) -fopenmp -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp"; \
              echo; \
-             $(NCXX) -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp;\
+             $(NCXX) -fopenmp -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NCXX) -fopenmp -march=native -c -o $@ $(DEFINES) $(CXXFLAGS) $(INCLUDES) $*.cpp \
+	  $(NCXX) -fopenmp -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
 	    >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
@@ -370,7 +370,7 @@ verbose: $(EXE).exe
 	    $(INCLUDES) $*.cu >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
 	     echo; \
-             echo "$(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu"; \
+             echo "$(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -I./nbody/include -I./nbody  $(INCLUDES) $*.cu"; \
              echo; \
              $(CUDACOMPILER)  -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu;\
              echo; \

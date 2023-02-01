@@ -1,6 +1,6 @@
 #!/bin/sh  
 
-# This makes enzo.exe on Happiness@SNU
+# This makes enzo.exe on Rusty@Flatiron
 
 echo "Making enzo on"
 pwd

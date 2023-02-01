@@ -1596,8 +1596,15 @@ OBJS_NBODY= \
 						nbody/xtrnlv.o \
 						nbody/gpunb.velocity.o \
 						nbody/gpupot.gpu.o \
-						nbody/phicor.o \
-						nbody/irr.avx.o \ 
+						nbody/irr.sse.o  \
+						nbody/irr.avx.o \
+
+						#nbody/phicor.o \
+						#nbody/reg.avx.o \
+						#nbody/reg.sse.o \
+						#nbody/pot.sse.o \
+						#nbody/pot.avx.o \
+
 						#nbody/fpoly2_mpi.o \
 						#nbody/fpoly1_mpi.o \
 						#nbody/energy_mpi.o \
