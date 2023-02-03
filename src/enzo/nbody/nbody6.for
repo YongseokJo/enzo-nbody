@@ -1,4 +1,4 @@
-      SUBROUTINE NBODY6(NI, DT, MI, XI, VI, FI, BFI, AA)
+      SUBROUTINE NBODY6(NI, DT, MII, XII, VII, FII, BFII, AA)
 *
 *             N B O D Y 6++
 *             *************
@@ -31,7 +31,7 @@
       
       INTEGER  NI
       REAL*8   AA
-      REAL*8   DT,MI(NI),XI(3,NI),VI(3,NI),FI(4,3,NI),BFI(3,NI)
+      REAL*8   DT,MII(NI),XII(3,NI),VII(3,NI),FII(4,3,NI),BFII(3,NI)
       
 *
 #ifdef PARALLEL
@@ -53,7 +53,7 @@
       iserreg = 40
       iserks = 640
       
-      PRINT *, NI, DT, XI(1,1),VI(1,1),FI(1,1),BFI(1,1)
+      PRINT *, NI, DT, XII(1,1),VII(1,1),FII(1,1,1),BFII(1,1)
 
 
 #if MPIINIT
