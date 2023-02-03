@@ -1,4 +1,4 @@
-      SUBROUTINE NBODY6
+      SUBROUTINE NBODY6(NI, DT, MI, XI, VI, FI, BFI, AA)
 *
 *             N B O D Y 6++
 *             *************
@@ -28,6 +28,11 @@
 *     --10/03/14 19:41-lwang-end----------------------------------------*
 #endif
       EXTERNAL MERGE
+      
+      INTEGER  NI
+      REAL*8   AA
+      REAL*8   DT,MI(NI),XI(3,NI),VI(3,NI),FI(4,3,NI),BFI(3,NI)
+      
 *
 #ifdef PARALLEL
 #define MPIINIT 1
@@ -47,7 +52,8 @@
       isernb = 40
       iserreg = 40
       iserks = 640
-
+      
+      PRINT *, NI, DT, XI(1,1),VI(1,1),FI(1,1),BFI(1,1)
 
 
 #if MPIINIT
