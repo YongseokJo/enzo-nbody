@@ -17,6 +17,13 @@ enzo.C:929:21: warning: invalid suffix on literal; C++11 requires a space betwee
 enzo.C:929:34: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
      fprintf (stderr,"%s:%d %"ISYM" ABORT ON UNKNOWN EXIT VALUE %"ISYM"!\n",
                                   ^
+In file included from NbodyRoutines.C:24:0:
+Grid.h:1155:20: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
+                    ^
+Grid.h:1155:47: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
+                                               ^
 In file included from enzo.C:30:0:
 enzo.C: In function 'Eint32 main(Eint32, char**)':
 EnzoTiming.h:408:53: warning: ISO C++ forbids converting a string constant to 'char*' [-Wwrite-strings]
@@ -67,13 +74,6 @@ enzo.C:737:37: warning: ISO C++ forbids converting a string constant to 'char*' 
 enzo.C:784:43: warning: ISO C++ forbids converting a string constant to 'char*' [-Wwrite-strings]
    PrintMemoryUsage("Call evolve hierarchy");
                                            ^
-In file included from NbodyRoutines.C:24:0:
-Grid.h:1155:20: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
-   {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
-                    ^
-Grid.h:1155:47: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
-   {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
-                                               ^
 In file included from PrepareNbodyComputation.C:27:0:
 Grid.h:1155:20: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
    {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
@@ -82,16 +82,9 @@ Grid.h:1155:47: warning: invalid suffix on literal; C++11 requires a space betwe
    {fprintf(stdout, "Baryonfield[field = %"ISYM"][index = %"ISYM"] = %g\n",
                                                ^
 PrepareNbodyComputation.C: In function 'int PrepareNbodyComputation(LevelHierarchyEntry**, int)':
-PrepareNbodyComputation.C:190:4: error: 'nbody6' was not declared in this scope
-    nbody6(&NumberOfNbodyParticles, &dt, NbodyParticleMass, NbodyParticlePosition, NbodyParticleVelocity,
-    ^~~~~~
-PrepareNbodyComputation.C:190:4: note: suggested alternative: 'nbody6_'
-    nbody6(&NumberOfNbodyParticles, &dt, NbodyParticleMass, NbodyParticlePosition, NbodyParticleVelocity,
-    ^~~~~~
-    nbody6_
-PrepareNbodyComputation.C:226:116: warning: passing NULL to non-pointer argument 5 of 'int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)' [-Wconversion-null]
+PrepareNbodyComputation.C:229:116: warning: passing NULL to non-pointer argument 5 of 'int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)' [-Wconversion-null]
     MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
                                                                                                                     ^
-PrepareNbodyComputation.C:227:100: warning: passing NULL to non-pointer argument 5 of 'int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)' [-Wconversion-null]
+PrepareNbodyComputation.C:230:100: warning: passing NULL to non-pointer argument 5 of 'int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)' [-Wconversion-null]
     MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
                                                                                                     ^

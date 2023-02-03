@@ -1261,6 +1261,9 @@ OBJS_NBODY_ALL= \
 #				PrepareNbodyComputation.o 
 
 OBJS_NBODY= \
+						NbodyRoutines.o \
+						PrepareNbodyComputation.o\
+						nbody/nbody6.o \
 						nbody/absorb.o \
 						nbody/add_tlist.o \
 						nbody/assess.o \
@@ -1579,9 +1582,6 @@ OBJS_NBODY= \
 						nbody/modify.o \
 						nbody/mydump.o \
 						nbody/nbint.o \
-						NbodyRoutines.o \
-						PrepareNbodyComputation.o\
-						nbody/nbody6.o \
 						nbody/output.o \
 						nbody/regcor_gpu.o \
 						nbody/remove_ks.o \
