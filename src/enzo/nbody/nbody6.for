@@ -31,7 +31,7 @@
       
       INTEGER  NI
       REAL*8   DT
-      REAL*8   MI
+      REAL*8   MI(NI)
       
 *
 #ifdef PARALLEL
@@ -53,7 +53,8 @@
       iserreg = 40
       iserks = 640
       
-      PRINT *, NI, DT, MI(1)
+      write (6,*) NI, DT, MI(1)
+      write (0,*) NI, DT, MI(1)
 
 
 #if MPIINIT

@@ -187,7 +187,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 			/* Do direct calculation!*/
 			float dt = 0.1, scale_factor=1.0;
-			fprintf(stderr, "%d, %f, %f, %f", NumberOfNbodyParticles, dt, 
+			fprintf(stderr, "%d, %f, %f\n", NumberOfNbodyParticles, dt, 
 					NbodyParticleMass[0]);
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, &dt, NbodyParticleMass); 
 			//NbodyParticlePosition, NbodyParticleVelocity,NbodyParticleAcceleration, NbodyParticleAccelerationNoStar, &scale_factor);
