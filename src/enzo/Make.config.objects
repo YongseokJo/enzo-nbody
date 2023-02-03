@@ -1257,8 +1257,8 @@ POBJS_UUID = \
 # Objects for the Nbody6 support 
 
 OBJS_NBODY_ALL= \
-				NbodyRoutines.o \
-				PrepareNbodyComputation.o 
+#				NbodyRoutines.o \
+#				PrepareNbodyComputation.o 
 
 OBJS_NBODY= \
 						nbody/absorb.o \
@@ -1579,6 +1579,8 @@ OBJS_NBODY= \
 						nbody/modify.o \
 						nbody/mydump.o \
 						nbody/nbint.o \
+						NbodyRoutines.o \
+						PrepareNbodyComputation.o\
 						nbody/nbody6.o \
 						nbody/output.o \
 						nbody/regcor_gpu.o \

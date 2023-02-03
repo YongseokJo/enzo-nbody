@@ -34,8 +34,8 @@
 
 
 extern "C" void FORTRAN_NAME(nbody6)(
-	int* NumberOfNbodyParticles, float* dt, float* NbodyParticleMass, float *NbodyParticlePosition, float *NbodyParticleVelocity,
-					float** NbodyParticleAcceleration, float* NbodyParticleAccelerationNoStar, float* scale_factor
+	int* NumberOfNbodyParticles, float* dt, float* NbodyParticleMass, float **NbodyParticlePosition, float **NbodyParticleVelocity,
+					float *** NbodyParticleAcceleration, float** NbodyParticleAccelerationNoStar, float* scale_factor
 	 	);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
@@ -186,7 +186,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/* Do direct calculation!*/
 			float dt = 0.1, scale_factor=1.0;
 			fprintf(stderr, "%d, %f, %f, %f", NumberOfNbodyParticles, dt, 
-					NbodyParticleMass[0], NbodyParticlePosition[0]0]);
+					NbodyParticleMass[0], NbodyParticlePosition[0][0]);
 			nbody6(&NumberOfNbodyParticles, &dt, NbodyParticleMass, NbodyParticlePosition, NbodyParticleVelocity,
 					NbodyParticleAcceleration, NbodyParticleAccelerationNoStar, &scale_factor);
 
