@@ -52,7 +52,7 @@ EXTERN float *NbodyParticleMass;
 EXTERN float *NbodyParticlePosition[MAX_DIMENSION];
 EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];
 EXTERN float *NbodyParticleAcceleration[MAX_DIMENSION][HERMITE_ORDER];
-EXTERN float *NbodyParticleAccelerationOld[MAX_DIMENSION][HERMITE_ORDER];
+//EXTERN float *NbodyParticleAccelerationOld[MAX_DIMENSION][HERMITE_ORDER];
 EXTERN float *NbodyParticleAccelerationNoStar[MAX_DIMENSION];
 
 EXTERN bool NbodyFirst;

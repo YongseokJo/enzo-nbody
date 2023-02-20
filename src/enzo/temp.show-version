@@ -1,6 +1,10 @@
 make[1]: Warning: File `DEPEND' has modification time 100 s in the future
 
 Git Branch   master
+<<<<<<< Updated upstream
 Git Revision 02b55e6dc10d47d485a7c84ff1f0209f0a322e41
+=======
+Git Revision 6a62ca5226b45fd2b6812e286b3121a5d1fedf97
+>>>>>>> Stashed changes
 
 make[1]: warning:  Clock skew detected.  Your build may be incomplete.

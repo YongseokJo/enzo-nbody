@@ -8,3 +8,6 @@
 *.out
 bin/enzo
 method-paper-joss-2019
+src/enzo/auto_show_version.C
+src/enzo/out.compile
+src/enzo/temp.show-version
