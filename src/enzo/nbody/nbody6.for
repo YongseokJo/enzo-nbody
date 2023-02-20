@@ -4,7 +4,8 @@
      &            EH11,EH12,EH13,
      &            EH21,EH22,EH23,
      &            EH31,EH32,EH33,
-     &            EH41,EH42,EH43,EDT)
+     &            EH41,EH42,EH43,EDT,
+     &            EMU,ELU,EVU,ETU)
  
 *
 *             N B O D Y 6++
@@ -38,6 +39,13 @@
       REAL*8 EH21(EN),EH22(EN),EH23(EN)
       REAL*8 EH31(EN),EH32(EN),EH33(EN)
       REAL*8 EH41(EN),EH42(EN),EH43(EN)
+
+*     conversion factors for enzo code unit -> cgs
+
+      REAL*8 EMU,ELU,EVU,ETU
+
+
+*     conversion factors for astronomical -> nbody
 
       REAL*8 LENGTHU0,MASSU0,VELU0,TIMEU0
       REAL*8 LENGTHU,MASSU,VELU,TIMEU
@@ -83,7 +91,7 @@
 *     determine how much steps should be run depending on approximate
 *     scaling
 
-      ENDSTEP = INT(EDT/TIMEU0)+1
+      ENDSTEP = INT(EDT*ETU/(TIMEU0*(3.1556952E7)))+1
       TCRIT = REAL(ENDSTEP)
       
       write (6,*) TCRIT,TIMEU0,LENGTHU0
@@ -102,12 +110,12 @@
       DO 7 IS = 1,N
 
          BODY(IS) = EBODY(IS)/MASSU
-         X(1,IS) = EX1(IS)/LENGTHU
-         X(2,IS) = EX2(IS)/LENGTHU
-         X(3,IS) = EX3(IS)/LENGTHU
-         XDOT(1,IS) = EXDOT1(IS)/VELU
-         XDOT(2,IS) = EXDOT2(IS)/VELU
-         XDOT(3,IS) = EXDOT3(IS)/VELU
+         X(1,IS) = EX1(IS)*ELU/LENGTHU/(3.0857E18)
+         X(2,IS) = EX2(IS)*ELU/LENGTHU/(3.0857E18)
+         X(3,IS) = EX3(IS)*ELU/LENGTHU/(3.0857E18)
+         XDOT(1,IS) = EXDOT1(IS)*EVU/VELU/(1e5)
+         XDOT(2,IS) = EXDOT2(IS)*EVU/VELU/(1e5)
+         XDOT(3,IS) = EXDOT3(IS)*EVU/VELU/(1e5)
 
     7 CONTINUE
 
