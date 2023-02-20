@@ -212,8 +212,10 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				ENZO_FAIL("Error in GetUnits.");
 			}
 
-			//fprintf(stderr, "%d, %f, %f\n", NumberOfNbodyParticles, dt,
-			//			NbodyParticleMass[0]);
+			fprintf(stderr, "%d\n", NumberOfNbodyParticles);
+			for (i=0; i<NumberOfNbodyParticles;i++ )
+				fprintf(stderr, "%f\n", NbodyParticleMass[i]);
+
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
 				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
 					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],

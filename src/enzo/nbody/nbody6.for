@@ -31,26 +31,25 @@
 
       INTEGER EN,IS,ENDSTEP,IE,EID,I
 
-      REAL*8 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
-      REAL*8 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
-      REAL*8 EF1(EN),EF2(EN),EF3(EN)
+      REAL*4 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
+      REAL*4 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
+      REAL*4 EF1(EN),EF2(EN),EF3(EN)
 
-      REAL*8 EH11(EN),EH12(EN),EH13(EN)
-      REAL*8 EH21(EN),EH22(EN),EH23(EN)
-      REAL*8 EH31(EN),EH32(EN),EH33(EN)
-      REAL*8 EH41(EN),EH42(EN),EH43(EN)
+      REAL*4 EH11(EN),EH12(EN),EH13(EN)
+      REAL*4 EH21(EN),EH22(EN),EH23(EN)
+      REAL*4 EH31(EN),EH32(EN),EH33(EN)
+      REAL*4 EH41(EN),EH42(EN),EH43(EN)
 
 *     conversion factors for enzo code unit -> cgs
 
-      REAL*8 EMU,ELU,EVU,ETU
-
+      REAL*4 EMU,ELU,EVU,ETU
+      REAL*4 EDT
 
 *     conversion factors for astronomical -> nbody
 
       REAL*8 LENGTHU0,MASSU0,VELU0,TIMEU0
       REAL*8 LENGTHU,MASSU,VELU,TIMEU
       
-      REAL*8 EDT
 
       COMMON/STSTAT/  TINIT,NIR,NIB,NRGL,NKS
 #ifdef DEBUG
