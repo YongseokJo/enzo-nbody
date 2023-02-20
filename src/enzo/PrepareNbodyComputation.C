@@ -34,7 +34,16 @@
 
 
 extern "C" void FORTRAN_NAME(nbody6)(
-		int* NumberOfNbodyParticles, float* dt, float* NbodyParticleMass);
+		int* NumberOfNbodyParticles, float* NbodyParticleMass,
+		float* x, float* y, float* z,
+		float* vx, float* vy, float* vz,
+		float* ax, float* ay, float* az,
+		float* hax1, float* hay1, float* haz1,
+		float* hax2, float* hay2, float* haz2,
+		float* hax3, float* hay3, float* haz3,
+		float* hax4, float* hay4, float* haz4,
+		float* dt
+		);
 //float *NbodyParticlePosition[0], float *NbodyParticlePosition[1], float *NbodyParticlePosition[2], float *NbodyParticleVelocity[0], float *NbodyParticleVelocity[1],
 //float *NbodyParticleVelocity[2],
 //float ** NbodyParticleAcceleration[HERMITE_ORDER], float** NbodyParticleAccelerationNoStar, float* scale_factor
