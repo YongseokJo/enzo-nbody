@@ -42,7 +42,9 @@ extern "C" void FORTRAN_NAME(nbody6)(
 		float* hax2, float* hay2, float* haz2,
 		float* hax3, float* hay3, float* haz3,
 		float* hax4, float* hay4, float* haz4,
-		float* dt
+		float* dt,
+		float* MassUnits, float* LengthUnits, float *VelocityUnits, 
+		float *TimeUnits
 		);
 //float *NbodyParticlePosition[0], float *NbodyParticlePosition[1], float *NbodyParticlePosition[2], float *NbodyParticleVelocity[0], float *NbodyParticleVelocity[1],
 //float *NbodyParticleVelocity[2],
@@ -204,7 +206,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 						TemperatureUnits=1;
 			double MassUnits=1;
 			float GridTime;
-			GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime() // Not sure ?
+			GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
 			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
 						&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
 				ENZO_FAIL("Error in GetUnits.");
