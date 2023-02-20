@@ -31,19 +31,19 @@
 
       INTEGER EN,IS,ENDSTEP,IE,EID,I
 
-      REAL*4 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
-      REAL*4 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
-      REAL*4 EF1(EN),EF2(EN),EF3(EN)
+      REAL*8 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
+      REAL*8 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
+      REAL*8 EF1(EN),EF2(EN),EF3(EN)
 
-      REAL*4 EH11(EN),EH12(EN),EH13(EN)
-      REAL*4 EH21(EN),EH22(EN),EH23(EN)
-      REAL*4 EH31(EN),EH32(EN),EH33(EN)
-      REAL*4 EH41(EN),EH42(EN),EH43(EN)
+      REAL*8 EH11(EN),EH12(EN),EH13(EN)
+      REAL*8 EH21(EN),EH22(EN),EH23(EN)
+      REAL*8 EH31(EN),EH32(EN),EH33(EN)
+      REAL*8 EH41(EN),EH42(EN),EH43(EN)
 
 *     conversion factors for enzo code unit -> cgs
 
-      REAL*4 EMU,ELU,EVU,ETU
-      REAL*4 EDT
+      REAL*8 EMU,ELU,EVU,ETU
+      REAL*8 EDT
 
 *     conversion factors for astronomical -> nbody
 
@@ -100,7 +100,7 @@
 
 *     convert scaling according to new values
 
-      TIMEU = EDT/TCRIT
+      TIMEU = EDT*ETU/(TCRIT*3.1556952E7)
       MASSU = MASSU0
       LENGTHU = LENGTHU0*((TIMEU/TIMEU0)**(2.0/3.0))
       VELU = 6.557*((MASSU/LENGTHU)**(0.5))/(100)
@@ -111,7 +111,7 @@
       
       DO 7 IS = 1,N
 
-         BODY(IS) = EBODY(IS)/MASSU
+         BODY(IS) = EBODY(IS)*EMU/(MASSU*1.98847E30)
          X(1,IS) = EX1(IS)*ELU/LENGTHU/(3.0857E18)
          X(2,IS) = EX2(IS)*ELU/LENGTHU/(3.0857E18)
          X(3,IS) = EX3(IS)*ELU/LENGTHU/(3.0857E18)
@@ -291,7 +291,7 @@
       DO 17 EID = 1,N
          
          IE = NAME(EID)
-         EBODY(IE) = BODY(IE)*MASSU
+         EBODY(IE) = EBODY(IE)*MASSU*1.98847E30/EMU
          EX1(IE) = X(1,IE)*LENGTHU*3.0857E18/ELU
          EX2(IE) = X(2,IE)*LENGTHU*3.0857E18/ELU
          EX3(IE) = X(3,IE)*LENGTHU*3.0857E18/ELU
