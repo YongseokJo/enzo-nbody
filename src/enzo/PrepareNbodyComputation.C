@@ -50,6 +50,9 @@ extern "C" void FORTRAN_NAME(nbody6)(
 		
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
+int GetUnits(float *DensityUnits, float *LengthUnits,
+		float *TemperatureUnits, float *TimeUnits,
+		float *VelocityUnits, double *MassUnits, FLOAT Time);
 //int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]);
 //int FindStartIndex(int* LocalNumberOfNbodyParticles);
 //void InitializeNbodyArrays(void);
@@ -196,18 +199,26 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 			/* Do direct calculation!*/
 			float dt = 0.1, scale_factor=1.0;
-			fprintf(stderr, "%d, %f, %f\n", NumberOfNbodyParticles, dt, 
-					NbodyParticleMass[0]);
+
+			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+						TemperatureUnits=1;
+			double MassUnits=1;
+			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
+						&TimeUnits, &VelocityUnits, &MassUnits, thisgrid->Time) == FAIL) {
+				ENZO_FAIL("Error in GetUnits.");
+			}
+
+			//fprintf(stderr, "%d, %f, %f\n", NumberOfNbodyParticles, dt,
+			//			NbodyParticleMass[0]);
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
-				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2], 
+				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
 					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],
-					NbodyParticleAccelerationNoStar[0], NbodyParticleAccelerationNoStar[1], NbodyParticleAccelerationNoStar[2], 
-					NbodyParticleAcceleration[0][0], NbodyParticleAcceleration[1][0], NbodyParticleAcceleration[2][0], 
-					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1], 
-					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],  
-					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],  
-					&dt); 
-					
+					NbodyParticleAccelerationNoStar[0], NbodyParticleAccelerationNoStar[1], NbodyParticleAccelerationNoStar[2],
+					NbodyParticleAcceleration[0][0], NbodyParticleAcceleration[1][0], NbodyParticleAcceleration[2][0],
+					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1],
+					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],
+					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
+					&dt, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
 
 
 			/* Copy ID and Acc to Old arrays!*/
