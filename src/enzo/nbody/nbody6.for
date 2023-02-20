@@ -82,7 +82,7 @@
       MASSU0 = 0.0D0
 
       DO I = 1,EN
-          MASSU0 = MASSU0 + EBODY(I)
+          MASSU0 = MASSU0 + EBODY(I)*EMU/(1.98847E30)
       END DO
 
       LENGTHU0 = 2.58811
