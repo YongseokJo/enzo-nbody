@@ -34,7 +34,16 @@
 
 
 extern "C" void FORTRAN_NAME(nbody6)(
-		int* NumberOfNbodyParticles, float* dt, float* NbodyParticleMass);
+		int* NumberOfNbodyParticles, float* NbodyParticleMass,
+		float* x, float* y, float* z,
+		float* vx, float* vy, float* vz,
+		float* ax, float* ay, float* az,
+		float* hax1, float* hay1, float* haz1,
+		float* hax2, float* hay2, float* haz2,
+		float* hax3, float* hay3, float* haz3,
+		float* hax4, float* hay4, float* haz4,
+		float* dt
+		);
 //float *NbodyParticlePosition[0], float *NbodyParticlePosition[1], float *NbodyParticlePosition[2], float *NbodyParticleVelocity[0], float *NbodyParticleVelocity[1],
 //float *NbodyParticleVelocity[2],
 //float ** NbodyParticleAcceleration[HERMITE_ORDER], float** NbodyParticleAccelerationNoStar, float* scale_factor
@@ -189,8 +198,15 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			float dt = 0.1, scale_factor=1.0;
 			fprintf(stderr, "%d, %f, %f\n", NumberOfNbodyParticles, dt, 
 					NbodyParticleMass[0]);
-			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, &dt, NbodyParticleMass); 
-			//NbodyParticlePosition, NbodyParticleVelocity,NbodyParticleAcceleration, NbodyParticleAccelerationNoStar, &scale_factor);
+			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
+				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2], 
+					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],
+					NbodyParticleAccelerationNoStar[0], NbodyParticleAccelerationNoStar[1], NbodyParticleAccelerationNoStar[2], 
+					NbodyParticleAcceleration[0][0], NbodyParticleAcceleration[1][0], NbodyParticleAcceleration[2][0], 
+					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1], 
+					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],  
+					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],  
+					&dt); 
 					
 
 
