@@ -290,12 +290,12 @@
          
          IE = NAME(EID)
          EBODY(IE) = BODY(IE)*MASSU
-         EX1(IE) = X(1,IE)*LENGTHU
-         EX2(IE) = X(2,IE)*LENGTHU
-         EX3(IE) = X(3,IE)*LENGTHU
-         EXDOT1(IE) = XDOT(1,IE)*VELU
-         EXDOT2(IE) = XDOT(2,IE)*VELU
-         EXDOT3(IE) = XDOT(3,IE)*VELU
+         EX1(IE) = X(1,IE)*LENGTHU*3.0857E18/ELU
+         EX2(IE) = X(2,IE)*LENGTHU*3.0857E18/ELU
+         EX3(IE) = X(3,IE)*LENGTHU*3.0857E18/ELU
+         EXDOT1(IE) = XDOT(1,IE)*VELU*1e5/EVU
+         EXDOT2(IE) = XDOT(2,IE)*VELU*1e5/EVU
+         EXDOT3(IE) = XDOT(3,IE)*VELU*1e5/EVU
 
    17 CONTINUE
 
