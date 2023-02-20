@@ -28,7 +28,7 @@
       INCLUDE 'timing.h'
       include 'omp_lib.h'
 
-      INTEGER EN,IS,ENDSTEP,IE,EID
+      INTEGER I,EN,IS,ENDSTEP,IE,EID
 
       REAL*8 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
       REAL*8 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
@@ -44,7 +44,7 @@
       
       REAL*8 EDT
 
-      COMMON/STSTAT/  TINIT,NIR,NIB,NRGL,NKS
+      COMMON/STSTAT/  <S-F10>TINIT,NIR,NIB,NRGL,NKS
 #ifdef DEBUG
 *     --10/03/14 19:40-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -68,9 +68,17 @@
 
 *     conventional units are pc, Msun, km/s and yr
 *     the length unit is Rvir, mass unit is total mass, et cetera
+      
+      MASSU0 = 0.0D0      
 
-      LENGTHU0 = 2.58811
-      MASSU0 = 1.00E5
+      DO I=1,EN
+          
+          MASSU0 = MASSU0 + EBODY(I)
+
+      END DO
+
+
+      LENGTHU0 = 2.58811 
       VELU0 = 6.557*((MASSU0/LENGTHU0)**(0.5))/(100)
       TIMEU0 = 14.94*(((LENGTHU0)**3/(MASSU0/1000))**(0.5))
 
