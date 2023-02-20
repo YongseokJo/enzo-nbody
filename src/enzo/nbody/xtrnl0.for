@@ -74,7 +74,7 @@
       IF (KZ(14).EQ.2) THEN
 *
 *       Read galaxy mass and central distance (solar units and kpc).
-         if(rank.eq.0) READ (5,*)  GMG, RG0
+*         if(rank.eq.0) READ (5,*)  GMG, RG0
 #if MPIINIT
       CALL MPI_BCAST(GMG,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
       CALL MPI_BCAST(RG0,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)

@@ -76,6 +76,8 @@
 
 *     conventional units are pc, Msun, km/s and yr
 *     the length unit is Rvir, mass unit is total mass, et cetera
+      
+      write (6,*) 'before conversion',EBODY(1),EX1(1),EXDOT1(1)      
 
       MASSU0 = 0.0D0
 
@@ -86,7 +88,8 @@
       LENGTHU0 = 2.58811
       VELU0 = 6.557*((MASSU0/LENGTHU0)**(0.5))/(100)
       TIMEU0 = 14.94*(((LENGTHU0)**3/(MASSU0/1000))**(0.5))
-
+       
+      write (6,*) 'initial scale',MASSU0,LENGTHU0,VELU0,TIMEU0
 
 *     determine how much steps should be run depending on approximate
 *     scaling
@@ -94,7 +97,7 @@
       ENDSTEP = INT(EDT*ETU/(TIMEU0*(3.1556952E7)))+1
       TCRIT = REAL(ENDSTEP)
       
-      write (6,*) TCRIT,TIMEU0,LENGTHU0
+      write (6,*) 'timesteps',ENDSTEP,TCRIT
 
 *     convert scaling according to new values
 
@@ -103,7 +106,7 @@
       LENGTHU = LENGTHU0*((TIMEU/TIMEU0)**(2.0/3.0))
       VELU = 6.557*((MASSU/LENGTHU)**(0.5))/(100)
 
-      write (6,*) LENGTHU, MASSU, VELU, TIMEU       
+      write (6,*) 'newscale',LENGTHU, MASSU, VELU, TIMEU       
 
       N = EN
       
@@ -120,7 +123,7 @@
     7 CONTINUE
 
 
-      write (6,*) BODY(1),X(1,1),XDOT(1,1)
+      write (6,*) 'after conversion',BODY(1),X(1,1),XDOT(1,1)
 
 *input needed for nbody6.F
 
