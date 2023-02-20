@@ -203,8 +203,10 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 						TemperatureUnits=1;
 			double MassUnits=1;
+			float GridTime;
+			GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime() // Not sure ?
 			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
-						&TimeUnits, &VelocityUnits, &MassUnits, thisgrid->Time) == FAIL) {
+						&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
 				ENZO_FAIL("Error in GetUnits.");
 			}
 
