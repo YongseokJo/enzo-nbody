@@ -1,1 +1,1 @@
-CONFIG_MACHINE = rusty
+CONFIG_MACHINE = linux-gnu-nbody

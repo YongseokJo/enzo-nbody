@@ -1,6 +1,7 @@
+make[1]: Warning: File `DEPEND' has modification time 100 s in the future
 
-   MACHINE: Generic Ubuntu 8.04
-   MACHINE-NAME: rusty
+   MACHINE: Generic GNU/Linux machine file. Requires gfortran/gcc/g++, OpenMPI, and a serial HDF5 library. Make sure to set the correct LOCAL_HDF5_INSTALL path in the machine file (e.g., /usr for a system-wide installation or a custom path for local installations).
+   MACHINE-NAME: linux-gnu-nbody
 
    PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000
    PARAMETER_MAX_BARYONS  [max-baryons-###]                  : 30
@@ -36,7 +37,8 @@
    CONFIG_FAST_SIB  [fastsib-{yes,no}]                       : yes
    CONFIG_GRAVITY_4S  [gravity-4s-{yes,no}]                  : no
    CONFIG_ENZO_PERFORMANCE  [enzo-performance-{yes,no}]      : yes
-   CONFIG_GRACKLE  [grackle-{yes,no}]                        : yes
+   CONFIG_GRACKLE  [grackle-{yes,no}]                        : no
    CONFIG_LOG2ALLOC  [log2alloc-{yes,no}]                    : no
    CONFIG_UUID  [uuid-{yes,no}]                              : yes
 
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.
