@@ -30,6 +30,7 @@
 #include "LevelHierarchy.h"
 #include "CommunicationUtilities.h"
 #include "NbodyRoutines.h"  //added  
+#include "phys_constants.h"
 
 
 
@@ -215,7 +216,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 
 			/* Do direct calculation!*/
-			float dt = 1e-10, scale_factor=1.0;
+			float dt = 1e-8, scale_factor=1.0;
 
 			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 						TemperatureUnits=1;
@@ -227,7 +228,14 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				ENZO_FAIL("Error in GetUnits.");
 			}
 
-			fprintf(stdout, "%f, %f\n", dt, TimeUnits);
+			fprintf(stdout, "%e, %f\n", dt, TimeUnits);
+
+			fprintf(stderr, "id: %d, pos:(%f,%f,%f), vel:(%f,%f,%f), mass:%f\n", 
+					NbodyParticleID[0], 
+					NbodyParticlePosition[0][0]*LengthUnits/kpc_cm, NbodyParticlePosition[1][0]*LengthUnits/kpc_cm, NbodyParticlePosition[2][0]*LengthUnits/kpc_cm, 
+					NbodyParticleVelocity[0][0]*1e-5*VelocityUnits,NbodyParticleVelocity[1][0]*1e-5*VelocityUnits,NbodyParticleVelocity[2][0]*1e-5*VelocityUnits,
+					NbodyParticleMass[0]*MassUnits/SolarMass);
+
 
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
 				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],

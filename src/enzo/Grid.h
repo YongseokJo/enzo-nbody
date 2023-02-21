@@ -1806,7 +1806,7 @@ class grid
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i];
+						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
 						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
 					} // ENDFOR dim
