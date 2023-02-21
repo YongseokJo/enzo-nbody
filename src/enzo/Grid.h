@@ -1797,10 +1797,12 @@ class grid
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
+			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					NbodyParticleMassTemp[*count] = ParticleMass[i]*CellWidth*CellWidth*CellWidth;
+					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
