@@ -82,9 +82,10 @@
       MASSU0 = 0.0D0
 
       DO I = 1,EN
-          MASSU0 = MASSU0 + EBODY(I)*EMU/(1.98847E30)
+          MASSU0 = MASSU0 + EBODY(I)*EMU/(1.9891e33)
       END DO
-
+*     need to calculate virial radius and put that into LENGTHU0
+*     ** code for calculating virial radius** <- should be added
       LENGTHU0 = 2.58811
       VELU0 = 6.557*((MASSU0/LENGTHU0)**(0.5))/(100)
       TIMEU0 = 14.94*(((LENGTHU0)**3/MASSU0)**(0.5))
@@ -94,14 +95,14 @@
 *     determine how much steps should be run depending on approximate
 *     scaling
 
-      ENDSTEP = INT(EDT*ETU/(TIMEU0*(3.1556952E13)))+1
+      ENDSTEP = INT(EDT*ETU/(TIMEU0*(3.1557E13)))+1
       TCRIT = REAL(ENDSTEP)
       
       write (6,*) 'timesteps',ENDSTEP,TCRIT
 
 *     convert scaling according to new values
 
-      TIMEU = EDT*ETU/(TCRIT*3.1556952E13)
+      TIMEU = EDT*ETU/(TCRIT*3.1557E13)
       MASSU = MASSU0
       LENGTHU = LENGTHU0*((TIMEU/TIMEU0)**(2.0/3.0))
       VELU = 6.557*((MASSU/LENGTHU)**(0.5))/(100)
@@ -112,10 +113,10 @@
       
       DO 7 IS = 1,N
 
-         BODY(IS) = EBODY(IS)*EMU/(MASSU*1.98847E30)
-         X(1,IS) = EX1(IS)*ELU/LENGTHU/(3.0857E18)
-         X(2,IS) = EX2(IS)*ELU/LENGTHU/(3.0857E18)
-         X(3,IS) = EX3(IS)*ELU/LENGTHU/(3.0857E18)
+         BODY(IS) = EBODY(IS)*EMU/(MASSU*1.9891e33)
+         X(1,IS) = EX1(IS)*ELU/LENGTHU/(3.0857E21)
+         X(2,IS) = EX2(IS)*ELU/LENGTHU/(3.0857E21)
+         X(3,IS) = EX3(IS)*ELU/LENGTHU/(3.0857E21)
          XDOT(1,IS) = EXDOT1(IS)*EVU/VELU/(1e5)
          XDOT(2,IS) = EXDOT2(IS)*EVU/VELU/(1e5)
          XDOT(3,IS) = EXDOT3(IS)*EVU/VELU/(1e5)
@@ -292,10 +293,10 @@
       DO 17 EID = 1,N
          
          IE = NAME(EID)
-         EBODY(IE) = BODY(IE)*MASSU*1.98847E30/EMU
-         EX1(IE) = X(1,IE)*LENGTHU*3.0857E18/ELU
-         EX2(IE) = X(2,IE)*LENGTHU*3.0857E18/ELU
-         EX3(IE) = X(3,IE)*LENGTHU*3.0857E18/ELU
+         EBODY(IE) = BODY(IE)*MASSU*1.9891e33/EMU
+         EX1(IE) = X(1,IE)*LENGTHU*3.0857E21/ELU
+         EX2(IE) = X(2,IE)*LENGTHU*3.0857E21/ELU
+         EX3(IE) = X(3,IE)*LENGTHU*3.0857E21/ELU
          EXDOT1(IE) = XDOT(1,IE)*VELU*1e5/EVU
          EXDOT2(IE) = XDOT(2,IE)*VELU*1e5/EVU
          EXDOT3(IE) = XDOT(3,IE)*VELU*1e5/EVU
