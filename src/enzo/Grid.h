@@ -1800,7 +1800,7 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					NbodyParticleMassTemp[*count] = ParticleMass[i];
+					NbodyParticleMassTemp[*count] = ParticleMass[i]*CellWidth*CellWidth*CellWidth;
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {

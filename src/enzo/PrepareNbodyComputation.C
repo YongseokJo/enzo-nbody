@@ -215,7 +215,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 
 			/* Do direct calculation!*/
-			float dt = 0.1, scale_factor=1.0;
+			float dt = 1e-10, scale_factor=1.0;
 
 			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 						TemperatureUnits=1;
@@ -227,9 +227,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				ENZO_FAIL("Error in GetUnits.");
 			}
 
-			fprintf(stderr, "%d\n", NumberOfNbodyParticles);
-			for (i=0; i<NumberOfNbodyParticles;i++ )
-				fprintf(stderr, "%d: %f\n", i, NbodyParticleMass[i]);
+			fprintf(stdout, "%f, %f\n", dt, TimeUnits);
 
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
 				 	NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
