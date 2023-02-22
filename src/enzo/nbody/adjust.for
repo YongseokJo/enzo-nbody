@@ -429,8 +429,10 @@ C     New (Aug. 1998): P.Kroupa
 #ifdef PARALLEL
          IF(rank.EQ.0)THEN
 #endif
-            ttotal=(tt1-ttota)*60.
-            PRINT*,' Total CPU=',ttotal
+           ttotal=(tt1-ttota)*60.
+           PRINT*,' Total CPU=',ttotal
+
+           IPHASE = 13
 
 #ifdef PARALLEL
          END IF
@@ -442,11 +444,10 @@ C     New (Aug. 1998): P.Kroupa
 *         CALL MPI_ABORT(MPI_COMM_WORLD,ierr)
          CALL MPI_FINALIZE
 #endif
-         IPHASE = 13
 
          RETURN
 *     
-      END IF
+       END IF
 *     
 *     Check optional truncation of time.
       IF (KZ(35).GT.0.AND.TIME.GE.DTOFF) THEN

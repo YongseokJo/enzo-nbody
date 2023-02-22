@@ -239,6 +239,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			for (i=0;i<NumberOfNbodyParticles;i++) {
+				fprintf(stderr, "mass:%f \n", NbodyParticleMass[i]);
 				fprintf(stderr, "vel:%f \n", NbodyParticleVelocity[0][i]);
 				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
 			}
@@ -254,8 +255,16 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
 					&dt, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
 
+
 			fprintf(stderr,"NBODY Ends!\n");
 			fprintf(stdout,"NBODY Ends!\n");
+
+			for (i=0;i<NumberOfNbodyParticles;i++) {
+				fprintf(stderr, "mass:%f \n", NbodyParticleMass[i]);
+				fprintf(stderr, "vel:%f \n", NbodyParticleVelocity[0][i]);
+				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
+			}
+
 
 			/* Copy ID and Acc to Old arrays!*/
 			CopyNbodyArrayToOld();
