@@ -366,6 +366,11 @@
       ttks = ttks + (tt2-tt1)*60.
       END IF
 *
+      ELSE IF (IPHASE.EQ.13) THEN
+          RETURN
+      END IF
+
+
 *       Continue integration
       GO TO 1
      

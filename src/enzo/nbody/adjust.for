@@ -442,7 +442,9 @@ C     New (Aug. 1998): P.Kroupa
 *         CALL MPI_ABORT(MPI_COMM_WORLD,ierr)
          CALL MPI_FINALIZE
 #endif
-         STOP
+         IPHASE = 13
+
+         RETURN
 *     
       END IF
 *     
