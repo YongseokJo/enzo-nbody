@@ -324,6 +324,9 @@
 *       Perform energy check & parameter adjustments and print diagnostics.
           call cputim(tt7)
           CALL ADJUST
+          IF (IPHASE.EQ.13) THEN
+            RETURN
+          END IF
           call cputim(tt8)
           ttadj = ttadj + (tt8-tt7)*60.
 *
@@ -364,7 +367,6 @@
           CALL CHAIN(ISUB)
       call cputim(tt2)
       ttks = ttks + (tt2-tt1)*60.
-      END IF
 *
       ELSE IF (IPHASE.EQ.13) THEN
           RETURN

@@ -259,7 +259,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 			/* Copy ID and Acc to Old arrays!*/
 			CopyNbodyArrayToOld();
-			fprintf(stderr,"Done?3\n");
+			fprintf(stderr,"Done?2\n");
 
 
 			CommunicationBarrier();
@@ -352,7 +352,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 #endif
 		}
 
-		fprintf(stderr,"Done?4\n");
+		fprintf(stderr,"Done?3\n");
 		/* Update Particle Velocity and Position Back to Grids */
 		count = 0;
 		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
@@ -362,7 +362,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
 				}
 
-		fprintf(stderr,"Done?5\n");
+		fprintf(stderr,"Done?4\n");
 
 
 
