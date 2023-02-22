@@ -146,7 +146,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 		for (i=0; i<LocalNumberOfNbodyParticles;i++ )
-			fprintf(stderr, "proc=%d, local: %d,  %f\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
+			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
 
 		if (MyProcessorNumber == ROOT_PROCESSOR) {
 
@@ -239,8 +239,8 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			for (i=0;i<NumberOfNbodyParticles;i++) {
-				fprintf(stderr, "mass:%f \n", NbodyParticleMass[i]);
-				fprintf(stderr, "vel:%f \n", NbodyParticleVelocity[0][i]);
+				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
+				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
 				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
 			}
 
@@ -260,8 +260,8 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			fprintf(stdout,"NBODY Ends!\n");
 
 			for (i=0;i<NumberOfNbodyParticles;i++) {
-				fprintf(stderr, "mass:%f \n", NbodyParticleMass[i]);
-				fprintf(stderr, "vel:%f \n", NbodyParticleVelocity[0][i]);
+				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
+				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
 				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
 			}
 
@@ -360,6 +360,10 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 #endif
 		}
+
+
+		for (i=0; i<LocalNumberOfNbodyParticles;i++ )
+			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
 
 		fprintf(stderr,"Done?3\n");
 		/* Update Particle Velocity and Position Back to Grids */
