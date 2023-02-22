@@ -216,25 +216,30 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 
 			/* Do direct calculation!*/
-			float dt = 1e-8, scale_factor=1.0;
+			float dt = 1e-2, scale_factor=1.0;
 
 			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 						TemperatureUnits=1;
 			double MassUnits=1;
-			float GridTime;
+			float GridTime, TimeStep;
 			GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
+			TimeStep = LevelArray[MaximumRefinementLevel]->GridData->ReturnTimeStep(); // Not sure ?
 			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
 						&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
 				ENZO_FAIL("Error in GetUnits.");
 			}
 
-			fprintf(stdout, "%e, %f\n", dt, TimeUnits);
+			fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
 
 			fprintf(stderr, "id: %d, pos:(%f,%f,%f), vel:(%f,%f,%f), mass:%f\n", 
 					NbodyParticleID[0], 
 					NbodyParticlePosition[0][0]*LengthUnits/kpc_cm, NbodyParticlePosition[1][0]*LengthUnits/kpc_cm, NbodyParticlePosition[2][0]*LengthUnits/kpc_cm, 
 					NbodyParticleVelocity[0][0]*1e-5*VelocityUnits,NbodyParticleVelocity[1][0]*1e-5*VelocityUnits,NbodyParticleVelocity[2][0]*1e-5*VelocityUnits,
 					NbodyParticleMass[0]*MassUnits/SolarMass);
+
+
+			for (i=0;i<NumberOfNbodyParticles;i++)
+				fprintf(stderr, "vel:%f \n", NbodyParticleVelocity[0][i]);
 
 
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
