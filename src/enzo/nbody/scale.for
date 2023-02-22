@@ -32,7 +32,7 @@
 *      READ (5,*)  Q, VXROT, VZROT, RTIDE
 
 *      end if
-      SMAX = 0.5
+*      SMAX = 0.5
 #if MPIINIT
 *     print*,' MPIINIT selected to be 1'
       CALL MPI_BCAST(Q,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)

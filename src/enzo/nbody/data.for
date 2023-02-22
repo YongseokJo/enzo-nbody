@@ -24,7 +24,7 @@
 
 *       input needed for data.F
 
-      ALPHA = 0.0
+      ALPHAS = 0.0
       BODY1 = 1.0
       BODYN = 1.0
       NBIN0 = 0
