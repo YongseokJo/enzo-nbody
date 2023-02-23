@@ -259,6 +259,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			fprintf(stderr,"NBODY Ends!\n");
 			fprintf(stdout,"NBODY Ends!\n");
 
+			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
 			for (i=0;i<NumberOfNbodyParticles;i++) {
 				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
 				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);

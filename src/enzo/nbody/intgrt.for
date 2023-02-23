@@ -44,6 +44,10 @@
       SAVE DTOUT
 
 
+      IF (TIME .EQ. 0.0) THEN
+        IPSTART = .true.
+      END IF
+
 *
 *       Update quantized value of STEPM for large N (first time only).
       call cputim(tttbegin)
@@ -98,7 +102,7 @@
                   END IF
                END DO
 
-*     HDF5 format output initialization                  
+*     HDF5 format output initialization
 *     At the first time, full dataset need to be stored,
                if(rank.eq.0) then
 #ifdef H5OUTPUT
@@ -121,7 +125,7 @@
                   IF(KZ(46).eq.4)
      &                 write(6,*) 'ANSI output all particles  ',
      &                 'with time interval ',DTK(KZ(47)+1)
-#endif                  
+#endif
                   IF(KZ(46).GE.3.AND.KZ(46).LE.4.AND.SMAX.GT.
      &                 DTK(KZ(47)+1)) then
                      write(6,*) 'Warning!: Maximum time step ',SMAX,

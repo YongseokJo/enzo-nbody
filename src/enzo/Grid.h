@@ -1830,7 +1830,7 @@ class grid
 					ParticleMass[i] = NbodyParticleMassTemp[*count]/dv ;
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count];
+						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count]+0.5;
 						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];
 					} // ENDFOR dim
 					(*count)++;

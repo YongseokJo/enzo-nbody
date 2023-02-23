@@ -433,6 +433,9 @@ C     New (Aug. 1998): P.Kroupa
            PRINT*,' Total CPU=',ttotal
 
            IPHASE = 13
+*           by YS Jo to reset variables
+           CALL GPUNB_RETURN()
+
 
 #ifdef PARALLEL
          END IF

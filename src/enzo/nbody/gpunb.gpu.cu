@@ -555,8 +555,10 @@ static bool devinit = false;
 // static int *nblist;
 
 void GPUNB_devinit(int irank){
+	fprintf(stdout,"In GPUNB_devinit"); // by YS Jo
   if(devinit) return;
   
+	fprintf(stdout,"Initialization Starts!\n"); //by YS Jo
   cudaGetDeviceCount(&numGPU);
   assert(numGPU > 0);
   char *gpu_list = getenv("GPU_LIST");
@@ -590,21 +592,22 @@ void GPUNB_devinit(int irank){
 }
 
 void GPUNB_open(int nbmax,int irank){
+	fprintf(stdout,"In GPUNB_open"); // by YS Jo
 	time_send = time_grav = time_nb = time_out = 0.0;
 	numInter = 0;
-    icall = ini = isend = 0;
-    
-    //select GPU========================================//
-    GPUNB_devinit(irank);
-    
-    if(is_open){
-      fprintf(stderr, "gpunb: it is already open\n");
-      return;
+	icall = ini = isend = 0;
+
+	//select GPU========================================//
+	GPUNB_devinit(irank);
+
+	if(is_open){
+		fprintf(stderr, "gpunb: it is already open\n");
+		return;
 	}
 	is_open = true;
 
-    //==================================================//
-    // CUT_DEVICE_INIT();
+	//==================================================//
+	// CUT_DEVICE_INIT();
 	// size_t jpsize = nbmax * sizeof(Jparticle);
 	// size_t ipsize = NIMAX * sizeof(Iparticle);
 	// size_t fosize = NIBLOCK * NJBLOCK * NTHREAD * sizeof(Force);
@@ -617,24 +620,24 @@ void GPUNB_open(int nbmax,int irank){
 	// cudaMalloc    ((void **)&fo_dev , fosize);
 	jpbuf.allocate(nbmax + NTHREAD);
 	ipbuf.allocate(NIMAX);
-    fopart.allocate(NIMAX);
+	fopart.allocate(NIMAX);
 	fobuf.allocate(NIMAX);
-    nbpart.allocate(NIMAX);
-    nblist.allocate(NB_BUF_SIZE);
-    nboff.allocate(NIMAX+1);
+	nbpart.allocate(NIMAX);
+	nblist.allocate(NB_BUF_SIZE);
+	nboff.allocate(NIMAX+1);
 	nbodymax = nbmax;
 
-    //    nblist.reserve(nbmax);
+	//    nblist.reserve(nbmax);
 #ifdef PROFILE
-    //	fprintf(stderr, "RANK: %d ******************\n",irank);
-    //	fprintf(stderr, "Opened NBODY6/GPU library\n");
-    fprintf(stderr, "# Open GPU regular force - rank: %d; nbmax: %d\n", irank, nbmax);
+	//	fprintf(stderr, "RANK: %d ******************\n",irank);
+	//	fprintf(stderr, "Opened NBODY6/GPU library\n");
+	fprintf(stderr, "# Open GPU regular force - rank: %d; nbmax: %d\n", irank, nbmax);
 	//fprintf(stderr, "***********************\n");
 #endif
 }
 
 void GPUNB_close(){
-  if(!is_open){
+	if(!is_open){
 		fprintf(stderr, "gpunb: it is already close\n");
 		return;
 	}
@@ -654,6 +657,8 @@ void GPUNB_close(){
     nblist.free();
     nboff.free();
 	nbodymax = 0;
+	fprintf(stderr, "# GPU closed\n"); //by YS Jo
+	return;
 
 // #ifdef PROFILE
 // 	fprintf(stderr, "Closed NBODY6/GPU library\n");
@@ -675,6 +680,7 @@ void GPUNB_send(
 	time_send -= get_wtime();
     isend++;
 	nbody = nj;
+	fprintf(stderr, "nbody: %d, max: %d\n", nbody, nbodymax); //by YS Jo
 	assert(nbody <= nbodymax);
     //    time_send -= get_wtime();
 	for(int j=0; j<nj; j++){
@@ -818,6 +824,16 @@ void GPUNB_profile(int irank) {
 #endif
 }
 
+
+// by YS Jo
+void GPUNB_return() {
+	fprintf(stderr,"GPU return and reset variables!");
+	is_open = false;
+	devinit = false;
+  return;
+}
+
+
 extern "C" {
   void gpunb_devinit_ (int *irank){
     GPUNB_devinit(*irank);
@@ -827,6 +843,10 @@ extern "C" {
   }
   void gpunb_close_(){
     GPUNB_close();
+  }
+
+  void gpunb_return_(){
+    GPUNB_return();
   }
   void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3]){
     GPUNB_send(*nj, mj, xj, vj);
