@@ -100,7 +100,6 @@ void DeleteNbodyArrays(void) {
 
 void CopyNbodyArrayToOld(void) {
 
-	fprintf(stderr,"Done?1-3\n");
 	/* Create New Array */
 	NbodyParticleIDOld =  new int[NumberOfNbodyParticles]{0};
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -109,17 +108,13 @@ void CopyNbodyArrayToOld(void) {
 		}
 	}
 
-	fprintf(stderr,"Done?1-4\n");
 	/* Assgin */
 	NumberOfNbodyParticlesOld = NumberOfNbodyParticles;
-	fprintf(stderr,"Done?1-5\n");
 	for (int i=0; i<NumberOfNbodyParticles; i++) {
 		NbodyParticleIDOld[i] = NbodyParticleID[i];
-	fprintf(stderr,"Done?1-6\n");
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			for (int order=0; order<HERMITE_ORDER; order++) {
 				NbodyParticleAccelerationOld[dim][order][i] = NbodyParticleAcceleration[dim][order][i];
-	fprintf(stderr,"Done?1-7\n");
 			}
 		}
 	}
@@ -141,13 +136,13 @@ void MatchAccelerationWithIndex(void) {
 		} // ENFOR old particles
 	} //ENDFOR particles
 
-	/* Delete Array */
+	/* Delete Old Array */
 	delete [] NbodyParticleIDOld;
 	NbodyParticleIDOld = NULL;
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 		for (int order=0; order<HERMITE_ORDER; order++) {
-			delete [] NbodyParticleAcceleration[dim][order];
-			NbodyParticleAcceleration[dim][order] = NULL;
+			delete [] NbodyParticleAccelerationOld[dim][order];
+			NbodyParticleAccelerationOld[dim][order] = NULL;
 		}
 	}
 } // MatchAccelerationWithIndex

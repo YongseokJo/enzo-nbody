@@ -555,10 +555,10 @@ static bool devinit = false;
 // static int *nblist;
 
 void GPUNB_devinit(int irank){
-	fprintf(stdout,"In GPUNB_devinit"); // by YS Jo
+	//fprintf(stdout,"In GPUNB_devinit"); // by YS Jo
   if(devinit) return;
   
-	fprintf(stdout,"Initialization Starts!\n"); //by YS Jo
+	//fprintf(stdout,"Initialization Starts!\n"); //by YS Jo
   cudaGetDeviceCount(&numGPU);
   assert(numGPU > 0);
   char *gpu_list = getenv("GPU_LIST");
@@ -592,7 +592,7 @@ void GPUNB_devinit(int irank){
 }
 
 void GPUNB_open(int nbmax,int irank){
-	fprintf(stdout,"In GPUNB_open"); // by YS Jo
+	//fprintf(stdout,"In GPUNB_open"); // by YS Jo
 	time_send = time_grav = time_nb = time_out = 0.0;
 	numInter = 0;
 	icall = ini = isend = 0;
@@ -657,7 +657,7 @@ void GPUNB_close(){
     nblist.free();
     nboff.free();
 	nbodymax = 0;
-	fprintf(stderr, "# GPU closed\n"); //by YS Jo
+	//fprintf(stderr, "# GPU closed\n"); //by YS Jo
 	return;
 
 // #ifdef PROFILE
@@ -680,7 +680,7 @@ void GPUNB_send(
 	time_send -= get_wtime();
     isend++;
 	nbody = nj;
-	fprintf(stderr, "nbody: %d, max: %d\n", nbody, nbodymax); //by YS Jo
+	//fprintf(stderr, "nbody: %d, max: %d\n", nbody, nbodymax); //by YS Jo
 	assert(nbody <= nbodymax);
     //    time_send -= get_wtime();
 	for(int j=0; j<nj; j++){

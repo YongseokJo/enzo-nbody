@@ -145,8 +145,10 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		/* We need to gather all the information from other processes */
 
 
+		/**
 		for (i=0; i<LocalNumberOfNbodyParticles;i++ )
 			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
+			**/
 
 		if (MyProcessorNumber == ROOT_PROCESSOR) {
 
@@ -216,7 +218,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 
 			/* Do direct calculation!*/
-			float dt = 1e-2, scale_factor=1.0;
+			float dt = 1e-3, scale_factor=1.0;
 
 			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 						TemperatureUnits=1;
@@ -231,6 +233,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 			fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
 
+			/**
 			fprintf(stderr, "id: %d, pos:(%f,%f,%f), vel:(%f,%f,%f), mass:%f\n", 
 					NbodyParticleID[0], 
 					NbodyParticlePosition[0][0]*LengthUnits/kpc_cm, NbodyParticlePosition[1][0]*LengthUnits/kpc_cm, NbodyParticlePosition[2][0]*LengthUnits/kpc_cm, 
@@ -243,6 +246,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
 				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
 			}
+			**/
 
 
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
@@ -260,11 +264,13 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			fprintf(stdout,"NBODY Ends!\n");
 
 			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
+			/**
 			for (i=0;i<NumberOfNbodyParticles;i++) {
 				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
 				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
 				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
 			}
+			**/
 
 
 			/* Copy ID and Acc to Old arrays!*/
@@ -363,8 +369,11 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		}
 
 
+		/**
 		for (i=0; i<LocalNumberOfNbodyParticles;i++ )
 			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
+			**/
+		CommunicationBarrier();
 
 		fprintf(stderr,"Done?3\n");
 		/* Update Particle Velocity and Position Back to Grids */
