@@ -1050,7 +1050,6 @@ OBJS_CONFIG_LIB = \
 #-----------------------------------------------------------------------
 # Objects for radiative transfer module
 #-----------------------------------------------------------------------
-
 POBJS_CONFIG_LIB = \
 	CommunicationLoadBalancePhotonGrids.o \
 	CommunicationNonblockingRoutines.o \
@@ -1237,8 +1236,7 @@ OBJS_ECUDA_ALL = \
 	hydro_rk/Grid_CudaMHDRK2_2ndStep.o \
 	cuPPM.o \
 	CUDAUtil.o \
-	SaveSubgridFluxCUDA.o 
-
+	SaveSubgridFluxCUDA.o \
 
 # Objects to support get_uuid
 POBJS_UUID = \
@@ -1251,8 +1249,7 @@ POBJS_UUID = \
         uuid/parse.o \
         uuid/unpack.o \
         uuid/unparse.o \
-        uuid/uuid_time.o
-
+        uuid/uuid_time.o \
 
 # Objects for the Nbody6 support 
 
@@ -1598,22 +1595,5 @@ OBJS_NBODY= \
 						nbody/xtrnlv.o \
 						nbody/gpupot.gpu.o \
 						nbody/gpunb.gpu.o \
-						nbody/reset_count.o \ 
-						#nbody/gpunb.gpu.o \
-						#nbody/irr.sse.o  \
-						#nbody/irr.avx.o \
+						nbody/reset_count.o 
 
-						#nbody/phicor.o \
-						#nbody/reg.avx.o \
-						#nbody/reg.sse.o \
-						#nbody/pot.sse.o \
-						#nbody/pot.avx.o \
-
-						#nbody/fpoly2_mpi.o \
-						#nbody/fpoly1_mpi.o \
-						#nbody/energy_mpi.o \
-						#nbody/jacobi_transform.o \
-						#nbody/ttcal.o \
-						#nbody/ttforce.o \
-						#nbody/ttgalaxy.o \
-						#nbody/ttinit.o \

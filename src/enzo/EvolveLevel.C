@@ -694,6 +694,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
 						ENZO_FAIL("Error in NbodyParticleFindAll.");
 					}
+					fprintf(stderr,"PNC done.\n", level);  // by YS
 				//}
 #endif
 
