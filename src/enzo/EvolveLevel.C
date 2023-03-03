@@ -277,7 +277,6 @@ static int StaticLevelZero = 1;
 #else
 static int StaticLevelZero = 0;
 #endif
-
 extern int RK2SecondStepBaryonDeposit;
 
 

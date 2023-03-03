@@ -221,7 +221,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			 **/
 
 
-			/***
 			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
 					NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
 					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],
@@ -231,7 +230,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],
 					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
 					&dt, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
-			***/
 
 
 			fprintf(stderr,"NBODY Ends!\n");

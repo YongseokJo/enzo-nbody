@@ -47,6 +47,8 @@ int grid::ClearParticleAccelerations()
 #ifdef NBODY 
       if (ParticleAccelerationNoStar[dim] != NULL)
 				fprintf(stderr, "ClearStarBackGroundAcceleration: Field not NULL.\n");
+
+			/* Allocate accleration field. */
 			ParticleAccelerationNoStar[dim] = new float[NumberOfParticles]; //by YS, we have to change this to
 #endif
 

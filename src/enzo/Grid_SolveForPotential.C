@@ -82,8 +82,7 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   tol_dim = max(sqrt(float(size))*1e-6, tol_dim);
  
 #ifdef NBODY
-	float **rhs;
-	rhs	= new float*[2];
+	float *rhs[2];
 	rhs[0]	= new float[size];
 	rhs[1]	= new float[size];
 #else
@@ -184,10 +183,15 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
   /* Clean up. */
  
+#ifdef NBODY
+  delete [] rhs[0];
+  delete [] rhs[1];
+#else
   delete [] rhs;
+#endif
 
-//#define NO_POTENTIALDEBUGOUTPUT
-#define POTENTIALDEBUGOUTPUT
+#define NO_POTENTIALDEBUGOUTPUT
+//#define POTENTIALDEBUGOUTPUT
 #ifdef POTENTIALDEBUGOUTPUT
   for (int i=0;i<GridDimension[0]; i++) {
     int igrid = GRIDINDEX_NOGHOST(i,(GridEndIndex[0]+GridStartIndex[0])/2,(GridEndIndex[0]+GridStartIndex[0])/2);

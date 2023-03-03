@@ -125,7 +125,7 @@ void MatchAccelerationWithIndex(void) {
 
 	/* Match!*/
 	for (int i=0; i<NumberOfNbodyParticlesOld; i++) {
-		for (int j=0; i<NumberOfNbodyParticlesOld; i++) {
+		for (int j=0; j<NumberOfNbodyParticlesOld; j++) {
 			if (NbodyParticleIDOld[i] == NbodyParticleID[j]) {
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					for (int order=0; order<HERMITE_ORDER; order++){
