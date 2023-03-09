@@ -435,7 +435,8 @@ C     New (Aug. 1998): P.Kroupa
            IPHASE = 13
 
 *           by YS Jo to reset variables
-             
+           CALL GPUNB_RETURN()           
+ 
 *           by sykim to reset count
            CALL RESET_COUNT
 

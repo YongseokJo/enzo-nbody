@@ -44,6 +44,12 @@
       REAL*8 DTOUT
       SAVE DTOUT
 
+*     included by YS Jo
+
+      IF (TIME.EQ.0.0) THEN
+          IPSTART = .true.
+      END IF
+
 
 *
 *       Update quantized value of STEPM for large N (first time only).
