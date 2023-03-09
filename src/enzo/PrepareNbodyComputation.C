@@ -229,7 +229,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1],
 					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],
 					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
-					&dt, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
+					&TimeStep, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
 
 
 			fprintf(stderr,"NBODY Ends!\n");

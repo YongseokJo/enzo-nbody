@@ -1,11 +1,3457 @@
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
-/bin/bash: makedepend: command not found
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading ErrorExceptions.h, line 18): cannot find include file "exception"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/exception
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/exception
+	not in /mnt/home/yjo10/packages/grackle/build/include/exception
+	not in ./exception
+	not in /usr/include/exception
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ErrorExceptions.h includes /usr/include/stdio.h more than once!
+Already have
+	/usr/include/execinfo.h
+	/usr/include/stdio.h
+	/usr/include/stdlib.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading ErrorExceptions.h, line 25): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading ErrorExceptions.h, line 26): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 6): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 7): cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 9): cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 10): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading macros_and_parameters.h, line 11): cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h, line 233): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading Grid.h, line 14): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/limits.h, line 124): cannot find include file "limits.h"
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 42): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /usr/include/inttypes.h, line 37): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 57): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading ActiveParticle.h, line 20): cannot find include file "typeinfo"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/typeinfo
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/typeinfo
+	not in /mnt/home/yjo10/packages/grackle/build/include/typeinfo
+	not in ./typeinfo
+	not in /usr/include/typeinfo
+makedepend: warning:  hydro_rk/AGNDiskInitialize.C (reading ProblemType.h, line 15): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading /usr/include/unistd.h, line 226): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 28): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 29): cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 30): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/EvolveLevel_RK2.C includes EnzoTiming.h more than once!
+Already have
+	preincludes.h
+	/mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h
+	/usr/include/stdlib.h
+	/usr/include/stdio.h
+	/usr/include/math.h
+	/usr/include/unistd.h
+	EnzoTiming.h
+	performance.h
+makedepend: warning:  hydro_rk/Grid_CudaMHD.C (reading CUDAUtil.h, line 4): cannot find include file "cuda_runtime.h"
+	not in cuda_runtime.h
+	not in cuda_runtime.h
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cuda_runtime.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cuda_runtime.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/cuda_runtime.h
+	not in ./cuda_runtime.h
+	not in /usr/include/cuda_runtime.h
+makedepend: warning:  hydro_rk/TurbulenceInitialize.C, line 16: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/TurbulenceInitialize.C, line 17: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h, line 233): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/bits/libc-header-start.h), line 28: # error "Never include <bits/libc-header-start.h> directly."
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading ErrorExceptions.h, line 18): cannot find include file "exception"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/exception
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/exception
+	not in /mnt/home/yjo10/packages/grackle/build/include/exception
+	not in ./exception
+	not in /usr/include/exception
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ErrorExceptions.h includes /usr/include/stdio.h more than once!
+Already have
+	/usr/include/execinfo.h
+	/usr/include/stdio.h
+	/usr/include/stdlib.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading ErrorExceptions.h, line 25): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading ErrorExceptions.h, line 26): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 6): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 7): cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 9): cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 10): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading macros_and_parameters.h, line 11): cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading Grid.h, line 14): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/limits.h, line 124): cannot find include file "limits.h"
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 42): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /usr/include/inttypes.h, line 37): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 57): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading ActiveParticle.h, line 20): cannot find include file "typeinfo"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/typeinfo
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/typeinfo
+	not in /mnt/home/yjo10/packages/grackle/build/include/typeinfo
+	not in ./typeinfo
+	not in /usr/include/typeinfo
+makedepend: warning:  ActiveParticle_AccretingParticle.C (reading ProblemType.h, line 15): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  AdjustMustRefineParticlesRefineToLevel.C (reading /usr/include/time.h, line 29): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  AnalysisBaseClass.C, line 4: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  CallProblemSpecificRoutines.C (reading /usr/include/unistd.h, line 226): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  CommunicationMergeStarParticle.C, line 23: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  CommunicationMergeStarParticle.C, line 24: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  CommunicationShareParticles.C, line 21: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  CommunicationShareStars.C, line 21: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  CommunicationTransferParticlesOpt.C, line 20: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  CommunicationTransferStarsOpt.C, line 21: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 28): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 29): cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 30): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ComputeStochasticForcing.C, line 14: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ConstructFeedbackZone.C includes phys_constants.h more than once!
+Already have
+	preincludes.h
+	ErrorExceptions.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	phys_constants.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	ActiveParticle.h
+makedepend: warning:  DepositParticleMassFlaggingField.C, line 21: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  DetermineParallelism.C, line 27: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  DetermineParallelism.C, line 28: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  DistributeFeedbackZone.C includes phys_constants.h more than once!
+Already have
+	preincludes.h
+	ErrorExceptions.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	phys_constants.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	ActiveParticle.h
+makedepend: warning:  EventHooks.C, line 13: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  EventHooks.C, line 14: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  EventHooks.C, line 15: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  EventHooks.C, line 16: cannot find include file "stdexcept"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdexcept
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdexcept
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdexcept
+	not in ./stdexcept
+	not in /usr/include/stdexcept
+makedepend: warning:  FindSuperSourceByPosition.C, line 7: cannot find include file "xmmintrin.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/xmmintrin.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/xmmintrin.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/xmmintrin.h
+	not in ./xmmintrin.h
+	not in /usr/include/xmmintrin.h
+makedepend: warning:  FOF_nrutil.C, line 9: cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  Grid_ApplyGalaxyParticleFeedback.C includes phys_constants.h more than once!
+Already have
+	preincludes.h
+	ErrorExceptions.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	units.h
+	Fluxes.h
+	GridList.h
+	phys_constants.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	ActiveParticle.h
+makedepend: warning:  Grid_ApplyGalaxyParticleGravity.C includes phys_constants.h more than once!
+Already have
+	preincludes.h
+	ErrorExceptions.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	units.h
+	Fluxes.h
+	GridList.h
+	phys_constants.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	ActiveParticle.h
+makedepend: warning:  Grid_ApplySmartStarParticleFeedback.C includes phys_constants.h more than once!
+Already have
+	preincludes.h
+	ErrorExceptions.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	units.h
+	Fluxes.h
+	GridList.h
+	phys_constants.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	ActiveParticle.h
+makedepend: warning:  Grid_CorrectForRefinedFluxes.C, line 36: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  Grid_MergePausedPhotonPackages.C, line 18: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  Grid_RegridPausedPhotonPackage.C, line 19: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  Grid_StarParticleHandler.C, line 20: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  Group_ReadDataHierarchy.C, line 26: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  h5utilities.C, line 19: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  h5utilities.C, line 20: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  lcamem.C, line 15: cannot find include file "new"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/new
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/new
+	not in /mnt/home/yjo10/packages/grackle/build/include/new
+	not in ./new
+	not in /usr/include/new
+makedepend: warning:  lcaperf.C (reading lcaperf.h, line 26): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  lcaperf.C (reading lcaperf.h, line 27): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  lcaperf.C (reading lcaperf.h, line 28): cannot find include file "set"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/set
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/set
+	not in /mnt/home/yjo10/packages/grackle/build/include/set
+	not in ./set
+	not in /usr/include/set
+makedepend: warning:  lcaperf.C (reading lcaperf.h, line 29): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  lcaperf.C (reading lcaperf.h, line 30): cannot find include file "stack"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stack
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stack
+	not in /mnt/home/yjo10/packages/grackle/build/include/stack
+	not in ./stack
+	not in /usr/include/stack
+makedepend: warning:  LoadBalanceHilbertCurve.C, line 22: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  LoadBalanceHilbertCurveRootGrids.C, line 22: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  MemoryAllocationRoutines.C, line 17: cannot find include file "new"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/new
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/new
+	not in /mnt/home/yjo10/packages/grackle/build/include/new
+	not in ./new
+	not in /usr/include/new
+makedepend: warning:  NbodyRoutines.C, line 16: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  ProblemType_AgoraRestart.C, line 16: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ProblemType.C, line 13: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  ProblemType.C, line 14: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ProblemType.C, line 15: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ProblemType.C, line 16: cannot find include file "stdexcept"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdexcept
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdexcept
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdexcept
+	not in ./stdexcept
+	not in /usr/include/stdexcept
+makedepend: warning:  ProblemType_CollapsingCoolingCloud.C, line 16: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ProblemType_ExplodingCloud.C, line 16: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ProblemType_MagneticReconnection.C, line 16: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ProblemType_RotatingCylinder.C, line 16: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ReadDataHierarchy.C, line 23: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ReadParameterFile.C, line 26: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  UpdateFromFinerGrids.C includes performance.h more than once!
+Already have
+	/mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h
+	/usr/include/stdio.h
+	performance.h
+	ErrorExceptions.h
+makedepend: warning:  Mpich_V1_Dims_create.c (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  Mpich_V1_Dims_create.c (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  Mpich_V1_Dims_create.c (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  Mpich_V1_Dims_create.c (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  Mpich_V1_Dims_create.c (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  wall_clock.c (reading /usr/include/time.h, line 29): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  BlockSolve.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  calc_tdust_1d.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  chtable.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  chtable.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  chtable.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  chtable.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cool1d_cloudy.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cool1d_cloudy.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cool1d_cloudy.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cool1d_cloudy.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cool1d_cloudy.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  cray_x1_fft64.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  cray_x1_fft64.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  feedback_formulae.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  feedback_formulae.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  feedback_formulae.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  fft_utils.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  f_message.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  fortio.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  fortio.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  fortio.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  grid_cic.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  ibm_fft64.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  ibm_fft64.F includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  intprim.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  intprim.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  intprim.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  intprim.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  intprim.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  int_spline.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  int_spline.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  mhd_hlld_adiabatic.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  pop3_maker.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  riemann_mhd.F includes fortran_types.def more than once!
+Already have
+	fortran_types.def
+makedepend: warning:  smooth.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  solve_rate_cool.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker10.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker1.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker2.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3mom.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3mom.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3mom.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3mom.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker3mom.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker4.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker5.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker7.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  star_maker_h2reg.F includes phys_const.def more than once!
+Already have
+	fortran.def
+	error.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  star_maker_h2reg.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	error.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  star_maker_ssn.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	error.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  utilities.F includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  cannot open "*/*.f"
+makedepend: warning:  cannot open "*/*.F"
+makedepend: warning:  nbody/irr.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/irr.avx.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/irr.avx.cpp, line 3: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/irr.avx.cpp, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/irr.avx.cpp (reading /usr/include/unistd.h, line 226): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/irr.avx.cpp, line 6: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/irr.avx.cpp (reading vector3.h, line 8): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/irr.avx.cpp (reading vector3.h, line 10): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/irr.avx.cpp (reading vector3.h, line 12): cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/irr.sse.cpp, line 2: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/irr.sse.cpp, line 3: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/irr.sse.cpp, line 4: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/irr.sse.cpp, line 5: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/irr.sse.cpp, line 7: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/pot.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/pot.sse.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.avx.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.avx.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/reg.avx.cpp, line 3: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/reg.avx.cpp, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/reg.avx.cpp, line 9: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/reg.sse.cpp, line 1: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/reg.sse.cpp, line 2: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/reg.sse.cpp, line 3: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/reg.sse.cpp, line 4: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/reg.sse.cpp, line 5: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/reg.sse.cpp, line 6: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/reg.sse.cpp, line 11: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading ErrorExceptions.h, line 18): cannot find include file "exception"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/exception
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/exception
+	not in /mnt/home/yjo10/packages/grackle/build/include/exception
+	not in ./exception
+	not in /usr/include/exception
+makedepend: warning:  ErrorExceptions.h includes /usr/include/stdio.h more than once!
+Already have
+	/usr/include/execinfo.h
+	/usr/include/stdio.h
+	/usr/include/stdlib.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading ErrorExceptions.h, line 25): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading ErrorExceptions.h, line 26): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 6): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 7): cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 9): cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 10): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading macros_and_parameters.h, line 11): cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h, line 233): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/CudaMHD.cu (reading CUDAUtil.h, line 4): cannot find include file "cuda_runtime.h"
+	not in cuda_runtime.h
+	not in cuda_runtime.h
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cuda_runtime.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cuda_runtime.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/cuda_runtime.h
+	not in ./cuda_runtime.h
+	not in /usr/include/cuda_runtime.h
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 6): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 7): cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 9): cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 10): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  hydro_rk/HydroSweep_CUDA.cu (reading macros_and_parameters.h, line 11): cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/gpunb.gpu.cu (reading /usr/include/unistd.h, line 226): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/gpunb.gpu.cu, line 5: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/gpunb.gpu.cu, line 6: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/gpunb.velocity.cu, line 1: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/gpunb.velocity.cu, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  nbody/gpunb.velocity.cu, line 5: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/gpunb.velocity.cu, line 6: cannot find include file "omp.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/omp.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/omp.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/omp.h
+	not in ./omp.h
+	not in /usr/include/omp.h
+makedepend: warning:  nbody/gpupot.gpu.cu, line 2: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/gpupot.mdot.cu, line 2: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/gpupot.mdot.cu, line 4: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  FSProb_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  FSProb_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  FSProb_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_AnalyticalEqns.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_AnalyticalEqns.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_AnalyticalEqns.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_DiffRHS.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_DiffRHS.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_LocalJac.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_LocalJac.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_LocalJac.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_LocalJac.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_LocalJac.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_MatrixEntries.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_MatrixEntries.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_SetNewtonBCs.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  gFLDProblem_SetNewtonBCs.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_AnalyticChemistry.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_AnalyticChemistry.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_AnalyticChemistry.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_AnalyticChemistry.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_AnalyticChemistry.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  gFLDSplit_SetupSystem.F90 includes fortran_types.def more than once!
+Already have
+	fortran.def
+	phys_const.def
+	fortran_types.def
+makedepend: warning:  wrapper1d.F90 includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  wrapper2d.F90 includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  wrapper3d.F90 includes fortran_types.def more than once!
+Already have
+	error.def
+	fortran.def
+	fortran_types.def
+makedepend: warning:  hydro_rk/SuperNova.h (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  hydro_rk/SuperNova.h (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  nbody/cutil.h (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/cutil.h (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/cutil.h (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/helper_cuda.h (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/helper_cuda.h (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/helper_cuda.h, line 24: cannot find include file "helper_string.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/helper_string.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/helper_string.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/helper_string.h
+	not in ./helper_string.h
+	not in /usr/include/helper_string.h
+makedepend: warning:  nbody/helper_string.h, line 18: cannot find include file "fstream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/fstream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/fstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/fstream
+	not in ./fstream
+	not in /usr/include/fstream
+makedepend: warning:  nbody/helper_string.h, line 19: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/initial.h, line 33: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/initial.h, line 34: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/initial.h, line 35: cannot find include file "sstream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/sstream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/sstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/sstream
+	not in ./sstream
+	not in /usr/include/sstream
+makedepend: warning:  nbody/initial.h, line 36: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  nbody/initial.h, line 37: cannot find include file "utility"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/utility
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/utility
+	not in /mnt/home/yjo10/packages/grackle/build/include/utility
+	not in ./utility
+	not in /usr/include/utility
+makedepend: warning:  nbody/initial.h, line 38: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/nb6out3.h, line 81: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/nb6out3.h, line 82: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  nbody/uftools.h, line 51: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/uftools.h, line 52: cannot find include file "cstdio"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdio
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdio
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdio
+	not in ./cstdio
+	not in /usr/include/cstdio
+makedepend: warning:  nbody/uftools.h, line 53: cannot find include file "sstream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/sstream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/sstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/sstream
+	not in ./sstream
+	not in /usr/include/sstream
+makedepend: warning:  nbody/uftools.h, line 54: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/uftools.h, line 55: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  nbody/uftools.h, line 56: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/uftools.h, line 59: cannot find include file "cstdlib"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstdlib
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstdlib
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstdlib
+	not in ./cstdlib
+	not in /usr/include/cstdlib
+makedepend: warning:  nbody/vector3.h, line 8: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/vector3.h, line 10: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  nbody/vector3.h, line 12: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
+makedepend: warning:  uuid/uuid.h (reading /usr/include/time.h, line 29): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  uuid/uuidP.h (reading /usr/include/inttypes.h, line 37): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/mpi.h, line 233): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/string.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/strings.h, line 23): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-helper-functions.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  /usr/include/math.h includes /usr/include/bits/mathcalls-narrow.h more than once!
+Already have
+	/usr/include/bits/libc-header-start.h
+	/usr/include/bits/types.h
+	/usr/include/bits/math-vector.h
+	/usr/include/bits/floatn.h
+	/usr/include/bits/flt-eval-method.h
+	/usr/include/bits/fp-logb.h
+	/usr/include/bits/fp-fast.h
+	/usr/include/bits/mathcalls-helper-functions.h
+	/usr/include/bits/mathcalls.h
+	/usr/include/bits/mathcalls-narrow.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading ErrorExceptions.h, line 18): cannot find include file "exception"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/exception
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/exception
+	not in /mnt/home/yjo10/packages/grackle/build/include/exception
+	not in ./exception
+	not in /usr/include/exception
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/stdlib.h, line 31): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/sys/types.h, line 144): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/alloca.h, line 24): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ErrorExceptions.h includes /usr/include/stdio.h more than once!
+Already have
+	/usr/include/execinfo.h
+	/usr/include/stdio.h
+	/usr/include/stdlib.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading ErrorExceptions.h, line 25): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading ErrorExceptions.h, line 26): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 6): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 7): cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 9): cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 10): cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading macros_and_parameters.h, line 11): cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading Grid.h, line 14): cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/limits.h, line 124): cannot find include file "limits.h"
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 42): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stdarg.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /usr/include/inttypes.h, line 37): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/H5public.h, line 57): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stddef.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading ActiveParticle.h, line 20): cannot find include file "typeinfo"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/typeinfo
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/typeinfo
+	not in /mnt/home/yjo10/packages/grackle/build/include/typeinfo
+	not in ./typeinfo
+	not in /usr/include/typeinfo
+makedepend: warning:  ActiveParticle_AccretingParticle.h (reading ProblemType.h, line 15): cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  ActiveParticle.h, line 20: cannot find include file "typeinfo"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/typeinfo
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/typeinfo
+	not in /mnt/home/yjo10/packages/grackle/build/include/typeinfo
+	not in ./typeinfo
+	not in /usr/include/typeinfo
+makedepend: warning:  CUDAUtil.h, line 4: cannot find include file "cuda_runtime.h"
+	not in cuda_runtime.h
+	not in cuda_runtime.h
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cuda_runtime.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cuda_runtime.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/cuda_runtime.h
+	not in ./cuda_runtime.h
+	not in /usr/include/cuda_runtime.h
+makedepend: warning:  EnzoTiming.h, line 28: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  EnzoTiming.h, line 29: cannot find include file "cstring"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
+	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
+	not in ./cstring
+	not in /usr/include/cstring
+makedepend: warning:  EnzoTiming.h, line 30: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ErrorExceptions.h, line 18: cannot find include file "exception"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/exception
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/exception
+	not in /mnt/home/yjo10/packages/grackle/build/include/exception
+	not in ./exception
+	not in /usr/include/exception
+makedepend: warning:  ErrorExceptions.h includes /usr/include/stdio.h more than once!
+Already have
+	/usr/include/execinfo.h
+	/usr/include/stdio.h
+	/usr/include/stdlib.h
+makedepend: warning:  ErrorExceptions.h, line 25: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  ErrorExceptions.h, line 26: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  Grid.h, line 14: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  lcaperf.h, line 26: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  lcaperf.h, line 27: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  lcaperf.h, line 28: cannot find include file "set"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/set
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/set
+	not in /mnt/home/yjo10/packages/grackle/build/include/set
+	not in ./set
+	not in /usr/include/set
+makedepend: warning:  lcaperf.h, line 29: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  lcaperf.h, line 30: cannot find include file "stack"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/stack
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/stack
+	not in /mnt/home/yjo10/packages/grackle/build/include/stack
+	not in ./stack
+	not in /usr/include/stack
+makedepend: warning:  macros_and_parameters.h, line 6: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  macros_and_parameters.h, line 7: cannot find include file "iomanip"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iomanip
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iomanip
+	not in /mnt/home/yjo10/packages/grackle/build/include/iomanip
+	not in ./iomanip
+	not in /usr/include/iomanip
+makedepend: warning:  macros_and_parameters.h, line 8: cannot find include file "vector"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/vector
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  macros_and_parameters.h, line 9: cannot find include file "algorithm"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/algorithm
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/algorithm
+	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
+	not in ./algorithm
+	not in /usr/include/algorithm
+makedepend: warning:  macros_and_parameters.h, line 10: cannot find include file "map"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
+	not in /mnt/home/yjo10/packages/grackle/build/include/map
+	not in ./map
+	not in /usr/include/map
+makedepend: warning:  macros_and_parameters.h, line 11: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cassert
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
+makedepend: warning:  ProblemType.h, line 15: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  sse2neon.h, line 133: #error "Unsupported target. Must be either ARMv7-A+NEON or ARMv8-A."
+makedepend: warning:  sse2neon.h, line 137: cannot find include file "arm_neon.h"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/arm_neon.h
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/arm_neon.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/arm_neon.h
+	not in ./arm_neon.h
+	not in /usr/include/arm_neon.h
+makedepend: warning:  vector3.h, line 8: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/iostream
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  vector3.h, line 10: cannot find include file "string"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
+	not in /mnt/home/yjo10/packages/grackle/build/include/string
+	not in ./string
+	not in /usr/include/string
+makedepend: warning:  vector3.h, line 12: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cmath
+	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
