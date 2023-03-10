@@ -4,11 +4,7 @@ void auto_show_flags(FILE *fp) {
    fprintf (fp,"CPP = /mnt/sw/nix/store/494gvfa9gj2ibqg8210v89h2iljfgqj8-gcc-7.5.0/bin/cpp\n");
    fprintf (fp,"CC  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpicc\n");
    fprintf (fp,"CXX = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpicxx\n");
-<<<<<<< HEAD
    fprintf (fp,"FC  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpif77\n");
-=======
-   fprintf (fp,"FC  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpif90\n");
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
    fprintf (fp,"F90 = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpif90\n");
    fprintf (fp,"LD  = /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/bin/mpicxx\n");
    fprintf (fp,"\n");
@@ -23,10 +19,6 @@ void auto_show_flags(FILE *fp) {
    fprintf (fp,"F90FLAGS =  -O3 -g\n");
    fprintf (fp,"LDFLAGS  =  -O3 -g\n");
    fprintf (fp,"\n");
-<<<<<<< HEAD
    fprintf (fp,"LIBS     = -L/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22//lib -lhdf5 -lz  -lgfortran   -L/mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/lib -lmpi -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh         -L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4//lib64 -lcudart -L/mnt/home/yjo10/packages/grackle/build/lib -lgrackle\n");
-=======
-   fprintf (fp,"LIBS     = -L/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22//lib -lhdf5 -lz  -lgfortran   -L/mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/lib -lmpi        -L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4//lib64 -lcudart -L/mnt/home/yjo10/packages/grackle/build/lib -lgrackle\n");
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
    fprintf (fp,"\n");
 }

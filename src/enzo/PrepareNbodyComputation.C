@@ -224,19 +224,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			*** Communication with Nbody6++
 			***/
 
-<<<<<<< HEAD
 			MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 123, MPI_COMM_WORLD);
-=======
-			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
-					NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
-					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],
-					NbodyParticleAccelerationNoStar[0], NbodyParticleAccelerationNoStar[1], NbodyParticleAccelerationNoStar[2],
-					NbodyParticleAcceleration[0][0], NbodyParticleAcceleration[1][0], NbodyParticleAcceleration[2][0],
-					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1],
-					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],
-					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
-					&TimeStep, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 
 
 

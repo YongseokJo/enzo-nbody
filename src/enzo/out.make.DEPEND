@@ -402,31 +402,19 @@ makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading /usr/include/unistd.h,
 	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
 	not in ./stddef.h
 	not in /usr/include/stddef.h
-<<<<<<< HEAD
 makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 32): cannot find include file "string"
-=======
-makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 28): cannot find include file "string"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
 	not in /mnt/home/yjo10/packages/grackle/build/include/string
 	not in ./string
 	not in /usr/include/string
-<<<<<<< HEAD
 makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 33): cannot find include file "cstring"
-=======
-makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 29): cannot find include file "cstring"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
 	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
 	not in ./cstring
 	not in /usr/include/cstring
-<<<<<<< HEAD
 makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 34): cannot find include file "map"
-=======
-makedepend: warning:  hydro_rk/EvolveLevel_RK2.C (reading EnzoTiming.h, line 30): cannot find include file "map"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
 	not in /mnt/home/yjo10/packages/grackle/build/include/map
@@ -915,31 +903,19 @@ makedepend: warning:  CommunicationTransferStarsOpt.C, line 21: cannot find incl
 	not in /mnt/home/yjo10/packages/grackle/build/include/algorithm
 	not in ./algorithm
 	not in /usr/include/algorithm
-<<<<<<< HEAD
 makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 32): cannot find include file "string"
-=======
-makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 28): cannot find include file "string"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
 	not in /mnt/home/yjo10/packages/grackle/build/include/string
 	not in ./string
 	not in /usr/include/string
-<<<<<<< HEAD
 makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 33): cannot find include file "cstring"
-=======
-makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 29): cannot find include file "cstring"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
 	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
 	not in ./cstring
 	not in /usr/include/cstring
-<<<<<<< HEAD
 makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 34): cannot find include file "map"
-=======
-makedepend: warning:  CommunicationTranspose.C (reading EnzoTiming.h, line 30): cannot find include file "map"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
 	not in /mnt/home/yjo10/packages/grackle/build/include/map
@@ -3335,31 +3311,19 @@ makedepend: warning:  CUDAUtil.h, line 4: cannot find include file "cuda_runtime
 	not in /mnt/home/yjo10/packages/grackle/build/include/cuda_runtime.h
 	not in ./cuda_runtime.h
 	not in /usr/include/cuda_runtime.h
-<<<<<<< HEAD
 makedepend: warning:  EnzoTiming.h, line 32: cannot find include file "string"
-=======
-makedepend: warning:  EnzoTiming.h, line 28: cannot find include file "string"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/string
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/string
 	not in /mnt/home/yjo10/packages/grackle/build/include/string
 	not in ./string
 	not in /usr/include/string
-<<<<<<< HEAD
 makedepend: warning:  EnzoTiming.h, line 33: cannot find include file "cstring"
-=======
-makedepend: warning:  EnzoTiming.h, line 29: cannot find include file "cstring"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/cstring
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/cstring
 	not in /mnt/home/yjo10/packages/grackle/build/include/cstring
 	not in ./cstring
 	not in /usr/include/cstring
-<<<<<<< HEAD
 makedepend: warning:  EnzoTiming.h, line 34: cannot find include file "map"
-=======
-makedepend: warning:  EnzoTiming.h, line 30: cannot find include file "map"
->>>>>>> c91f1213cd522e3fa47b39cbf3e9828eae033958
 	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/map
 	not in /mnt/sw/nix/store/imz0paik74l75yah5d7nx1d47l445gy1-openmpi-4.0.7/include/map
 	not in /mnt/home/yjo10/packages/grackle/build/include/map
