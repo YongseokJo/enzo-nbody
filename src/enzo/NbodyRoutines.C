@@ -168,9 +168,9 @@ int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]) {
 	}
 
 #ifdef USE_MPI
-	//MPI_Allgather(&LocalNumberOfNbodyParticles, 1, MPI_INT, &NumberOfNbodyParticles, 1, MPI_INT, MPI_COMM_WORLD);
+	//MPI_Allgather(&LocalNumberOfNbodyParticles, 1, MPI_INT, &NumberOfNbodyParticles, 1, MPI_INT, enzo_comm);
 	MPI_Allreduce(&LocalNumberOfNbodyParticles, &NumberOfNbodyParticles, 1,
-			IntDataType, MPI_SUM, MPI_COMM_WORLD);
+			IntDataType, MPI_SUM, enzo_comm);
 #else
 	NumberOfNbodyParticles = LocalNumberOfNbodyParticles;
 #endif
@@ -188,9 +188,9 @@ int FindStartIndex(int* LocalNumberOfNbodyParticles) {
 #ifdef USE_MPI
 	//MPI_Op  myOp;
 	//MPI_Op_create((MPI_User_function *)scan, 1, &myOp);
-	//MPI_Scan(LocalNumberOfNbodyParticles, &start_index, 1, MPI_INT, myOp, MPI_COMM_WORLD);
+	//MPI_Scan(LocalNumberOfNbodyParticles, &start_index, 1, MPI_INT, myOp, enzo_comm);
 
-	MPI_Scan(LocalNumberOfNbodyParticles, &start_index, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Scan(LocalNumberOfNbodyParticles, &start_index, 1, MPI_INT, MPI_SUM, enzo_comm);
 	start_index -= *LocalNumberOfNbodyParticles;
 
 	fprintf(stderr, "Proc: %d, LocalNumberOfNbodyParticles:%d\n",MyProcessorNumber, *LocalNumberOfNbodyParticles);

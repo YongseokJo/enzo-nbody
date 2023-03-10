@@ -26,6 +26,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 // #ifdef _OPENMP
 // #include <omp.h>
@@ -103,7 +104,7 @@ int gFLDSplit::Initialize(HierarchyEntry &TopGrid, TopGridData &MetaData)
 #ifndef MPI_INT
   // in case MPI is not included
   int MPI_PROC_NULL = -3;
-  int MPI_COMM_WORLD = 0;
+  int enzo_comm = 0;
 #endif
 
   // set rank of self-gravity problem to 3
@@ -663,7 +664,7 @@ int gFLDSplit::Initialize(HierarchyEntry &TopGrid, TopGridData &MetaData)
 
   //    set up the grid
   //       create the grid object
-  HYPRE_StructGridCreate(MPI_COMM_WORLD, rank, &grid);
+  HYPRE_StructGridCreate(enzo_comm, rank, &grid);
 
 //   if (debug)  printf("     HYPRE_StructGridSetExtents\n");
 
@@ -742,11 +743,11 @@ int gFLDSplit::Initialize(HierarchyEntry &TopGrid, TopGridData &MetaData)
   matentries = new Eflt64[stSize*Nx*Ny*Nz];
   rhsentries = new Eflt64[Nx*Ny*Nz];
   HYPREbuff = new Eflt64[Nx];
-  HYPRE_StructMatrixCreate(MPI_COMM_WORLD, grid, stencil, &P);
+  HYPRE_StructMatrixCreate(enzo_comm, grid, stencil, &P);
   HYPRE_StructMatrixInitialize(P);
-  HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &rhsvec);
+  HYPRE_StructVectorCreate(enzo_comm, grid, &rhsvec);
   HYPRE_StructVectorInitialize(rhsvec);
-  HYPRE_StructVectorCreate(MPI_COMM_WORLD, grid, &solvec);
+  HYPRE_StructVectorCreate(enzo_comm, grid, &solvec);
   HYPRE_StructVectorInitialize(solvec);
 
 #ifdef USE_MPI

@@ -322,6 +322,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 	/* Create a SUBling list of the subgrids */
 	LevelHierarchyEntry **SUBlingList;
 
+
 	/* Initialize the chaining mesh used in the FastSiblingLocator. */
 
 	if (dbx) fprintf(stderr, "EL: Initialize FSL \n"); 
@@ -562,6 +563,9 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef SAB
 				} // End of loop over grids
 
+
+
+
 				fprintf(stdout,"6\n");  // by YS
 																//Ensure the consistency of the AccelerationField
 				SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
@@ -687,13 +691,13 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 #ifdef NBODY
 				//if (level == MaximumRefinementLevel) {
-					fprintf(stdout,"10\n");  // by YS
-					fprintf(stderr,"level=%d\n", level);  // by YS
-					/* Create a master list of all nbody particles */
-					if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
-						ENZO_FAIL("Error in NbodyParticleFindAll.");
-					}
-					fprintf(stderr,"PNC done.\n", level);  // by YS
+				fprintf(stdout,"10\n");  // by YS
+				fprintf(stderr,"level=%d\n", level);  // by YS
+				/* Create a master list of all nbody particles */
+				if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
+					ENZO_FAIL("Error in NbodyParticleFindAll.");
+				}
+				fprintf(stderr,"PNC done.\n", level);  // by YS
 				//}
 #endif
 

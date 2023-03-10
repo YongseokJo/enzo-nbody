@@ -151,7 +151,7 @@ int RadiativeTransferCallFLD(LevelHierarchyEntry *LevelArray[], int level,
   // extended to the general AMR case when the time comes.  However, we 
   // must take care since the HYPRE solver requires that all processes 
   // in the communicator be involved in each solve, and for now we only 
-  // have MPI_COMM_WORLD (so not all processes interact on all implicit 
+  // have enzo_comm (so not all processes interact on all implicit 
   // "solves" on subgrids).
   else {
     if (level == CallLevel) {

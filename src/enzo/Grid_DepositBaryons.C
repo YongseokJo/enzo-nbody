@@ -330,21 +330,21 @@ int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar)
     if (MyProcessorNumber == ProcessorNumber)
       CommunicationBufferedSend(dens_field, size, DataType, 
 				TargetGrid->ProcessorNumber, MPI_SENDREGION_TAG, 
-				MPI_COMM_WORLD, BUFFER_IN_PLACE);
+				enzo_comm, BUFFER_IN_PLACE);
 
     /* Send/Recv Mode */
 
     if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
 	CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
       MPI_Recv(dens_field, size, DataType, ProcessorNumber, 
-	       MPI_SENDREGION_TAG, MPI_COMM_WORLD, &status);
+	       MPI_SENDREGION_TAG, enzo_comm, &status);
 
     /* Post receive call */
 
     if (MyProcessorNumber == TargetGrid->ProcessorNumber &&
 	CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
       MPI_Irecv(dens_field, size, DataType, ProcessorNumber, 
-	        MPI_SENDREGION_TAG, MPI_COMM_WORLD, 
+	        MPI_SENDREGION_TAG, enzo_comm, 
 	        CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
       CommunicationReceiveBuffer[CommunicationReceiveIndex] = dens_field;
       CommunicationReceiveDependsOn[CommunicationReceiveIndex] =

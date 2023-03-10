@@ -115,7 +115,7 @@ int CommunicationShareStars(int *NumberToMove, star_data* &SendList,
     ***************************/
     
     stat = MPI_Alltoall(NumberToMove, SendCount, DataTypeInt,
-			RecvListCount, RecvCount, DataTypeInt, MPI_COMM_WORLD);
+			RecvListCount, RecvCount, DataTypeInt, enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
     /* Allocate buffers and generated displacement list. */
@@ -137,7 +137,7 @@ int CommunicationShareStars(int *NumberToMove, star_data* &SendList,
 			   MPI_StarMoveList,
 			 SharedList, MPI_RecvListCount, MPI_RecvListDisplacements,
 			   MPI_StarMoveList,
-			 MPI_COMM_WORLD);
+			 enzo_comm);
     if (stat != MPI_SUCCESS) ENZO_FAIL("");
 
 #ifdef MPI_INSTRUMENTATION

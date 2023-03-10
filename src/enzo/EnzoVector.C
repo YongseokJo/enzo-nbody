@@ -68,7 +68,7 @@ EnzoVector::EnzoVector(int N0, int N1, int N2, int G0l, int G0r,
   else {
     MPI_Arg one = 1;
     MPI_Datatype DataType = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
-    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, MPI_COMM_WORLD);  
+    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, enzo_comm);  
   }
 #else
   Nglobal = Nlocal;
@@ -133,7 +133,7 @@ EnzoVector::EnzoVector(int N0, int N1, int N2, int G0l, int G0r,
   else {
     MPI_Arg one = 1;
     MPI_Datatype DataType = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
-    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, MPI_COMM_WORLD);  
+    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, enzo_comm);  
   }
 #else
   Nglobal = Nlocal;
@@ -197,7 +197,7 @@ EnzoVector::EnzoVector(int N0, int N1, int N2, int G0l, int G0r,
   else {
     MPI_Arg one = 1;
     MPI_Datatype DataType = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
-    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, MPI_COMM_WORLD);  
+    MPI_Allreduce(&Nlocal, &Nglobal, one, DataType, MPI_SUM, enzo_comm);  
   }
 #else
   Nglobal = Nlocal;
@@ -818,7 +818,7 @@ float EnzoVector::dot(EnzoVector *x) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
 #else
   gsum = sum;
@@ -849,7 +849,7 @@ float EnzoVector::rmsnorm() const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
 #else
   gsum = sum;
@@ -883,7 +883,7 @@ float EnzoVector::rmsnorm_component(int idat) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
 #else
   gsum = sum;
@@ -931,7 +931,7 @@ float EnzoVector::wl2norm(EnzoVector *w) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
 #else
   gsum = sum;
@@ -959,7 +959,7 @@ float EnzoVector::l1norm() const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
 #else
   gsum = sum;
@@ -990,7 +990,7 @@ float EnzoVector::infnorm() const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, enzo_comm);
   }
 #else
   gmax = max;
@@ -1025,7 +1025,7 @@ float EnzoVector::infnorm_component(int var) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, enzo_comm);
   }
 #else
   gmax = max;
@@ -1063,7 +1063,7 @@ float EnzoVector::relative_difference(float *x, int var) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&max, &gmax, one, DataType, MPI_MAX, enzo_comm);
   }
 #else
   gmax = max;
@@ -1101,7 +1101,7 @@ float EnzoVector::relative_vol_difference(float *x, int var) const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum, &gsum, one, DataType, MPI_SUM, enzo_comm);
   }
   gsum = gsum;
 #else
@@ -1134,7 +1134,7 @@ float EnzoVector::minval() const
   else {
     MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
     MPI_Arg one = 1;
-    MPI_Allreduce(&min, &gmin, one, DataType, MPI_MIN, MPI_COMM_WORLD);
+    MPI_Allreduce(&min, &gmin, one, DataType, MPI_MIN, enzo_comm);
   }
 #else
   gmin = min;

@@ -89,7 +89,7 @@ int InitializePhotonMessages(void)
   for (proc = 0; proc < NumberOfProcessors; proc++)
     if (proc != MyProcessorNumber) {
       MPI_Irecv(PhotonMessageBuffer+PhotonMessageIndex,
-		1, MPI_INT, proc, MPI_NPHOTON_TAG, MPI_COMM_WORLD,
+		1, MPI_INT, proc, MPI_NPHOTON_TAG, enzo_comm,
 		PhotonMessageRequest+PhotonMessageIndex);
       PhotonMessageIndex++;
       PhotonMessageMaxIndex++;
@@ -110,7 +110,7 @@ int KeepTransportingInitialize(char* &kt_global, bool initial_call)
     if (proc != MyProcessorNumber) {
       MPI_Irecv(KeepTransMessageBuffer+KeepTransMessageIndex, 
 		1, MPI_CHAR, proc, 
-		MPI_KEEPTRANSPORTING_TAG, MPI_COMM_WORLD,
+		MPI_KEEPTRANSPORTING_TAG, enzo_comm,
 		KeepTransMessageRequest+KeepTransMessageIndex);
       if (initial_call) {
 	KeepTransMessageIndex++;
@@ -126,7 +126,7 @@ int KeepTransportingInitialize(char* &kt_global, bool initial_call)
 	printf("P%"ISYM": Sending KT=%"ISYM" to P%"ISYM"\n", MyProcessorNumber, 
 	       kt_global[MyProcessorNumber], proc);
       CommunicationBufferedSend(kt_global+MyProcessorNumber, 1, MPI_CHAR, proc,
-				MPI_KEEPTRANSPORTING_TAG, MPI_COMM_WORLD, 1);
+				MPI_KEEPTRANSPORTING_TAG, enzo_comm, 1);
 
       } // ENDIF other processor
 #endif /* USE_MPI */
@@ -219,7 +219,7 @@ int CommunicationNumberOfPhotonSends(int *nPhoton, int size)
 	printf("CRP[%"ISYM"]: Sending %"ISYM" messages, %"ISYM" photons to P%"ISYM"\n", MyProcessorNumber,
 	       NumberOfMessages, nPhoton[proc], proc);
       CommunicationBufferedSend(&NumberOfMessages, 1, MPI_INT, proc,
-				MPI_NPHOTON_TAG, MPI_COMM_WORLD, sizeof(Eint32));
+				MPI_NPHOTON_TAG, enzo_comm, sizeof(Eint32));
     }
 #endif
   return SUCCESS;
@@ -245,7 +245,7 @@ int PostPhotonReceives(Eint32 index, Eint32 proc, int size, MPI_Datatype type)
     ReceiveBuffer = new GroupPhotonList[size];
 
     MPI_Irecv(ReceiveBuffer, size, type, proc,
-	      MPI_PHOTONGROUP_TAG, MPI_COMM_WORLD,
+	      MPI_PHOTONGROUP_TAG, enzo_comm,
 	      PH_CommunicationReceiveMPI_Request +
 	      PH_CommunicationReceiveIndex);
 
@@ -361,7 +361,7 @@ int InitializePhotonReceive(int max_size, bool local_transport,
 				     MAX_PH_RECEIVE_BUFFERS, PhotonMessageIndex,
 				     PhotonMessageMaxIndex);
       MPI_Irecv(PhotonMessageBuffer + PhotonMessageIndex,
-		1, MPI_INT, RecvProc, MPI_NPHOTON_TAG, MPI_COMM_WORLD,
+		1, MPI_INT, RecvProc, MPI_NPHOTON_TAG, enzo_comm,
 		PhotonMessageRequest + PhotonMessageIndex);
       MPI_Test(PhotonMessageRequest + PhotonMessageIndex, &MessageReceived,
 	       MPI_STATUS_IGNORE);
@@ -392,7 +392,7 @@ int KeepTransportingSend(int keep_transporting)
 	       value, proc);
       CommunicationBufferedSend(&value, 1, MPI_CHAR, proc,
 				MPI_KEEPTRANSPORTING_TAG,
-				MPI_COMM_WORLD, 1);
+				enzo_comm, 1);
     } // ENDIF other processor
 #endif /* USE_MPI */
   return SUCCESS;
@@ -461,7 +461,7 @@ int KeepTransportingCheck(char* &kt_global, int &keep_transporting)
 				     KeepTransMessageMaxIndex);
       MPI_Irecv(KeepTransMessageBuffer + KeepTransMessageIndex, 
 		1, MPI_CHAR, RecvProc,
-		MPI_KEEPTRANSPORTING_TAG, MPI_COMM_WORLD,
+		MPI_KEEPTRANSPORTING_TAG, enzo_comm,
 		KeepTransMessageRequest + KeepTransMessageIndex);
       MPI_Test(KeepTransMessageRequest + KeepTransMessageIndex, 
 	       &MessageReceived, MPI_STATUS_IGNORE);
@@ -494,9 +494,9 @@ int KeepTransportingCheck(char* &kt_global, int &keep_transporting)
     // Ping back the processor, saying that we've received this flag
     if (kt_global[RecvProc] == SENT_DATA) {
       CommunicationBufferedSend(&received, 1, MPI_CHAR, RecvProc,
-				MPI_KEEPTRANSPORTING_TAG, MPI_COMM_WORLD, 1);
+				MPI_KEEPTRANSPORTING_TAG, enzo_comm, 1);
       CommunicationBufferedSend(&value, 1, MPI_CHAR, RecvProc,
-				MPI_KEEPTRANSPORTING_TAG, MPI_COMM_WORLD, 1);
+				MPI_KEEPTRANSPORTING_TAG, enzo_comm, 1);
     }
 
     if (next_kt >= 0)

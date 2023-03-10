@@ -93,7 +93,7 @@ int InexactNewtonSolver::Solve(NonlinearProblemABC *prob, EnzoVector *x)
   else if (NtolNorm == 7)  fnormtest = (fvec->infnorm())/normscale;
 
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // begin Newton iterations (if needed)
@@ -115,7 +115,7 @@ int InexactNewtonSolver::Solve(NonlinearProblemABC *prob, EnzoVector *x)
       }
       
 #ifdef USE_MPI
-      MPI_Barrier(MPI_COMM_WORLD);
+      MPI_Barrier(enzo_comm);
 #endif
       
       // set up Jacobian for Newton solve
@@ -125,7 +125,7 @@ int InexactNewtonSolver::Solve(NonlinearProblemABC *prob, EnzoVector *x)
       }
       
 #ifdef USE_MPI
-      MPI_Barrier(MPI_COMM_WORLD);
+      MPI_Barrier(enzo_comm);
 #endif
       
       // solve problem-specific inexact Newton system, J(u)*dx=f
@@ -135,7 +135,7 @@ int InexactNewtonSolver::Solve(NonlinearProblemABC *prob, EnzoVector *x)
       }
       
 #ifdef USE_MPI
-      MPI_Barrier(MPI_COMM_WORLD);
+      MPI_Barrier(enzo_comm);
 #endif
       
       if (DampNewt != 0) {

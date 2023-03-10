@@ -41,7 +41,7 @@ MACH_CPP       = cpp # C preprocessor command
 
 MACH_CC_MPI    =  mpicc     #/home/kerex/intel/bin/icc 
 MACH_CXX_MPI   =  mpicxx    #/home/kerex/intel/bin/icpc
-MACH_FC_MPI    =  mpif90   #/home/kerex/intel/bin/ifort 
+MACH_FC_MPI    =  mpif77   #/home/kerex/intel/bin/ifort 
 MACH_F90_MPI   =  mpif90   #/home/kerex/intel/bin/ifort
 MACH_LD_MPI    =  mpicxx    #/home/kerex/intel/bin/icpc
 
@@ -126,7 +126,7 @@ MACH_INCLUDES_GRACKLE  = $(LOCAL_INCLUDES_GRACKLE)
 # Libraries
 #-----------------------------------------------------------------------
 
-LOCAL_LIBS_MPI    = -L$(LOCAL_MPI)/lib -lmpi ##-lopen-rte -lopen-pal # MPI libraries
+LOCAL_LIBS_MPI    = -L$(LOCAL_MPI)/lib -lmpi -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh  ##-lopen-rte -lopen-pal # MPI libraries
 LOCAL_LIBS_HDF5   = -L$(LOCAL_HDF5_INSTALL)/lib -lhdf5 -lz # HDF5 libraries
 LOCAL_LIBS_HYPRE  = # hypre libraries
 LOCAL_LIBS_PAPI   = # PAPI libraries

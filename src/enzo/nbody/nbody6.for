@@ -1,11 +1,4 @@
-      SUBROUTINE NBODY6(EN,EBODY,EX1,EX2,EX3,
-     &            EXDOT1,EXDOT2,EXDOT3,
-     &            EF1,EF2,EF3,
-     &            EH11,EH12,EH13,
-     &            EH21,EH22,EH23,
-     &            EH31,EH32,EH33,
-     &            EH41,EH42,EH43,EDT,
-     &            EMU,ELU,EVU,ETU)
+      SUBROUTINE NBODY6(comm_enzo, nbody_comm, mpi_rank)
 *
 *             N B O D Y 6++
 *             *************
@@ -28,18 +21,24 @@
       INCLUDE 'timing.h'
       include 'omp_lib.h'
       
+*     For MPI communication by YS Jo
+      !USE ISO_C_BINDING
+      integer :: nbody_comm
+      INTEGER :: comm_enzo
+
 *     added by sykim, parameters from enzo
 
-      INTEGER EN,IS,IE,EID,I
+      INTEGER, parameter:: EN_MAX = 2000
+      INTEGER EN, IS,IE,EID,I
 
-      REAL*8 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
-      REAL*8 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
-      REAL*8 EF1(EN),EF2(EN),EF3(EN)
+      REAL*8 EBODY(EN_MAX),EX1(EN_MAX),EX2(EN_MAX),EX3(EN_MAX)
+      REAL*8 EXDOT1(EN_MAX),EXDOT2(EN_MAX),EXDOT3(EN_MAX)
+      REAL*8 EF1(EN_MAX),EF2(EN_MAX),EF3(EN_MAX)
 
-      REAL*8 EH11(EN),EH12(EN),EH13(EN)
-      REAL*8 EH21(EN),EH22(EN),EH23(EN)
-      REAL*8 EH31(EN),EH32(EN),EH33(EN)
-      REAL*8 EH41(EN),EH42(EN),EH43(EN)
+      REAL*8 EH11(EN_MAX),EH12(EN_MAX),EH13(EN_MAX)
+      REAL*8 EH21(EN_MAX),EH22(EN_MAX),EH23(EN_MAX)
+      REAL*8 EH31(EN_MAX),EH32(EN_MAX),EH33(EN_MAX)
+      REAL*8 EH41(EN_MAX),EH42(EN_MAX),EH43(EN_MAX)
 
 *     conversion factors for enzo code unit -> cgs
 
@@ -67,10 +66,12 @@
 
 
 #ifdef PARALLEL
-#define MPIINIT 1
+      ! by YS should be 1 
+#define MPIINIT 0
 #else
 #ifdef ENSEMBLE
-#define MPIINIT 1
+      ! by YS should be 1
+#define MPIINIT 0
 #else
 #define MPIINIT 0
 #endif
@@ -84,6 +85,25 @@
 
 *     conventional units are pc, Msun, km/s and Myr
 *     the length unit is Rvir, mass :unit is total mass, et cetera
+
+
+*     Massive MPI Communication with Enzo code! (subroutine later) by YS
+
+      ! recieve the number of particles
+      !call MPI_INIT(ierr) 
+      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 123, comm_enzo, mpi_ierr)
+
+      write (0,*) 'Number of Nbody Particles on Fortran', EN
+
+
+      ! send and receive the arrays
+*k      mpi_tag = 123
+*      call MPI_Sendrecv(array, n, MPI_INTEGER, 0, tag, &
+*        received_array, n, MPI_INTEGER, 0, tag, &
+*        MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
+
+
+*     MPI done!
 
       write (6,*) 'before conversion',EBODY(1),EX1(1),EXDOT1(1)
 
@@ -394,4 +414,5 @@
 *       Continue integration.
       GO TO 1
 *
+      call MPI_FINALIZE(ierr)
       END
