@@ -1260,6 +1260,7 @@ OBJS_NBODY_ALL= \
 OBJS_NBODY= \
 						NbodyRoutines.o \
 						PrepareNbodyComputation.o\
+						FinalizeNbodyComputation.o\
 						nbody/nbody6.o \
 						nbody/absorb.o \
 						nbody/add_tlist.o \

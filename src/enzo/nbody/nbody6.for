@@ -29,16 +29,21 @@
 *     added by sykim, parameters from enzo
 
       INTEGER, parameter:: EN_MAX = 2000
-      INTEGER EN, IS,IE,EID,I
+      INTEGER :: EN, IS,IE,EID,I,J
+      integer :: istatus(MPI_STATUS_SIZE)
 
-      REAL*8 EBODY(EN_MAX),EX1(EN_MAX),EX2(EN_MAX),EX3(EN_MAX)
-      REAL*8 EXDOT1(EN_MAX),EXDOT2(EN_MAX),EXDOT3(EN_MAX)
-      REAL*8 EF1(EN_MAX),EF2(EN_MAX),EF3(EN_MAX)
+*      REAL*8 EBODY(EN_MAX),EX1(EN_MAX),EX2(EN_MAX),EX3(EN_MAX)
+*      REAL*8 EXDOT1(EN_MAX),EXDOT2(EN_MAX),EXDOT3(EN_MAX)
+*      REAL*8 EF1(EN_MAX),EF2(EN_MAX),EF3(EN_MAX)
 
-      REAL*8 EH11(EN_MAX),EH12(EN_MAX),EH13(EN_MAX)
-      REAL*8 EH21(EN_MAX),EH22(EN_MAX),EH23(EN_MAX)
-      REAL*8 EH31(EN_MAX),EH32(EN_MAX),EH33(EN_MAX)
-      REAL*8 EH41(EN_MAX),EH42(EN_MAX),EH43(EN_MAX)
+*      REAL*8 EH11(EN_MAX),EH12(EN_MAX),EH13(EN_MAX)
+*      REAL*8 EH21(EN_MAX),EH22(EN_MAX),EH23(EN_MAX)
+*      REAL*8 EH31(EN_MAX),EH32(EN_MAX),EH33(EN_MAX)
+*      REAL*8 EH41(EN_MAX),EH42(EN_MAX),EH43(EN_MAX)
+
+      REAL*8, pointer :: EBODY(:),EX(:,:)
+      REAL*8, pointer :: EXDOT(:,:), EF(:,:), EH(:,:,:)
+
 
 *     conversion factors for enzo code unit -> cgs
 
@@ -87,25 +92,43 @@
 *     the length unit is Rvir, mass :unit is total mass, et cetera
 
 
+      write (0,*) 'In the Nbody6 '
 *     Massive MPI Communication with Enzo code! (subroutine later) by YS
+      write (0,*) 'Initialize Arrays'
+
+*     Massive MPI Communication with Enzo code! (subroutine later) by YS
+      write (0,*) 'Communication Starts'
 
       ! recieve the number of particles
-      !call MPI_INIT(ierr) 
-      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 123, comm_enzo, mpi_ierr)
+      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, comm_enzo, istatus,
+     &           ierr)
 
-      write (0,*) 'Number of Nbody Particles on Fortran', EN
-
-
-      ! send and receive the arrays
-*k      mpi_tag = 123
-*      call MPI_Sendrecv(array, n, MPI_INTEGER, 0, tag, &
-*        received_array, n, MPI_INTEGER, 0, tag, &
-*        MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
-
+      write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
+      allocate(EBODY(EN))
+      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, comm_enzo,
+     &     istatus, ierr)
+      allocate(EX(3,EN))
+      allocate(EXDOT(3,EN))
+      allocate(EF(3,EN))
+      allocate(EH(3,4,EN))
+      DO  I = 1,3
+        call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
+     &           comm_enzo, istatus,ierr)
+        call MPI_RECV(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
+     &           comm_enzo, istatus,ierr)
+        call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &            comm_enzo, istatus,ierr)
+        DO J = 1,4
+          call MPI_RECV(EH(I,J,:), EN, MPI_DOUBLE_PRECISION, 0, 600,
+     &            comm_enzo, istatus,ierr)
+        END DO
+      END DO
+      write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
+     &             ', V=',EXDOT(1,1)
 
 *     MPI done!
 
-      write (6,*) 'before conversion',EBODY(1),EX1(1),EXDOT1(1)
+      write (6,*) 'before conversion',EBODY(1),EX(1,1),EXDOT(1,1)
 
       MASSU = 0.0D0
 
@@ -130,21 +153,16 @@
 
       write (6,*) 'timesteps',TCRIT
 
+
       DO 7 IS = 1,N
-
          BODY(IS) = EBODY(IS)*EMU/(MASSU*1.9891D33)
-         X(1,IS) = EX1(IS)*ELU/LENGTHU/(3.0857D18)
-         X(2,IS) = EX2(IS)*ELU/LENGTHU/(3.0857D18)
-         X(3,IS) = EX3(IS)*ELU/LENGTHU/(3.0857D18)
-         XDOT(1,IS) = EXDOT1(IS)*EVU/VELU/(1D5)
-         XDOT(2,IS) = EXDOT2(IS)*EVU/VELU/(1D5)
-         XDOT(3,IS) = EXDOT3(IS)*EVU/VELU/(1D5)
-
+         DO J = 1,3
+          X(J,IS) = EX(J,IS)*ELU/LENGTHU/(3.0857D18)
+          XDOT(J,IS) = EXDOT(J,IS)*EVU/VELU/(1D5)
+         END DO
     7 CONTINUE
 
       write (6,*) 'after conversion',BODY(1),X(1,1),XDOT(1,1)
-
-
 *     end added by sykim
 
 
@@ -327,12 +345,10 @@
 
          IE = NAME(EID)
          EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
-         EX1(IE) = (X(1,IE)-RDENS(1))*LENGTHU*3.0857D18/ELU
-         EX2(IE) = (X(2,IE)-RDENS(2))*LENGTHU*3.0857D18/ELU
-         EX3(IE) = (X(3,IE)-RDENS(3))*LENGTHU*3.0857D18/ELU
-         EXDOT1(IE) = XDOT(1,IE)*VELU*1D5/EVU
-         EXDOT2(IE) = XDOT(2,IE)*VELU*1D5/EVU
-         EXDOT3(IE) = XDOT(3,IE)*VELU*1D5/EVU
+         DO J = 1,3
+           EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
+           EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
+         END DO
 
    17 CONTINUE
 

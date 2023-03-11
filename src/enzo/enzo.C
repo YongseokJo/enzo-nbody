@@ -277,6 +277,21 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
   // Initialize Communications
 
   CommunicationInitialize(&argc, &argv); 
+	fprintf(stdout, "MPI Initialization Done!\n");
+
+#ifdef USE_MPI	
+#ifdef NBODY
+	//by YS, start nbody6!
+	if (nbody_comm != MPI_COMM_NULL) {
+		//MPI_Comm comm_ptr_enzo = MPI_COMM_WORLD;
+		MPI_Fint comm_f;
+		comm_f = MPI_Comm_c2f(MPI_COMM_WORLD);
+		fprintf(stderr, "NBODY6++ starts!\n");
+		FORTRAN_NAME(nbody6)(&comm_f, &nbody_comm, &MyProcessorNumber);
+		my_exit(EXIT_SUCCESS);
+	} 
+#endif
+#endif
 
   //#define DEBUG_MPI
 #ifdef DEBUG_MPI
@@ -472,18 +487,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 
 
   // START
-#ifdef USE_MPI	
-#ifdef NBODY
-	//by YS, start nbody6!
-	if (nbody_comm != MPI_COMM_NULL) {
-		//MPI_Comm comm_ptr_enzo = MPI_COMM_WORLD;
-		MPI_Fint comm_f;
-		comm_f = MPI_Comm_c2f(MPI_COMM_WORLD);
-		fprintf(stderr, "NBODY6++ starts!\n");
-		FORTRAN_NAME(nbody6)(&comm_f, &nbody_comm, &MyProcessorNumber);
-	} 
-#endif
-#endif
+
   for (int level = 0; level < MAX_DEPTH_OF_HIERARCHY; level++) {
     LevelArray[level] = NULL;
   }

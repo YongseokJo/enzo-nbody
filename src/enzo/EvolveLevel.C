@@ -111,6 +111,7 @@ void RunEventHooks(char *, HierarchyEntry *Grid[], TopGridData &MetaData) {}
 
 #ifdef NBODY
 int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
+int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
 #endif
 
 #define EXTRA_OUTPUT_MACRO(A,B) ExtraOutput(A,LevelArray,MetaData,level,Exterior IMPLICIT_MACRO,B);
@@ -571,6 +572,19 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 				SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
 						Exterior, LevelArray[level], LevelCycleCount[level]);
 
+#ifdef NBODY
+				//if (level == MaximumRefinementLevel) {
+				fprintf(stdout,"6.5\n");  // by YS
+				/* Create a master list of all nbody particles */
+				if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
+					ENZO_FAIL("Error in NbodyParticleFindAll.");
+				}
+				fprintf(stderr,"PNC done.\n", level);  // by YS
+				//}
+#endif
+
+
+
 				fprintf(stdout,"7\n");  // by YS
 				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
 #endif //SAB.
@@ -692,12 +706,11 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef NBODY
 				//if (level == MaximumRefinementLevel) {
 				fprintf(stdout,"10\n");  // by YS
-				fprintf(stderr,"level=%d\n", level);  // by YS
 				/* Create a master list of all nbody particles */
-				if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
+				if (FinalizeNbodyComputation(LevelArray, level) == FAIL) {
 					ENZO_FAIL("Error in NbodyParticleFindAll.");
 				}
-				fprintf(stderr,"PNC done.\n", level);  // by YS
+				fprintf(stderr,"FNC done.\n", level);  // by YS
 				//}
 #endif
 

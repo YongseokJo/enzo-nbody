@@ -39,14 +39,14 @@ void my_exit(int exit_status);
 
 #ifdef USE_MPI
 void CommunicationErrorHandlerFn(MPI_Comm *comm, MPI_Arg *err, ...);
+#ifdef NBODY
+#define NumberOfNbodyProcessors 1
+	MPI_Comm nbody_comm;
+	MPI_Comm enzo_comm;
+#endif
 #endif
 
-#ifdef USE_MPI
-#ifdef NBODY
-MPI_Comm nbody_comm;
-MPI_Comm enzo_comm;
-#endif
-#endif
+
 
 int CommunicationInitialize(Eint32 *argc, char **argv[])
 {
@@ -67,13 +67,13 @@ int CommunicationInitialize(Eint32 *argc, char **argv[])
 
 #ifdef NBODY
 	// by YS, N body function will be activated only if mpi_size > 12
-	if (mpi_size >= 12) {
+	if (mpi_size >= 2) {
 		// by YS, create the group of processes in MPI_COMM_WORLD
 		MPI_Group world_group;
 		MPI_Comm_group(MPI_COMM_WORLD, &world_group);
 
-		const int mpi_nbody_size = 6;
-		const int mpi_enzo_size = mpi_size-6;
+		const int mpi_nbody_size = NumberOfNbodyProcessors;
+		const int mpi_enzo_size = mpi_size-mpi_nbody_size;
 		int ranks_nbody[mpi_nbody_size];
 		for (int i=0;i<mpi_nbody_size;i++) {
 			ranks_nbody[i] = i + mpi_enzo_size;
@@ -87,13 +87,15 @@ int CommunicationInitialize(Eint32 *argc, char **argv[])
 		// Construct a enzo group and corresponding communicator
 		MPI_Group enzo_group;
 		MPI_Group_incl(world_group, mpi_enzo_size, ranks_enzo, &enzo_group);
-		MPI_Comm_create_group(MPI_COMM_WORLD, enzo_group, tag, &enzo_comm);
+		//MPI_Comm_create_group(MPI_COMM_WORLD, enzo_group, tag, &enzo_comm);
+		MPI_Comm_create(MPI_COMM_WORLD, enzo_group, &enzo_comm);
 
 
 		// Construct a nbody group and corresponding communicator
 		MPI_Group nbody_group;
 		MPI_Group_incl(world_group, mpi_nbody_size, ranks_nbody, &nbody_group);
-		MPI_Comm_create_group(MPI_COMM_WORLD, nbody_group, tag, &nbody_comm);
+		//MPI_Comm_create_group(MPI_COMM_WORLD, nbody_group, tag, &nbody_comm);
+		MPI_Comm_create(MPI_COMM_WORLD, nbody_group, &nbody_comm);
 
 		int new_rank, new_size;
 		//if (mpi_rank >= (mpi_size-mpi_nbody_size)) {
@@ -114,8 +116,10 @@ int CommunicationInitialize(Eint32 *argc, char **argv[])
 #endif
   MyProcessorNumber = mpi_rank;
  
-  if (MyProcessorNumber == ROOT_PROCESSOR)
+  if (MyProcessorNumber == ROOT_PROCESSOR) {
     printf("MPI_Init: NumberOfProcessors = %"ISYM"\n", NumberOfProcessors);
+    printf("MPI_Init: TotalNumberOfProcessors = %"ISYM"\n", TotalNumberOfProcessors);
+	}
  
 #else /* USE_MPI */
  

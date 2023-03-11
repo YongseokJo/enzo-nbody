@@ -14,7 +14,7 @@ module add icc
 module add mpi
 
 make machine-linux-mpich
-make precision-64 integers-32 particle-id-32 max-baryons-30 opt-aggressive lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes
+make precision-64 integers-32 particle-id-32 max-baryons-30 opt-aggressive lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes nbody-yes photon-no cuda-no
 make show-config
 make show-flags
 make -j3
