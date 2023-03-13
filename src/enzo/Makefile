@@ -49,8 +49,9 @@ ETAGS_COMMAND = "0"
 
 NCXX = cpp #g++
 NVCC = nvcc
-F77 = gfortran
+#F77 = gfortran
 F77 = mpif77
+#F77 = mpiifort
 
 LFLAGS=--header-file=libconfig/scanner.h --prefix=libconfig_yy
 
@@ -115,7 +116,7 @@ all: MACHNOTES MAKETAGS $(EXE).exe
 # I believe this has to be done here, as it is target-specific.
 lib: CFLAGS   += $(MACH_SHARED_FLAGS) -fPIC
 lib: CXXFLAGS += $(MACH_SHARED_FLAGS) -DSHARED_LIBRARY
-lib: FFLAGS   += $(MACH_SHARED_FLAGS) -fPIC -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh -lmpi
+lib: FFLAGS   += $(MACH_SHARED_FLAGS) -fPIC  -lmpi 
 lib: F90FLAGS += $(MACH_SHARED_FLAGS)
 lib: LDFLAGS  += $(MACH_SHARED_FLAGS) -lstdc++ L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/lib64 -lcudart 
 lib: lib$(EXE)_p$(ASSEMBLE_PARTICLE_NUMBER)_b$(ASSEMBLE_PRECISION_NUMBER).$(MACH_SHARED_EXT)

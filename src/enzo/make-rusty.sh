@@ -10,8 +10,10 @@ cd ../../
 ./configure
 cd src/enzo/
 
-module add gcc/7.5.0
-module add openmpi4
+#module add gcc/7.5.0
+#module add openmpi4
+module add intel-oneapi-compilers
+module add intel-oneapi-mpi
 module add ucx
 module add cuda
 #module add openmpi/1.10.7
