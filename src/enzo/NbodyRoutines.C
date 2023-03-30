@@ -36,6 +36,9 @@ int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 void scan(int *in, int *inout, int *len, MPI_Datatype *dptr);
 #endif
 
+void InitializeNbodyArrays(bool NbodyFirst);
+void InitializeNbodyArrays(void);
+void InitializeNbodyArrays(int); 
 
 
 

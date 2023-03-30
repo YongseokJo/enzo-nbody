@@ -42,7 +42,7 @@
 *      REAL*8 EH41(EN_MAX),EH42(EN_MAX),EH43(EN_MAX)
 
       REAL*8, pointer :: EBODY(:),EX(:,:)
-      REAL*8, pointer :: EXDOT(:,:), EF(:,:), EH(:,:,:)
+      REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
 
 
 *     conversion factors for enzo code unit -> cgs
@@ -112,7 +112,6 @@
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
-      allocate(EH(3,4,EN))
       DO  I = 1,3
         call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           comm_enzo, istatus,ierr)
@@ -120,11 +119,11 @@
      &           comm_enzo, istatus,ierr)
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &            comm_enzo, istatus,ierr)
-        DO J = 1,4
-          call MPI_RECV(EH(I,J,:), EN, MPI_DOUBLE_PRECISION, 0, 600,
-     &            comm_enzo, istatus,ierr)
-        END DO
       END DO
+      call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
+     &            comm_enzo, istatus,ierr)
+      call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
+     &            comm_enzo, istatus,ierr)
       write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
      &             ', V=',EXDOT(1,1)
 *     MPI done!
@@ -343,6 +342,13 @@
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &            comm_enzo, istatus,ierr)
       END DO
+      call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
+     &            comm_enzo, istatus,ierr)
+      call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
+     &            comm_enzo, istatus,ierr)
+*       TCRIT = TCRIT + dtENZO
+*     for SY
+      TCRIT = TCRIT + EDT*ETU/(TIMEU*(3.1556952D13)) ! should be fixed
       write (0,*) 'fortran: force=', EF(1,1)
 *     MPI done!
 *----------------------------------------------------------------------------------*
@@ -390,19 +396,19 @@
         CALL ADJUST
 
 *       added by sykim. return datas to ENZO if TIME>TCRIT
-*       TCRIT = TCRIT + dtENZO
         IF (IPHASE.EQ.13) THEN
 
 *       need to make a new extrapolation scheme... in progress
 *       after extrapolation,  update the EBODY, EX, EXDOT that would be passed onto ENZO
-            DO 17 EID = 1,N
-              IE = NAME(EID)
+          DO EID = 1,N
+            IE = NAME(EID)
               EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
-                DO J = 1,3
+              DO J = 1,3
                   EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
                   EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
                 END DO
-            17 CONTINUE
+                END DO 
+*           17 CONTINUE ! this does not work for SY
 
 *      sykim: need to add the MPI return scheme here!  
 *      and do not return or end the program
@@ -418,21 +424,21 @@
      &           comm_enzo)
 
           END DO
+*          deallocate(EF)
           write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
      &             ', V=',EXDOT(1,1)
 *            deallocate(EBODY(EN))
 *            deallocate(EX(3,EN))
 *            deallocate(EXDOT(3,EN))
-          deallocate(EF(3,EN))
 *            deallocate(EH(3,4,EN))
 *     MPI done!
 *----------------------------------------------------------------------------------*
           IPHASE = 19 
-            
-            GO TO 1
-          END IF
-          call cputim(tt8)
-          ttadj = ttadj + (tt8-tt7)*60.
+
+          GO TO 1
+        END IF
+        call cputim(tt8)
+        ttadj = ttadj + (tt8-tt7)*60.
 
 *
       ELSE IF (IPHASE.EQ.4) THEN

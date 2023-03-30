@@ -33,6 +33,7 @@
 #include "phys_constants.h"
 
 
+void InitializeNbodyArrays(int);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
 int GetUnits(float *DensityUnits, float *LengthUnits,
@@ -94,7 +95,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			  /*-----------------------------------------------*/
 			 /******** Recv Arrays to Fortran Nbody6++    *****/
 			/*-----------------------------------------------*/
-			InitializeNbodyArrays(1)
+			InitializeNbodyArrays(1);
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 300, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -168,7 +169,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		int count = 0;
 		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
 			for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel)
-				if (Temp->GridData->UpdateNbodyParticles(&count, NbodyParticleIDTemp, NbodyParticleMassTemp,
+				if (Temp->GridData->UpdateNbodyParticles(&count, NbodyParticleIDTemp,
 							NbodyParticlePositionTemp, NbodyParticleVelocityTemp) == FAIL) {
 					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
 				}
@@ -181,28 +182,15 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		if (NbodyParticleIDTemp != NULL)
 			delete [] NbodyParticleIDTemp;
 		NbodyParticleIDTemp = NULL;
-		fprintf(stderr,"Done?5\n");
-
-		if (NbodyParticleMassTemp != NULL)
-			delete [] NbodyParticleMassTemp;
-		NbodyParticleMassTemp = NULL;
-		fprintf(stderr,"Done?6\n");
 
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			if (NbodyParticlePositionTemp[dim] != NULL)
 				delete [] NbodyParticlePositionTemp[dim];
 			NbodyParticlePositionTemp[dim] = NULL;
-			fprintf(stderr,"Done?7\n");
 
 			if (NbodyParticleVelocityTemp[dim] != NULL)
 				delete [] NbodyParticleVelocityTemp[dim];
 			NbodyParticleVelocityTemp[dim] = NULL;
-			fprintf(stderr,"Done?8\n");
-
-			if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
-				delete [] NbodyParticleAccelerationNoStarTemp[dim];
-			NbodyParticleAccelerationNoStarTemp[dim] = NULL;
-			fprintf(stderr,"Done?9\n");
 		}
 			CommunicationBarrier();
 		fprintf(stderr,"Done?10\n");

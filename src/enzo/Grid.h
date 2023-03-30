@@ -1840,8 +1840,7 @@ class grid
 		}
 
 
-		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[],
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
+		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
@@ -1850,8 +1849,6 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 				//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 				if (ParticleNumber[i] == NbodyParticleIDTemp[*count]) {
-					ParticleMass[i] = NbodyParticleMassTemp[*count]/dv ;
-
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count]+0.5;
 						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];

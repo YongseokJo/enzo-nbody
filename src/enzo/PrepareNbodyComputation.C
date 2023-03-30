@@ -32,7 +32,8 @@
 #include "NbodyRoutines.h"  //added  
 #include "phys_constants.h"
 
-
+void InitializeNbodyArrays(bool NbodyFirst);
+void InitializeNbodyArrays(void);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
 int GetUnits(float *DensityUnits, float *LengthUnits,
@@ -169,6 +170,8 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					MPI_Ssend(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD);
 					MPI_Ssend(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 500, MPI_COMM_WORLD);
 				}
+				MPI_Ssend(&TimeStep, 1, MPI_DOUBLE, NumberOfProcessors, 600, MPI_COMM_WORLD);
+				MPI_Ssend(&TimeUnits, 1, MPI_DOUBLE, NumberOfProcessors, 700, MPI_COMM_WORLD);
 
 				if (start_index_all != NULL)
 					delete [] start_index_all;
@@ -214,6 +217,29 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				CommunicationBarrier();
 			} // endelse: other processor
 #endif
+			fprintf(stderr,"Done?3\n");
+			/* Destruct Arrays*/
+			if (NbodyParticleIDTemp != NULL)
+				delete [] NbodyParticleIDTemp;
+			NbodyParticleIDTemp = NULL;
+
+			if (NbodyParticleMassTemp != NULL)
+				delete [] NbodyParticleMassTemp;
+			NbodyParticleMassTemp = NULL;
+
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				if (NbodyParticlePositionTemp[dim] != NULL)
+					delete [] NbodyParticlePositionTemp[dim];
+				NbodyParticlePositionTemp[dim] = NULL;
+
+				if (NbodyParticleVelocityTemp[dim] != NULL)
+					delete [] NbodyParticleVelocityTemp[dim];
+				NbodyParticleVelocityTemp[dim] = NULL;
+
+				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
+					delete [] NbodyParticleAccelerationNoStarTemp[dim];
+				NbodyParticleAccelerationNoStarTemp[dim] = NULL;
+			}
 		}// endif: nbody first 
 		else {
 			int *NbodyParticleIDTemp;
@@ -284,6 +310,8 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					//MPI_Ssend(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD);
 					MPI_Ssend(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 500, MPI_COMM_WORLD);
 				}
+				MPI_Ssend(&TimeStep, 1, MPI_DOUBLE, NumberOfProcessors, 600, MPI_COMM_WORLD);
+				MPI_Ssend(&TimeUnits, 1, MPI_DOUBLE, NumberOfProcessors, 700, MPI_COMM_WORLD);
 
 				if (start_index_all != NULL)
 					delete [] start_index_all;
@@ -313,7 +341,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					//MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 					//			NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
-				//	MPI_Wait(&request, &status);
+					//	MPI_Wait(&request, &status);
 					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
@@ -322,41 +350,20 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				CommunicationBarrier();
 			} // endelse: other processor
 #endif
+			fprintf(stderr,"Done?3\n");
+			/* Destruct Arrays*/
+			if (NbodyParticleIDTemp != NULL)
+				delete [] NbodyParticleIDTemp;
+			NbodyParticleIDTemp = NULL;
+
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
+					delete [] NbodyParticleAccelerationNoStarTemp[dim];
+				NbodyParticleAccelerationNoStarTemp[dim] = NULL;
+			}
 		} // endelse: not first
-
-		fprintf(stderr,"Done?3\n");
-		/* Destruct Arrays*/
-		if (NbodyParticleIDTemp != NULL)
-			delete [] NbodyParticleIDTemp;
-		NbodyParticleIDTemp = NULL;
-		fprintf(stderr,"Done?5\n");
-
-		if (NbodyParticleMassTemp != NULL)
-			delete [] NbodyParticleMassTemp;
-		NbodyParticleMassTemp = NULL;
-		fprintf(stderr,"Done?6\n");
-
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			if (NbodyParticlePositionTemp[dim] != NULL)
-				delete [] NbodyParticlePositionTemp[dim];
-			NbodyParticlePositionTemp[dim] = NULL;
-			fprintf(stderr,"Done?7\n");
-
-			if (NbodyParticleVelocityTemp[dim] != NULL)
-				delete [] NbodyParticleVelocityTemp[dim];
-			NbodyParticleVelocityTemp[dim] = NULL;
-			fprintf(stderr,"Done?8\n");
-
-			if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
-				delete [] NbodyParticleAccelerationNoStarTemp[dim];
-			NbodyParticleAccelerationNoStarTemp[dim] = NULL;
-			fprintf(stderr,"Done?9\n");
-		}
-			CommunicationBarrier();
-		fprintf(stderr,"Done?10\n");
-
-		} // ENDIF level
-		return SUCCESS;
-	}
+	} // ENDIF level
+	return SUCCESS;
+}
 #endif
 
