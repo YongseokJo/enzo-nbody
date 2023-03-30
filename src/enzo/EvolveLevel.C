@@ -728,10 +728,11 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					/*Trying after solving for radiative transfer */
 #ifdef EMISSIVITY
 					/*                                                                                                           
-																																																											 clear the Emissivity of the level below, after the level below                                            
-																																																											 updated the current level (it's parent) and before the next
-																																																											 timestep at the current level.                                                                            
-																																																											 */
+					clear the Emissivity of the level below, after the level below                                            
+					updated the current level (it's parent) and before the next
+					timestep at the current level.                                                                            
+					*/
+
 					/*    if (StarMakerEmissivityField > 0) {
 								LevelHierarchyEntry *Temp;
 								Temp = LevelArray[level];

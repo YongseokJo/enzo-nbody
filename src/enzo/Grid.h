@@ -1816,6 +1816,29 @@ class grid
 			return SUCCESS;
 		}
 
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float *NbodyParticleAccelerationNoStarTemp[]) {
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
+			for (int i=0; i < NumberOfParticles; i++) {
+
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					//NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
+					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						//NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
+						//NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+					} // ENDFOR dim
+					(*count)++;
+				} // ENDIF nbody particles
+			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+
 
 		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[],
 				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {

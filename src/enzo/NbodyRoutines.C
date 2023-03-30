@@ -39,7 +39,7 @@ void scan(int *in, int *inout, int *len, MPI_Datatype *dptr);
 
 
 
-void InitializeNbodyArrays(void) {
+void InitializeNbodyArrays(bool NbodyFirst) {
 
 	if (NbodyParticleMass != NULL)
 		delete [] NbodyParticleMass;
@@ -63,12 +63,51 @@ void InitializeNbodyArrays(void) {
 			delete [] NbodyParticleAccelerationNoStar[dim];
 		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
 
-		for (int order=0; order<HERMITE_ORDER; order++) {
-			if (NbodyParticleAcceleration[dim] != NULL)
-				delete [] NbodyParticleAcceleration[dim][order];
-			NbodyParticleAcceleration[dim][order] = new float[NumberOfNbodyParticles]{0};
+	}
+}
 
-		}
+
+void InitializeNbodyArrays(void) {
+
+	if (NbodyParticleMass != NULL)
+		delete [] NbodyParticleMass;
+	NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+
+	if (NbodyParticleID != NULL)
+		delete [] NbodyParticleID;
+	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+
+
+	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+
+		if (NbodyParticleVelocity[dim] != NULL)
+			delete [] NbodyParticleVelocity[dim];
+		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+
+		if (NbodyParticleAccelerationNoStar[dim] != NULL)
+			delete [] NbodyParticleAccelerationNoStar[dim];
+		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+
+	}
+}
+
+void InitializeNbodyArrays(int) {
+
+
+	if (NbodyParticleID != NULL)
+		delete [] NbodyParticleID;
+	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+
+
+	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+
+		if (NbodyParticlePosition[dim] != NULL) delete [] NbodyParticlePosition[dim];
+		NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+
+		if (NbodyParticleVelocity[dim] != NULL)
+			delete [] NbodyParticleVelocity[dim];
+		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+
 	}
 }
 
@@ -76,19 +115,30 @@ void InitializeNbodyArrays(void) {
 
 void DeleteNbodyArrays(void) {
 
-	delete [] NbodyParticleMass;
-	delete [] NbodyParticleID;
+	if (NbodyParticleMass != NULL) {
+		delete [] NbodyParticleMass;
 	NbodyParticleMass = NULL;
+	}
+	if (NbodyParticleID != NULL) {
+		delete [] NbodyParticleID;
 	NbodyParticleID = NULL;
+	}
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+		if (NbodyParticlePosition[dim] != NULL) {
+			delete [] NbodyParticlePosition[dim];
+			NbodyParticlePosition[dim] = NULL;
+		}
 
-		delete [] NbodyParticlePosition[dim];
-		delete [] NbodyParticleVelocity[dim];
-		delete [] NbodyParticleAccelerationNoStar[dim];
-		NbodyParticlePosition[dim] = NULL;
-		NbodyParticleVelocity[dim] = NULL;
-		NbodyParticleAccelerationNoStar[dim] = NULL;
+		if (NbodyParticleVelocity[dim] != NULL) {
+			delete [] NbodyParticleVelocity[dim];
+			NbodyParticleVelocity[dim] = NULL;
+		}
+
+		if (NbodyParticleAccelerationNoStar[dim] != NULL) {
+			delete [] NbodyParticleAccelerationNoStar[dim];
+			NbodyParticleAccelerationNoStar[dim] = NULL;
+		}
 
 		for (int i=0; i<HERMITE_ORDER; i++) {
 			delete [] NbodyParticleAcceleration[dim][i];

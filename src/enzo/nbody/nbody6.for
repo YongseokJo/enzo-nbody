@@ -99,7 +99,9 @@
 *     Massive MPI Communication with Enzo code! (subroutine later) by YS
       write (0,*) 'Communication Starts'
 
-      ! recieve the number of particles
+      ! recieve the number of particles 
+*----------------------------------------------------------------------------------*
+*     MPI starts, refer to PrepareNbodyComputation.C for the counter part  by YS
       call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, comm_enzo, istatus,
      &           ierr)
 
@@ -125,8 +127,8 @@
       END DO
       write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
      &             ', V=',EXDOT(1,1)
-
 *     MPI done!
+*----------------------------------------------------------------------------------*
 
       write (6,*) 'before conversion',EBODY(1),EX(1,1),EXDOT(1,1)
 
@@ -325,6 +327,26 @@
 *     sykim: need to recieve force from enzo here!!
 *     update the common variables to the recieved enzo variables. 
 
+*      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, comm_enzo, istatus,
+*     &           ierr)
+*      write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
+*      allocate(EBODY(EN))
+*      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, comm_enzo,
+*     &     istatus, ierr)
+*      allocate(EX(3,EN))
+*      allocate(EXDOT(3,EN))
+
+*----------------------------------------------------------------------------------*
+*     MPI starts, refer to PrepareNbodyComputation.C:219 for the counter part  by YS
+      allocate(EF(3,EN))
+      DO I = 1,3 
+        call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &            comm_enzo, istatus,ierr)
+      END DO
+      write (0,*) 'fortran: force=', EF(1,1)
+*     MPI done!
+*----------------------------------------------------------------------------------*
+
 
       call cputim(tt1)
 *
@@ -364,15 +386,14 @@
       ELSE IF (IPHASE.EQ.3) THEN
 *       Perform energy check & parameter adjustments and print
 *       diagnostics.
-          call cputim(tt7)
-          CALL ADJUST
+        call cputim(tt7)
+        CALL ADJUST
 
 *       added by sykim. return datas to ENZO if TIME>TCRIT
-          IF (IPHASE.EQ.13) THEN
+*       TCRIT = TCRIT + dtENZO
+        IF (IPHASE.EQ.13) THEN
 
 *       need to make a new extrapolation scheme... in progress
-
-
 *       after extrapolation,  update the EBODY, EX, EXDOT that would be passed onto ENZO
             DO 17 EID = 1,N
               IE = NAME(EID)
@@ -386,7 +407,27 @@
 *      sykim: need to add the MPI return scheme here!  
 *      and do not return or end the program
 *            RETURN
-            IPHASE = 19
+*            call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, comm_enzo,
+*     &     istatus, ierr)
+*----------------------------------------------------------------------------------*
+*     MPI starts, refer to FinalizeNbodyComputation.C for the counter part  by YS
+          DO  I = 1,3
+           call MPI_SSEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
+     &           comm_enzo)
+           call MPI_SSEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
+     &           comm_enzo)
+
+          END DO
+          write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
+     &             ', V=',EXDOT(1,1)
+*            deallocate(EBODY(EN))
+*            deallocate(EX(3,EN))
+*            deallocate(EXDOT(3,EN))
+          deallocate(EF(3,EN))
+*            deallocate(EH(3,4,EN))
+*     MPI done!
+*----------------------------------------------------------------------------------*
+          IPHASE = 19 
             
             GO TO 1
           END IF

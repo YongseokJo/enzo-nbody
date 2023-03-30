@@ -43,33 +43,28 @@ int GetUnits(float *DensityUnits, float *LengthUnits,
 int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 {
 
-	int i, GridNum, LocalNumberOfNbodyParticles;
-	LevelHierarchyEntry *Temp;
-	int start_index;
 
 	if (level == MaximumRefinementLevel) {
+		int i, GridNum, LocalNumberOfNbodyParticles;
+		LevelHierarchyEntry *Temp;
+		int start_index;
 
 		LocalNumberOfNbodyParticles = FindTotalNumberOfNbodyParticles(LevelArray);
 
 		int *NbodyParticleIDTemp;
-		float *NbodyParticleMassTemp;
 		float *NbodyParticlePositionTemp[MAX_DIMENSION];
 		float *NbodyParticleVelocityTemp[MAX_DIMENSION];
-		float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
 
 		NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
-		NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
 			NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-			NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
 		}
 
 
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
-
-		fprintf(stderr,"Done?1\n");
+		fprintf(stderr,"Fianl Done?1\n");
 
 #ifdef USE_MPI
 		if (MyProcessorNumber == ROOT_PROCESSOR) {
@@ -79,6 +74,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			int* LocalNumberAll;
 			start_index_all = new int[NumberOfProcessors];
 			LocalNumberAll = new int[NumberOfProcessors];
+
 			MPI_Request request;
 			MPI_Status status;
 
@@ -86,7 +82,6 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 			MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
-			CommunicationBarrier();
 
 			for (i=0;i<NumberOfProcessors;i++) {
 				fprintf(stderr,"proc=%d: (%d, %d)\n",i, start_index_all[i],LocalNumberAll[i]);
@@ -99,35 +94,21 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			  /*-----------------------------------------------*/
 			 /******** Recv Arrays to Fortran Nbody6++    *****/
 			/*-----------------------------------------------*/
-			MPI_Recv(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-			MPI_Recv(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			InitializeNbodyArrays(1)
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-				MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-				MPI_Recv(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-				for (int order=0; order<HERMITE_ORDER;order++)
-					MPI_Recv(NbodyParticleAcceleration[dim][order], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 300, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			}
 
 			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
 
-			  /*-----------------------------------------------*/
-			 /******** Copy ID and Acc to Old arrays! *********/
-			/*-----------------------------------------------*/
-			CopyNbodyArrayToOld();
-			fprintf(stderr,"Done?2\n");
-
 
 			CommunicationBarrier();
-
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
 			for (i=0;i<NumberOfProcessors;i++) {
 				fprintf(stderr,"(%d, %d)",start_index_all[i],LocalNumberAll[i]);
 			}
 
-			MPI_Iscatterv(NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE,
-					NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
-			MPI_Wait(&request, &status);
 			MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
 					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 			MPI_Wait(&request, &status);
@@ -157,18 +138,12 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
 			MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
-			CommunicationBarrier();
 
 			MPI_Request request;
 			MPI_Status status;
 
-			CommunicationBarrier();
 
 			/* Receiving Index, NumberOfParticles, NbodyArrays from the root processs */
-			MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
-					NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
-					&request);
-			MPI_Wait(&request, &status);
 			MPI_Iscatterv(NULL, NULL, NULL, IntDataType,
 					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,
 					&request);
