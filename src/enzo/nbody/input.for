@@ -53,7 +53,8 @@ C      CALL DEFINE
       KZ(11) = 0
       KZ(12) = 0
       KZ(13) = 0
-      KZ(14) = 2
+      KZ(14) = 0
+*      KZ(14) = 2 : external force would be recieved from enzo
       KZ(15) = 2
       KZ(16) = 1
       KZ(17) = 1

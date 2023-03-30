@@ -321,6 +321,11 @@
       ttinitial = ttinitial + (tt2-ttota)*60.
 *       Advance solutions until next output or change of procedure.
     1 CONTINUE
+
+*     sykim: need to recieve force from enzo here!!
+*     update the common variables to the recieved enzo variables. 
+
+
       call cputim(tt1)
 *
 *     --08/27/13 16:31-lwang-debug--------------------------------------*
@@ -337,24 +342,6 @@
       ttint = ttint + (tt2-tt1)*60.
 *
 
-*     added by sykim
-
-      IF (TIME.GE.TCRIT) THEN
-
-      DO 17 EID = 1,N
-
-         IE = NAME(EID)
-         EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
-         DO J = 1,3
-           EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
-           EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
-         END DO
-
-   17 CONTINUE
-
-      END IF
-
-*     end added by sykim
 
 
       IF (IPHASE.EQ.1) THEN
@@ -382,7 +369,26 @@
 
 *       added by sykim. return datas to ENZO if TIME>TCRIT
           IF (IPHASE.EQ.13) THEN
-            RETURN
+
+*       need to make a new extrapolation scheme... in progress
+
+
+*       after extrapolation,  update the EBODY, EX, EXDOT that would be passed onto ENZO
+            DO 17 EID = 1,N
+              IE = NAME(EID)
+              EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
+                DO J = 1,3
+                  EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
+                  EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
+                END DO
+            17 CONTINUE
+
+*      sykim: need to add the MPI return scheme here!  
+*      and do not return or end the program
+*            RETURN
+            IPHASE = 19
+            
+            GO TO 1
           END IF
           call cputim(tt8)
           ttadj = ttadj + (tt8-tt7)*60.
