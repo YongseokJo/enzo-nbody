@@ -150,7 +150,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
 				}
-				CommunicationBarrier();
 				fprintf(stderr,"Done?1-2\n");
 
 
@@ -172,6 +171,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				}
 				MPI_Ssend(&TimeStep, 1, MPI_DOUBLE, NumberOfProcessors, 600, MPI_COMM_WORLD);
 				MPI_Ssend(&TimeUnits, 1, MPI_DOUBLE, NumberOfProcessors, 700, MPI_COMM_WORLD);
+				MPI_Ssend(&LengthUnits, 1, MPI_DOUBLE, NumberOfProcessors, 800, MPI_COMM_WORLD);
+				MPI_Ssend(&MassUnits, 1, MPI_DOUBLE, NumberOfProcessors, 900, MPI_COMM_WORLD);
+				MPI_Ssend(&VelocityUnits, 1, MPI_DOUBLE, NumberOfProcessors, 1000, MPI_COMM_WORLD);
 
 				if (start_index_all != NULL)
 					delete [] start_index_all;
@@ -214,7 +216,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					MPI_Wait(&request, &status);
 				}
 
-				CommunicationBarrier();
 			} // endelse: other processor
 #endif
 			fprintf(stderr,"Done?3\n");
@@ -295,7 +296,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
 				}
-				CommunicationBarrier();
 				fprintf(stderr,"Done?1-2\n");
 
 
@@ -347,7 +347,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					MPI_Wait(&request, &status);
 				}
 
-				CommunicationBarrier();
 			} // endelse: other processor
 #endif
 			fprintf(stderr,"Done?3\n");
