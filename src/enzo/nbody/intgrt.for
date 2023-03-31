@@ -28,8 +28,7 @@
       REAL*8 DTOUT
       SAVE DTOUT
 
-*     included by YS Jo
-
+*     included by YS Jo is it still needed? for SY
       IF (TIME.EQ.0.0) THEN
           IPSTART = .true.
       END IF
@@ -144,7 +143,7 @@
           CALL HIVEL(0)
       END IF
 *
-     call cputim(tttbegin)
+      call cputim(tttbegin)
 
 *     Reset control & regularization indicators.
       IPHASE = 0
@@ -241,8 +240,8 @@
       IF (KZ(13).GT.0) THEN
           CALL CLINT
       END IF
-*
-       Check optional integration of cluster guiding centre.
+*     Check optional integration of cluster guiding centre.
+       
       IF (KZ(14).EQ.3.OR.KZ(14).EQ.4) THEN
           IF (KZ(14).EQ.3.AND.DMOD(TIME,STEPX).EQ.0.0D0) THEN
              CALL GCINT
@@ -281,10 +280,10 @@
       END IF
 *
 *       Check next adjust time before beginning a new block.
-      IF (TIME.GT.TADJ).OR.(TIME.GE.TCRIT) THEN
-          TIME = TADJ
-          IPHASE = 3
-          GO TO 100
+      IF ((TIME.GT.TADJ).OR.(TIME.GE.TCRIT)) THEN
+        TIME = TADJ
+        IPHASE = 3
+        GO TO 100
       END IF
 *
 *       Also check output time in case DTADJ & DELTAT not commensurate.
@@ -615,7 +614,7 @@ c$$$         ttmov = ttmov +(tt334-tt333)*60
 *
       END IF
 
-     custom output
+*      custom output
       call cputim(ttiout1)
       IF(KZ(46).GT.0.AND.DMOD(TIME,DTOUT).EQ.0) THEN
          call custom_output(NXTLEN,NXTLST,NXTLIMIT,NGHOSTS,IMINR)
@@ -636,7 +635,7 @@ c$$$         ttmov = ttmov +(tt334-tt333)*60
       call cputim(tt336)
       ttintb =ttintb + (tt336-tt335)*60
       ttnewt = ttnewt + (tt336 - tt335)*60.      
-     Output of Massive black hole data
+*     Output of Massive black hole data
       IF (KZ(24).EQ.1) then
          call BHPLOT
       END IF
