@@ -451,65 +451,16 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
 *
 
 
-c$$$        call cputim(ttt32)
-c$$$**!$omp parallel do if(NXTLEN.GE.ithread)
-c$$$**!$omp& default(shared) private(L,I,DTR,K)
-c$$$        DO L = 1,NXTLEN
-c$$$           I = NXTLST(L)
-c$$$*       Save new block step and update T0 & next time
-c$$$           T0(I) = TIME
-c$$$           TIMENW(I) = T0(I) + STEP(I)
-c$$$           
-c$$$*     Set non-zero indicator for new regular force.
-c$$$           IF (T0R(I) + STEPR(I).GT.TIME) THEN
-c$$$*     *!$omp critical 
-c$$$*              NREG = NREG + 1
-c$$$*              IREG(NREG) = I
-c$$$**!$omp end critical
-c$$$*          ELSE
-c$$$*       Extrapolate regular force & first derivatives to obtain F & FDOT.
-c$$$              DTR = TIME - T0R(I)
-c$$$              F(1,I) = 0.5*(FRDOT(1,I)*DTR + FR(1,I) + FI(1,I))
-c$$$              F(2,I) = 0.5*(FRDOT(2,I)*DTR + FR(2,I) + FI(2,I))
-c$$$              F(3,I) = 0.5*(FRDOT(3,I)*DTR + FR(3,I) + FI(3,I))
-c$$$              FDOT(1,I) = ONE6*(FRDOT(1,I) + FIDOT(1,I))
-c$$$              FDOT(2,I) = ONE6*(FRDOT(2,I) + FIDOT(2,I))
-c$$$              FDOT(3,I) = ONE6*(FRDOT(3,I) + FIDOT(3,I))
-c$$$* Higher order extrapolation?
-c$$$*                 F(K,I) = FI(K,I) + FR(K,I) + DTR*(FRDOT(K,I)
-c$$$*    *                + DTR*(D2R(K,I)/2.D0 + DTR*D3R(K,I)/6.D0))
-c$$$*                 FDOT(K,I) = FIDOT(K,I) + FRDOT(K,I)
-c$$$*    *                + DTR*(D2R(K,I) + DTR*D3R(K,I)/2.D0)
-c$$$*                 F(K,I) = F(K,I)/2.D0
-c$$$*                 FDOT(K,I) = FDOT(K,I)/6.D0
-c$$$           END IF
-c$$$          
-c$$$*     X0(K,I) = XN(K,I)
-c$$$*     X0DOT(K,I) = XNDOT(K,I)
-c$$$        END DO
-c$$$**!$omp end parallel do
-*
 *
 *       See whether any KS candidates are in the same block.
         IF (IKS.GT.0) THEN
 *       Accept same time, otherwise reduce STEP(ICOMP) and/or delay.
            IF (T0(JCOMP).EQ.T0(ICOMP)) THEN
-*             call cputim(ttnb1)
-*             call xbpredall
-*             call cputim(ttnb2)
-*             ttpre = ttpre + (ttnb2-ttnb1)*60.
               I = ICOMP
               ICOMP = MIN(ICOMP,JCOMP)
               JCOMP = MAX(I,JCOMP)
               call jpred_int(icomp,time)
               call jpred_int(jcomp,time)
-*     --09/25/13 21:44-lwang-debug--------------------------------------*
-***** Note:------------------------------------------------------------**
-c$$$              if(time.ge.0.3) then
-c$$$                 print*,rank,'icomp',icomp,name(icomp),
-c$$$     &            x(1,icomp),xdot(1,icomp),x0(1,icomp),x0dot(i,icomp)
-c$$$              end if
-*     --09/25/13 21:44-lwang-end----------------------------------------*
            ELSE IF (T0(JCOMP) + STEP(JCOMP).LT.T0(ICOMP)) THEN
               STEP(ICOMP) = 0.5D0*STEP(ICOMP)
               TIMENW(ICOMP) = T0(ICOMP) + STEP(ICOMP)
@@ -522,8 +473,6 @@ c$$$              end if
       NSTEPI = NSTEPI + NXTLEN
 
 *
-c$$$      call cputim(ttt33)
-c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 
 ***** --Regular force calculation--------------------------------------**
       IF(NREG.GT.0)THEN
@@ -534,17 +483,6 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
          NN = NTOT - IFIRST + 1
          CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
          call cputim(tt52)
-*     --09/26/13 16:58-lwang-debug--------------------------------------*
-***** Note:------------------------------------------------------------**
-c$$$      if(rank.eq.0) print*,'NREG',NXTLEN,NREG,TIME,NGPUC,tt52-tt51
-c$$$      NGPUC = NGPUC + 1
-c$$$      if(rank.eq.0) then
-c$$$         do i=1,nreg
-c$$$            L=ireg(i)
-c$$$            write(100,*) NREG, Name(L), STEPR(L),TIME
-c$$$         end do
-c$$$      end if
-*     --09/26/13 16:58-lwang-end----------------------------------------*
          ttgrcomm = ttgrcomm + (tt52-tt51)*60.0
 #endif
 
@@ -568,12 +506,8 @@ c$$$      end if
                FDOT(2,I) = ONE6*(FIDOT(2,I) + FRDOT(2,I))
                FDOT(3,I) = ONE6*(FIDOT(3,I) + FRDOT(3,I))               
                X0(1:3,I) = XN(1:3,I)
-c$$$               X(1:3,I) = XN(1:3,I)
                X0DOT(1:3,I) = XNDOT(1:3,I)
-c$$$               XDOT(1:3,I) = XNDOT(1:3,I)
 *     Copy neighbor list
-*               NNB = IMPI(1,L) + 1 
-*               LIST(1:NNB,I) = IMPI(1:NNB,L)
                IF(LIST(1,I).GT.0) then
 !$omp critical                   
                   RSMIN = MIN(RSMIN,RS(I))
@@ -587,32 +521,8 @@ c$$$               XDOT(1:3,I) = XNDOT(1:3,I)
             ttreg = ttreg + (tt2-tt1)*60.
 
 
-c$$$         call cputim(tt333) 
          NSTEPR = NSTEPR + NREG
          NBLCKR = NBLCKR + 1
-c$$$*
-c$$$c$$$**!$omp parallel do if(NREG.GE.ithread) private(L,I,K)      
-c$$$c$$$         DO L = 1,NREG
-c$$$c$$$            I = IREG(L)
-c$$$c$$$*     
-c$$$c$$$            LIST(1:LMAX,I) = IMPI(1:LMAX,L)
-c$$$c$$$*
-c$$$c$$$*       Check minimum neighbor sphere since last output
-c$$$c$$$**!$omp critical          
-c$$$c$$$            IF(LIST(1,I).GT.0)RSMIN = MIN(RSMIN,RS(I))
-c$$$c$$$**!$omp end critical              
-c$$$c$$$*
-c$$$c$$$         END DO
-c$$$c$$$**!$omp end parallel do      
-c$$$         call cputim(tt334)
-c$$$         ttmov = ttmov +(tt334-tt333)*60
-*
-*          OPEN(98,STATUS='OLD',ERR=123)
-*         print*,' last reg block t=',time,' length=',nreg
-*         print*,' first 10 =',(name(ireg(l)),l=1,min(nreg,10))
-*         call flush(6)
-*         CLOSE(98)
-*123      CONTINUE
 *
       END IF
 
@@ -641,23 +551,6 @@ c$$$         ttmov = ttmov +(tt334-tt333)*60
       IF (KZ(24).EQ.1) then
          call BHPLOT
       END IF
-c$$$*     --10/27/13 10:33-lwang-add----------------------------------------*
-c$$$***** if ks need terminate, do prediction for icomp and jcomp-----------*
-c$$$      if (iks.gt.0) then
-c$$$         call xvpred(ICOMP,0)
-c$$$         call xvpred(JCOMP,0)
-c$$$      end if
-c$$$*     --10/27/13 10:33-lwang-end----------------------------------------*
-*
-**!$omp parallel do if (nreg.ge.ithread) private(L,I)      
-*       DO L =1,NREG
-*          I = IREG(L)
-*          DO 82 K = 1,3
-*             X0(K,I) = XN(K,I)
-*             X0DOT(K,I) = XNDOT(K,I)
-* 82       CONTINUE
-*       END DO
-**!$omp end parallel do      
 *     Needed to update only active particles, avoid sending all at reg block
 *     Take care is this really efficient?
 *         CALL GPUIRR_SET_JP(I,X0(1,I),X0DOT(1,I),F(1,I),FDOT(1,I),
@@ -734,10 +627,6 @@ c$$$          IF (TIME.GT.TMDOT.AND.DMOD(TIME,STEPX).EQ.0.0D0) THEN
          IF (KZ(1).GT.1) CALL MYDUMP(1,1)
       END IF
 *     
-C*     Check option for general binary search.
-C      IF (KZ(4).NE.0.AND.TIME - TLASTS.GT.DELTAS) THEN
-C         CALL EVOLVE(0,0)
-C      END IF
 *     
 *     Include facility for termination of run (create dummy file STOP).
       IF(rank.EQ.0)THEN
