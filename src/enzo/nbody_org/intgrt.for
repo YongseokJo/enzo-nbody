@@ -287,11 +287,9 @@
       END IF
 *
 *       Also check output time in case DTADJ & DELTAT not commensurate.
-      ! criteria for Enzo communication by YS Jo
       IF (TIME.GT.TNEXT) THEN
           TIME = TNEXT
-          CALL ENZO_COMMUNICATION
-          !CALL ENZO_COMMUNICATION
+          CALL OUTPUT
           GO TO 1
       END IF
 *
