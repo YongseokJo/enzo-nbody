@@ -101,8 +101,8 @@
                      call custom_update_file(TTOT,DTOUT)
                   END IF
                end if
-               CALL custom_output(NXTLEN,NXTLST,
-     &              NXTLIMIT,NGHOSTS)
+               !CALL custom_output(NXTLEN,NXTLST, //by YS
+*     &              NXTLIMIT,NGHOSTS)
             END IF
 
 *     Sorting NXTLST
@@ -524,7 +524,8 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
 *      custom output
       call cputim(ttiout1)
       IF(KZ(46).GT.0.AND.DMOD(TIME,DTOUT).EQ.0) THEN
-         call custom_output(NXTLEN,NXTLST,NXTLIMIT,NGHOSTS,IMINR)
+         !call custom_output(NXTLEN,NXTLST,NXTLIMIT,NGHOSTS,IMINR) //by
+         !YS
       END IF
       call cputim(ttiout2)
       ttout = ttout + (ttiout2 - ttiout1)*60.
