@@ -22,9 +22,9 @@ MACH_FILE  = Make.mach.ubuntu-hardy
 #-----------------------------------------------------------------------
 
 
-LOCAL_HDF5_INSTALL = /home/sykim/local/hdf5-1.12.1
-LOCAL_MPI = /appl/intel/oneapi/mpi/latest
-LOCAL_GRACKLE_INSTALL = /home/sykim/local/grackle
+LOCAL_HDF5_INSTALL = /home/kerex/packages/hdf5-1.8.20/build
+LOCAL_MPI = /appl/intel/oneapi/mpi/2021.4.0
+LOCAL_GRACKLE_INSTALL = /home/kerex/packages/grackle/build
 LOCAL_CUDA_INSTALL    = /usr/local/cuda-11.8
 
 #-----------------------------------------------------------------------

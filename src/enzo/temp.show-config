@@ -1,6 +1,7 @@
+make[1]: Warning: File `DEPEND' has modification time 110 s in the future
 
    MACHINE: Generic Ubuntu 8.04
-   MACHINE-NAME: rusty
+   MACHINE-NAME: linux-sy
 
    PARAMETER_MAX_SUBGRIDS  [max-subgrids-###]                : 100000
    PARAMETER_MAX_BARYONS  [max-baryons-###]                  : 30
@@ -40,3 +41,4 @@
    CONFIG_LOG2ALLOC  [log2alloc-{yes,no}]                    : no
    CONFIG_UUID  [uuid-{yes,no}]                              : yes
 
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.
