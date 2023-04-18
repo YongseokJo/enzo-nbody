@@ -152,6 +152,8 @@
 *       Find all particles due at next block time.
     1 CONTINUE
 
+
+
 *
 *       Redetermine TMIN after main change to catch new small steps after chain.
       ICALL = ICALL + 1
@@ -262,32 +264,30 @@
 *
 *       Check for new regularization at end of block.
       IF (IKS.GT.0) THEN
-*       added by sykim
-          IF(TIME.GE.TCRIT) THEN
-              write(6,*) "need to check IKS"
-              IPHASE  = 3
-              GO TO 100
-          END IF
-*       end added by sykim
           TIME = TPREV
           IPHASE = 1
           GO TO 100
       END IF
 *
 *       Check next adjust time before beginning a new block.
-      IF ((TIME.GT.TADJ).OR.(TIME.GE.TCRIT)) THEN
+      IF(TIME.GT.TADJ)THEN
         TIME = TADJ
         IPHASE = 3
         GO TO 100
       END IF
+
+*        Check if we should end the run
 *
 *       Also check output time in case DTADJ & DELTAT not commensurate.
       ! criteria for Enzo communication by YS Jo
       IF (TIME.GT.TNEXT) THEN
-          TIME = TNEXT
-          !CALL ENZO_COMMUNICATION
-          !CALL ENZO_COMMUNICATION
-          GO TO 1
+*          TIME = TNEXT
+           IPHASE = 13
+           GO TO 100
+*          CALL OUTPUT
+*          CALL ENZO_COMMUNICATION
+*          CALL ENZO_COMMUNICATION
+*          GO TO 1
       END IF
 *
 *       See whether to advance any close encounters at first new time.

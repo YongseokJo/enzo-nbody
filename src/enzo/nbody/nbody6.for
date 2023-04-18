@@ -139,9 +139,10 @@
 *     scaling
  
       N = EN
-      TCRIT = EDT*ETU/(TIMEU*(3.1556952D13))
+      TNEXT = EDT*ETU/(TIMEU*(3.1556952D13))
+      TCRIT = 1d5
 
-      write (6,*) 'timesteps',TCRIT
+      write (6,*) 'timesteps',TNEXT
 
 
       DO 7 IS = 1,N
@@ -263,9 +264,12 @@
 *       diagnostics.
         call cputim(tt7)
         CALL ADJUST
+        call cputim(tt8)
+        ttadj = ttadj + (tt8-tt7)*60.
+
 
 *       added by sykim. return datas to ENZO if TIME>TCRIT
-        IF (IPHASE.EQ.13) THEN
+      ELSE IF (IPHASE.EQ.13) THEN
 
 *           17 CONTINUE ! this does not work for SY ,why?
 
@@ -278,17 +282,20 @@
           ! for SY enzo comm
 
           DO EID = 1,N
-          IE = NAME(EID)
-          EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
-          DO J = 1,3
-          EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
-          EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
-          END DO
+
+            IE = NAME(EID)
+            EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
+            
+              DO J = 1,3
+                EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
+                EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
+              END DO
+
           END DO 
 *----------------------------------------------------------------------------------*
       ! SEND
-      allocate(EX(3,N))
-      allocate(EXDOT(3,N))
+          allocate(EX(3,N))
+          allocate(EXDOT(3,N))
 *     sorting
 *     CALL NB_TO_ENZO(EX, EDOT)
 *     MPI starts, refer to FinalizeNbodyComputation.C for the counter part  by YS
@@ -312,37 +319,33 @@
 
 *        particle id
 *        force unit (likely cgs)
-      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
-     &           ierr)
-      allocate(EF(3,EN))
-        DO I = 1,3 
-        call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
+          call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
+     &         ierr)
+          allocate(EF(3,EN))
+
+            DO I = 1,3 
+               call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &         ECOMM, istatus,ierr)
+            END DO
+ 
+          call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ECOMM, istatus,ierr)
-        END DO
-        call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
-     &            ECOMM, istatus,ierr)
-        call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
+          call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
      &            ECOMM, istatus,ierr)
 *       TCRIT = TCRIT + dtENZO
 *     for SY, here TIMEU changes adaptivelyi on the fly?
-        write (0,*) 'fortran: force=', EF(1,1)
+          write (0,*) 'fortran: force=', EF(1,1)
 *     MPI done!
 
 *      CALL ENZO_TO_NB(EX, EXDOT)
 *----------------------------------------------------------------------------------*
+  
+          TNEXT = TNEXT + EDT*ETU/(TIMEU*(3.1556952D13)) ! is it right? SY
+          write (6,*) 'timesteps',TNEXT
 
-      TCRIT = TCRIT + EDT*ETU/(TIMEU*(3.1556952D13)) ! is it right? SY
+          write (6,*) 'recieved and restarting'
 
-      write (6,*) 'timesteps',TCRIT
-
-
-          IPHASE = 19 
-
-
-          GO TO 1
-        END IF
-        call cputim(tt8)
-        ttadj = ttadj + (tt8-tt7)*60.
+          IPHASE = 0
 
 *
       ELSE IF (IPHASE.EQ.4) THEN

@@ -335,7 +335,8 @@ c$$$     &        EBIN,EMERGE
 *     
 *     See whether standard output is due.
       IF (TIME.GE.TNEXT) THEN
-         CALL OUTPUT
+*     added by sykim
+         IPHASE = 13
 *     
 *     Include optional diagnostics for the hardest binary below ECLOSE.
          IF (KZ(9).EQ.1.OR.KZ(9).EQ.3) THEN
@@ -420,7 +421,7 @@ C     New (Aug. 1998): P.Kroupa
          call cputim(tt1)
 
 #ifdef GPU
-         CALL GPUNB_CLOSE
+*        CALL GPUNB_CLOSE
 #endif
 #ifdef SIMD
          CALL IRR_SIMD_CLOSE(rank)
@@ -432,7 +433,7 @@ C     New (Aug. 1998): P.Kroupa
            ttotal=(tt1-ttota)*60.
            PRINT*,' Total CPU=',ttotal
 
-*           IPHASE = 13
+           IPHASE = 13
 
 
 #ifdef PARALLEL
