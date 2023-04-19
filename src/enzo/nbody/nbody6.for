@@ -281,6 +281,7 @@
 
           ! for SY enzo comm
 
+
           DO EID = 1,N
 
             IE = NAME(EID)
@@ -292,6 +293,8 @@
               END DO
 
           END DO 
+          write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
+          write (0,*) 'fortran: RDENS=', RDENS(1)
 *----------------------------------------------------------------------------------*
       ! SEND
           allocate(EX(3,N))
@@ -319,9 +322,11 @@
 
 *        particle id
 *        force unit (likely cgs)
-          call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
-     &         ierr)
-          allocate(EF(3,EN))
+*          call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
+*     &         ierr)
+          !allocate(EF(3,EN))
+          write (0,*) 'fortran: read in' 
+          write (6,*) 'fortran: read in' 
 
             DO I = 1,3 
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,

@@ -63,6 +63,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		}
 
 
+		fprintf(stderr,"FNC in\n");
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
 		fprintf(stderr,"Fianl Done?1\n");
@@ -102,6 +103,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 
 			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
+			fprintf(stderr,"enzo: X=%f, V=%f\n ",NbodyParticlePosition[0], NbodyParticleVelocity[0]);
 
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */

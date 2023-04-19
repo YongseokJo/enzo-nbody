@@ -159,9 +159,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
 				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
 
-				/*-----------------------------------------------*/
-				/******** Send Arrays to Fortran Nbody6++    *****/
-				/*-----------------------------------------------*/
+				/*----------------------------------------------------------*/
+				/******** Send Arrays to Fortran Nbody6++  First Time  *****/
+				/*--------------------------------------------------------*/
 				MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, MPI_COMM_WORLD);
 				MPI_Ssend(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 200, MPI_COMM_WORLD);
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -305,9 +305,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				/******** Send Arrays to Fortran Nbody6++    *****/
 				/*-----------------------------------------------*/
 				//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, MPI_COMM_WORLD);
-				//MPI_Ssend(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 200, MPI_COMM_WORLD);
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
-					//MPI_Ssend(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD);
 					MPI_Ssend(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 500, MPI_COMM_WORLD);
 				}
 				MPI_Ssend(&TimeStep, 1, MPI_DOUBLE, NumberOfProcessors, 600, MPI_COMM_WORLD);
