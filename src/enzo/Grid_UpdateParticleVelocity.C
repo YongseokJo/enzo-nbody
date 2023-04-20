@@ -79,9 +79,11 @@ int grid::UpdateParticleVelocity(float TimeStep)
 				 already been divided by a(t). */
 
 			for (i = 0; i < NumberOfParticles; i++) {
+#ifdef NBODY
 				// by YS Jo
-				//if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
+				if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
 				//&& GridLevel != MaximumRefinementLevel )
+#endif				
 
 #ifdef VELOCITY_METHOD1
 

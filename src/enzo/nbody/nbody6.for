@@ -29,11 +29,11 @@
 *     added by sykim, parameters from enzo
 
       INTEGER, parameter:: EN_MAX = 2000
-      INTEGER :: EN, IS,IE,EID,I,J
+      INTEGER :: EN, IS,IE,I,J
       integer :: istatus(MPI_STATUS_SIZE)
 
 
-      REAL*8, pointer :: EBODY(:),EX(:,:)
+      REAL*8, pointer :: EBODY(:),EID(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
 
 
@@ -89,7 +89,10 @@
 
       write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
       allocate(EBODY(EN))
+      allocate(EID(EN))
       call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ECOMM,
+     &     istatus, ierr)
+      call MPI_RECV(EID, EN, MPI_INTEGER, 0, 200, ECOMM,
      &     istatus, ierr)
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
@@ -282,9 +285,9 @@
           ! for SY enzo comm
 
 
-          DO EID = 1,N
+          DO I = 1,N
 
-            IE = NAME(EID)
+            IE = NAME(I)
             EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
             
               DO J = 1,3
@@ -297,8 +300,6 @@
           write (0,*) 'fortran: RDENS=', RDENS(1)
 *----------------------------------------------------------------------------------*
       ! SEND
-          allocate(EX(3,N))
-          allocate(EXDOT(3,N))
 *     sorting
 *     CALL NB_TO_ENZO(EX, EDOT)
 *     MPI starts, refer to FinalizeNbodyComputation.C for the counter part  by YS
@@ -312,7 +313,7 @@
      &           ECOMM, ierr)
           END DO
 *          deallocate(EF)
-          write (0,*) 'fortran: X=', EX(1,1), ', V=',EXDOT(1,1)
+          write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
 *----------------------------------------------------------------------------------*
 

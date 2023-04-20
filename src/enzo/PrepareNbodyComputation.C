@@ -164,6 +164,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				/*--------------------------------------------------------*/
 				MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, MPI_COMM_WORLD);
 				MPI_Ssend(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 200, MPI_COMM_WORLD);
+				MPI_Ssend(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, NumberOfProcessors, 250, MPI_COMM_WORLD);
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					MPI_Ssend(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 300, MPI_COMM_WORLD);
 					MPI_Ssend(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, NumberOfProcessors, 400, MPI_COMM_WORLD);
