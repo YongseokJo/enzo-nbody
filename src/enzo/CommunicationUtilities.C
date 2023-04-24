@@ -803,6 +803,16 @@ int CommunicationBarrier()
   return SUCCESS;
 }
 
+int CommunicationInterBarrier()
+{
+#ifdef USE_MPI
+  MPI_Barrier(inter_comm);
+#endif /* USE_MPI */
+  return SUCCESS;
+}
+
+
+
 /************************************************************************
   Just like grid::CommunicationMethodShouldExit (in Grid.h) but for
   any processor numbers

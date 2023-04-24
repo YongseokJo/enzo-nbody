@@ -63,6 +63,7 @@ EXTERN bool NbodyFirst;
 /* by YS, MPI COMMs*/
 extern MPI_Comm enzo_comm;
 extern MPI_Comm nbody_comm;
+extern MPI_Comm inter_comm;
 #endif
 
 

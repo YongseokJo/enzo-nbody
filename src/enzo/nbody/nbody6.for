@@ -1,4 +1,4 @@
-      SUBROUTINE NBODY6(comm_enzo, nbody_comm, mpi_rank)
+      SUBROUTINE NBODY6(world_comm, inter_comm, nbody_comm, mpi_rank)
 *
 *             N B O D Y 6++
 *             *************
@@ -24,7 +24,8 @@
 *     For MPI communication by YS Jo
       !USE ISO_C_BINDING
       integer :: nbody_comm, NCOMM
-      INTEGER :: comm_enzo, ECOMM
+      integer :: inter_comm, ICOMM
+      INTEGER :: world_comm, WCOMM
       LOGICAL :: FIRST=.true.
 *     added by sykim, parameters from enzo
 
@@ -51,7 +52,7 @@
 *     end added by sykim
 
 *     common variables for MPI by YS
-      COMMON/MPI/ ECOMM, NCOMM, FIRST
+      COMMON/MPI/ WCOMM, ICOMM, NCOMM, FIRST
 
       COMMON/STSTAT/  TINIT,NIR,NIB,NRGL,NKS
 #ifdef DEBUG
@@ -82,39 +83,41 @@
       ! recieve the number of particles 
 *----------------------------------------------------------------------------------*
 *     MPI starts, refer to PrepareNbodyComputation.C for the counter part  by YS
-      ECOMM = comm_enzo
+      WCOMM = world_comm
+      ICOMM = inter_comm
       NCOMM = nbody_comm
-      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
+
+      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
      &           ierr)
 
       write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
       allocate(EBODY(EN))
       allocate(EID(EN))
-      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ECOMM,
+      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
      &     istatus, ierr)
-      call MPI_RECV(EID, EN, MPI_INTEGER, 0, 200, ECOMM,
+      call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM,
      &     istatus, ierr)
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
       DO  I = 1,3
         call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
-     &           ECOMM, istatus,ierr)
+     &           ICOMM, istatus,ierr)
         call MPI_RECV(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
-     &           ECOMM, istatus,ierr)
+     &           ICOMM, istatus,ierr)
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       END DO
       call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(ELU, 1, MPI_DOUBLE_PRECISION, 0, 800,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(EMU, 1, MPI_DOUBLE_PRECISION, 0, 900,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(EVU, 1, MPI_DOUBLE_PRECISION, 0, 1000,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
       write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
      &             ', V=',EXDOT(1,1)
 *     MPI done!
@@ -216,11 +219,11 @@
 *     sykim: need to recieve force from enzo here!!
 *     update the common variables to the recieved enzo variables. 
 
-*      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
+*      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
 *     &           ierr)
 *      write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
 *      allocate(EBODY(EN))
-*      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ECOMM,
+*      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
 *     &     istatus, ierr)
 *      allocate(EX(3,EN))
 *      allocate(EXDOT(3,EN))
@@ -279,7 +282,7 @@
 *      sykim: need to add the MPI return scheme here!  
 *      and do not return or end the program
 *            RETURN
-*            call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ECOMM,
+*            call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
 *     &     istatus, ierr)
 
           ! for SY enzo comm
@@ -288,11 +291,11 @@
           DO I = 1,N
 
             IE = NAME(I)
-            EBODY(IE) = BODY(IE)*MASSU*1.9891D33/EMU
+            EBODY(I) = BODY(IE)*MASSU*1.9891D33/EMU
             
               DO J = 1,3
                 EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
-                EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU
+                EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU   
               END DO
 
           END DO 
@@ -305,13 +308,16 @@
 *     MPI starts, refer to FinalizeNbodyComputation.C for the counter part  by YS
           write (0,*) 'fortran: write out' 
           write (6,*) 'fortran: write out' 
+          write (0,*) 'fortran: FN =', N 
 
+          !call MPI_BARRIER(cross_comm, ierr)
           DO  I = 1,3
-          call MPI_SSEND(EX(I,:), N, MPI_DOUBLE_PRECISION, 0, 300,
-     &           ECOMM, ierr)
-          call MPI_SSEND(EXDOT(I,:), N, MPI_DOUBLE_PRECISION, 0, 400,
-     &           ECOMM, ierr)
+          call MPI_SSEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
+     &           ICOMM)!, ierr)
+          call MPI_SSEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
+     &           ICOMM)!, ierr)
           END DO
+          !call MPI_BARRIER(cross_comm,ierr)
 *          deallocate(EF)
           write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
@@ -323,21 +329,23 @@
 
 *        particle id
 *        force unit (likely cgs)
-*          call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ECOMM, istatus,
+*          call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
 *     &         ierr)
           !allocate(EF(3,EN))
           write (0,*) 'fortran: read in' 
           write (6,*) 'fortran: read in' 
 
+          !call MPI_BARRIER(cross_comm,ierr)
             DO I = 1,3 
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
-     &         ECOMM, istatus,ierr)
+     &         ICOMM, istatus,ierr)
             END DO
  
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
           call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
-     &            ECOMM, istatus,ierr)
+     &            ICOMM, istatus,ierr)
+          !call MPI_BARRIER(cross_comm,ierr)
 *       TCRIT = TCRIT + dtENZO
 *     for SY, here TIMEU changes adaptivelyi on the fly?
           write (0,*) 'fortran: force=', EF(1,1)
@@ -396,5 +404,5 @@
 *       Continue integration.
       GO TO 1
 *
-      call MPI_FINALIZE(ierr)
+      !call MPI_FINALIZE(ierr)
       END

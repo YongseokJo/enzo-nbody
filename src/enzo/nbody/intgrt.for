@@ -687,6 +687,7 @@ c$$$          IF (TIME.GT.TMDOT.AND.DMOD(TIME,STEPX).EQ.0.0D0) THEN
       CALL IRR_SIMD_CLOSE(rank)
 #endif
 #ifdef PARALLEL
+      write (0,*) 'fortran: here?'
       call cputim(tt998)
       CALL MPI_BARRIER(MPI_COMM_WORLD,ierr)
       call cputim(tt999)
