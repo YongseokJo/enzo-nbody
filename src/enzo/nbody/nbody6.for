@@ -95,8 +95,10 @@
       allocate(EID(EN))
       call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
      &     istatus, ierr)
+          write (0,*) 'fortran: ierr=', ierr
       call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM,
      &     istatus, ierr)
+          write (0,*) 'fortran: ierr=', ierr
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
@@ -118,6 +120,7 @@
      &            ICOMM, istatus,ierr)
       call MPI_RECV(EVU, 1, MPI_DOUBLE_PRECISION, 0, 1000,
      &            ICOMM, istatus,ierr)
+          write (0,*) 'fortran: ierr=', ierr
       write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1), 
      &             ', V=',EXDOT(1,1)
 *     MPI done!
@@ -310,14 +313,16 @@
           write (6,*) 'fortran: write out' 
           write (0,*) 'fortran: FN =', N 
 
-          !call MPI_BARRIER(cross_comm, ierr)
+          call MPI_BARRIER(ICOMM, ierr)
           DO  I = 1,3
-          call MPI_SSEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
-     &           ICOMM)!, ierr)
-          call MPI_SSEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
-     &           ICOMM)!, ierr)
+          call MPI_SEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
+     &           ICOMM, ierr)
+          write (0,*) 'fortran: ierr=', ierr
+          call MPI_SEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
+     &           ICOMM, ierr)
+          write (0,*) 'fortran: ierr=', ierr
           END DO
-          !call MPI_BARRIER(cross_comm,ierr)
+          call MPI_BARRIER(ICOMM,ierr)
 *          deallocate(EF)
           write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
@@ -335,17 +340,21 @@
           write (0,*) 'fortran: read in' 
           write (6,*) 'fortran: read in' 
 
-          !call MPI_BARRIER(cross_comm,ierr)
+          call MPI_BARRIER(ICOMM,ierr)
             DO I = 1,3 
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &         ICOMM, istatus,ierr)
+               write (0,*) 'fortran: ierr=', ierr
             END DO
  
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
+          write (0,*) 'fortran: ierr=', ierr
           call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
      &            ICOMM, istatus,ierr)
-          !call MPI_BARRIER(cross_comm,ierr)
+          write (0,*) 'fortran: ierr=', ierr
+          call MPI_BARRIER(ICOMM,ierr)
+          write (0,*) 'fortran: ierr=', ierr
 *       TCRIT = TCRIT + dtENZO
 *     for SY, here TIMEU changes adaptivelyi on the fly?
           write (0,*) 'fortran: force=', EF(1,1)

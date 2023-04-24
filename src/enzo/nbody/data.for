@@ -108,7 +108,7 @@
       CALL MPI_BCAST(X(1,1),3*N,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
       CALL MPI_BCAST(XDOT(1,1),3*N,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
       call cputim(tt998)
-      CALL mpi_barrier(MPI_COMM_WORLD,ierr)
+      !CALL mpi_barrier(MPI_COMM_WORLD,ierr)
       ibarcount=ibarcount+1
       call cputim(tt999)
       ttbar = ttbar + (tt999-tt998)*60

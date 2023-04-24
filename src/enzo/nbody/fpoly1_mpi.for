@@ -16,7 +16,7 @@
 *
 *       Loop over all bodies, pair #ICOMP & JCOMP or one single body.
       call cputim(tt998)
-      call mpi_barrier(MPI_COMM_WORLD,ierr)
+*      call mpi_barrier(MPI_COMM_WORLD,ierr)
       call cputim(tt999)
       ttbar = ttbar + (tt999-tt998)*60
       ibarcount=ibarcount+1
@@ -160,7 +160,7 @@
      *                  MPI_COMM_WORLD,status,ierr)
 *
       call cputim(tt998)
-      call mpi_barrier(MPI_COMM_WORLD,ierr)
+*      call mpi_barrier(MPI_COMM_WORLD,ierr)
       call cputim(tt999)
       ibarcount=ibarcount+1
       ttbar = ttbar + (tt999-tt998)*60

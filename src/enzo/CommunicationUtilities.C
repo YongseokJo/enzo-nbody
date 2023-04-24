@@ -797,18 +797,20 @@ int CommunicationAllReduceValues(Eint64 *Values, int Number,
 
 int CommunicationBarrier()
 {
+	int ierr;
 #ifdef USE_MPI
-  MPI_Barrier(enzo_comm);
+  ierr = MPI_Barrier(enzo_comm);
 #endif /* USE_MPI */
-  return SUCCESS;
+  return ierr;
 }
 
 int CommunicationInterBarrier()
 {
+	int ierr;
 #ifdef USE_MPI
-  MPI_Barrier(inter_comm);
+  ierr = MPI_Barrier(inter_comm);
 #endif /* USE_MPI */
-  return SUCCESS;
+  return ierr;
 }
 
 
