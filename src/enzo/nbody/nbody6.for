@@ -217,39 +217,15 @@
       call cputim(tt2)
       ttinitial = ttinitial + (tt2-ttota)*60.
 *       Advance solutions until next output or change of procedure.
+
     1 CONTINUE
-
-*     sykim: need to recieve force from enzo here!!
-*     update the common variables to the recieved enzo variables. 
-
-*      call MPI_RECV(EN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
-*     &           ierr)
-*      write (0,*) 'fortran: Number of Nbody Particles on Fortran', EN
-*      allocate(EBODY(EN))
-*      call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
-*     &     istatus, ierr)
-*      allocate(EX(3,EN))
-*      allocate(EXDOT(3,EN))
-
 
 
       call cputim(tt1)
-*
-*     --08/27/13 16:31-lwang-debug--------------------------------------*
-***** Note: -----------------------------------------------------------**
-*      if(time.ge.20.8) print*,rank,'aint ',time
-*     --08/27/13 16:31-lwang-end-debug----------------------------------*
       CALL INTGRT
-*     --08/27/13 16:32-lwang-debug--------------------------------------*
-***** Note:------------------------------------------------------------**
-*      if(time.ge.20.8) print*,rank,'bint ',time
-*     --08/27/13 16:32-lwang-end-debug----------------------------------*
-*
       call cputim(tt2)
       ttint = ttint + (tt2-tt1)*60.
 *
-
-
 
       IF (IPHASE.EQ.1) THEN
 *       Prepare new KS regularization.
