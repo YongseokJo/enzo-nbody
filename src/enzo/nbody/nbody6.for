@@ -30,12 +30,16 @@
 *     added by sykim, parameters from enzo
 
       INTEGER, parameter:: EN_MAX = 2000
-      INTEGER :: EN, IS,IE,I,J
+      INTEGER :: EN,IS,IE,I,J,K
       integer :: istatus(MPI_STATUS_SIZE)
 
 
       REAL*8, pointer :: EBODY(:),EID(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
+
+*     initial ID of particles recieved from ENZO
+
+      INTEGER EIDINIT(NMAX)
 
 
 *     conversion factors for enzo code unit -> cgs
@@ -160,6 +164,7 @@
 
 
       DO 7 IS = 1,N
+         EIDINIT(IS) = EID(IS)
          BODY(IS) = EBODY(IS)*EMU/(MASSU*1.9891D33)
          DO J = 1,3
           X(J,IS) = EX(J,IS)*ELU/LENGTHU/(3.0857D18)
@@ -272,18 +277,19 @@
 
           ! for SY enzo comm
 
-
           DO I = 1,N
-
-            IE = NAME(I)
-            EBODY(I) = BODY(IE)*MASSU*1.9891D33/EMU
-            
-              DO J = 1,3
-                EX(J,IE) = (X(J,IE)-RDENS(J))*LENGTHU*3.0857D18/ELU
-                EXDOT(J,IE) = XDOT(J,IE)*VELU*1D5/EVU   
-              END DO
-
+*      the ENZO ID of the current particle
+            IE = EIDINIT(NAME(I))
+            DO J = 1,N
+               IF (IE.EQ.EID(J)) THEN
+                 EBODY(J) = BODY(I)*MASSU*1.9891D33/EMU
+                   DO K = 1,3
+                     EX(K,J) = (X(K,I)-RDENS(K))*LENGTHU*3.0857D18/ELU
+                     EXDOT(K,J) = XDOT(K,I)*VELU*1D5/EVU   
+                   END DO
+               END IF
           END DO 
+
           write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
           write (0,*) 'fortran: RDENS=', RDENS(1)
 *----------------------------------------------------------------------------------*
@@ -345,8 +351,12 @@
 *      CALL ENZO_TO_NB(EX, EXDOT)
 *----------------------------------------------------------------------------------*
           DO IS = 1,N
-            DO J = 1,3
-              FENZO(J,IS) = EF(J,IS)/FORCEU
+            DO I = 1,N
+              IF (EIDINIT(NAME(I)).EQ.EID(IS))
+                DO J = 1,3
+                FENZO(J,I) = EF(J,IS)/FORCEU
+                END DO
+              END IF
             END DO
           END DO
  
