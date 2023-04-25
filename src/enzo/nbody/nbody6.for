@@ -169,7 +169,7 @@
          DO J = 1,3
           X(J,IS) = EX(J,IS)*ELU/LENGTHU/(3.0857D18)
           XDOT(J,IS) = EXDOT(J,IS)*EVU/VELU/(1D5)
-          FENZO(J,IS) = EF(J,IS)/FORCEU
+          FENZO(J,IS) = 0 !EF(J,IS)/FORCEU
          END DO
     7 CONTINUE
 
@@ -282,12 +282,13 @@
             IE = EIDINIT(NAME(I))
             DO J = 1,N
                IF (IE.EQ.EID(J)) THEN
-                 EBODY(J) = BODY(I)*MASSU*1.9891D33/EMU
-                   DO K = 1,3
-                     EX(K,J) = (X(K,I)-RDENS(K))*LENGTHU*3.0857D18/ELU
-                     EXDOT(K,J) = XDOT(K,I)*VELU*1D5/EVU   
-                   END DO
+                 !EBODY(J) = BODY(I)*MASSU*1.9891D33/EMU
+                 DO K = 1,3
+                  !EX(K,J) = (X(K,I)-RDENS(K))*LENGTHU*3.0857D18/ELU
+                  !EXDOT(K,J) = XDOT(K,I)*VELU*1D5/EVU   
+                 END DO
                END IF
+               END DO
           END DO 
 
           write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
@@ -302,6 +303,8 @@
           write (0,*) 'fortran: FN =', N 
 
           call MPI_BARRIER(ICOMM, ierr)
+          call MPI_SEND(EID, EN, MPI_INTEGER, 0, 250,
+     &           ICOMM, ierr)
           DO  I = 1,3
           call MPI_SEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, ierr)
@@ -329,6 +332,8 @@
           write (6,*) 'fortran: read in' 
 
           call MPI_BARRIER(ICOMM,ierr)
+          call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM, istatus,
+     &         ierr)
             DO I = 1,3 
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &         ICOMM, istatus,ierr)
@@ -352,9 +357,9 @@
 *----------------------------------------------------------------------------------*
           DO IS = 1,N
             DO I = 1,N
-              IF (EIDINIT(NAME(I)).EQ.EID(IS))
+              IF (EIDINIT(NAME(I)).EQ.EID(IS)) THEN
                 DO J = 1,3
-                FENZO(J,I) = EF(J,IS)/FORCEU
+                FENZO(J,I) = 0 !EF(J,IS)/FORCEU
                 END DO
               END IF
             END DO

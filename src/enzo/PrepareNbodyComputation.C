@@ -181,6 +181,13 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				MPI_Send(&MassUnits, 1, MPI_DOUBLE, 1, 900, inter_comm);
 				MPI_Send(&VelocityUnits, 1, MPI_DOUBLE, 1, 1000, inter_comm);
 
+
+				/**
+				for (int i=0; i<NumberOfNbodyParticles; i++) {
+					fprintf(stderr,"enzo: X=%e\n ",NbodyParticlePosition[0][i]);
+				}
+				**/
+
 				if (start_index_all != NULL)
 					delete [] start_index_all;
 				start_index_all = NULL;
@@ -297,7 +304,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				InitializeNbodyArrays();
 
 
-
 				/*-----------------------------------------------*/
 				/******  Gather Arrays from other processes  *****/
 				/*-----------------------------------------------*/
@@ -360,17 +366,14 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
 
-				//MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
-				//		NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
-				//MPI_Wait(&request, &status);
+				/*-----------------------------------------------*/
+				/******  Send Arrays to root processes       *****/
+				/*-----------------------------------------------*/
 				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
 						NULL, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm, &request);
 				MPI_Wait(&request, &status);
 
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
-					//MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-					//			NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
-					//	MPI_Wait(&request, &status);
 					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);

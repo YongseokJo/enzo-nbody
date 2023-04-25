@@ -100,7 +100,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/*-----------------------------------------------*/
 			InitializeNbodyArrays(1);
 			CommunicationInterBarrier();
-			ierr = MPI_Recv(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm, &status);
+			ierr = MPI_Recv(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 300, inter_comm, &status);
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				ierr = MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm, &status);
 				ierr = MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm, &status);
@@ -108,15 +108,9 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			CommunicationInterBarrier();
 
 
-			/**
-			for (int i=0; i<NumberOfNbodyParticles; i++) {
-				fprintf(stderr,"enzo: X=%e\n ",NbodyParticlePosition[0][i]);
-			}
-			**/
-
 
 			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
-			//fprintf(stderr,"enzo: X=%e, V=%e\n ",NbodyParticlePosition[0][0], NbodyParticleVelocity[0][0]);
+			fprintf(stderr,"enzo: X=%e, V=%e\n ",NbodyParticlePosition[0][0], NbodyParticleVelocity[0][0]);
 
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */

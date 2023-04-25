@@ -36,10 +36,6 @@ int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 void scan(int *in, int *inout, int *len, MPI_Datatype *dptr);
 #endif
 
-void InitializeNbodyArrays(bool NbodyFirst);
-void InitializeNbodyArrays(void);
-void InitializeNbodyArrays(int); 
-
 
 
 void InitializeNbodyArrays(bool NbodyFirst) {
@@ -83,10 +79,6 @@ void InitializeNbodyArrays(void) {
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
-		if (NbodyParticleVelocity[dim] != NULL)
-			delete [] NbodyParticleVelocity[dim];
-		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
-
 		if (NbodyParticleAccelerationNoStar[dim] != NULL)
 			delete [] NbodyParticleAccelerationNoStar[dim];
 		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
@@ -100,7 +92,6 @@ void InitializeNbodyArrays(int) {
 	if (NbodyParticleID != NULL)
 		delete [] NbodyParticleID;
 	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
-
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
@@ -117,6 +108,41 @@ void InitializeNbodyArrays(int) {
 
 
 void DeleteNbodyArrays(void) {
+
+	if (NbodyParticleMass != NULL) {
+		delete [] NbodyParticleMass;
+	NbodyParticleMass = NULL;
+	}
+	if (NbodyParticleID != NULL) {
+		delete [] NbodyParticleID;
+	NbodyParticleID = NULL;
+	}
+
+	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+		if (NbodyParticlePosition[dim] != NULL) {
+			delete [] NbodyParticlePosition[dim];
+			NbodyParticlePosition[dim] = NULL;
+		}
+
+		if (NbodyParticleVelocity[dim] != NULL) {
+			delete [] NbodyParticleVelocity[dim];
+			NbodyParticleVelocity[dim] = NULL;
+		}
+
+		if (NbodyParticleAccelerationNoStar[dim] != NULL) {
+			delete [] NbodyParticleAccelerationNoStar[dim];
+			NbodyParticleAccelerationNoStar[dim] = NULL;
+		}
+
+		for (int i=0; i<HERMITE_ORDER; i++) {
+			delete [] NbodyParticleAcceleration[dim][i];
+			NbodyParticleAcceleration[dim][i] = NULL;
+		}
+	}
+}
+
+
+void DeleteNbodyArrays(int) {
 
 	if (NbodyParticleMass != NULL) {
 		delete [] NbodyParticleMass;
@@ -206,16 +232,14 @@ void MatchAccelerationWithIndex(void) {
 int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]) {
 
 	int LocalNumberOfNbodyParticles=0;
-	int level;
-	int num_tmp; // delete
   LevelHierarchyEntry *Temp;
 	NumberOfNbodyParticles = 0;
 
 	//fprintf(stderr,"In the FindTotalNbody\n");
 
-	for (level = 0; level < MAX_DEPTH_OF_HIERARCHY-1; level++) {
+	for (int level = 0; level < MAX_DEPTH_OF_HIERARCHY-1; level++) {
 		for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
-			Temp->GridData->SetNumberOfNbodyParticles();
+			Temp->GridData->SetNumberOfNbodyParticles(); 
 			LocalNumberOfNbodyParticles += Temp->GridData->ReturnNumberOfNbodyParticles();
 		}
 	}
