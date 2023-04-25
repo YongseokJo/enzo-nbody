@@ -45,7 +45,7 @@
 
 *     conversion factors for astronomical -> nbody
 
-      REAL*8 LENGTHU,MASSU,VELU,TIMEU
+      REAL*8 LENGTHU,MASSU,VELU,TIMEU,FORCEU
 
       REAL*8 EDT
 
@@ -142,7 +142,11 @@
       VELU = 6.557D0*((MASSU/LENGTHU)**(0.5D0))/(100.0D0)
       TIMEU = 14.94D0*(((LENGTHU)**3.0D0/MASSU)**(0.5D0))
 
-      write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
+*     force unit from cgs to nbody
+
+      FORCEU = MASSU*VELU*1.9891D33*1D5/(TIMEU*3.1556952D13)
+
+      write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU,FORCEU
 
 *     determine how much steps should be run depending on approximate
 *     scaling
@@ -159,6 +163,7 @@
          DO J = 1,3
           X(J,IS) = EX(J,IS)*ELU/LENGTHU/(3.0857D18)
           XDOT(J,IS) = EXDOT(J,IS)*EVU/VELU/(1D5)
+          FENZO(J,IS) = EF(J,IS)/FORCEU
          END DO
     7 CONTINUE
 
@@ -338,7 +343,12 @@
 
 *      CALL ENZO_TO_NB(EX, EXDOT)
 *----------------------------------------------------------------------------------*
-  
+          DO 7 IS = 1,N
+            DO J = 1,3
+              FENZO(J,IS) = EF(J,IS)/FORCEU
+            END DO
+          END DO
+ 
           TNEXT = TNEXT + EDT*ETU/(TIMEU*(3.1556952D13)) ! is it right? SY
           write (6,*) 'timesteps',TNEXT
 

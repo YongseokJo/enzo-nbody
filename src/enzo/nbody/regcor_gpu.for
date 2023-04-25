@@ -117,6 +117,15 @@ C$$$      END IF
 *
       END IF
 *
+*       added on 23.04.24 by sykim
+*       add external force recieved from ENZO
+
+        DO 23 K=1,3
+          FREG(K) = FREG(K) + FENZO(K,I)
+   23   CONTINUE
+
+*       end added by sykim
+
 *       Check for zero neighbour number.
       IF (NNB.EQ.0) THEN
 *       Assume small mass at centre for distant body or no neighbours.
