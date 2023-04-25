@@ -134,13 +134,14 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				/*-----------------------------------------------*/
 				/******  Gather Arrays from other processes  *****/
 				/*-----------------------------------------------*/
+				MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
+						NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
+				MPI_Wait(&request, &status);
+
 				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
 						NbodyParticleID, LocalNumberAll, start_index_all, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 				MPI_Wait(&request, &status);
 
-				MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
-				MPI_Wait(&request, &status);
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					MPI_Igatherv(NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NbodyParticlePosition[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
@@ -178,19 +179,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
 				MPI_Send(&LengthUnits, 1, MPI_DOUBLE, 1, 800, inter_comm);
 				MPI_Send(&MassUnits, 1, MPI_DOUBLE, 1, 900, inter_comm);
-				ierr = MPI_Send(&VelocityUnits, 1, MPI_DOUBLE, 1, 1000, inter_comm);
-				if (ierr == MPI_SUCCESS) {
-					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				} else {
-					fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-					MPI_Error_class(ierr,&errclass);
-					if (errclass== MPI_ERR_RANK) {
-						fprintf(stderr,"Invalid rank used in MPI send call\n");
-						MPI_Error_string(ierr,err_buffer,&resultlen);
-						fprintf(stderr,err_buffer);
-						MPI_Finalize();
-					}
-				}
+				MPI_Send(&VelocityUnits, 1, MPI_DOUBLE, 1, 1000, inter_comm);
 
 				if (start_index_all != NULL)
 					delete [] start_index_all;
@@ -330,52 +319,15 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				/*-----------------------------------------------*/
 				//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, inter_comm);
 				CommunicationInterBarrier();
+				MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
-					if (ierr == MPI_SUCCESS) {
-						fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-					} else {
-						fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-						MPI_Error_class(ierr,&errclass);
-						if (errclass== MPI_ERR_RANK) {
-							fprintf(stderr,"Invalid rank used in MPI send call\n");
-							MPI_Error_string(ierr,err_buffer,&resultlen);
-							fprintf(stderr,err_buffer);
-							MPI_Finalize();
-						}
-					}
 				}
-
 				ierr = MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
-				if (ierr == MPI_SUCCESS) {
-					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				} else {
-					fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-					MPI_Error_class(ierr,&errclass);
-					if (errclass== MPI_ERR_RANK) {
-						fprintf(stderr,"Invalid rank used in MPI send call\n");
-						MPI_Error_string(ierr,err_buffer,&resultlen);
-						fprintf(stderr,err_buffer);
-						MPI_Finalize();
-					}
-				}
-
 				ierr = MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
-				if (ierr == MPI_SUCCESS) {
-					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				} else {
-					fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-					MPI_Error_class(ierr,&errclass);
-					if (errclass== MPI_ERR_RANK) {
-						fprintf(stderr,"Invalid rank used in MPI send call\n");
-						MPI_Error_string(ierr,err_buffer,&resultlen);
-						fprintf(stderr,err_buffer);
-						MPI_Finalize();
-					}
-				}
 				ierr = CommunicationInterBarrier();
 
-
+				/**
 				if (ierr == MPI_SUCCESS) {
 					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
 				} else {
@@ -388,6 +340,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 						MPI_Finalize();
 					}
 				}
+				**/
 
 				if (start_index_all != NULL)
 					delete [] start_index_all;
@@ -426,24 +379,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			} // endelse: other processor
 #endif
 
-			int ierr;
-			int errclass,resultlen;
-			char err_buffer[MPI_MAX_ERROR_STRING];
-			fprintf(stderr,"Done?3.0\n");
-			ierr = CommunicationBarrier();
-			if (ierr == MPI_SUCCESS) {
-				fprintf(stderr,"Success %d\n");
-			} else {
-				fprintf(stderr,"Fail\n");
-				MPI_Error_class(ierr,&errclass);
-				if (errclass== MPI_ERR_RANK) {
-					fprintf(stderr,"Invalid rank used in MPI send call\n");
-					MPI_Error_string(ierr,err_buffer,&resultlen);
-					fprintf(stderr,err_buffer);
-					MPI_Finalize();
-				}
-			}
-			fprintf(stderr,"Done?3.1\n");
 			/* Destruct Arrays*/
 			if (NbodyParticleIDTemp != NULL)
 				delete [] NbodyParticleIDTemp;

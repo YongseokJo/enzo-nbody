@@ -143,8 +143,9 @@
       TIMEU = 14.94D0*(((LENGTHU)**3.0D0/MASSU)**(0.5D0))
 
 *     force unit from cgs to nbody
-
-      FORCEU = MASSU*VELU*1.9891D33*1D5/(TIMEU*3.1556952D13)
+*     g*cm/s^2
+      FORCEU = MASSU*VELU*1.9891D33*1D5/(TIMEU*3.1556952D13)*
+     &         EMU*EVU**2/ELU
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU,FORCEU
 
@@ -343,7 +344,7 @@
 
 *      CALL ENZO_TO_NB(EX, EXDOT)
 *----------------------------------------------------------------------------------*
-          DO 7 IS = 1,N
+          DO IS = 1,N
             DO J = 1,3
               FENZO(J,IS) = EF(J,IS)/FORCEU
             END DO

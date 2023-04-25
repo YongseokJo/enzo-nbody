@@ -133,11 +133,9 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
-			/*
 			MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
 					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 			MPI_Wait(&request, &status);
-			*/
 
 			CommunicationBarrier();
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -187,13 +185,11 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 		fprintf(stderr,"Child:Done?2-5\n");
-			/* Receiving Index, NumberOfParticles, NbodyArrays from the root processs */
-			/*
-			MPI_Iscatterv(NULL, NULL, NULL, IntDataType,
-					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,
-					&request);
-			MPI_Wait(&request, &status);
-			*/
+		/* Receiving Index, NumberOfParticles, NbodyArrays from the root processs */
+		MPI_Iscatterv(NULL, NULL, NULL, IntDataType,
+				NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,
+				&request);
+		MPI_Wait(&request, &status);
 
 		CommunicationBarrier();
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
