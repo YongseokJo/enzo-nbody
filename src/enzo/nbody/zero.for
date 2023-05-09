@@ -19,8 +19,7 @@
       TBLIST = 0.0D0
       TPLOT = 0.0D0
       DTB = 0.0D0
-*     disabled by sykim - we are recieving TNEXT from ENZO
-*     TNEXT = 0.0D0
+      TNEXT = 0.0D0
       TMDOT = 0.0D0
       ZMDOT = 0.0D0
       TLASTS = 0.0D0

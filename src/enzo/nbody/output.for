@@ -507,79 +507,77 @@ c$$$     &           nmerge,name(j1),name(j2),name(icm)
 *
 *        Write all data in binary format on unit 3 = conf.3.
 *
-*      disabled by sykim
-*      if(rank.eq.0)then
+      if(rank.eq.0)then
 *     Split the conf.3 files by time
-*         call string_left(TCHAR,TTOT,DELTAT)
-*         write(OUTFILE,118) TCHAR
-* 118     format('conf.3_',A20)
+         call string_left(TCHAR,TTOT,DELTAT)
+         write(OUTFILE,118) TCHAR
+ 118     format('conf.3_',A20)
 
-*         IF(KZ(46).EQ.1.OR.KZ(46).EQ.3) THEN
-*            if(rank.eq.0.AND.TTOT.GT.0.0D0) THEN
-*               call custom_update_file(TTOT,DELTAT)
-*            END IF
-*         END IF
+         IF(KZ(46).EQ.1.OR.KZ(46).EQ.3) THEN
+            if(rank.eq.0.AND.TTOT.GT.0.0D0) THEN
+               call custom_update_file(TTOT,DELTAT)
+            END IF
+         END IF
 
 *     edited by sykim
 
-*         OPEN (UNIT=3,STATUS='UNKNOWN',FILE=OUTFILE)
+         OPEN (UNIT=3,STATUS='UNKNOWN',FILE=OUTFILE)
 
-*         DO J = 1, NTOT
+         DO J = 1, NTOT
 
 *     move position to galactic center
-*              XS(1,J) = XS(1,J) - AS(7)
-*              XS(2,J) = XS(2,J) - AS(8)
-*              XS(3,J) = XS(3,J) - AS(9)
+              XS(1,J) = XS(1,J) - AS(7)
+              XS(2,J) = XS(2,J) - AS(8)
+              XS(3,J) = XS(3,J) - AS(9)
 
-*              WRITE (3,'(7f20.8,I7)')  BODYS(J),
-*     &         (XS(K,J),K=1,3),(VS(K,J),K=1,3),NAME(J)
-*         END DO
+              WRITE (3,'(7f20.8,I7)')  BODYS(J),
+     &         (XS(K,J),K=1,3),(VS(K,J),K=1,3),NAME(J)
+         END DO
 
-*         CLOSE(3)
+         CLOSE(3)
 
 
 
 *     Tidal tail data
-*         IF(KZ(23).GE.3) THEN
-*            write(OUTTAIL,119) TCHAR
-* 119        format('tail.5_',A20)
-*            OPEN (UNIT=5,STATUS='UNKNOWN',FILE=OUTTAIL)
+         IF(KZ(23).GE.3) THEN
+            write(OUTTAIL,119) TCHAR
+ 119        format('tail.5_',A20)
+            OPEN (UNIT=5,STATUS='UNKNOWN',FILE=OUTTAIL)
             
-*            NK = 13
-*            WRITE (5) NTAIL, MODEL, NK
+            NK = 13
+            WRITE (5) NTAIL, MODEL, NK
 *     Include cluster centre just in case.
-*            DO K = 1,3
-*               AS(K) = REAL(RG(K))
-*               AS(K+3) = REAL(VG(K))
-*               AS(K+6) = REAL(RDENS(K))
-*            END DO
-*            AS(10) = REAL(TTOT)
-*            AS(11) = REAL(RBAR)
-*            AS(12) = REAL(TSTAR)
-*            AS(13) = REAL(VSTAR)
-*            NK = 13
-*            WRITE (5)  (AS(K),K=1,NK)
+            DO K = 1,3
+               AS(K) = REAL(RG(K))
+               AS(K+3) = REAL(VG(K))
+               AS(K+6) = REAL(RDENS(K))
+            END DO
+            AS(10) = REAL(TTOT)
+            AS(11) = REAL(RBAR)
+            AS(12) = REAL(TSTAR)
+            AS(13) = REAL(VSTAR)
+            NK = 13
+            WRITE (5)  (AS(K),K=1,NK)
             
-*            IF (NTAIL.GT.0) THEN
+            IF (NTAIL.GT.0) THEN
 *     Individual stars
-*               DO I = ITAIL0,NTTOT
-*                  BODYS(I) = REAL(BODY(I))
-*                  DO K = 1,3
-*                     XS(K,I) = REAL(X(K,I) - RG(K))
-*                     VS(K,I) = REAL(XDOT(K,I) - VG(K))
-*                  END DO
-*                  WRITE (5) NAME(I),BODYS(I),XS(1:3,I),VS(1:3,I)
-*               END DO
-*            END IF
-*            CLOSE(5)
-*         END IF
+               DO I = ITAIL0,NTTOT
+                  BODYS(I) = REAL(BODY(I))
+                  DO K = 1,3
+                     XS(K,I) = REAL(X(K,I) - RG(K))
+                     VS(K,I) = REAL(XDOT(K,I) - VG(K))
+                  END DO
+                  WRITE (5) NAME(I),BODYS(I),XS(1:3,I),VS(1:3,I)
+               END DO
+            END IF
+            CLOSE(5)
+         END IF
 
-*      end if
+      end if
 *
-*      end disabled by sykim
-
 *       Update next output interval and initialize the corresponding error.
-  100 TNEXT = TNEXT + DELTAT
+*  100 TNEXT = TNEXT + DELTAT
+  100 IPHASE = 11  ! added by sykim
       ERROR = 0.0D0
 *
       RETURN

@@ -332,7 +332,7 @@ c$$$     &     ' size',icnt,' isend',isend,' irecv',irecv
      *         rank,LIST(1,istrec),LMAX*icnt2,MPI_REAL8,irecv,irecv,
      *         MPI_COMM_WORLD,status,ierr)
       call cputim(ttb)
-*      call mpi_barrier(MPI_COMM_WORLD,ierr)
+      call mpi_barrier(MPI_COMM_WORLD,ierr)
       call cputim(tt999)
       ibarcount=ibarcount+1
       ttbar = ttbar + (tt999-ttb)*60
@@ -343,7 +343,7 @@ c$$$     &     ' after fi(1) ',fi(1,istsen), ' fi(e) ',fi(1,istrec)
 #endif
 *
 #ifdef SHMEM
-*       call barrier()
+       call barrier()
        call shmem_get(FI(1,istren),FI(1,istrec),3*icnt2,irecv)
        call shmem_get(FR(1,istren),FR(1,istrec),3*icnt2,irecv)
        call shmem_get(D1(1,istren),D1(1,istrec),3*icnt2,irecv)
