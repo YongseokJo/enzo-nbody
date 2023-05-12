@@ -21,13 +21,10 @@
 
 int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]);
 int FindStartIndex(int* LocalNumberOfNbodyParticles);
+void InitializeNbodyArrays(void);
 void CopyNbodyArrayToOld(void);
 void MatchAccelerationWithIndex(void);
 void DeleteNbodyArrays(void);
-void DeleteNbodyArrays(int);
 void Scan(int *in, int *inout, int *len, MPI_Datatype *dptr);
-void InitializeNbodyArrays(bool NbodyFirst);
-void InitializeNbodyArrays(void);
-void InitializeNbodyArrays(int); 
-
+void DeleteNbodyArrays(void);
 

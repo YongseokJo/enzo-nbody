@@ -210,7 +210,7 @@
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
-           FENZO(J,IS) = EF(J,IS)/EFORCEU
+           !FENZO(J,IS) = EF(J,IS)/EFORCEU
          END DO
 
       END DO
@@ -376,7 +376,7 @@
 *         END DO
 *   23    CONTINUE
 *   29 CONTINUE
-      SHUFFLECNT = 0
+      !SHUFFLECNT = 0
 
       DO 29 IP = 1,NXTLIMIT
 
@@ -391,7 +391,7 @@
                   EXDOT(KP,JP) = XDOT(K,IP)/EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
-            SHUFFLECNT = SHUFFLECNT + 1
+            !SHUFFLECNT = SHUFFLECNT + 1
             END IF
          END DO
 
@@ -400,7 +400,7 @@
 
           write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
           write (0,*) 'fortran: RDENS=', RDENS(1)
-          write (0,*) '# of matched shuffles', SHUFFLECNT
+          !write (0,*) '# of matched shuffles', SHUFFLECNT
 
 *---------------------------------------------------------------------*
 *    send particles to ENZO

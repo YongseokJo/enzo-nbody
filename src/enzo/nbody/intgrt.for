@@ -395,7 +395,7 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *
 *       Also check output time in case DTADJ & DELTAT not commensurate.
       IF (TIME.GT.TNEXT) THEN
-          TIME = TNEXT
+          !TIME = TNEXT
           CALL OUTPUT
 *         GO TO 1
           GO TO 100 ! exit for return to ENZO
