@@ -1804,6 +1804,7 @@ class grid
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					fprintf(stderr, "In Grid, PID: %d \n", ParticleNumber[i]);
 
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;

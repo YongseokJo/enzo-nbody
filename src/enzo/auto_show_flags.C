@@ -1,26 +1,24 @@
 #include <stdio.h>
 void auto_show_flags(FILE *fp) {
-   fprintf (fp,"make[1]: Warning: File `DEPEND' has modification time 90 s in the future\n");
    fprintf (fp,"\n");
-   fprintf (fp,"CPP = /bin/cpp\n");
-   fprintf (fp,"CC  = /appl/intel/oneapi/mpi/2021.4.0/bin/mpicc\n");
-   fprintf (fp,"CXX = /appl/intel/oneapi/mpi/2021.4.0/bin/mpicxx\n");
-   fprintf (fp,"FC  = /appl/intel/oneapi/mpi/2021.4.0/bin/mpifc\n");
-   fprintf (fp,"F90 = /appl/intel/oneapi/mpi/2021.4.0/bin/mpif90\n");
-   fprintf (fp,"LD  = /appl/intel/oneapi/mpi/2021.4.0/bin/mpicxx\n");
+   fprintf (fp,"CPP = /usr/bin/cpp\n");
+   fprintf (fp,"CC  = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpicc\n");
+   fprintf (fp,"CXX = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpicxx\n");
+   fprintf (fp,"FC  = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpif77\n");
+   fprintf (fp,"F90 = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpif90\n");
+   fprintf (fp,"LD  = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpicxx\n");
    fprintf (fp,"\n");
    fprintf (fp,"DEFINES = -DLINUX -DH5_USE_16_API   -D__max_subgrids=100000 -D__max_baryons=30 -D__max_cpu_per_node=36 -D__memory_pool_size=100000 -DINITS64 -DSMALL_INTS -DCONFIG_PINT_4 -DIO_32   -DNEW_PROBLEM_TYPES -DUSE_MPI   -DCONFIG_PFLOAT_8 -DCONFIG_BFLOAT_8  -DUSE_HDF5_GROUPS      -DNEW_GRID_IO -DFAST_SIB   -DNBODY -D GPU     -DENZO_PERFORMANCE  -DUSE_GRACKLE  -DUSE_UUID -DSAB\n");
    fprintf (fp,"\n");
-   fprintf (fp,"INCLUDES = -I/home/sykim/local/hdf5-1.12.1/include  -I/appl/intel/oneapi/mpi/latest/include       -I/home/sykim/local/grackle/include    -I.\n");
+   fprintf (fp,"INCLUDES = -I/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22//include  -I/mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/include       -I/mnt/home/yjo10/packages/grackle/build/include    -I.\n");
    fprintf (fp,"\n");
-   fprintf (fp,"CPPFLAGS = -P -traditional \n");
+   fprintf (fp,"CPPFLAGS = -P -traditional\n");
    fprintf (fp,"CFLAGS   =  -O3 -g\n");
    fprintf (fp,"CXXFLAGS =  -O3 -g\n");
-   fprintf (fp,"FFLAGS   = -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh -lmpi -O3 -g\n");
+   fprintf (fp,"FFLAGS   = -lmpi -lrt -ldl -W -O3 -g\n");
    fprintf (fp,"F90FLAGS =  -O3 -g\n");
    fprintf (fp,"LDFLAGS  =  -O3 -g\n");
    fprintf (fp,"\n");
-   fprintf (fp,"LIBS     = -L/home/sykim/local/hdf5-1.12.1/lib -lhdf5 -lz  -lgfortran   -L/appl/intel/oneapi/mpi/latest/lib -lmpi        -L/usr/local/cuda-11.8/lib64 -lcudart -L/home/sykim/local/grackle/lib -lgrackle\n");
+   fprintf (fp,"LIBS     = -L/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22//lib -lhdf5 -lz  -lgfortran   -L/mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/lib -lmpi        -L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4//lib64 -lcudart -L/mnt/home/yjo10/packages/grackle/build/lib -lgrackle\n");
    fprintf (fp,"\n");
-   fprintf (fp,"make[1]: warning:  Clock skew detected.  Your build may be incomplete.\n");
 }

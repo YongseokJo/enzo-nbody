@@ -36,9 +36,9 @@
       integer :: istatus(MPI_STATUS_SIZE)
 
 
-      REAL*8, pointer :: EBODY(:),EID(:),EX(:,:)
+      REAL*8, pointer :: EBODY(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
-
+      INTEGER, pointer :: EID(:)
 *     initial ID of particles recieved from ENZO
 
       INTEGER EIDINIT(NMAX)
@@ -111,10 +111,7 @@
       allocate(EID(EN))
       call MPI_RECV(EBODY, EN, MPI_DOUBLE_PRECISION, 0, 200, ICOMM,
      &     istatus, ierr)
-          write (0,*) 'fortran: ierr=', ierr
-      call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM,
-     &     istatus, ierr)
-          write (0,*) 'fortran: ierr=', ierr
+      call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM,istatus, ierr)
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
@@ -136,9 +133,9 @@
      &            ICOMM, istatus,ierr)
       call MPI_RECV(EVU, 1, MPI_DOUBLE_PRECISION, 0, 1000,
      &            ICOMM, istatus,ierr)
-          write (0,*) 'fortran: ierr=', ierr
-      write (0,*) 'fortran: mass=', EBODY(1), 'X=', EX(1,1),
-     &             ', V=',EXDOT(1,1)
+      do I = 1, EN
+        write (0,*) 'fortran: EID=', EID(I)
+      end do
 *     MPI done!
 
 *-----end-added-by-YS---------------------------------------------------*

@@ -1,6 +1,4 @@
-make[1]: Warning: File `DEPEND' has modification time 90 s in the future
 
 Git Branch   independent_communication
-Git Revision 4f75d9d5434e635b87cb6d7524421491a973201c
+Git Revision 271fecafc947d65f50d73511c604bdac50585b77
 
-make[1]: warning:  Clock skew detected.  Your build may be incomplete.

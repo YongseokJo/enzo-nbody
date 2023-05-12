@@ -159,10 +159,13 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 
-				fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
-				fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
-				fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
-				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
+				//fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
+				//fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
+				//fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
+				//fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
+				fprintf(stderr, "PID\n");
+				for (int k=0; k<NumberOfNbodyParticles; k++)
+					fprintf(stderr, "%d \n", NbodyParticleID[k]);
 
 				/*----------------------------------------------------------*/
 				/******** Send Arrays to Fortran Nbody6++  First Time  *****/
@@ -313,6 +316,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 
+				fprintf(stderr, "PID\n");
+				for (int k=0; k<NumberOfNbodyParticles; k++)
+					fprintf(stderr, "%d \n", NbodyParticleID[k]);
 				fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
 				/*-----------------------------------------------*/
 				/******** Send Arrays to Fortran Nbody6++    *****/
