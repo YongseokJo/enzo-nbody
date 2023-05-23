@@ -34,7 +34,7 @@ C      CALL DEFINE
       ETAR = 0.02D0
       RS0 = 0.20807868D0
       DTADJ = 1.00D0
-      DELTAT = 1.00D0
+      ! DELTAT = 1.00D0 disabled by sykim
       QE = 1.0D10
       RBAR = 2.58811228D0
       ZMBAR= 100.000000D0

@@ -199,37 +199,37 @@
       END IF
 
 *     Output global features and counters into global.30
-      IF(rank.eq.0) then
-         IF(kstart.eq.1.and.ttot.eq.0.0) then
-         write (30,76) 
- 76      format('TIME[NB} TIME[Myr] TCR[Myr] DE BE(3) ',
-     &           'RSCALE[PC] RTIDE[PC] RDENS[PC] RC[PC]  RHOD[M*] ',
-     &           'RHOM[M*] MC[M*] CMAX <Cn> Ir/R RCM VCM AZ ',
-     &           'EB/E EM/E VRMS ',
-     &           'N NS NPAIRS NUPKS NPKS NMERGE MULT <NB> NC NESC ',
-     &           'NSTEPI NSTEPB NSTEPR NSTEPU NSTEPT NSTEPQ NSTEPC ',
-     &           'NBLOCK NBLCKR NNPRED ',
-     &           'NIRRF NBCORR NBFLUX NBFULL NBVOID NICONV NLSMIN ',
-     &           'NBSMIN NBDIS NBDIS2 NCMDER ',
-     &           'NFAST NBFAST ',
-     &           'NKSTRY NKSREG NKSHYP NKSPER NKSMOD',
-     &           'NTTRY NTRIP NQUAD NCHAIN NMERG NEWHI')
-         END IF
-         write (30,77) TTOT,TTOT*TSTAR,TCR*TSTAR,ERROR,BE(3),
-     &        RSCALE*RBAR,RTIDE*RBAR,RD*RBAR,RC*RBAR,RHOD*ZMBAR/RBAR**3,
-     &        RHOM*ZMBAR/RBAR**3,ZMC*ZMBAR,CMAX,CNNB,COST,CMR(4),
-     &        CMRDOT(4),AZ,EB,EM,VRMS,
-     &        N,NS,NPAIRS,IUNP,NP,NMERGE,MULT,NNB,NC,NESC,
-     &        NSTEPI,NSTEPB,NSTEPR,NSTEPU,NSTEPT,NSTEPQ,NSTEPC,
-     &        NBLOCK,NBLCKR,NNPRED,
-     &        NIRRF,NBCORR,NBFLUX,NBFULL,NBVOID,NICONV,NLSMIN,NBSMIN,
-     &        NBDIS,NBDIS2,NCMDER,
-     &        NFAST,NBFAST,
-     &        NKSTRY,NKSREG,NKSHYP,NKSPER,NKSMOD,
-     &        NTTRY,NTRIP,NQUAD,NCHAIN,NMERG,NEWHI
- 77      format(21E26.17,44I12)
-         call flush(30)
-      END IF
+*      IF(rank.eq.0) then
+*         IF(kstart.eq.1.and.ttot.eq.0.0) then
+*         write (30,76) 
+* 76      format('TIME[NB} TIME[Myr] TCR[Myr] DE BE(3) ',
+*     &           'RSCALE[PC] RTIDE[PC] RDENS[PC] RC[PC]  RHOD[M*] ',
+*     &           'RHOM[M*] MC[M*] CMAX <Cn> Ir/R RCM VCM AZ ',
+*     &           'EB/E EM/E VRMS ',
+*     &           'N NS NPAIRS NUPKS NPKS NMERGE MULT <NB> NC NESC ',
+*     &           'NSTEPI NSTEPB NSTEPR NSTEPU NSTEPT NSTEPQ NSTEPC ',
+*     &           'NBLOCK NBLCKR NNPRED ',
+*     &           'NIRRF NBCORR NBFLUX NBFULL NBVOID NICONV NLSMIN ',
+*     &           'NBSMIN NBDIS NBDIS2 NCMDER ',
+*     &           'NFAST NBFAST ',
+*     &           'NKSTRY NKSREG NKSHYP NKSPER NKSMOD',
+*     &           'NTTRY NTRIP NQUAD NCHAIN NMERG NEWHI')
+*         END IF
+*         write (30,77) TTOT,TTOT*TSTAR,TCR*TSTAR,ERROR,BE(3),
+*     &        RSCALE*RBAR,RTIDE*RBAR,RD*RBAR,RC*RBAR,RHOD*ZMBAR/RBAR**3,
+*     &        RHOM*ZMBAR/RBAR**3,ZMC*ZMBAR,CMAX,CNNB,COST,CMR(4),
+*     &        CMRDOT(4),AZ,EB,EM,VRMS,
+*     &        N,NS,NPAIRS,IUNP,NP,NMERGE,MULT,NNB,NC,NESC,
+*     &        NSTEPI,NSTEPB,NSTEPR,NSTEPU,NSTEPT,NSTEPQ,NSTEPC,
+*     &        NBLOCK,NBLCKR,NNPRED,
+*     &        NIRRF,NBCORR,NBFLUX,NBFULL,NBVOID,NICONV,NLSMIN,NBSMIN,
+*     &        NBDIS,NBDIS2,NCMDER,
+*     &        NFAST,NBFAST,
+*     &        NKSTRY,NKSREG,NKSHYP,NKSPER,NKSMOD,
+*     &        NTTRY,NTRIP,NQUAD,NCHAIN,NMERG,NEWHI
+* 77      format(21E26.17,44I12)
+*         call flush(30)
+*      END IF
 *
 *       Check output for mass loss or tidal capture.
       IF (KZ(19).GT.0.OR.KZ(27).GT.0) THEN
@@ -577,8 +577,7 @@ c$$$     &           nmerge,name(j1),name(j2),name(icm)
 *
 *       Update next output interval and initialize the corresponding error.
 *  100 TNEXT = TNEXT + DELTAT
-  100 IPHASE = 11  ! added by sykim
-      ERROR = 0.0D0
+  100 ERROR = 0.0D0
 *
       RETURN
 *

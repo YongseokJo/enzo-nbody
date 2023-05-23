@@ -191,8 +191,8 @@
 *     scaling
  
       N = EN
-      TCRIT = 1d5
-!      TNEXT = 10 ! EDT/TIMEU
+      TCRIT = 1.0D5
+      DELTAT = 10.0D0 ! EDT/TIMEU
 
 !      write (6,*) 'timesteps',TNEXT
 
@@ -219,7 +219,6 @@
       KSTART = 1
       TCOMP = 100000.0D0
       TCRITP = 1.0D8
-
       isernb = 40
       iserreg = 40
       iserks = 640
@@ -277,11 +276,6 @@
       ttinitial = ttinitial + (tt2-ttota)*60.
 
 *       Advance solutions until next output or change of procedure.
-
-*   add TNEXT after start - by sykim
-      TNEXT = 3.0D0 !EDT/ETIMEU
-      write (0,*) 'initial tnext is',TNEXT
-*   end added by sykim
 
     1 CONTINUE
 
@@ -356,7 +350,7 @@
       END IF
 
 *----communication-with-ENZO-YS------------------------------------------*
-      IF (IPHASE.EQ.11) THEN
+      IF ((EPHASE.EQ.2).OR.(EPHASE.EQ.3)) THEN
 
 *     first unshuffle the indexes changed by shuffling
 
@@ -373,9 +367,9 @@
 *         END DO
 *   23    CONTINUE
 *   29 CONTINUE
-      !SHUFFLECNT = 0
+      SHUFFLECNT = 0
 
-      DO 29 IP = 1,NXTLIMIT
+      DO 29 IP = 1,NTOT
 
          IF (NAME(IP).GT.N) GO TO 23 
          IE = EIDINIT(NAME(IP)) ! the id of the ipth particle 
@@ -388,16 +382,17 @@
                   EXDOT(KP,JP) = XDOT(K,IP)/EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
-            !SHUFFLECNT = SHUFFLECNT + 1
+            SHUFFLECNT = SHUFFLECNT + 1
             END IF
          END DO
 
    23   CONTINUE
    29   CONTINUE
-
+         
+          write (0,*) 'fortran: NTOT',NTOT
           write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
           write (0,*) 'fortran: RDENS=', RDENS(1)
-          !write (0,*) '# of matched shuffles', SHUFFLECNT
+          write (0,*) '# of matched shuffles', SHUFFLECNT
 
 *---------------------------------------------------------------------*
 *    send particles to ENZO
@@ -469,15 +464,14 @@
 *              END IF
 *            END DO
 *          END DO
-
-          TNEXT = TNEXT + 3.0D0 !EDT/ETIMEU  ! is it right? SY
+          
+          DELTAT = 3.0D0 !EDT/ETIMEU
+          TNEXT = TNEXT + DELTAT  ! is it right? SY
+          
           write (6,*) 'timesteps',TNEXT
-          write (6,*) 'number of reg cal',NSTEPR
 
           write (6,*) 'recieved and restarting'
          
-          IPHASE = 17 ! just in case of looping
-
 *----end-added-by-YS-----------------------------------------------------*
       END IF
 

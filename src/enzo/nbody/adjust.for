@@ -336,6 +336,7 @@ c$$$     &        EBIN,EMERGE
 *     See whether standard output is due.
       IF (TIME.GE.TNEXT) THEN
 
+         EPHASE = 3
          CALL OUTPUT
 *     
 *     Include optional diagnostics for the hardest binary below ECLOSE.
