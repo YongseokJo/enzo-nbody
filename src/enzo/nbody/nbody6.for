@@ -192,7 +192,7 @@
  
       N = EN
       TCRIT = 1.0D5
-      DELTAT = 10.0D0 ! EDT/TIMEU
+      DELTAT = EDT/TIMEU
 
 !      write (6,*) 'timesteps',TNEXT
 
@@ -260,8 +260,10 @@
 
       CPU = TCOMP
       CALL START
+      write(0,*) "start finished - SY"
       call cputim(tt7)
       CALL ADJUST
+      write(0,*) "adjust finished - SY"
       call cputim(tt8)
       ttadj = ttadj + (tt8-tt7)*60.
 
@@ -278,6 +280,8 @@
 *       Advance solutions until next output or change of procedure.
 
     1 CONTINUE
+
+      write(0,*) "go into integration loop"
 
       call cputim(tt1)
 *
@@ -376,10 +380,10 @@
 
          DO JP = 1,N
             IF (IE.EQ.EID(JP)) THEN
-               EBODY(JP) = BODY(IP)/EMASSU
+               EBODY(JP) = BODY(IP)*EMASSU
                DO KP = 1,3
-                  EX(KP,JP) = (X(K,IP)-RDENS(KP))/ELENGTHU
-                  EXDOT(KP,JP) = XDOT(K,IP)/EVELU
+                  EX(KP,JP) = (X(K,IP)-RDENS(KP))*ELENGTHU
+                  EXDOT(KP,JP) = XDOT(K,IP)*EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
             SHUFFLECNT = SHUFFLECNT + 1
@@ -465,7 +469,7 @@
 *            END DO
 *          END DO
           
-          DELTAT = 3.0D0 !EDT/ETIMEU
+          DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
           
           write (6,*) 'timesteps',TNEXT
