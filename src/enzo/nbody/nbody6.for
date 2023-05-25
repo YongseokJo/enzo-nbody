@@ -161,9 +161,8 @@
       VELU = 6.557D0*((MASSU/LENGTHU)**(0.5D0))/(100.0D0)
       TIMEU = 14.94D0*(((LENGTHU)**3.0D0/MASSU)**(0.5D0))
 *     added on 0424 - sykim
-      EFORCEU = MASSU*VELU*1.9891D33*1D5/(TIMEU*3.1556952D13)*
-     &         EMU*EVU**2/ELU
-
+*      EFORCEU = MASSU*VELU*1.9891D33*1D5/(TIMEU*3.1556952D13)*
+*     &         EMU*EVU**2/ELU
 
 
 *     calculates enzo <-> nbody units
@@ -173,7 +172,7 @@
       EVELU = (VELU*1d5)/EVU
       ETIMEU = (TIMEU*3.1556952D13)/ETU
 *     what was force unit recieved from ENZO again? -sykim
-      EFORCEU = FORCEU
+      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
 
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
@@ -204,8 +203,11 @@
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
-           !FENZO(J,IS) = EF(J,IS)/EFORCEU
+           !FENZO(Js,IS) = EF(JS,IS)/EFORCEU
          END DO
+         FENZO(1,IS) = 0.05/EFORCEU !EF(J,IS)/EFORCEU
+         FENZO(2,IS) = 0D0 !EF(J,IS)/EFORCEU
+         FENZO(3,IS) = 0D0 !EF(J,IS)/EFORCEU
 
       END DO
 
@@ -459,7 +461,20 @@
 *              END IF
 *            END DO
 *          END DO
-          
+
+
+
+*          to SY, gotta sort EF to fit into FENZO 
+*          DO IS = 1,N
+*         EIDINIT(IS) = EID(IS)
+*         DO JS = 1,3
+*           FENZO(JS,IS) = EF(JS,IS)/EFORCEU
+*         END DO
+*      END DO
+
+
+
+
           DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
           
