@@ -133,9 +133,6 @@
      &            ICOMM, istatus,ierr)
       call MPI_RECV(EVU, 1, MPI_DOUBLE_PRECISION, 0, 1000,
      &            ICOMM, istatus,ierr)
-      do I = 1, EN
-        write (0,*) 'fortran: EID=', EID(I)
-      end do
 *     MPI done!
 
 *-----end-added-by-YS---------------------------------------------------*
@@ -382,8 +379,8 @@
             IF (IE.EQ.EID(JP)) THEN
                EBODY(JP) = BODY(IP)*EMASSU
                DO KP = 1,3
-                  EX(KP,JP) = (X(K,IP)-RDENS(KP))*ELENGTHU
-                  EXDOT(KP,JP) = XDOT(K,IP)*EVELU
+                  EX(KP,JP) = (X(KP,IP)-RDENS(KP))*ELENGTHU
+                  EXDOT(KP,JP) = XDOT(KP,IP)*EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
             SHUFFLECNT = SHUFFLECNT + 1
@@ -413,10 +410,8 @@
           DO  I = 1,3
           call MPI_SEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, ierr)
-          write (0,*) 'fortran: ierr=', ierr
           call MPI_SEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
      &           ICOMM, ierr)
-          write (0,*) 'fortran: ierr=', ierr
           END DO
           call MPI_BARRIER(ICOMM,ierr)
 *          deallocate(EF)
@@ -442,17 +437,13 @@
             DO I = 1,3
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &         ICOMM, istatus,ierr)
-               write (0,*) 'fortran: ierr=', ierr
             END DO
 
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
-          write (0,*) 'fortran: ierr=', ierr
           call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
      &            ICOMM, istatus,ierr)
-          write (0,*) 'fortran: ierr=', ierr
           call MPI_BARRIER(ICOMM,ierr)
-          write (0,*) 'fortran: ierr=', ierr
 *       TCRIT = TCRIT + dtENZO
 *     for SY, here TIMEU changes adaptivelyi on the fly?
           write (0,*) 'fortran: force=', EF(1,1)

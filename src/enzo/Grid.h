@@ -1841,21 +1841,24 @@ class grid
 		}
 
 
-		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
+		int UpdateNbodyParticles(int* count,int NumberOfNbodyParticles,int NbodyParticleIDTemp[], float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
 			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
-				//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-				if (ParticleNumber[i] == NbodyParticleIDTemp[*count]) {
-					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count]+0.5;
-						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];
-					} // ENDFOR dim
-					(*count)++;
-				} // ENDIF partID matched
+				for (int j=0; j<NumberOfNbodyParticles; j++) {
+					//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					if (ParticleNumber[i] == NbodyParticleIDTemp[j]) {
+						for (int dim=0; dim<MAX_DIMENSION; dim++) {
+							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j]+0.5;
+							ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][j];
+						} // ENDFOR dim
+						(*count)++;
+						break;
+					} // ENDIF partID matched
+				} // ENDFOR nbody particles
 			} // ENDFOR number of particles
 			return SUCCESS;
 		}

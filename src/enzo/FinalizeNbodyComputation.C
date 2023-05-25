@@ -52,11 +52,11 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 		LocalNumberOfNbodyParticles = FindTotalNumberOfNbodyParticles(LevelArray);
 
-		int *NbodyParticleIDTemp;
+		//int *NbodyParticleIDTemp;
 		float *NbodyParticlePositionTemp[MAX_DIMENSION];
 		float *NbodyParticleVelocityTemp[MAX_DIMENSION];
 
-		NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
+		//NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
 			NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
@@ -103,6 +103,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
 				ierr = MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm, &status);
+				/*
 				if (ierr == MPI_SUCCESS) {
 					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
 				} else {
@@ -115,14 +116,9 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 						MPI_Finalize();
 					}
 				}
+				*/
 
 				ierr = MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm, &status);
-				if (ierr == MPI_SUCCESS) {
-					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				} else {
-					fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				}
-
 			}
 			CommunicationInterBarrier();
 
@@ -133,9 +129,11 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
+			/*
 			MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
 					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 			MPI_Wait(&request, &status);
+			*/
 
 			CommunicationBarrier();
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -143,20 +141,17 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 						NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
 						&request);
 				ierr = MPI_Wait(&request, &status);
-				if (ierr == MPI_SUCCESS) {
-					printf("Sent to process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				} else {
-					printf("Error sending message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-				}
 				MPI_Iscatterv(NbodyParticleVelocity[dim], LocalNumberAll, start_index_all, MPI_DOUBLE,
 						NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
 						&request);
 				ierr  = MPI_Wait(&request, &status);
+				/*
 				if (ierr == MPI_SUCCESS) {
 					printf("Sent to process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
 				} else {
 					printf("Error sending message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
 				}
+				*/
 			}
 
 
@@ -186,36 +181,30 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 		fprintf(stderr,"Child:Done?2-5\n");
 		/* Receiving Index, NumberOfParticles, NbodyArrays from the root processs */
+		/*
 		MPI_Iscatterv(NULL, NULL, NULL, IntDataType,
 				NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,
 				&request);
 		MPI_Wait(&request, &status);
+		*/
 
 		CommunicationBarrier();
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			fprintf(stderr,"Done?2-5.1\n");
-
 			MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
 					NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
 					&request);
-			fprintf(stderr,"Done?2-5.2\n");
 			ierr = MPI_Wait(&request, &status);
+			/*
 			if (ierr == MPI_SUCCESS) {
 				printf("Received from process %d with tag %d\n",  status.MPI_SOURCE, status.MPI_TAG);
 			} else {
 				printf("Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
 			}
-			fprintf(stderr,"Done?2-6\n");
-
+			*/
 			MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
 					NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
 					&request);
 			ierr = MPI_Wait(&request, &status);
-			if (ierr == MPI_SUCCESS) {
-				printf("Received from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-			} else {
-				printf("Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
-			}
 		}
 		fprintf(stderr,"Done?2-7\n");
 		} // end else
@@ -228,11 +217,13 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		int count = 0;
 		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
 			for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel)
-				if (Temp->GridData->UpdateNbodyParticles(&count, NbodyParticleIDTemp,
+				if (Temp->GridData->UpdateNbodyParticles(&count, LocalNumberOfNbodyParticles, NbodyParticleIDTemp,
 							NbodyParticlePositionTemp, NbodyParticleVelocityTemp) == FAIL) {
 					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
 				}
 
+		fprintf(stderr,"Proc %d, # of Nbody = %d, count = %d\n", 
+				MyProcessorNumber, LocalNumberOfNbodyParticles, count);
 		fprintf(stderr,"Done?4\n");
 
 

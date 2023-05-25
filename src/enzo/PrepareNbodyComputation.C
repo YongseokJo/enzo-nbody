@@ -82,7 +82,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		if (NbodyFirst) {
 			NbodyParticleIDOld =  NULL;
 			NumberOfNbodyParticlesOld = 0;
-			int *NbodyParticleIDTemp;
+			//int *NbodyParticleIDTemp;
 			float *NbodyParticleMassTemp;
 			float *NbodyParticlePositionTemp[MAX_DIMENSION];
 			float *NbodyParticleVelocityTemp[MAX_DIMENSION];
@@ -163,9 +163,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				//fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
 				//fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
 				//fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
-				fprintf(stderr, "PID\n");
-				for (int k=0; k<NumberOfNbodyParticles; k++)
-					fprintf(stderr, "%d \n", NbodyParticleID[k]);
 
 				/*----------------------------------------------------------*/
 				/******** Send Arrays to Fortran Nbody6++  First Time  *****/
@@ -233,9 +230,11 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			fprintf(stderr,"Proc %d: All Good 0, NbodyFirst=%d\n", MyProcessorNumber,NbodyFirst);
 			fprintf(stderr,"Done?3\n");
 			/* Destruct Arrays*/
+			/*
 			if (NbodyParticleIDTemp != NULL)
 				delete [] NbodyParticleIDTemp;
 			NbodyParticleIDTemp = NULL;
+			*/
 
 			if (NbodyParticleMassTemp != NULL)
 				delete [] NbodyParticleMassTemp;
@@ -256,7 +255,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			}
 		}// endif: nbody first 
 		else {
-			int *NbodyParticleIDTemp;
+			//int *NbodyParticleIDTemp;
 			//float *NbodyParticleMassTemp;
 			//float *NbodyParticleVelocityTemp[MAX_DIMENSION]; // feedback can affect velocity
 			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
@@ -316,9 +315,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 
-				fprintf(stderr, "PID\n");
-				for (int k=0; k<NumberOfNbodyParticles; k++)
-					fprintf(stderr, "%d \n", NbodyParticleID[k]);
 				fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
 				/*-----------------------------------------------*/
 				/******** Send Arrays to Fortran Nbody6++    *****/
@@ -386,9 +382,11 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 #endif
 
 			/* Destruct Arrays*/
+			/*
 			if (NbodyParticleIDTemp != NULL)
 				delete [] NbodyParticleIDTemp;
 			NbodyParticleIDTemp = NULL;
+			*/
 
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)

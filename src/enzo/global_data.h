@@ -51,6 +51,7 @@ EXTERN int NumberOfNbodyParticles;
 EXTERN int NumberOfNbodyParticlesOld;
 EXTERN int *NbodyParticleID;
 EXTERN int *NbodyParticleIDOld;
+EXTERN int *NbodyParticleIDTemp;
 EXTERN float *NbodyParticleMass;
 EXTERN float *NbodyParticlePosition[MAX_DIMENSION];
 EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];
