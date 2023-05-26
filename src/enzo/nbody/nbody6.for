@@ -205,9 +205,9 @@
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
            !FENZO(Js,IS) = EF(JS,IS)/EFORCEU
          END DO
-         FENZO(1,IS) = 0.05/EFORCEU !EF(J,IS)/EFORCEU
-         FENZO(2,IS) = 0D0 !EF(J,IS)/EFORCEU
-         FENZO(3,IS) = 0D0 !EF(J,IS)/EFORCEU
+         FENZO(1,IS) = 0.05D0 !EF(J,IS)/EFORCEU
+         FENZO(2,IS) = 0.0D0 !EF(J,IS)/EFORCEU
+         FENZO(3,IS) = 0.0D0 !EF(J,IS)/EFORCEU
 
       END DO
 
@@ -381,7 +381,7 @@
             IF (IE.EQ.EID(JP)) THEN
                EBODY(JP) = BODY(IP)*EMASSU
                DO KP = 1,3
-                  EX(KP,JP) = (X(KP,IP)-RDENS(KP))*ELENGTHU
+                  EX(KP,JP) = X(KP,IP)*ELENGTHU
                   EXDOT(KP,JP) = XDOT(KP,IP)*EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
@@ -394,7 +394,7 @@
          
           write (0,*) 'fortran: NTOT',NTOT
           write (0,*) 'fortran: X=', X(1,1), ', V=',XDOT(1,1)
-          write (0,*) 'fortran: RDENS=', RDENS(1)
+          write (0,*) 'fortran: RDENS=',RDENS(1),RDENS(2),RDENS(3)
           write (0,*) '# of matched shuffles', SHUFFLECNT
 
 *---------------------------------------------------------------------*
@@ -467,13 +467,7 @@
 *          to SY, gotta sort EF to fit into FENZO 
 *          DO IS = 1,N
 *         EIDINIT(IS) = EID(IS)
-*         DO JS = 1,3
-*           FENZO(JS,IS) = EF(JS,IS)/EFORCEU
-*         END DO
-*      END DO
-
-
-
+*         DO JS 
 
           DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
