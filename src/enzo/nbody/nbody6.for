@@ -32,7 +32,7 @@
 *     added by sykim, parameters from enzo
 
       INTEGER, parameter:: EN_MAX = 2000
-      INTEGER :: EN,IS,IP,IE,JS,JP,KP
+      INTEGER :: EN,IE
       integer :: istatus(MPI_STATUS_SIZE)
 
 
@@ -45,6 +45,9 @@
       INTEGER I
       INTEGER SHUFFLECNT
 
+      INTEGER IS,JS  ! loop for starting
+      INTEGER IP,JP,KP  ! loop for predingting/sending
+      INTEGER IR,JR,KR  ! loop for recieving force
 
 *     conversion factors for enzo code unit -> cgs
 
@@ -203,11 +206,11 @@
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
-           !FENZO(Js,IS) = EF(JS,IS)/EFORCEU
+           FENZO(JS,IS) = EF(JS,IS)/EFORCEU
          END DO
-         FENZO(1,IS) = 0.05D0 !EF(J,IS)/EFORCEU
-         FENZO(2,IS) = 0.0D0 !EF(J,IS)/EFORCEU
-         FENZO(3,IS) = 0.0D0 !EF(J,IS)/EFORCEU
+         !FENZO(1,IS) = 0.05D0
+         !FENZO(2,IS) = 0.0D0
+         !FENZO(3,IS) = 0.0D0
 
       END DO
 
@@ -355,21 +358,6 @@
 *----communication-with-ENZO-YS------------------------------------------*
       IF ((EPHASE.EQ.2).OR.(EPHASE.EQ.3)) THEN
 
-*     first unshuffle the indexes changed by shuffling
-
-*     this unshuffling didn't work... why?
-*      DO 29 IP=1,NXTLIMIT
-
-*         IE = NAME(IP)
-*         IF (IE.GT.N) GO TO 23
-        
-*         EBODY(IE) = BODY(IP)/EMASSU
-*         DO KP = 1,3
-*            EX(KP,IE) = (X(KP,IP)-RDENS(KP))/ELENGTHU
-*            EXDOT(KP,IE) = XDOT(KP,IP)/EVELU
-*         END DO
-*   23    CONTINUE
-*   29 CONTINUE
       SHUFFLECNT = 0
 
       DO 29 IP = 1,NTOT
@@ -451,23 +439,24 @@
           write (0,*) 'fortran: force=', EF(1,1)
 *     MPI done!
 
-*      CALL ENZO_TO_NB(EX, EXDOT)
-*          DO IS = 1,N
-*            DO I = 1,N
-*              IF (EIDINIT(NAME(I)).EQ.EID(IS)) THEN
-*                DO J = 1,3
-*                FENZO(J,I) = 0 !EF(J,IS)/FORCEU
-*                END DO
-*              END IF
-*            END DO
-*          END DO
+*      Recieve forces from ENZO and update them
+       
+       DO IR = 1,NTOT
 
+          IF (NAME(IR).GT.EN) GO TO 33
+          IE = EIDINIT(NAME(IR)) 
 
+          DO JR = 1,EN
+             IF (EID(JR).EQ.IE) THEN
+             DO KR = 1,3
+                FENZO(KR,IR)=EF(KR,JR)/EFORCEU
+             END DO
+             END IF
+          END DO
 
-*          to SY, gotta sort EF to fit into FENZO 
-*          DO IS = 1,N
-*         EIDINIT(IS) = EID(IS)
-*         DO JS 
+   33  CONTINUE
+
+       END DO
 
           DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
