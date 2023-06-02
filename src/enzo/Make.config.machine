@@ -1,1 +1,1 @@
-CONFIG_MACHINE = linux-sy
+CONFIG_MACHINE = rusty

@@ -519,7 +519,7 @@ c$$$     &           nmerge,name(j1),name(j2),name(icm)
 *
 *        Write all data in binary format on unit 3 = conf.3.
 *
-      if(rank.eq.0)then
+      if(rank.eq.-1)then
 *     Split the conf.3 files by time
          write(0,*) "string starts - SY"
 !         call string_left(TCHAR,TTOT,DELTAT)

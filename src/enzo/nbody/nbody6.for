@@ -43,7 +43,10 @@
 
       INTEGER EIDINIT(NMAX)
       INTEGER I
+      INTEGER OUTC, OUTCNUM
       INTEGER SHUFFLECNT
+      CHARACTER*27 OUTFILE
+      CHARACTER*27 OUTFORM
 
       INTEGER IS,JS  ! loop for starting
       INTEGER IP,JP,KP  ! loop for predingting/sending
@@ -90,6 +93,7 @@
 
 
 *-----MPI-scheme-of-nbody-added-by-YS-----------------------------------*
+      OUTC = 1
 
       write (0,*) 'In the Nbody6 '
 *     Massive MPI Communication with Enzo code! (subroutine later) by SY
@@ -206,7 +210,7 @@
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
-           FENZO(JS,IS) = EF(JS,IS)/EFORCEU
+           FENZO(JS,IS) = 0 !EF(JS,IS)/EFORCEU
          END DO
          !FENZO(1,IS) = 0.05D0
          !FENZO(2,IS) = 0.0D0
@@ -449,7 +453,7 @@
           DO JR = 1,EN
              IF (EID(JR).EQ.IE) THEN
              DO KR = 1,3
-                FENZO(KR,IR)=EF(KR,JR)/EFORCEU
+                FENZO(KR,IR)= 0 !EF(KR,JR)/EFORCEU
              END DO
              END IF
           END DO
@@ -465,8 +469,34 @@
 
           write (6,*) 'recieved and restarting'
          
+
+
+        ! output
+        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
+        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+        write(OUTFILE,OUTFORM) 'output_',OUTC
+        OPEN (UNIT=3,STATUS='UNKNOWN',
+     &         FILE=OUTFILE)
+
+        OUTCNUM = NAME(J)
+        DO J = 1, NTOT
+
+          WRITE (3,
+     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
+     &          f20.8,f20.8,f20.8,f20.8,I5)')  
+     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
+     &         (FENZO(K,J),K=1,3), OUTCNUM
+        END DO
+
+        CLOSE(3)
+      OUTC = OUTC + 1
+
+
+
+
 *----end-added-by-YS-----------------------------------------------------*
       END IF
+
 
 *       Continue integration.
       GO TO 1

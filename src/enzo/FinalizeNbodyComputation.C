@@ -45,12 +45,16 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 {
 
 
-	if (level == MaximumRefinementLevel) {
+	if (LevelArray[level+1] == NULL) {
+	//if (level == MaximumRefinementLevel) {
 		int i, GridNum, LocalNumberOfNbodyParticles;
 		LevelHierarchyEntry *Temp;
 		int start_index;
 
 		LocalNumberOfNbodyParticles = FindTotalNumberOfNbodyParticles(LevelArray);
+
+		if (NumberOfNbodyParticles == 0)
+			return SUCCESS;
 
 		//int *NbodyParticleIDTemp;
 		float *NbodyParticlePositionTemp[MAX_DIMENSION];

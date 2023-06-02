@@ -48,18 +48,23 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 	LevelHierarchyEntry *Temp;
 	int start_index;
 
-	fprintf(stderr,"All Good 1\n");
+	//fprintf(stderr,"All Good 1\n");
 
 	/* Store AccelerationNoStar of particles to sustainable ParticleAttribute */
 	for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel)
 		Temp->GridData->CopyAccelerationToAttribute();
 
-	fprintf(stderr,"All Good 2\n");
+	//fprintf(stderr,"All Good 2\n");
 
 
-	if (level == MaximumRefinementLevel) {
+	if (LevelArray[level+1] == NULL) {
+	//if (level == MaximumRefinementLevel) {
+	fprintf(stderr,"Level = %d\n",level);
 
 		LocalNumberOfNbodyParticles = FindTotalNumberOfNbodyParticles(LevelArray);
+
+		if (NumberOfNbodyParticles == 0)
+			return SUCCESS;
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
 
@@ -70,8 +75,10 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					TemperatureUnits=1;
 		double MassUnits=1;
 		float GridTime, TimeStep;
-		GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
-		TimeStep = LevelArray[MaximumRefinementLevel]->GridData->ReturnTimeStep(); // Not sure ?
+		//GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
+		//TimeStep = LevelArray[MaximumRefinementLevel]->GridData->ReturnTimeStep(); // Not sure ?
+		GridTime = LevelArray[level]->GridData->ReturnTime(); // Not sure ?
+		TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure ?
 		if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
 					&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
 			ENZO_FAIL("Error in GetUnits.");
