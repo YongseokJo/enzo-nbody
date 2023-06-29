@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include",
+                "/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/include",
+                "/mnt/home/yjo10/packages/grackle/build/include",
+                "/mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0//include"
+            ],
+            "defines": [],
+            "compilerPath": "/mnt/sw/nix/store/ym0r2w4dnzd0fg0pnlipazv3ww9a3j6w-gcc-10.4.0/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

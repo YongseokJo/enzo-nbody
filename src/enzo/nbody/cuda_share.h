@@ -21,8 +21,11 @@ struct Jparticle{
   float  mass;
   float3 vel;
   float  pad;
+
+  float3 bgacc; // by YS Jo
+
   Jparticle(int) {}
-  Jparticle(double mj, double xj[3], double vj[3]){
+  Jparticle(double mj, double xj[3], double vj[3], double aj[3]){
     pos.x = xj[0];
     pos.y = xj[1];
     pos.z = xj[2];
@@ -31,6 +34,11 @@ struct Jparticle{
     vel.y = vj[1];
     vel.z = vj[2];
 
+    /* For interpolation of background acceleration by YS Jo */
+    bgacc.x = aj[0];
+    bgacc.y = aj[1];
+    bgacc.z = aj[2];
+
     NAN_CHECK(xj[0]);
     NAN_CHECK(xj[1]);
     NAN_CHECK(xj[2]);
@@ -38,8 +46,33 @@ struct Jparticle{
     NAN_CHECK(vj[0]);
     NAN_CHECK(vj[1]);
     NAN_CHECK(vj[2]);
+    NAN_CHECK(aj[0]);
+    NAN_CHECK(aj[1]);
+    NAN_CHECK(aj[2]);
   }
   __device__ Jparticle() {}
+};
+
+struct Aparticle{
+  float3 pos;
+  float3 acc;
+  Aparticle(int) {}
+  Aparticle(double aj[3], double xj[3]){
+    pos.x = xj[0];
+    pos.y = xj[1];
+    pos.z = xj[2];
+    acc.x = aj[0];
+    acc.y = aj[1];
+    acc.z = aj[2];
+
+    NAN_CHECK(xj[0]);
+    NAN_CHECK(xj[1]);
+    NAN_CHECK(xj[2]);
+    NAN_CHECK(aj[0]);
+    NAN_CHECK(aj[1]);
+    NAN_CHECK(aj[2]);
+  }
+  __device__ Aparticle() {}
 };
 
 static float2 float2_split(double x){
@@ -77,3 +110,4 @@ static __device__ float2 float2_add(float2 a, float2 b){
 }
 
 extern cudaPointer <Jparticle> jpbuf;
+extern cudaPointer <Aparticle> apbuf; //by YS Jo

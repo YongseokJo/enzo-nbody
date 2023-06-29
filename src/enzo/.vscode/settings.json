@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "PrepareNbodyComputation.C": "cpp"
+    },
+    "fortran.fortls.disabled": true
+}

@@ -90,6 +90,30 @@ struct Jparticle{
 		vel.z = tmp2.z;
 	}
 };
+
+// by YS Jo for Interpolation of Acceleration
+struct Aparticle{
+  float3 pos;
+  float3 acc;
+  Aparticle(int) {}
+  Aparticle(double aj[3], double xj[3]){
+    pos.x = xj[0];
+    pos.y = xj[1];
+    pos.z = xj[2];
+    acc.x = aj[0];
+    acc.y = aj[1];
+    acc.z = aj[2];
+
+    NAN_CHECK(xj[0]);
+    NAN_CHECK(xj[1]);
+    NAN_CHECK(xj[2]);
+    NAN_CHECK(aj[0]);
+    NAN_CHECK(aj[1]);
+    NAN_CHECK(aj[2]);
+  }
+  __device__ Aparticle() {}
+};
+
 struct Iparticle{
 	float3 pos;
 	float  h2;

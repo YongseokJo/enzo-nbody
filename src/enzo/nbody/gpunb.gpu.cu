@@ -34,7 +34,7 @@ typedef unsigned short uint16;
 // 		num = 0;
 // 		val = NULL;
 // 	}
-// 	~myvector(){
+// 	~myvecjjkktor(){
 // 		delete [] val;
 // 	}
 // 	void clear(){
@@ -91,6 +91,10 @@ struct Force{
 	float  pot;
 	float3 jrk;
 	int    nnb;          //  8 words
+	/* For background acceleration by YS Jo */
+	float3 bgacc;
+	float  norm_bgacc; // normalization factor
+
   //	unsigned short  neib[NB_PER_BLOCK]; // 24 words
 	// __device__  Force(){
 	// 	acc.x = acc.y = acc.z = 0.f;
@@ -103,6 +107,8 @@ struct Force{
 		jrk.x = jrk.y = jrk.z = 0.f;
 		pot = 0.f;
 		nnb = 0;
+		bgacc.x = bgacc.y = bgacc.z = 0.f; // by YS Jo
+		norm_bgacc = 0.;
 	}
   	__device__ void operator+=(const Force &rhs){
 		acc.x += rhs.acc.x;
@@ -174,6 +180,13 @@ __device__ void h4_kernel(
 		// fo.neib[fo.nnb++ % NB_PER_BLOCK] = j;
 		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
 		fo.nnb++;
+
+		/* Backgound Acceleration Interpolation */
+		fo.bgacc.x += rinv1*jp.bgacc.x; // by YS Jo
+		fo.bgacc.y += rinv1*jp.bgacc.y; 
+		fo.bgacc.z += rinv1*jp.bgacc.z; 
+		fo.norm_bgacc += rinv1;
+
 		rinv1 = 0.f;
 	}
 	float rinv2 = rinv1 * rinv1;
@@ -219,8 +232,17 @@ __device__ void h4_kernel_m(
 	float rinv1 = rsqrtf(r2);
     if(min(r2,r2p) < jp.mass * ip.h2){
 		// fo.neib[fo.nnb++ % NB_PER_BLOCK] = j;
-		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
+		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j; // limits to the number of elements 
 		fo.nnb++;
+
+		/* Backgound Acceleration Interpolation */
+		fo.bgacc.x += rinv1*jp.bgacc.x; // by YS Jo
+		fo.bgacc.y += rinv1*jp.bgacc.y; 
+		fo.bgacc.z += rinv1*jp.bgacc.z; 
+		fo.norm_bgacc += rinv1;
+
+		rinv1 = 0.f;
+
 		rinv1 = 0.f;
 	}
 	float rinv2 = rinv1 * rinv1;
@@ -541,6 +563,7 @@ __global__ void gather_nb_kernel(
 
 static cudaPointer <Iparticle> ipbuf;
 cudaPointer <Jparticle> jpbuf;
+cudaPointer <Aparticle> apbuf; //by YS Jo
 static cudaPointer <Force[NJBLOCK]> fopart;
 static cudaPointer <Force> fobuf;
 static cudaPointer <uint16[NJBLOCK][NB_PER_BLOCK]>nbpart;
@@ -673,10 +696,12 @@ void GPUNB_close(){
 }
 
 void GPUNB_send(
-		int nj,
-		double mj[],
-		double xj[][3],
-		double vj[][3]){
+	int nj,
+	double mj[],
+	double xj[][3],
+	double vj[][3],
+	double aj[][3]) // by YS Jo for background acceleration 
+{
 	time_send -= get_wtime();
     isend++;
 	nbody = nj;
@@ -685,13 +710,34 @@ void GPUNB_send(
     //    time_send -= get_wtime();
 	for(int j=0; j<nj; j++){
 		// jp_host[j] = Jparticle(mj[j], xj[j], vj[j]);
-      jpbuf[j] = Jparticle(mj[j], xj[j], vj[j]);
+      jpbuf[j] = Jparticle(mj[j], xj[j], vj[j], aj[j]);
 	}
 	// size_t jpsize = nj * sizeof(Jparticle);
 	// cudaMemcpy(jp_dev, jp_host, jpsize, cudaMemcpyHostToDevice);
 	jpbuf.htod(nj);
 	time_send += get_wtime();
 }
+
+/* 
+ * Particles used for potential are sent to GPU
+ * by YS Jo
+
+void GPUBN_SEND_ACC(
+		int nj,
+		double aj[], // this must be acc
+		double xj[][3]){
+	time_send -= get_wtime();
+//isend++;
+	nbody = nj;
+	assert(nbody <= nbodymax);
+	for(int j=0; j<nj; j++){
+      apbuf[j] = Aparticle(aj[j], xj[j]);
+	}
+	apbuf.htod(nj);
+	time_send += get_wtime();
+}
+ */ 
+
 
 void GPUNB_regf(
                 int ni,
@@ -702,6 +748,7 @@ void GPUNB_regf(
                 double acc[][3],
                 double jrk[][3],
                 double pot[],
+				double bgacc[][3], //by YS Jo for background acceleration
                 int lmax,
                 int nnbmax,
                 int *listbase,
@@ -777,12 +824,15 @@ void GPUNB_regf(
   // out data
   for(int i=0; i<ni; i++){
     Force &fo = fobuf[i];
-    acc[i][0] = fo.acc.x;
-    acc[i][1] = fo.acc.y;
-    acc[i][2] = fo.acc.z;
-    jrk[i][0] = fo.jrk.x;
-    jrk[i][1] = fo.jrk.y;
-    jrk[i][2] = fo.jrk.z;
+	bgacc[i][0] = fo.bgacc.x*fo.norm_bgacc.x;
+	bgacc[i][1] = fo.bgacc.y*fo.norm_bgacc.y;
+	bgacc[i][2] = fo.bgacc.z*fo.norm_bgacc.z;
+    acc[i][0]   = fo.acc.x+bgacc[i][0];
+    acc[i][1]   = fo.acc.y+bgacc[i][1];
+    acc[i][2]   = fo.acc.z+bgacc[i][2];
+    jrk[i][0]   = fo.jrk.x;
+    jrk[i][1]   = fo.jrk.y;
+    jrk[i][2]   = fo.jrk.z;
     //    fprintf(stderr, "%f %f %f %f %f %f\n", acc[i][0], acc[i][1], acc[i][2], jrk[i][0], jrk[i][1], jrk[i][2]);
         //        exit(0);
 #ifdef POTENTIAL
