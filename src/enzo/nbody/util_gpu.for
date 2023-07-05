@@ -59,9 +59,12 @@
 
 *     GPU first call with first values of GPU_POT, GPU_A & GPU_JERK
  550     call cputim(tt53)
+
+         write(6,*) "REGF starts" ! by YS
          CALL gpunb_regf(ni,GPU_RS,GPU_DTR,x_i,v_i,GPU_A,GPU_JERK,
      &        GPU_POT,bgacc_i,lmax,nnbmax,LISTGP,M_FLAG)
               ! bgacc_i added by sykim
+         write(6,*) "REGF ends" ! by YS
          call cputim(tt54)
          ttgpu = ttgpu + (tt54-tt53)*60.0
 
