@@ -77,7 +77,7 @@
 *       Send all single particles to the GPU.
          write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
       CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
-     &               FENZO(1,FIRST))
+     &               FENZO(1,IFIRST))
          write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
 *
 *       Define maximum GPU neighbour number and initialize counters.
@@ -129,7 +129,8 @@
  31       I = JNEXT + IFIRST
          write(6,*) "GPUNB_REGF starts in fpoly" ! by YS
           CALL GPUNB_REGF(NI,H2I,DTR,X(1,I),XDOT(1,I),GPUACC,GPUJRK,
-     &         GPUPHI,LMAX,NNBMAX,LISTGP,M_FLAG)
+     &         GPUPHI,FENZO(1,I),LMAX,NNBMAX,LISTGP,M_FLAG)
+         ! edited by SY
          write(6,*) "GPUNB_REGF ends in fpoly" ! by YS
 *       Check neighbour lists for overflow or zero membership (NNB = 1).
 *!$omp parallel do private(LL,NNB,I,RI2) reduction(+:NOFL2)
