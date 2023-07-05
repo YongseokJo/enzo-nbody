@@ -898,8 +898,8 @@ extern "C" {
   void gpunb_return_(){
     GPUNB_return();
   }
-  void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3]){
-    GPUNB_send(*nj, mj, xj, vj);
+  void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3], double bgacc[][3]){
+    GPUNB_send(*nj, mj, xj, vj, bgacc);
   }
   void gpunb_regf_(int *ni, double h2[], double dtr[], double xi[][3],
                    double vi[][3], double acc[][3], double jrk[][3],

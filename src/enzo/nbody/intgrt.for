@@ -910,7 +910,8 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 *       Send all single particles to GPU memory
          call cputim(tt51)
          NN = NTOT - IFIRST + 1
-         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),FENZO(1,IFIRST))
+         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
+     *                   FENZO(1,IFIRST))
          call cputim(tt52)
 *     --09/26/13 16:58-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -1484,7 +1485,7 @@ C      END IF
       END IF
 #endif
 #ifdef GPU
-      CALL GPUNB_CLOSE
+
 *      CALL GPUPOT_CLOSE
 *      CALL GPUPOT_CLOSE_FLOAT
 #endif
