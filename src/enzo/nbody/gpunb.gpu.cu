@@ -567,7 +567,7 @@ __global__ void gather_nb_kernel(
 
 static cudaPointer <Iparticle> ipbuf;
 cudaPointer <Jparticle> jpbuf;
-cudaPointer <Aparticle> apbuf; //by YS Jo
+//cudaPointer <Aparticle> apbuf; //by YS Jo
 static cudaPointer <Force[NJBLOCK]> fopart;
 static cudaPointer <Force> fobuf;
 static cudaPointer <uint16[NJBLOCK][NB_PER_BLOCK]>nbpart;

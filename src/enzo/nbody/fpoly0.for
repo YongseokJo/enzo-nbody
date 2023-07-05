@@ -28,7 +28,9 @@
 #ifdef GPU
 *       Open the GPU libraries on new run (note nnbmax = NN is printed).
       NN = NTOT + 10
+         write(6,*) "GPUNB_OPEN starts in fpoly" ! by YS
       CALL GPUNB_OPEN(NN,rank)
+         write(6,*) "GPUNB_OPEN ends in fpoly" ! by YS
 #endif
 
       M_FLAG = 0
@@ -73,8 +75,10 @@
 *
 #ifdef GPU
 *       Send all single particles to the GPU.
+         write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
       CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
-      &               FENZO(1,FIRST))
+     &               FENZO(1,FIRST))
+         write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
 *
 *       Define maximum GPU neighbour number and initialize counters.
       NBMAX = MIN(NNBMAX + 150,LMAX-5)
@@ -123,8 +127,10 @@
 *
 *       Evaluate forces, first derivatives and neighbour lists for new block.
  31       I = JNEXT + IFIRST
+         write(6,*) "GPUNB_REGF starts in fpoly" ! by YS
           CALL GPUNB_REGF(NI,H2I,DTR,X(1,I),XDOT(1,I),GPUACC,GPUJRK,
      &         GPUPHI,LMAX,NNBMAX,LISTGP,M_FLAG)
+         write(6,*) "GPUNB_REGF ends in fpoly" ! by YS
 *       Check neighbour lists for overflow or zero membership (NNB = 1).
 *!$omp parallel do private(LL,NNB,I,RI2) reduction(+:NOFL2)
           DO 50 LL = 1,NI

@@ -453,7 +453,7 @@
           DO JR = 1,EN
              IF (EID(JR).EQ.IE) THEN
              DO KR = 1,3
-                FENZO(KR,IR)= EF(KR,JR)/EFORCEU
+                FENZO(KR,IR) = EF(KR,JR)/EFORCEU
              END DO
              END IF
           END DO

@@ -166,7 +166,9 @@
 
 #ifdef GPU
          NN = NTOT + 10
+         write(6,*) "GPUNB_OPEN starts" ! by YS
          CALL GPUNB_OPEN(NN,rank)
+         write(6,*) "GPUNB_OPEN ends" ! by YS
 *         CALL GPUPOT_INIT_FLOAT(rank)
 *         CALL GPUPOT_INIT(rank,NN)
 #endif

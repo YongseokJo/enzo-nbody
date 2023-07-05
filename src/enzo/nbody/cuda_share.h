@@ -110,4 +110,4 @@ static __device__ float2 float2_add(float2 a, float2 b){
 }
 
 extern cudaPointer <Jparticle> jpbuf;
-extern cudaPointer <Aparticle> apbuf; //by YS Jo
+//extern cudaPointer <Aparticle> apbuf; //by YS Jo
