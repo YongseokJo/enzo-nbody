@@ -78,7 +78,7 @@
          write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
       CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
      &               FENZO(1,IFIRST))
-         write(6,*) "GPUNB_SEND starts in fpoly" ! by YS
+         write(6,*) "GPUNB_SEND ends in fpoly" ! by YS
 *
 *       Define maximum GPU neighbour number and initialize counters.
       NBMAX = MIN(NNBMAX + 150,LMAX-5)

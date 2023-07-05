@@ -93,7 +93,7 @@ struct Force{
 	int    nnb;          //  8 words
 	/* For background acceleration by YS Jo */
 	float3 bgacc;
-	float3  norm_bgacc; // normalization factor
+	float3 norm_bgacc; // normalization factor
 
   //	unsigned short  neib[NB_PER_BLOCK]; // 24 words
 	// __device__  Force(){
@@ -122,6 +122,16 @@ struct Force{
 		jrk.x += rhs.jrk.x;
 		jrk.y += rhs.jrk.y;
 		jrk.z += rhs.jrk.z;
+
+		// by YS Jo
+		bgacc.x += rhs.bgacc.x;
+		bgacc.y += rhs.bgacc.y;
+		bgacc.z += rhs.bgacc.z;
+
+		norm_bgacc.x += rhs.norm_bgacc.x;
+		norm_bgacc.y += rhs.norm_bgacc.y;
+		norm_bgacc.z += rhs.norm_bgacc.z;
+
 		if(nnb>=0 && rhs.nnb>=0){
 			nnb += rhs.nnb;
 		}else{
@@ -139,6 +149,16 @@ struct Force{
 		jrk.x += __shfl_xor(jrk.x, mask);
 		jrk.y += __shfl_xor(jrk.y, mask);
 		jrk.z += __shfl_xor(jrk.z, mask);
+
+		// by YS Jo
+		bgacc.x += __shfl_xor(bgacc.x, mask);
+		bgacc.y += __shfl_xor(bgacc.y, mask);
+		bgacc.z += __shfl_xor(bgacc.z, mask);
+
+		norm_bgacc.x += __shfl_xor(norm_bgacc.x, mask);
+		norm_bgacc.y += __shfl_xor(norm_bgacc.y, mask);
+		norm_bgacc.z += __shfl_xor(norm_bgacc.z, mask);
+
 		int ntmp = __shfl_xor(nnb, mask);
 		if(nnb>=0 && ntmp>=0){
 			nnb += ntmp;
@@ -781,6 +801,8 @@ void GPUNB_regf(
   dim3 threads(NTHREAD, 1, 1);
   // h4_gravity <<< grid, threads >>> 
   //	(nbody, ip_dev, jp_dev, fo_dev);
+
+  fprintf(stderr, "gravity_m starts\n"); //by YS
   if(m_flag) {
     h4_gravity_m <<< grid, threads >>> 
       (nbody, ipbuf, jpbuf, fopart, nbpart);
@@ -800,7 +822,9 @@ void GPUNB_regf(
   // recieve force
   // size_t fosize = ni * NJBLOCK * sizeof(Force);
   // cudaMemcpy(fo_host, fo_dev, fosize, cudaMemcpyDeviceToHost);
+  fprintf(stderr, "fobuf dtoh, ni=%d \n", ni);  //by YS
   fobuf.dtoh(ni);
+  fprintf(stderr, "fobuf dtoh ends\n");  //by YS
 
   double wt = get_wtime();
   time_grav += wt;
@@ -819,7 +843,10 @@ void GPUNB_regf(
   gather_nb_kernel <<< rgrid, rthreads>>>
     (ni, nbody, fopart, fobuf, nboff, nbpart, nblist);
   //  CUDA_SAFE_THREAD_SYNC();
+
+  fprintf(stderr, "nblist dtoh\n");  //by YS
   nblist.dtoh(nbsum);
+  fprintf(stderr, "nblist dtoh ends\n");  //by YS
 
   wt = get_wtime();
   time_nb += get_wtime();

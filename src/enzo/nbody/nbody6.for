@@ -222,6 +222,31 @@
       write (6,*) 'initial enzo id',EIDINIT(1),EIDINIT(2),EIDINIT(3)
 *     hard-code  parameters needed for nbody6.F
 
+
+
+        ! output
+        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
+        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+        write(OUTFILE,OUTFORM) 'output_',OUTC
+        OPEN (UNIT=3,STATUS='UNKNOWN',
+     &         FILE=OUTFILE)
+
+        OUTCNUM = NAME(J)
+        DO J = 1, NTOT
+
+          WRITE (3,
+     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
+     &          f20.8,f20.8,f20.8,f20.8,I5)')  
+     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
+     &         (FENZO(K,J),K=1,3), OUTCNUM
+        END DO
+
+        CLOSE(3)
+      OUTC = OUTC + 1
+
+
+
+
       KSTART = 1
       TCOMP = 100000.0D0
       TCRITP = 1.0D8
