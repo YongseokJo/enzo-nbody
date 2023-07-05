@@ -93,7 +93,7 @@ struct Force{
 	int    nnb;          //  8 words
 	/* For background acceleration by YS Jo */
 	float3 bgacc;
-	float  norm_bgacc; // normalization factor
+	float3  norm_bgacc; // normalization factor
 
   //	unsigned short  neib[NB_PER_BLOCK]; // 24 words
 	// __device__  Force(){
@@ -107,8 +107,10 @@ struct Force{
 		jrk.x = jrk.y = jrk.z = 0.f;
 		pot = 0.f;
 		nnb = 0;
-		bgacc.x = bgacc.y = bgacc.z = 0.f; // by YS Jo
-		norm_bgacc = 0.;
+
+		// by YS Jo
+		bgacc.x = bgacc.y = bgacc.z = 0.f; 
+		norm_bgacc.x = norm_bgacc.x = norm_bgacc.x = 0.f;
 	}
   	__device__ void operator+=(const Force &rhs){
 		acc.x += rhs.acc.x;
@@ -182,10 +184,12 @@ __device__ void h4_kernel(
 		fo.nnb++;
 
 		/* Backgound Acceleration Interpolation */
-		fo.bgacc.x += rinv1*jp.bgacc.x; // by YS Jo
-		fo.bgacc.y += rinv1*jp.bgacc.y; 
-		fo.bgacc.z += rinv1*jp.bgacc.z; 
-		fo.norm_bgacc += rinv1;
+		fo.bgacc.x += dx*jp.bgacc.x; // by YS Jo
+		fo.bgacc.y += dy*jp.bgacc.y; 
+		fo.bgacc.z += dz*jp.bgacc.z; 
+		fo.norm_bgacc.x += dx;
+		fo.norm_bgacc.y += dy;
+		fo.norm_bgacc.z += dz;
 
 		rinv1 = 0.f;
 	}
@@ -236,12 +240,12 @@ __device__ void h4_kernel_m(
 		fo.nnb++;
 
 		/* Backgound Acceleration Interpolation */
-		fo.bgacc.x += rinv1*jp.bgacc.x; // by YS Jo
-		fo.bgacc.y += rinv1*jp.bgacc.y; 
-		fo.bgacc.z += rinv1*jp.bgacc.z; 
-		fo.norm_bgacc += rinv1;
-
-		rinv1 = 0.f;
+		fo.bgacc.x += dx*jp.bgacc.x; // by YS Jo
+		fo.bgacc.y += dy*jp.bgacc.y; 
+		fo.bgacc.z += dz*jp.bgacc.z; 
+		fo.norm_bgacc.x += dx;
+		fo.norm_bgacc.y += dy;
+		fo.norm_bgacc.z += dz;
 
 		rinv1 = 0.f;
 	}
@@ -903,8 +907,8 @@ extern "C" {
   }
   void gpunb_regf_(int *ni, double h2[], double dtr[], double xi[][3],
                    double vi[][3], double acc[][3], double jrk[][3],
-                   double pot[], int *lmax, int *nnbmax, int *list, int *m_flag){
-    GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, *lmax, *nnbmax, list, *m_flag);
+                   double pot[], double bgacc[][3],  int *lmax, int *nnbmax, int *list, int *m_flag){
+    GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, bgacc, *lmax, *nnbmax, list, *m_flag);
   }
   void gpunb_profile_(int *irank){
     GPUNB_profile(*irank);
