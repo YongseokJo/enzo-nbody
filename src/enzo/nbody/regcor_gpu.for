@@ -1,4 +1,4 @@
-      SUBROUTINE REGCOR_GPU(I,XI,XIDOT,FREG,FDR,NLIST)
+      SUBROUTINE REGCOR_GPU(I,XI,XIDOT,FBACK,FREG,FDR,NLIST)
 *
 *
 *       Regular integration.
@@ -11,6 +11,7 @@
 C      COMMON/CHAINC/  XC(3,NCMAX),UC(3,NCMAX),BODYC(NCMAX),ICH,
 C     &                LISTC(LMAX)
       REAL*8  XI(3),XIDOT(3),DFIRR(3),FREG(3),DV(3),DFD(3),FDR(3)
+      REAL*8  FBACK(3) ! added by sykim
       REAL*8  FRX(3),FDX(3)
       INTEGER NLIST(LMAX),JJLIST(2*LMAX)
 *     REAL*8  DFI(3),DFRG(3)
@@ -121,7 +122,7 @@ C$$$      END IF
 *       add external force recieved from ENZO
 
         DO 23 K=1,3
-          FREG(K) = FREG(K) + FENZO(K,I)
+          FREG(K) = FREG(K) + FBACK(I)
    23   CONTINUE
 
 *       end added by sykim
