@@ -31,7 +31,7 @@
 
 *     added by sykim, parameters from enzo
 
-      INTEGER, parameter:: EN_MAX = 20000
+      INTEGER, parameter:: EN_MAX = 200000
       INTEGER :: EN,IE
       integer :: istatus(MPI_STATUS_SIZE)
 
