@@ -166,7 +166,9 @@
 
 #ifdef GPU
          NN = NTOT + 10
+         write(6,*) "OPEN starts" ! by YS
          CALL GPUNB_OPEN(NN,rank)
+         write(6,*) "OPEN ends" ! by YS
 *         CALL GPUPOT_INIT_FLOAT(rank)
 *         CALL GPUPOT_INIT(rank,NN)
 #endif
@@ -910,7 +912,10 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 *       Send all single particles to GPU memory
          call cputim(tt51)
          NN = NTOT - IFIRST + 1
-         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
+         write(6,*) "SEND starts" ! by YS
+         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
+     &                  FENZO(1,IFIRST))
+         write(6,*) "SEND starts" ! by YS
          call cputim(tt52)
 *     --09/26/13 16:58-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -936,7 +941,9 @@ c$$$      end if
 #endif
 *
             call cputim(tt1)
+            write(6,*) "CALC_REG starts" ! by YS
             CALL CALC_REG_ON_GPU(IREG,1,NREG)
+            write(6,*) "CALC_REG ends" ! by YS
             call cputim(tt2)
             ttgrcalc = ttgrcalc + (tt2-tt1)*60.0
 *
@@ -1023,7 +1030,9 @@ c$$$      end if
 *
 
             call cputim(tt1)
+            write(6,*) "CALC_REG starts 2" ! by YS
             CALL CALC_REG_ON_GPU(IREG,istart,iend)
+            write(6,*) "CALC_REG ends 2" ! by YS
             call cputim(tt2)
             ttgrcalc2 = ttgrcalc2 + (tt2-tt1)*60.0
             ttreg = ttreg + (tt2-tt1)*60.0

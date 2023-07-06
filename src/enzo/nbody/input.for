@@ -23,7 +23,7 @@ C      CALL DEFINE
 *      added by sykim, hard-coded input parameters
 *     parameters needed for input.F
 
-      N = 1000
+*      N = 1000
       NFIX = 1
       NCRIT = 20
       NRAND = 10000

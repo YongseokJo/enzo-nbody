@@ -31,7 +31,7 @@
 
 *     added by sykim, parameters from enzo
 
-      INTEGER, parameter:: EN_MAX = 2000
+      INTEGER, parameter:: EN_MAX = 20000
       INTEGER :: EN,IE
       integer :: istatus(MPI_STATUS_SIZE)
 
@@ -210,7 +210,7 @@
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
-           FENZO(JS,IS) = 0 !EF(JS,IS)/EFORCEU
+           FENZO(JS,IS) = EF(JS,IS)/EFORCEU
          END DO
          !FENZO(1,IS) = 0.05D0
          !FENZO(2,IS) = 0.0D0
@@ -453,7 +453,7 @@
           DO JR = 1,EN
              IF (EID(JR).EQ.IE) THEN
              DO KR = 1,3
-                FENZO(KR,IR)= 0 !EF(KR,JR)/EFORCEU
+                FENZO(KR,IR)= EF(KR,JR)/EFORCEU
              END DO
              END IF
           END DO

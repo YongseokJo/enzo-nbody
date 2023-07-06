@@ -73,7 +73,8 @@
 *
 #ifdef GPU
 *       Send all single particles to the GPU.
-      CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
+      CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
+     &              FENZO(1,IFIRST)) ! by YS Jo
 *
 *       Define maximum GPU neighbour number and initialize counters.
       NBMAX = MIN(NNBMAX + 150,LMAX-5)
@@ -122,8 +123,10 @@
 *
 *       Evaluate forces, first derivatives and neighbour lists for new block.
  31       I = JNEXT + IFIRST
+         write(6,*) "regf starts in foly" ! by YS
           CALL GPUNB_REGF(NI,H2I,DTR,X(1,I),XDOT(1,I),GPUACC,GPUJRK,
-     &         GPUPHI,LMAX,NNBMAX,LISTGP,M_FLAG)
+     &         GPUPHI,FENZO(1,I),LMAX,NNBMAX,LISTGP,M_FLAG) ! by YS Jo
+          write(6,*) "regf end in foly" ! by YS
 *       Check neighbour lists for overflow or zero membership (NNB = 1).
 *!$omp parallel do private(LL,NNB,I,RI2) reduction(+:NOFL2)
           DO 50 LL = 1,NI

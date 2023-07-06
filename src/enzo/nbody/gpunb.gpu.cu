@@ -17,6 +17,7 @@
 #define NJBLOCK 28 // 8800GTS/512 has 16
 #define NIBLOCK 16 // 16 or 32 
 #define NIMAX (NTHREAD * NIBLOCK) // 1024
+#define NEGNUM 1e-10
 
 #define NXREDUCE 32 // must be >NJBLOCK
 #define NYREDUCE 8
@@ -61,11 +62,11 @@ static double time_send, time_grav, time_out, time_nb;
 static long long numInter;
 static int icall,ini,isend;
 
-struct Iparticle{
-  float3 pos;
+struct  __align__(16) Iparticle{
   float  h2;
-  float3 vel;
   float  dtr;
+  float3 vel;
+  float3 pos;
   Iparticle() {}
   Iparticle(double h2i, double dtri,double xi[3], double vi[3]){
     pos.x = xi[0];
@@ -86,11 +87,16 @@ struct Iparticle{
     NAN_CHECK(vi[2]);
   }
 };
-struct Force{
-	float3 acc;
+struct __align__(16) Force{
 	float  pot;
 	float3 jrk;
+	float3 acc;
+	/* by YS Jo for interpolation */
+	float3 bgacc;
+	float3 norm_bgacc;
 	int    nnb;          //  8 words
+
+
   //	unsigned short  neib[NB_PER_BLOCK]; // 24 words
 	// __device__  Force(){
 	// 	acc.x = acc.y = acc.z = 0.f;
@@ -103,6 +109,10 @@ struct Force{
 		jrk.x = jrk.y = jrk.z = 0.f;
 		pot = 0.f;
 		nnb = 0;
+
+		bgacc.x = bgacc.y = bgacc.z = 0.f;
+		norm_bgacc.x = norm_bgacc.y = norm_bgacc.z = 0.f;
+
 	}
   	__device__ void operator+=(const Force &rhs){
 		acc.x += rhs.acc.x;
@@ -114,6 +124,15 @@ struct Force{
 		jrk.x += rhs.jrk.x;
 		jrk.y += rhs.jrk.y;
 		jrk.z += rhs.jrk.z;
+
+		bgacc.x += rhs.bgacc.x;
+		bgacc.y += rhs.bgacc.y;
+		bgacc.z += rhs.bgacc.z;
+
+		norm_bgacc.x += rhs.norm_bgacc.x;
+		norm_bgacc.y += rhs.norm_bgacc.y;
+		norm_bgacc.z += rhs.norm_bgacc.z;
+
 		if(nnb>=0 && rhs.nnb>=0){
 			nnb += rhs.nnb;
 		}else{
@@ -131,6 +150,15 @@ struct Force{
 		jrk.x += __shfl_xor(jrk.x, mask);
 		jrk.y += __shfl_xor(jrk.y, mask);
 		jrk.z += __shfl_xor(jrk.z, mask);
+
+		bgacc.x += __shfl_xor(bgacc.x, mask);
+		bgacc.y += __shfl_xor(bgacc.y, mask);
+		bgacc.z += __shfl_xor(bgacc.z, mask);
+
+		norm_bgacc.x += __shfl_xor(norm_bgacc.x, mask);
+		norm_bgacc.y += __shfl_xor(norm_bgacc.y, mask);
+		norm_bgacc.z += __shfl_xor(norm_bgacc.z, mask);
+
 		int ntmp = __shfl_xor(nnb, mask);
 		if(nnb>=0 && ntmp>=0){
 			nnb += ntmp;
@@ -174,8 +202,19 @@ __device__ void h4_kernel(
 		// fo.neib[fo.nnb++ % NB_PER_BLOCK] = j;
 		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
 		fo.nnb++;
+
+		/* Backgound Acceleration Interpolation */
+		if (dx > NEGNUM && dy > NEGNUM  && dz > NEGNUM) {
+			fo.bgacc.x += jp.acc.x/fabsf(dx); // by YS Jo
+			fo.bgacc.y += jp.acc.y/fabsf(dy);
+			fo.bgacc.z += jp.acc.z/fabsf(dz); 
+			fo.norm_bgacc.x += 1/fabsf(dx);
+			fo.norm_bgacc.y += 1/fabsf(dy);
+			fo.norm_bgacc.z += 1/fabsf(dz);
+		}
 		rinv1 = 0.f;
 	}
+
 	float rinv2 = rinv1 * rinv1;
 	float mrinv1 = jp.mass * rinv1;
 	float mrinv3 = mrinv1 * rinv2;
@@ -221,6 +260,17 @@ __device__ void h4_kernel_m(
 		// fo.neib[fo.nnb++ % NB_PER_BLOCK] = j;
 		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
 		fo.nnb++;
+
+		/* Backgound Acceleration Interpolation */
+		if (dx > NEGNUM && dy > NEGNUM  && dz > NEGNUM) {
+			fo.bgacc.x += jp.acc.x/fabsf(dx); // by YS Jo
+			fo.bgacc.y += jp.acc.y/fabsf(dy);
+			fo.bgacc.z += jp.acc.z/fabsf(dz); 
+			fo.norm_bgacc.x += 1/fabsf(dx);
+			fo.norm_bgacc.y += 1/fabsf(dy);
+			fo.norm_bgacc.z += 1/fabsf(dz);
+		}
+
 		rinv1 = 0.f;
 	}
 	float rinv2 = rinv1 * rinv1;
@@ -258,14 +308,14 @@ __global__ void h4_gravity(
   fo.clear();
   uint16 *nblist = nbbuf[iaddr][jbid];
 #if __CUDA_ARCH__ >= 300 // just some trial
-	for(int j=jstart; j<jend; j+=32){
-		__shared__ Jparticle jpshare[32];
+	for(int j=jstart; j<jend; j+=16){
+		__shared__ Jparticle jpshare[16];
 		__syncthreads();
 		float4 *src = (float4 *)&jpbuf[j];
 		float4 *dst = (float4 *)jpshare;
 		dst[tid] = src[tid];
 		__syncthreads();
-		if(jend-j < 32){
+		if(jend-j < 16){
 #pragma unroll 4
 			for(int jj=0; jj<jend-j; jj++){
 				const Jparticle jp = jpshare[jj];
@@ -274,7 +324,7 @@ __global__ void h4_gravity(
 			}
 		}else{
 #pragma unroll 8
-			for(int jj=0; jj<32; jj++){
+			for(int jj=0; jj<16; jj++){
 				const Jparticle jp = jpshare[jj];
 				// const Jparticle jp( (float4 *)jpshare + 2*jj);
 				h4_kernel(j-jstart+jj, ip, jp, fo, nblist);
@@ -331,14 +381,14 @@ __global__ void h4_gravity_m(
   fo.clear();
   uint16 *nblist = nbbuf[iaddr][jbid];
 #if __CUDA_ARCH__ >= 300 // just some trial
-	for(int j=jstart; j<jend; j+=32){
-		__shared__ Jparticle jpshare[32];
+	for(int j=jstart; j<jend; j+=16){
+		__shared__ Jparticle jpshare[16];
 		__syncthreads();
 		float4 *src = (float4 *)&jpbuf[j];
 		float4 *dst = (float4 *)jpshare;
 		dst[tid] = src[tid];
 		__syncthreads();
-		if(jend-j < 32){
+		if(jend-j < 16){
 #pragma unroll 4
 			for(int jj=0; jj<jend-j; jj++){
 				const Jparticle jp = jpshare[jj];
@@ -347,7 +397,7 @@ __global__ void h4_gravity_m(
 			}
 		}else{
 #pragma unroll 8
-			for(int jj=0; jj<32; jj++){
+			for(int jj=0; jj<16; jj++){
 				const Jparticle jp = jpshare[jj];
 				// const Jparticle jp( (float4 *)jpshare + 2*jj);
 				h4_kernel_m(j-jstart+jj, ip, jp, fo, nblist);
@@ -651,11 +701,11 @@ void GPUNB_close(){
 	// cudaFree    (fo_dev);
 	jpbuf.free();
 	ipbuf.free();
-    fopart.free();
+	fopart.free();
 	fobuf.free();
-    nbpart.free();
-    nblist.free();
-    nboff.free();
+	nbpart.free();
+	nblist.free();
+	nboff.free();
 	nbodymax = 0;
 	//fprintf(stderr, "# GPU closed\n"); //by YS Jo
 	return;
@@ -676,16 +726,17 @@ void GPUNB_send(
 		int nj,
 		double mj[],
 		double xj[][3],
-		double vj[][3]){
+		double vj[][3],
+		double aj[][3]){
 	time_send -= get_wtime();
-    isend++;
+	isend++;
 	nbody = nj;
 	//fprintf(stderr, "nbody: %d, max: %d\n", nbody, nbodymax); //by YS Jo
 	assert(nbody <= nbodymax);
     //    time_send -= get_wtime();
 	for(int j=0; j<nj; j++){
 		// jp_host[j] = Jparticle(mj[j], xj[j], vj[j]);
-      jpbuf[j] = Jparticle(mj[j], xj[j], vj[j]);
+      jpbuf[j] = Jparticle(mj[j], xj[j], vj[j], aj[j]); //by YS Jo
 	}
 	// size_t jpsize = nj * sizeof(Jparticle);
 	// cudaMemcpy(jp_dev, jp_host, jpsize, cudaMemcpyHostToDevice);
@@ -702,6 +753,7 @@ void GPUNB_regf(
                 double acc[][3],
                 double jrk[][3],
                 double pot[],
+								double bgacc[][3],
                 int lmax,
                 int nnbmax,
                 int *listbase,
@@ -777,6 +829,15 @@ void GPUNB_regf(
   // out data
   for(int i=0; i<ni; i++){
     Force &fo = fobuf[i];
+		//by YS Jo
+		bgacc[i][0] = fo.bgacc.x/fo.norm_bgacc.x;
+		bgacc[i][1] = fo.bgacc.y/fo.norm_bgacc.y;
+		bgacc[i][2] = fo.bgacc.z/fo.norm_bgacc.z;
+		/*
+		acc[i][0]   = fo.acc.x+bgacc[i][0];
+		acc[i][1]   = fo.acc.y+bgacc[i][1];
+		acc[i][2]   = fo.acc.z+bgacc[i][2];
+		*/
     acc[i][0] = fo.acc.x;
     acc[i][1] = fo.acc.y;
     acc[i][2] = fo.acc.z;
@@ -848,13 +909,14 @@ extern "C" {
   void gpunb_return_(){
     GPUNB_return();
   }
-  void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3]){
-    GPUNB_send(*nj, mj, xj, vj);
+  void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3], double aj[][3]){
+    GPUNB_send(*nj, mj, xj, vj, aj);
   }
   void gpunb_regf_(int *ni, double h2[], double dtr[], double xi[][3],
+
                    double vi[][3], double acc[][3], double jrk[][3],
-                   double pot[], int *lmax, int *nnbmax, int *list, int *m_flag){
-    GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, *lmax, *nnbmax, list, *m_flag);
+                   double pot[], double bgacc[][3], int *lmax, int *nnbmax, int *list, int *m_flag){
+    GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, bgacc, *lmax, *nnbmax, list, *m_flag);
   }
   void gpunb_profile_(int *irank){
     GPUNB_profile(*irank);
