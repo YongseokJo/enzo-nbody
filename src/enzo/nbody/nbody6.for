@@ -164,7 +164,7 @@
 
 *     calculates nbody <-> astro units
 
-      LENGTHU = 2.58811228D0
+      LENGTHU = 7.76433685 !2.58811228D0
       VELU = 6.557D0*((MASSU/LENGTHU)**(0.5D0))/(100.0D0)
       TIMEU = 14.94D0*(((LENGTHU)**3.0D0/MASSU)**(0.5D0))
 *     added on 0424 - sykim
@@ -194,7 +194,7 @@
 *     scaling
  
       N = EN
-      TCRIT = 1.0D5
+      TCRIT = 1.0D10
       DELTAT = EDT/ETIMEU
 
       write (6,*) 'timesteps',DELTAT

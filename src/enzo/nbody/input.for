@@ -23,7 +23,7 @@ C      CALL DEFINE
 *      added by sykim, hard-coded input parameters
 *     parameters needed for input.F
 
-      N = 20000
+!      N = 20000
 *      N = 1000
       NFIX = 1
       NCRIT = 20
@@ -33,12 +33,12 @@ C      CALL DEFINE
 
       ETAI = 0.02D0
       ETAR = 0.02D0
-      RS0 = 0.20807868D0
+      RS0 = 0.15885539 !0.20807868D0
       DTADJ = 1.00D0
       ! DELTAT = 1.00D0 disabled by sykim
       QE = 1.0D10
-      RBAR = 2.58811228D0
-      ZMBAR= 100.000000D0
+      RBAR = 7.76433685 !2.58811228D0
+      ZMBAR= 200.000000D0 !100.000000D0
 
       KZ(1) = 2
       KZ(2) = 2
