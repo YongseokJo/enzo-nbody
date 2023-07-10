@@ -195,9 +195,9 @@
  
       N = EN
       TCRIT = 1.0D5
-      DELTAT = EDT/TIMEU
+      DELTAT = EDT/ETIMEU
 
-!      write (6,*) 'timesteps',TNEXT
+      write (6,*) 'timesteps',DELTAT
 
 
 *     move the variable recieved from ENZO to nbody
@@ -272,6 +272,9 @@
       write(0,*) "adjust finished - SY"
       call cputim(tt8)
       ttadj = ttadj + (tt8-tt7)*60.
+
+      TNEXT = DELTAT ! added by  sykim
+
 
 * (R.Sp.)Set time flag and step number flags for beginning of run
       TINIT = TTOT
@@ -465,7 +468,7 @@
           DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
           
-          write (6,*) 'timesteps',TNEXT
+          write (6,*) 'timesteps', DELTAT
 
           write (6,*) 'recieved and restarting'
          

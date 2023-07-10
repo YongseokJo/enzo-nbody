@@ -592,7 +592,8 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
             TIMENW(I) = T0(I) + STEP(I)
 *     Set non-zero indicator for new regular force.
 *     edited by sykim. may be wrong... need to check
-            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
+*            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
+             IF (T0R(I) + STEPR(I).GT.TIME) THEN
 *     end edited by sykim
 *     Extrapolate regular force & first derivatives to obtain F & FDOT.
               DTR = TIME - T0R(I)

@@ -832,9 +832,9 @@ void GPUNB_regf(
   for(int i=0; i<ni; i++){
     Force &fo = fobuf[i];
 		//by YS Jo
-		bgacc[i][0] = fo.bgacc.x/fo.norm_bgacc.x;
-		bgacc[i][1] = fo.bgacc.y/fo.norm_bgacc.y;
-		bgacc[i][2] = fo.bgacc.z/fo.norm_bgacc.z;
+		//bgacc[i][0] = fo.bgacc.x/fo.norm_bgacc.x;
+		//bgacc[i][1] = fo.bgacc.y/fo.norm_bgacc.y;
+		//bgacc[i][2] = fo.bgacc.z/fo.norm_bgacc.z;
 		/*
 		acc[i][0]   = fo.acc.x+bgacc[i][0];
 		acc[i][1]   = fo.acc.y+bgacc[i][1];
