@@ -93,13 +93,15 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			float *NbodyParticleMassTemp;
 			float *NbodyParticlePositionTemp[MAX_DIMENSION];
 			float *NbodyParticleVelocityTemp[MAX_DIMENSION];
-			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
+			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION+1];
 
 			NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
 			NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
 				NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
+			}
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 				NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
 			}
 
@@ -157,7 +159,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NbodyParticleVelocity[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
+				}
 
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
@@ -167,6 +171,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 				fprintf(stdout, "First TimeStep: %e, %f\n", TimeStep, TimeUnits);
+
+				fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
+				fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
 				//fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
 				//fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
 				//fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
@@ -180,8 +187,12 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					MPI_Send(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm);
 					MPI_Send(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm);
+				}
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
 				}
+				fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
+				fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
 				MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
 				MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
 				MPI_Send(&LengthUnits, 1, MPI_DOUBLE, 1, 800, inter_comm);
@@ -223,7 +234,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
+				}
 
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
@@ -255,7 +268,9 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				if (NbodyParticleVelocityTemp[dim] != NULL)
 					delete [] NbodyParticleVelocityTemp[dim];
 				NbodyParticleVelocityTemp[dim] = NULL;
+			}
 
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
 					delete [] NbodyParticleAccelerationNoStarTemp[dim];
 				NbodyParticleAccelerationNoStarTemp[dim] = NULL;
@@ -265,11 +280,11 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			//int *NbodyParticleIDTemp;
 			//float *NbodyParticleMassTemp;
 			//float *NbodyParticleVelocityTemp[MAX_DIMENSION]; // feedback can affect velocity
-			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
+			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION+1];
 
 			NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
 			//NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 				//NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
 				NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
 			}
@@ -313,7 +328,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
 						NbodyParticleID, LocalNumberAll, start_index_all, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 				MPI_Wait(&request, &status);
-				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					MPI_Wait(&request, &status);
@@ -329,7 +344,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, inter_comm);
 				CommunicationInterBarrier();
 				MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
-				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
 				}
 				ierr = MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
@@ -376,7 +391,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 						NULL, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm, &request);
 				MPI_Wait(&request, &status);
 
-				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					//MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
 					//			NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
 					//	MPI_Wait(&request, &status);
@@ -395,7 +410,7 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			NbodyParticleIDTemp = NULL;
 			*/
 
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
 					delete [] NbodyParticleAccelerationNoStarTemp[dim];
 				NbodyParticleAccelerationNoStarTemp[dim] = NULL;

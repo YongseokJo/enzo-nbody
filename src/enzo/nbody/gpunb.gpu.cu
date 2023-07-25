@@ -736,8 +736,8 @@ void GPUNB_send(
     //    time_send -= get_wtime();
 	for(int j=0; j<nj; j++){
 		// jp_host[j] = Jparticle(mj[j], xj[j], vj[j]);
-		fprintf(stderr, "send: %d\n", j);
-		fprintf(stderr, "send: %f, %f, %f \n", xj[j][0], xj[j][1], xj[j][2]);
+		//fprintf(stderr, "send: %d\n", j);
+		//fprintf(stderr, "send: %f, %f, %f \n", xj[j][0], xj[j][1], xj[j][2]);
       jpbuf[j] = Jparticle(mj[j], xj[j], vj[j], aj[j]); //by YS Jo
 	}
 	// size_t jpsize = nj * sizeof(Jparticle);

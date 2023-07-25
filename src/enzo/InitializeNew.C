@@ -324,7 +324,7 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
 		}
 #ifdef NBODY
 		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
-		NumberOfParticleAttributes = NumberOfParticleAttributes + 3; // for Acceleration
+		NumberOfParticleAttributes = NumberOfParticleAttributes + 4; // for Acceleration
 		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
 #endif
 	}

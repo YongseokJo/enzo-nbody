@@ -12,6 +12,7 @@ C      COMMON/CHAINC/  XC(3,NCMAX),UC(3,NCMAX),BODYC(NCMAX),ICH,
 C     &                LISTC(LMAX)
       REAL*8  XI(3),XIDOT(3),DFIRR(3),FREG(3),DV(3),DFD(3),FDR(3)
       REAL*8  FRX(3),FDX(3)
+      REAL*8  rnfw, Mnfw, gravn
       INTEGER NLIST(LMAX),JJLIST(2*LMAX)
 *     REAL*8  DFI(3),DFRG(3)
 *      LOGICAL LCHECK
@@ -113,15 +114,21 @@ C$$$      END IF
           END IF
 *
 *       Obtain the tidal perturbation (force and first derivative).
-          CALL XTRNLF(XI,XIDOT,DFIRR,FREG,DFD,FDR,1)
+*          CALL XTRNLF(XI,XIDOT,DFIRR,FREG,DFD,FDR,1)
 *
       END IF
+
+
+        rnfw  = sqrt(xi(1)**2+xi(2)**2+xi(3)**2)
+        Mnfw  = 10**(log10(rnfw*RBAR)+8.5)/ZMBAR
+        gravn = Mnfw*body(I)/rnfw**3
 *
 *       added on 23.04.24 by sykim
 *       add external force recieved from ENZO
 
         DO 23 K=1,3
           FREG(K) = FREG(K) + FENZO(K,I)
+          FREG(K) = FREG(K) - gravn*xi(K)
    23   CONTINUE
 
 *       end added by sykim

@@ -61,6 +61,9 @@ void InitializeNbodyArrays(bool NbodyFirst) {
 		if (NbodyParticleVelocity[dim] != NULL)
 			delete [] NbodyParticleVelocity[dim];
 		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+	}
+
+	for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 
 		if (NbodyParticleAccelerationNoStar[dim] != NULL)
 			delete [] NbodyParticleAccelerationNoStar[dim];
@@ -86,6 +89,9 @@ void InitializeNbodyArrays(void) {
 		if (NbodyParticleVelocity[dim] != NULL)
 			delete [] NbodyParticleVelocity[dim];
 		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+	}
+
+	for (int dim=0; dim<MAX_DIMENSION+1; dim++) { 
 
 		if (NbodyParticleAccelerationNoStar[dim] != NULL)
 			delete [] NbodyParticleAccelerationNoStar[dim];
@@ -137,17 +143,21 @@ void DeleteNbodyArrays(void) {
 			delete [] NbodyParticleVelocity[dim];
 			NbodyParticleVelocity[dim] = NULL;
 		}
+	}
 
+	for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 		if (NbodyParticleAccelerationNoStar[dim] != NULL) {
 			delete [] NbodyParticleAccelerationNoStar[dim];
 			NbodyParticleAccelerationNoStar[dim] = NULL;
 		}
+	}
 
+		/*
 		for (int i=0; i<HERMITE_ORDER; i++) {
 			delete [] NbodyParticleAcceleration[dim][i];
 			NbodyParticleAcceleration[dim][i] = NULL;
 		}
-	}
+		*/
 }
 
 

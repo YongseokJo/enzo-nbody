@@ -38,6 +38,7 @@
 
       REAL*8, pointer :: EBODY(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
+      REAL*8, pointer :: EP(:) 
       INTEGER, pointer :: EID(:)
 *     initial ID of particles recieved from ENZO
 
@@ -122,14 +123,19 @@
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
+      allocate(EP(EN))
       DO  I = 1,3
         call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, istatus,ierr)
         call MPI_RECV(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
      &           ICOMM, istatus,ierr)
+      END DO
+      DO  I = 1,3
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &            ICOMM, istatus,ierr)
       END DO
+      call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
       call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
@@ -197,7 +203,7 @@
       TCRIT = 1.0D10
       DELTAT = EDT/ETIMEU
 
-      write (6,*) 'timesteps',DELTAT
+      write (6,*) 'timesteps',TNEXT, DELTAT
 
 
 *     move the variable recieved from ENZO to nbody
@@ -435,6 +441,8 @@
                call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &         ICOMM, istatus,ierr)
             END DO
+            call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &         ICOMM, istatus,ierr)
 
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
@@ -468,7 +476,7 @@
           DELTAT = EDT/ETIMEU
           TNEXT = TNEXT + DELTAT  ! is it right? SY
           
-          write (6,*) 'timesteps', DELTAT
+          write (6,*) 'timesteps', TNEXT, DELTAT
 
           write (6,*) 'recieved and restarting'
          
@@ -486,9 +494,9 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,I5)')  
-     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
-     &         (FENZO(K,J),K=1,3), OUTCNUM
+     &          f20.8,f20.8,f20.8,f20.8,f20.8,I5)')  
+     &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
+     &         (EF(K,J),K=1,3), EP(J), OUTCNUM
         END DO
 
         CLOSE(3)

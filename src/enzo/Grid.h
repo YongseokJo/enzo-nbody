@@ -1780,9 +1780,9 @@ class grid
 		void CopyAccelerationToAttribute(void){
 			if (MyProcessorNumber != ProcessorNumber) return;
 
-			for (int dim=0; dim<MAX_DIMENSION; dim++ ) {
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++ ) {
 				for (int i=0; i<NumberOfParticles; i++) {
-					ParticleAttribute[NumberOfParticleAttributes-3+dim][i] = ParticleAccelerationNoStar[dim][i];
+					ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAccelerationNoStar[dim][i];
 				}
 				delete [] ParticleAccelerationNoStar[dim];
 				ParticleAccelerationNoStar[dim] = NULL;
@@ -1809,7 +1809,9 @@ class grid
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+					}
+					for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count)++;
 				} // ENDIF nbody particles
@@ -1829,10 +1831,10 @@ class grid
 					//NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 
-					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+					for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 						//NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						//NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count)++;
 				} // ENDIF nbody particles
