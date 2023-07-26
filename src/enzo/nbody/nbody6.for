@@ -185,7 +185,8 @@
       EVELU = (VELU*1d5)/EVU
       ETIMEU = (TIMEU*3.1556952D13)/ETU
 *     what was force unit recieved from ENZO again? -sykim
-      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
+*      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
+      EFORCEU = EVELU*EVELU/ELENGTHU
 
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
@@ -494,9 +495,9 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8,I5)')  
+     &          f20.8,f20.8,f20.8,f20.8,f20.8,I5, f20.8)')  
      &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), EP(J), OUTCNUM
+     &         (EF(K,J),K=1,3), EP(J), OUTCNUM, TNEXT*ETIMEU
         END DO
 
         CLOSE(3)

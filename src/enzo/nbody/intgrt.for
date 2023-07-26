@@ -913,12 +913,16 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 *       Send all single particles to GPU memory
          call cputim(tt51)
          NN = NTOT - IFIRST + 1
-         write(6,*) "SEND starts" ! by YS
-         write(6,*) "NN=",NN ! by YS
-         write(6,*) "NTOT=",NTOT ! by YS
+         !write(6,*) "SEND starts" ! by YS
+         !write(6,*) "NN=",NN ! by YS
+         !write(6,*) "NTOT=",NTOT ! by YS
+#ifdef  INTPOLATION
          CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
      &                  FENZO(1,IFIRST))
-         write(6,*) "SEND ends" ! by YS
+#else
+         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
+#endif 
+         !write(6,*) "SEND ends" ! by YS
          call cputim(tt52)
 *     --09/26/13 16:58-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**

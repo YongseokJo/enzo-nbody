@@ -1811,7 +1811,8 @@ class grid
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
 					}
 					for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						//NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = 246.22271888;
 					} // ENDFOR dim
 					(*count)++;
 				} // ENDIF nbody particles
@@ -1834,7 +1835,8 @@ class grid
 					for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 						//NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						//NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						//NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = 246.22271888;
 					} // ENDFOR dim
 					(*count)++;
 				} // ENDIF nbody particles

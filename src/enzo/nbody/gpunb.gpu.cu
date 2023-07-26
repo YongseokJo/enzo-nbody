@@ -91,9 +91,11 @@ struct __align__(16) Force{
 	float  pot;
 	float3 jrk;
 	float3 acc;
+#ifdef INTERPOLATION
 	/* by YS Jo for interpolation */
 	float3 bgacc;
 	float3 norm_bgacc;
+#endif
 	int    nnb;          //  8 words
 
 
@@ -110,8 +112,10 @@ struct __align__(16) Force{
 		pot = 0.f;
 		nnb = 0;
 
+#ifdef INTERPOLATION
 		bgacc.x = bgacc.y = bgacc.z = 0.f;
 		norm_bgacc.x = norm_bgacc.y = norm_bgacc.z = 0.f;
+#endif
 
 	}
   	__device__ void operator+=(const Force &rhs){
@@ -125,6 +129,7 @@ struct __align__(16) Force{
 		jrk.y += rhs.jrk.y;
 		jrk.z += rhs.jrk.z;
 
+#ifdef INTERPOLATION
 		bgacc.x += rhs.bgacc.x;
 		bgacc.y += rhs.bgacc.y;
 		bgacc.z += rhs.bgacc.z;
@@ -132,6 +137,7 @@ struct __align__(16) Force{
 		norm_bgacc.x += rhs.norm_bgacc.x;
 		norm_bgacc.y += rhs.norm_bgacc.y;
 		norm_bgacc.z += rhs.norm_bgacc.z;
+#endif
 
 		if(nnb>=0 && rhs.nnb>=0){
 			nnb += rhs.nnb;
@@ -151,6 +157,7 @@ struct __align__(16) Force{
 		jrk.y += __shfl_xor(jrk.y, mask);
 		jrk.z += __shfl_xor(jrk.z, mask);
 
+#ifdef INTERPOLATION
 		bgacc.x += __shfl_xor(bgacc.x, mask);
 		bgacc.y += __shfl_xor(bgacc.y, mask);
 		bgacc.z += __shfl_xor(bgacc.z, mask);
@@ -158,6 +165,7 @@ struct __align__(16) Force{
 		norm_bgacc.x += __shfl_xor(norm_bgacc.x, mask);
 		norm_bgacc.y += __shfl_xor(norm_bgacc.y, mask);
 		norm_bgacc.z += __shfl_xor(norm_bgacc.z, mask);
+#endif
 
 		int ntmp = __shfl_xor(nnb, mask);
 		if(nnb>=0 && ntmp>=0){
@@ -203,6 +211,7 @@ __device__ void h4_kernel(
 		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
 		fo.nnb++;
 
+#ifdef INTERPOLATION
 		/* Backgound Acceleration Interpolation */
 		if (dx > NEGNUM && dy > NEGNUM  && dz > NEGNUM) {
 			fo.bgacc.x += jp.acc.x/fabsf(dx); // by YS Jo
@@ -212,6 +221,7 @@ __device__ void h4_kernel(
 			fo.norm_bgacc.y += 1/fabsf(dy);
 			fo.norm_bgacc.z += 1/fabsf(dz);
 		}
+#endif
 		rinv1 = 0.f;
 	}
 
@@ -261,6 +271,7 @@ __device__ void h4_kernel_m(
 		nblist[fo.nnb & (NB_PER_BLOCK-1)] = (uint16)j;
 		fo.nnb++;
 
+#ifdef INTERPOLATION
 		/* Backgound Acceleration Interpolation */
 		if (dx > NEGNUM && dy > NEGNUM  && dz > NEGNUM) {
 			fo.bgacc.x += jp.acc.x/fabsf(dx); // by YS Jo
@@ -270,6 +281,7 @@ __device__ void h4_kernel_m(
 			fo.norm_bgacc.y += 1/fabsf(dy);
 			fo.norm_bgacc.z += 1/fabsf(dz);
 		}
+#endif
 
 		rinv1 = 0.f;
 	}
@@ -726,8 +738,11 @@ void GPUNB_send(
 		int nj,
 		double mj[],
 		double xj[][3],
-		double vj[][3],
-		double aj[][3]){
+		double vj[][3]
+#ifdef INTERPOLATION
+		, double aj[][3]
+#endif
+		){
 	time_send -= get_wtime();
 	isend++;
 	nbody = nj;
@@ -738,7 +753,11 @@ void GPUNB_send(
 		// jp_host[j] = Jparticle(mj[j], xj[j], vj[j]);
 		//fprintf(stderr, "send: %d\n", j);
 		//fprintf(stderr, "send: %f, %f, %f \n", xj[j][0], xj[j][1], xj[j][2]);
+#ifdef INTERPOLATION
       jpbuf[j] = Jparticle(mj[j], xj[j], vj[j], aj[j]); //by YS Jo
+#else
+      jpbuf[j] = Jparticle(mj[j], xj[j], vj[j]); //by YS Jo
+#endif
 	}
 	// size_t jpsize = nj * sizeof(Jparticle);
 	// cudaMemcpy(jp_dev, jp_host, jpsize, cudaMemcpyHostToDevice);
@@ -755,7 +774,9 @@ void GPUNB_regf(
                 double acc[][3],
                 double jrk[][3],
                 double pot[],
+#ifdef INTERPOLATION
 								double bgacc[][3],
+#endif
                 int lmax,
                 int nnbmax,
                 int *listbase,
@@ -832,6 +853,7 @@ void GPUNB_regf(
   for(int i=0; i<ni; i++){
     Force &fo = fobuf[i];
 		//by YS Jo
+#ifdef INTERPOLATION
 		//bgacc[i][0] = fo.bgacc.x/fo.norm_bgacc.x;
 		//bgacc[i][1] = fo.bgacc.y/fo.norm_bgacc.y;
 		//bgacc[i][2] = fo.bgacc.z/fo.norm_bgacc.z;
@@ -840,6 +862,7 @@ void GPUNB_regf(
 		acc[i][1]   = fo.acc.y+bgacc[i][1];
 		acc[i][2]   = fo.acc.z+bgacc[i][2];
 		*/
+#endif
     acc[i][0] = fo.acc.x;
     acc[i][1] = fo.acc.y;
     acc[i][2] = fo.acc.z;
@@ -911,6 +934,7 @@ extern "C" {
   void gpunb_return_(){
     GPUNB_return();
   }
+#ifdef INTERPOLATION
   void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3], double aj[][3]){
     GPUNB_send(*nj, mj, xj, vj, aj);
   }
@@ -920,6 +944,18 @@ extern "C" {
                    double pot[], double bgacc[][3], int *lmax, int *nnbmax, int *list, int *m_flag){
     GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, bgacc, *lmax, *nnbmax, list, *m_flag);
   }
+#else
+  void gpunb_send_(int *nj, double mj[], double xj[][3], double vj[][3]){
+    GPUNB_send(*nj, mj, xj, vj);
+  }
+  void gpunb_regf_(int *ni, double h2[], double dtr[], double xi[][3],
+
+                   double vi[][3], double acc[][3], double jrk[][3],
+                   double pot[], int *lmax, int *nnbmax, int *list, int *m_flag){
+    GPUNB_regf(*ni, h2, dtr, xi, vi, acc, jrk, pot, *lmax, *nnbmax, list, *m_flag);
+  }
+#endif
+
   void gpunb_profile_(int *irank){
     GPUNB_profile(*irank);
   }
