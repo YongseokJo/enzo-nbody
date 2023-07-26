@@ -128,7 +128,7 @@ C$$$      END IF
 
         DO 23 K=1,3
           FREG(K) = FREG(K) + FENZO(K,I)
-          FREG(K) = FREG(K) - gravn*xi(K)
+          !FREG(K) = FREG(K) - gravn*xi(K)
    23   CONTINUE
 
 *       end added by sykim
