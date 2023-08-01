@@ -1783,6 +1783,7 @@ class grid
 			for (int dim=0; dim<MAX_DIMENSION+1; dim++ ) {
 				for (int i=0; i<NumberOfParticles; i++) {
 					ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAccelerationNoStar[dim][i];
+					//ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAcceleration[dim][i];
 				}
 				delete [] ParticleAccelerationNoStar[dim];
 				ParticleAccelerationNoStar[dim] = NULL;

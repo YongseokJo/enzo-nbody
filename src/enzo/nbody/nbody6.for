@@ -191,6 +191,27 @@
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
 
+
+        ! output
+        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
+        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+        write(OUTFILE,OUTFORM) 'output_',OUTC
+        OPEN (UNIT=3,STATUS='UNKNOWN',
+     &         FILE=OUTFILE)
+
+        OUTCNUM = NAME(J)
+        DO J = 1, EN
+
+          WRITE (3,
+     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
+     &          f20.8,f20.8,f20.8,f20.8,f20.8,f20.8)')  
+     &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
+     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
+        END DO
+
+        CLOSE(3)
+      OUTC = OUTC + 1
+
 *-----end-added-by-sykim--------------------------------------------*
 
 
@@ -210,10 +231,8 @@
 *     move the variable recieved from ENZO to nbody
 
       DO IS = 1,N
-         
          EIDINIT(IS) = EID(IS)
          BODY(IS) = EBODY(IS)/EMASSU
-         
          DO JS = 1,3
            X(JS,IS) = EX(JS,IS)/ELENGTHU
            XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
@@ -474,14 +493,6 @@
 
        END DO
 
-          DELTAT = EDT/ETIMEU
-          TNEXT = TNEXT + DELTAT  ! is it right? SY
-          
-          write (6,*) 'timesteps', TNEXT, DELTAT
-
-          write (6,*) 'recieved and restarting'
-         
-
 
         ! output
         OUTCNUM = INT(LOG10(REAL(OUTC)))+1
@@ -495,15 +506,20 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8,I5, f20.8)')  
+     &          f20.8,f20.8,f20.8,f20.8,f20.8, f20.8)')  
      &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), EP(J), OUTCNUM, TNEXT*ETIMEU
+     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
         END DO
 
         CLOSE(3)
       OUTC = OUTC + 1
 
 
+          DELTAT = EDT/ETIMEU
+          TNEXT = TNEXT + DELTAT  ! is it right? SY
+
+          write (6,*) 'timesteps', TNEXT, DELTAT
+          write (6,*) 'recieved and restarting'
 
 
 *----end-added-by-YS-----------------------------------------------------*

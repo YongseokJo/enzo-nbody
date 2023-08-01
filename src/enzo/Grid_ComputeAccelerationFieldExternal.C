@@ -370,9 +370,9 @@ int grid::ComputeAccelerationFieldExternal()
 				ParticleAcceleration[1][i] -= accel*ypos;
 				ParticleAcceleration[2][i] -= accel*zpos;
 #ifdef NBODY	
-				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
-				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
-				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
+				ParticleAccelerationNoStar[0][i] -= accel*xpos;
+				ParticleAccelerationNoStar[1][i] -= accel*ypos;
+				ParticleAccelerationNoStar[2][i] -= accel*zpos;
 #endif
 			} // end: loop over number of particles
 
@@ -601,9 +601,9 @@ int grid::ComputeAccelerationFieldExternal()
 						+ accelcylR*zdisk
 						+ accelcylz*AngularMomentumz);
 #ifdef NBODY
-				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
-				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
-				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
+				//ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
+				//ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
+				//ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
 #endif
 
 
@@ -735,9 +735,10 @@ int grid::ComputeAccelerationFieldExternal()
 				ParticleAcceleration[1][i] += -g*ypos/r;
 				ParticleAcceleration[2][i] += -g*zpos/r;
 #ifdef NBODY
-				ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
-				ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
-				ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
+				ParticleAccelerationNoStar[0][i] +=  -g*xpos/r;
+				ParticleAccelerationNoStar[1][i] +=  -g*ypos/r;
+				ParticleAccelerationNoStar[2][i] +=  -g*zpos/r;
+
 #endif
 			}
 
@@ -816,9 +817,10 @@ int grid::ComputeAccelerationFieldExternal()
 					ParticleAcceleration[1][i] += accel_field[1][i];
 					ParticleAcceleration[2][i] += accel_field[2][i];
 #ifdef NBODY
-					ParticleAccelerationNoStar[0][i] = ParticleAcceleration[0][i];
-					ParticleAccelerationNoStar[1][i] = ParticleAcceleration[1][i];
-					ParticleAccelerationNoStar[2][i] = ParticleAcceleration[2][i];
+					ParticleAccelerationNoStar[0][i] += accel_field[0][i];
+					ParticleAccelerationNoStar[1][i] += accel_field[1][i];
+					ParticleAccelerationNoStar[2][i] += accel_field[2][i];
+
 #endif
 				}
 

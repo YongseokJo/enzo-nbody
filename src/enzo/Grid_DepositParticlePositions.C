@@ -94,7 +94,9 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	float TimeDifference = 0;
 	FLOAT LeftEdge[MAX_DIMENSION], OriginalLeftEdge[MAX_DIMENSION];
 	float *DepositFieldPointer, *OriginalDepositFieldPointer;
+#ifdef NBODY
 	int NoStarIndex = NoStar ? 1 : 0;
+#endif
 
 
 	/* 1) GravitatingMassField. */
@@ -104,9 +106,9 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassField(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer       = TargetGrid->GravitatingMassField[NoStarIndex];
+		DepositFieldPointer = TargetGrid->GravitatingMassField[NoStarIndex];
 #else
-		DepositFieldPointer       = TargetGrid->GravitatingMassField;
+		DepositFieldPointer = TargetGrid->GravitatingMassField;
 #endif
 		CellSize            = TargetGrid->GravitatingMassFieldCellSize;
 		CloudSize           = CellWidth[0][0];
@@ -123,7 +125,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassFieldParticles(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer       = TargetGrid->GravitatingMassFieldParticles[NoStarIndex];
+		DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles[NoStarIndex];
 #else
 		DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles;
 #endif
@@ -274,8 +276,39 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 		/* If required, Change the mass of particles in this grid. */
 
-		if (MassFactor != 1.0 || 
-				((StarParticleCreation == (1 << SINK_PARTICLE)) && 
+#ifdef NBODY
+		if (NoStar) {
+			ParticleMassTemp = new float[NumberOfParticles];
+			float MassFactorTemp = 1.;
+
+			if (MassFactor != 1.0 ||
+					((StarParticleCreation == (1 << SINK_PARTICLE)) &&
+					 SmoothField == TRUE)) 
+				MassFactorTemp = MassFactor;
+
+			for (i = 0; i < NumberOfParticles; i++) {
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY) // suspicous
+					ParticleMassTemp[i] = 0;
+				else
+					ParticleMassTemp[i] = ParticleMass[i]*MassFactorTemp;
+			}
+			ParticleMassPointer = ParticleMassTemp;
+		} else {
+			if (MassFactor != 1.0 ||
+					((StarParticleCreation == (1 << SINK_PARTICLE)) &&
+					 SmoothField == TRUE)) {
+				ParticleMassTemp = new float[NumberOfParticles];
+
+				for (i = 0; i < NumberOfParticles; i++)
+					ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
+				ParticleMassPointer = ParticleMassTemp;
+			}
+			else
+				ParticleMassPointer = ParticleMass;
+		}
+#else
+		if (MassFactor != 1.0 ||
+				((StarParticleCreation == (1 << SINK_PARTICLE)) &&
 				 SmoothField == TRUE)) {
 			ParticleMassTemp = new float[NumberOfParticles];
 
@@ -283,26 +316,9 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
 			ParticleMassPointer = ParticleMassTemp;
 		}
-#ifdef NBODY
-		else if (NoStar) {
-#define no_NBODY_NOSTAR_GRAVITY
-#ifdef NBODY_NOSTAR_GRAVITY
+		else
 			ParticleMassPointer = ParticleMass;
-#else
-			ParticleMassPointer = new float[NumberOfParticles];
-			for (i = 0; i < NumberOfParticles; i++) {
-				if (ParticleType[i] == PARTICLE_TYPE_STAR) {
-					ParticleMassPointer[i] = 0.0;
-				} else {
-					ParticleMassPointer[i] = ParticleMass[i]*MassFactor;
-				}
-			}
 #endif
-		}
-#endif
-		else {
-			ParticleMassPointer = ParticleMass;
-		}
 
 
 
