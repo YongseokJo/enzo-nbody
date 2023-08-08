@@ -88,7 +88,6 @@ int grid::UpdateParticlePosition(float TimeStep, int OffProcessorUpdate)
     /* wrap particle positions for periodic case.
        (now done in CommunicationTransferParticles) */
  
-      
     }
   }
 

@@ -69,7 +69,11 @@ int RK2SecondStepBaryonDeposit = 0;
 /* InterpolateBoundaryFromParent function */
 int FindField(int field, int farray[], int numfields);
  
+#ifdef NBODY
 int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar)
+#else
+int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime)
+#endif
 {
  
   /* If this doesn't concern us, return. */

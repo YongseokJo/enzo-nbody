@@ -96,6 +96,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	float *DepositFieldPointer, *OriginalDepositFieldPointer;
 #ifdef NBODY
 	int NoStarIndex = NoStar ? 1 : 0;
+	//fprintf(stderr, "NoStarIndex=%d", NoStarIndex);
 #endif
 
 
@@ -293,7 +294,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 					ParticleMassTemp[i] = ParticleMass[i]*MassFactorTemp;
 			}
 			ParticleMassPointer = ParticleMassTemp;
-		} else {
+		} else { // NoStar
 			if (MassFactor != 1.0 ||
 					((StarParticleCreation == (1 << SINK_PARTICLE)) &&
 					 SmoothField == TRUE)) {
@@ -306,6 +307,11 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			else
 				ParticleMassPointer = ParticleMass;
 		}
+		ParticleMassTemp = new float[NumberOfParticles];
+
+		for (i = 0; i < NumberOfParticles; i++)
+			ParticleMassTemp[i] = ParticleMass[i]*MassFactor;
+		ParticleMassPointer = ParticleMassTemp;
 #else
 		if (MassFactor != 1.0 ||
 				((StarParticleCreation == (1 << SINK_PARTICLE)) &&

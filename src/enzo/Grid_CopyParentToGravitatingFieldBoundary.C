@@ -183,7 +183,6 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
 #else	
 				GravitatingMassField[gravityindex] =
 					ParentGrid->GravitatingMassField[parentindex+iparent];
-
 #endif
 			}
 		}
@@ -193,24 +192,24 @@ int grid::CopyParentToGravitatingFieldBoundary(grid *ParentGrid)
  
   /* Clean up parent. */
  
-  if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
+	if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
 #ifdef NBODY
-			delete [] ParentGrid->GravitatingMassField[0];
-			ParentGrid->GravitatingMassField[0] = NULL;
+		delete [] ParentGrid->GravitatingMassField[0];
+		ParentGrid->GravitatingMassField[0] = NULL;
 #else
-    delete [] ParentGrid->GravitatingMassField;
-    ParentGrid->GravitatingMassField = NULL;
+		delete [] ParentGrid->GravitatingMassField;
+		ParentGrid->GravitatingMassField = NULL;
 #endif
   }
  
   /* Add one to field to account for one subtracted in ComovingSourceTerm. */
  
   if (ComovingCoordinates)
-    for (i = 0; i < size; i++) {
+		for (i = 0; i < size; i++) {
 #ifdef NBODY
-				GravitatingMassField[0][i] += 1.0;
+			GravitatingMassField[0][i] += 1.0;
 #else
-      GravitatingMassField[i] += 1.0;
+			GravitatingMassField[i] += 1.0;
 #endif
 		}
   /* Clear the region of GMF that will overlap with real grid points

@@ -1352,7 +1352,12 @@ class grid
 
 		/* Gravity: deposit baryons into target GravitatingMassField. */
 
+#ifdef NBODY
 		int DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar); // by YS
+#else
+		int DepositBaryons(grid *TargetGrid, FLOAT DepositTime); // by YS
+#endif
+
 
 		// -------------------------------------------------------------------------
 		// Functions for accessing various grid-based information

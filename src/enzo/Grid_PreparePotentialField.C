@@ -89,14 +89,36 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	}
 
 
-#define NO_NBODY_NOSTAR_GRAVITY
+#ifdef NBODY
+#define NBODY_NOSTAR_GRAVITY
 #ifdef NBODY_NOSTAR_GRAVITY
-	float diff=0.0;
-	for (int i=0; i<size; i++) {
-		diff = GravitatingMassField[0][i] - GravitatingMassField[1][i];
-		if (diff != 0.0) fprintf(stdout, "diff=%f\n",diff);
+
+	fprintf(stderr, "In PreparePotentialField.\n");
+		//by YS Jo for test
+	int ndiff=0;
+	int npdiff=0;
+	float diff=0;
+	float pdiff=0;
+  for (int i = 0; i < size; i++) {
+		diff = abs(GravitatingMassField[0][i]); //- GravitatingMassField[1][i]);
+		//pdiff = abs(GravitatingMassFieldParticles[0][i] - GravitatingMassFieldParticles[1][i]);
+		if (diff>1e-5) {
+			fprintf(stderr, "In PreparePotentialField, diff = %f\n", diff);
+			ndiff++;
+		}
+		/*
+		if (pdiff>1e-5) {
+			fprintf(stderr, "pdiff = %f\n", pdiff);
+			npdiff++;
+		}
+		*/
+
 	}
+	fprintf(stderr, "ndiff = %d\n", ndiff);
+	//fprintf(stderr, "npdiff = %d\n", npdiff);
 #endif
+#endif
+	fprintf(stderr, "Now okay?\n");
 
 	/* Declarations. */
 
@@ -240,8 +262,8 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	float maxPot=-1e30, minPot=1e30;    
 	for (int i=0;i<size; i++) {
 #ifdef NBODY
-		maxPot = max(maxPot,PotentialField[i][0]);
-		minPot = min(minPot,PotentialField[i][0]);
+		maxPot = max(maxPot,PotentialField[0][i]);
+		minPot = min(minPot,PotentialField[0][i]);
 #else
 		maxPot = max(maxPot,PotentialField[i]);
 		minPot = min(minPot,PotentialField[i]);

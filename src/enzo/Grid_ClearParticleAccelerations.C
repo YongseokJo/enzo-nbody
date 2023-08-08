@@ -100,7 +100,7 @@ int grid::ClearParticleAccelerationsNoStar()
 
 			/* Error check. */
 
-			if (ParticleAcceleration[dim] != NULL)
+			if (ParticleAccelerationNoStar[dim] != NULL)
 				fprintf(stderr, "ClearParticleAccelerations: Field not NULL.\n");
 
 			/* Allocate accleration field. */
@@ -108,7 +108,7 @@ int grid::ClearParticleAccelerationsNoStar()
 																																			 //number of nbody stars
 
 			/* Clear it. */
-			for (i = 0; i < NumberOfStars; i++) {
+			for (i = 0; i < NumberOfParticles; i++) {
 					ParticleAccelerationNoStar[dim][i] = 0;  //by YS, we have to change this to
 																										 //number of nbody stars
 			}

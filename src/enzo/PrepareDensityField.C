@@ -179,7 +179,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #ifdef FORCE_MSG_PROGRESS 
 		CommunicationBarrier();
 #endif
-		CommunicationBarrier();// by Jo
 
 		if (traceMPI) 
 			fprintf(tracePtr, "PrepareDensityField: Enter DepositParticleMassField"
@@ -195,13 +194,11 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		/* Finally, receive the data and process it. */
 
 		fprintf(stdout,"4-2\n"); // by YS
-		CommunicationReceiveHandler();
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("DepositParticleMassField");
 	fprintf(stdout,"\nProc:%d 4-2 ends.\n", MyProcessorNumber); //by YS
 
-	CommunicationBarrier(); //by YS
 
 #ifdef FORCE_BUFFER_PURGE
 	CommunicationBufferPurge();
@@ -230,7 +227,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #ifdef FORCE_MSG_PROGRESS 
 		CommunicationBarrier();
 #endif
-		CommunicationBarrier();// by Jo
 
 		if (traceMPI) 
 			fprintf(tracePtr, "PrepareDensityField: Enter DepositParticleMassField"
@@ -255,18 +251,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 	////////////// GravitatingMassFieldParticles for No Star Ends
 
-	fprintf(stdout,"\nProc:%d 4-20 ends.\n", MyProcessorNumber); //by YS
-	fprintf(stdout,"\nProc:%d # of grids:%d.\n", MyProcessorNumber,NumberOfGrids); //by YS
-	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
-		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
-		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
-			//fprintf(stdout,"\nProc:%d, Grav Field Part: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[0][0]); //by YS
-			//fprintf(stdout,"Proc:%d, Grav Field Part NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[1][0]);//by YS
-		}
-	}
-	fprintf(stdout,"Proc:%d, Go to 4-3?\n",MyProcessorNumber); // by YS
 
-	CommunicationBarrier(); //by YS
 
 
 
@@ -363,7 +348,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 		fprintf(stdout,"4-6"); // by YS
-		CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */
 		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
 
@@ -554,32 +538,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 
-	CommunicationBarrier();
 
-
-	//CommunicationBarrier(); //by YS
-
-	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
-		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
-		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
-			if (Grids[grid1]->GridData->GetGravitatingMassField()[0]==NULL) 
-				fprintf(stdout,"\nProc:%d, Grav Field is Null.\n", MyProcessorNumber); //by YS
-			else
-				fprintf(stdout,"\nProc:%d, Grav Field: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassField()[0][0]); //by YS
-			if (Grids[grid1]->GridData->GetGravitatingMassField()[1]==NULL) 
-				fprintf(stdout,"\nProc:%d, Grav Field No Star is Null.\n", MyProcessorNumber); //by YS
-			else
-				fprintf(stdout,"Proc:%d, Grav Field NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetGravitatingMassField()[1][0]);//by YS
-		}
-	}
-
-
-
-
-
-
-
-	CommunicationBarrier(); //by YS
 
 
 
@@ -713,7 +672,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("CopyOverlappingMassField");
-	fprintf(stdout,"4-10\n"); // by YS
+	fprintf(stdout,"4-10?\n"); // by YS
 
 	/************************************************************************/
 	// No Star Ends
@@ -760,8 +719,8 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	/************************************************************************/
 	/* Compute the potential for the top grid. */
 
-	//fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
-	CommunicationBarrier(); //by YS 
+	fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
+	//CommunicationBarrier(); //by YS 
 	//fprintf(stdout,"Proc:%d, Post barrier\n",MyProcessorNumber);//by YS 
 
 	if (level == 0) {
@@ -781,11 +740,13 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		LCAPERF_STOP("ComputePotentialFieldLevelZero");
 	}
 
-	CommunicationBarrier();// by Jo
+	//CommunicationBarrier();// by Jo
 	fprintf(stdout,"4-11"); // by YS
 
 
 
+	/*
+	
 	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
 		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
@@ -799,7 +760,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 				fprintf(stdout,"Proc:%d, Grav Field NoStar: %e\n", MyProcessorNumber, Grids[grid1]->GridData->GetPotentialField()[1][0]);//by YS
 		}
 	}
-
+*/
 
 
 

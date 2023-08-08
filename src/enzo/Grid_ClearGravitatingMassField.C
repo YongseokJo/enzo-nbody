@@ -43,8 +43,9 @@ int grid::ClearGravitatingMassField()
   /* compute size of the gravitating mass field */
  
   int i, dim, size = 1;
-  for (dim = 0; dim < GridRank; dim++)
+	for (dim = 0; dim < GridRank; dim++) {
     size *= GravitatingMassFieldDimension[dim];
+	}
  
 	//fprintf(stdout,"Proc:%d, Size: %d\n", MyProcessorNumber, size); // by YS
   /* allocate and clear the field */
@@ -54,15 +55,15 @@ int grid::ClearGravitatingMassField()
  
 		//fprintf(stdout,"Proc:%d, is this NULL\n", MyProcessorNumber); // by YS
 #ifdef NBODY
-  if (GravitatingMassField[0] == NULL) {
+  if (GravitatingMassField[0] == NULL)
      GravitatingMassField[0] = new float[size];
+  if (GravitatingMassField[0] == NULL)
+    ENZO_FAIL("malloc error (out of memory?)\n");
 #else
+  if (GravitatingMassField == NULL) 
     GravitatingMassField = new float[size];
 #endif
-		}
-  if (GravitatingMassField[0] == NULL) {
-    ENZO_FAIL("malloc error (out of memory?)\n");
-  }
+
  
   for (i = 0; i < size; i++) {
 #ifdef NBODY

@@ -125,14 +125,36 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
 #else /* SMOOTH_SOURCE */
  
+		//by YS Jo for test
+	int ndiff=0;
+	int npdiff=0;
+	float diff=0;
+	float pdiff=0;
   for (i = 0; i < size; i++) {
 #ifdef NBODY
     rhs[0][i] = GravitatingMassField[0][i] * Constant;
-    rhs[1][i] = GravitatingMassField[1][i] * Constant;
+    rhs[1][i] = GravitatingMassField[0][i] * Constant;
+
+		diff = abs(GravitatingMassField[0][i] - GravitatingMassField[1][i]);
+		pdiff = abs(GravitatingMassFieldParticles[0][i] - GravitatingMassFieldParticles[1][i]);
+		if (diff>1e-5) {
+			fprintf(stderr, "In SolveForPotential, diff = %f\n", diff);
+			ndiff++;
+		}
+		if (pdiff>1e-5) {
+			fprintf(stderr, "pdiff = %f\n", pdiff);
+			npdiff++;
+		}
 #else
     rhs[i] = GravitatingMassField[i] * Constant;
 #endif
+
 	}
+	fprintf(stderr, "ndiff = %d\n", ndiff);
+	fprintf(stderr, "npdiff = %d\n", npdiff);
+
+#ifdef NBODY
+#endif
  
 #endif /* SMOOTH_SOURCE */
  
@@ -200,7 +222,7 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 		printf("i: %i \t SolvedSub %g\n", i, PotentialField[1][igrid]);
 #else
 		printf("i: %i \t SolvedSub %g\n", i, PotentialField[igrid]);
-#endif
+#endif //NBODY
 	}
   float maxPot=-1e30, minPot=1e30;    
   float maxGM=-1e30, minGM=1e30;
@@ -215,12 +237,12 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 		minPot = min(minPot,PotentialField[i]);
     maxGM = max(maxGM,GravitatingMassField[i]);
     minGM = min(minGM,GravitatingMassField[i]);
-#endif
+#endif // NBODY
   }
   if (debug1) printf("SolvedPotential: Potential minimum: %g \t maximum: %g\n", minPot, maxPot);
   if (debug1) printf("SolvedPotential: GM minimum: %g \t maximum: %g\n", minGM, maxGM);
 
-#endif
+#endif // POTENTIALDEBUGOUTPUT
  
   LCAPERF_STOP("grid_SolveForPotential");
   return SUCCESS;
