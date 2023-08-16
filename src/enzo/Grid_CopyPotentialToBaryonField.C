@@ -102,12 +102,15 @@ int grid::CopyPotentialToBaryonField()
 	//	BaryonField[field][jj++] = GravitatingMassField[index] + 1; // use this for debugging 
 #ifdef NBODY	
 				BaryonField[field][jj++] = PotentialField[0][index];
+				// debuggin:
+				maxPot = max(maxPot,PotentialField[0][index]);
+				minPot = min(minPot,PotentialField[0][index]);
 #else
 				BaryonField[field][jj++] = PotentialField[index];
+				// debuggin:
+				maxPot = max(maxPot,PotentialField[index]);
+				minPot = min(minPot,PotentialField[index]);
 #endif
-	// debuggin:
-	maxPot = max(maxPot,PotentialField[0][index]);
-	minPot = min(minPot,PotentialField[0][index]);
       }
  
     }

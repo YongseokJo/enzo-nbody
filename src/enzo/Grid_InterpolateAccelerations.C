@@ -233,9 +233,12 @@ int grid::InterpolateAccelerations(grid *FromGrid)
 
   /* Clean up if we have transfered data. */
 
-  if (MyProcessorNumber != FromGrid->ProcessorNumber)
-
+  if (MyProcessorNumber != FromGrid->ProcessorNumber) {
     FromGrid->DeleteAllFields();
+#ifdef NBODY
+    FromGrid->DeleteAllFieldsNoStar();
+#endif
+	}
  
   return SUCCESS;
 }

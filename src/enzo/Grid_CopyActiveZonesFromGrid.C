@@ -278,6 +278,9 @@ int grid::CopyActiveZonesFromGrid(grid *OtherGrid, FLOAT EdgeOffset[MAX_DIMENSIO
   } // end while(true)
   if (MyProcessorNumber != OtherGrid->ProcessorNumber) {
     OtherGrid->DeleteAllFields();
+#ifdef NBODY
+    OtherGrid->DeleteAllFieldsNoStar();
+#endif
     }
 
   delete [] shift;

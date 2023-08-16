@@ -250,6 +250,40 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 #endif
 	////////////// GravitatingMassFieldParticles for No Star Ends
+	///
+	///
+	///
+
+// by YS debug
+#ifdef NBODY 
+
+	int ndiff=0;
+	float diff=0;
+	float org,nostar;
+	int size=1;
+	for (StartGrid = 0; StartGrid< NumberOfGrids; StartGrid+=GRIDS_PER_LOOP) {
+		EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+		ndiff=0;
+		diff=0;
+		for (grid1 = StartGrid; grid1 < EndGrid; grid1++) {
+			for (int dim=0; dim<Grids[grid1]->GridData->GetGridRank(); dim++) {
+				size *= Grids[grid1]->GridData->ReturnGravitatingMassFieldDimension(dim);
+			}
+			/*
+			for (int i=0; i<size; i++) {
+				org = Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[0][i];
+				nostar = Grids[grid1]->GridData->GetGravitatingMassFieldParticles()[1][i];
+				diff = abs(org - nostar);
+				if (diff>1e-5) {
+					fprintf(stderr, "In EvolveLevel, diff = %f\n", diff);
+					ndiff++;
+				} 
+			}*/
+		}
+	}
+	fprintf(stderr, "In EvolveLevel, ndiff = (%d/%d)\n", ndiff,size);
+#endif
 
 
 
@@ -348,6 +382,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 		fprintf(stdout,"4-6"); // by YS
+		CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */
 		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
 
@@ -501,7 +536,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 #ifdef FORCE_MSG_PROGRESS 
-	CommunicationBarrier();
+	CommunicationBarrier(); //by YS
 #endif
 
 	/************************************************************************/
@@ -538,6 +573,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 
+	CommunicationBarrier(); //by YS
 
 
 
@@ -1070,7 +1106,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // end: if (reallevel > MaximumGravityRefinementLevel)
 
-	CommunicationBarrier();// by YS Jo
+	//CommunicationBarrier();// by YS Jo
 	fprintf(stdout,"4-16"); // by YS
 
 

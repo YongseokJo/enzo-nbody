@@ -143,7 +143,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 #endif
 {
 
-	CommunicationBarrier();// by YS
+	//CommunicationBarrier();// by YS
 	fprintf(stdout,"4-10-0\n"); // by YS
 	/* Static declarations (for Green's function). */
 
@@ -182,7 +182,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 	/* If we have load balanced the root grids, then we have to
 		 recalculate the Green's function. */
 
-	CommunicationBarrier();
+	//CommunicationBarrier();
 	fprintf(stdout,"4-10-1\n"); // by YS
 	if (NumberOfProcessors > 1 && LoadBalancing > 1 &&
 			MetaData->CycleNumber % LoadBalancingCycleSkip == 0 &&
@@ -220,7 +220,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 					ENZO_FAIL("Error in PrepareIsolatedGreensFunction.");
 				}
 
-			CommunicationBarrier();
+			//CommunicationBarrier();
 			fprintf(stdout,"4-10-2\n"); // by YS
 			/* Forward FFT Greens function. */
 
@@ -231,7 +231,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 						FFT_FORWARD, TransposeOnCompletion) == FAIL) {
 				ENZO_FAIL("Error in CommunicationParallelFFT.");
 			}
-			CommunicationBarrier();
+			//CommunicationBarrier();
 			fprintf(stdout,"4-10-3\n"); // by YS
 
 			/* Clean up. */
@@ -245,7 +245,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 
 	} // end: if (FirstCall)
 
-	CommunicationBarrier();
+	//CommunicationBarrier();
 	fprintf(stdout,"4-10-30\n"); // by YS
 	/* ------------------------------------------------------------------- */
 	/* Generate FFT regions for density field. */
@@ -257,7 +257,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 			ENZO_FAIL("Error in grid->PrepareFFT.");
 		}
 
-	CommunicationBarrier();
+	//CommunicationBarrier();
 	fprintf(stdout,"4-10-4\n"); // by YS
 	/* If doing isolated BC's then double the domain size. */
 
@@ -366,7 +366,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 			ENZO_FAIL("Error in grid->PrepareFFT.");
 		}
 
-	CommunicationBarrier();
+	//CommunicationBarrier();
 	fprintf(stdout,"4-10-4 no\n"); // by YS
 	/* If doing isolated BC's then double the domain size. */
 

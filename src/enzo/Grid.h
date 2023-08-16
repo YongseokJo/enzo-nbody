@@ -871,6 +871,9 @@ class grid
 		/* Delete all the fields, but leave other grid data. */
 
 		void DeleteAllFields();
+#ifdef NBODY
+		void DeleteAllFieldsNoStar();
+#endif
 
 		/* Delete all the fields except for the particle data */
 

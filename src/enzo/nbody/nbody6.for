@@ -428,8 +428,8 @@
           write (0,*) 'fortran: FN =', N
 
           call MPI_BARRIER(ICOMM, ierr)
-          call MPI_SEND(EID, EN, MPI_INTEGER, 0, 250,
-     &           ICOMM, ierr)
+*          call MPI_SEND(EID, EN, MPI_INTEGER, 0, 250,
+*     &           ICOMM, ierr)
           DO  I = 1,3
           call MPI_SEND(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, ierr)

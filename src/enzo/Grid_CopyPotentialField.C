@@ -205,7 +205,6 @@ note: include buffer zones of this grid but not the other grid. */
 				OnBoundary = TRUE;
 
 			if (OnlyBoundary == TRUE && OnBoundary == FALSE) {
-
 				/* Only copy the endpoints. */
 #ifdef NBODY 
 				if (CopyPotentialFieldAverage == 2) {
@@ -493,13 +492,13 @@ note: include buffer zones of this grid but not the other grid. */
 					}
 
 			}
-	}
+		} // end for
 
-/* Clean up if we have transfered data. */
+	/* Clean up if we have transfered data. */
 
-if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-	OtherGrid->DeleteAllFields();
+	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
+		OtherGrid->DeleteAllFieldsNoStar();
 
 	return SUCCESS;
-	}
+}
 #endif

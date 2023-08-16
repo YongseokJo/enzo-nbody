@@ -106,6 +106,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			CommunicationInterBarrier();
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
+				//ierr = MPI_Recv(&NumberOfNbodyParticles, 1, MPI_INT, 1, 250, inter_comm, &status);
 				ierr = MPI_Recv(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm, &status);
 				/*
 				if (ierr == MPI_SUCCESS) {
@@ -139,7 +140,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			MPI_Wait(&request, &status);
 			*/
 
-			CommunicationBarrier();
+			//CommunicationBarrier();
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				MPI_Iscatterv(NbodyParticlePosition[dim], LocalNumberAll, start_index_all, MPI_DOUBLE,
 						NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
@@ -192,7 +193,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		MPI_Wait(&request, &status);
 		*/
 
-		CommunicationBarrier();
+		//CommunicationBarrier();
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
 			MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
 					NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,
@@ -214,7 +215,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		} // end else
 #endif
 
-		CommunicationBarrier();
+		//CommunicationBarrier();
 		fprintf(stderr,"Done?3\n");
 
 		/* Update Particle Velocity and Position Back to Grids */

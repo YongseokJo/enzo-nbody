@@ -125,7 +125,9 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
  
 #else /* SMOOTH_SOURCE */
  
-		//by YS Jo for test
+
+
+		//by YS debug
 	int ndiff=0;
 	int npdiff=0;
 	float diff=0;
@@ -133,7 +135,7 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   for (i = 0; i < size; i++) {
 #ifdef NBODY
     rhs[0][i] = GravitatingMassField[0][i] * Constant;
-    rhs[1][i] = GravitatingMassField[0][i] * Constant;
+    rhs[1][i] = GravitatingMassField[1][i] * Constant;
 
 		diff = abs(GravitatingMassField[0][i] - GravitatingMassField[1][i]);
 		pdiff = abs(GravitatingMassFieldParticles[0][i] - GravitatingMassFieldParticles[1][i]);
@@ -150,11 +152,11 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #endif
 
 	}
+	/*
 	fprintf(stderr, "ndiff = %d\n", ndiff);
 	fprintf(stderr, "npdiff = %d\n", npdiff);
+	*/
 
-#ifdef NBODY
-#endif
  
 #endif /* SMOOTH_SOURCE */
  

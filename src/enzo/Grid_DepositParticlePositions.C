@@ -307,6 +307,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			else
 				ParticleMassPointer = ParticleMass;
 		}
+		// by YS debug
 		ParticleMassTemp = new float[NumberOfParticles];
 
 		for (i = 0; i < NumberOfParticles; i++)

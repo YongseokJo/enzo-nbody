@@ -116,6 +116,7 @@ int grid::CommunicationSendRegion(grid *ToGrid, int ToProcessor,int SendField,
 		//  printf("SendRegion: RegionStart = %"ISYM" %"ISYM" %"ISYM"\n", RegionStart[0], RegionStart[1], RegionStart[2]);
 		index = 0;
 
+		// looks suspicious by YS debug
 		if (NewOrOld == NEW_AND_OLD || NewOrOld == NEW_ONLY)
 			for (field = 0; field < max(NumberOfBaryonFields, SendField+1); field++)
 				if (field == SendField || SendField == ALL_FIELDS) {

@@ -90,8 +90,9 @@ int grid::PreparePotentialField(grid *ParentGrid)
 
 
 #ifdef NBODY
-#define NBODY_NOSTAR_GRAVITY
-#ifdef NBODY_NOSTAR_GRAVITY
+	// by YS debug
+#define no_NBODY_NOSTAR_GRAVITY1
+#ifdef NBODY_NOSTAR_GRAVITY1
 
 	fprintf(stderr, "In PreparePotentialField.\n");
 		//by YS Jo for test
@@ -324,6 +325,35 @@ int grid::PreparePotentialFieldNoStar(grid *ParentGrid)
 			delete [] PotentialField[1];
 		PotentialField[1] = new float[size];
 	}
+
+	// by YS debug
+#define no_NBODY_NOSTAR_GRAVITY2
+#ifdef NBODY_NOSTAR_GRAVITY2
+
+	fprintf(stderr, "In PreparePotentialField.\n");
+		//by YS Jo for test
+	int ndiff=0;
+	int npdiff=0;
+	float diff=0;
+	float pdiff=0;
+  for (int i = 0; i < size; i++) {
+		//diff = abs(GravitatingMassField[0][i] - GravitatingMassField[1][i]);
+		diff =  GravitatingMassField[1][i];
+		//pdiff = abs(GravitatingMassFieldParticles[0][i] - GravitatingMassFieldParticles[1][i]);
+		if (diff>1e-5) {
+			fprintf(stderr, "In PreparePotentialField, diff = %f\n", diff);
+			ndiff++;
+		}
+		/*
+		if (pdiff>1e-5) {
+			fprintf(stderr, "pdiff = %f\n", pdiff);
+			npdiff++;
+		}
+		*/
+	}
+	fprintf(stderr, "ndiff = %d\n", ndiff);
+	//fprintf(stderr, "npdiff = %d\n", npdiff);
+#endif
 
 
 	/* Declarations. */

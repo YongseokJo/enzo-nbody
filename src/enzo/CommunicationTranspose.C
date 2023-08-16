@@ -128,7 +128,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 	/* Loop over processor jumps (number of processors ahead to send). */
 
 	fprintf(stdout,"4-10-2-2-1\n"); // by YS
-			CommunicationBarrier(); //by YS
+			//CommunicationBarrier(); //by YS
 	for (n = 0; n < NumberOfProcessors; n++) {
 
 		/* Copy regions into communication buffer (or just set buffer
@@ -231,7 +231,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 			//	ENZO_VFAIL("Proc %"ISYM" MPI_Sendrecv error %"ISYM"\n", MyProcessorNumber,
 			//		status.MPI_ERROR)
 			//      }
-			CommunicationBarrier(); //by YS
+			//CommunicationBarrier(); //by YS
 			fprintf(stdout,"4-10-2-2-5\n"); // by YS
 			MPI_Irecv((void*) ReceiveBuffer, RecvCount, DataType, Source, 
 					MPI_TRANSPOSE_TAG, enzo_comm, &RequestHandle);

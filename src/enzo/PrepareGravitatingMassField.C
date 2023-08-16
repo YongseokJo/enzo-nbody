@@ -207,11 +207,12 @@ int PrepareGravitatingMassFieldNoStar1(HierarchyEntry *Grid)
 
   if (CommunicationDirection == COMMUNICATION_POST_RECEIVE ||
       CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
-		/*
+
+		// by YS debug
     if (CurrentGrid->InitializeGravitatingMassField(RefinementFactor) == FAIL){
       ENZO_FAIL("Error in grid->InitializeGravitatingMassField.\n");
     }
-		*/
+
     CurrentGrid->ClearGravitatingMassFieldNoStar();
   }
 

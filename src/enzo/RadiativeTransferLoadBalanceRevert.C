@@ -134,6 +134,9 @@ int RadiativeTransferLoadBalanceRevert(HierarchyEntry **Grids[], int *NumberOfGr
       temp_proc = Grids[level][i]->GridData->ReturnProcessorNumber();
       if (MyProcessorNumber == temp_proc && ori_proc != temp_proc) {
 	Grids[level][i]->GridData->DeleteAllFields();
+#ifdef NBODY
+	Grids[level][i]->GridData->DeleteAllFieldsNoStar();
+#endif
 	Grids[level][i]->GridData->DeleteSubgridMarker();
       }
     } // ENDFOR grids

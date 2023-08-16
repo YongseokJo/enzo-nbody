@@ -168,7 +168,6 @@ int grid::CopyOverlappingMassField(grid *OtherGrid,
 	/* Clean up if we have transfered data. */
 
 	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-
 		OtherGrid->DeleteAllFields();
 
 	return SUCCESS;
@@ -315,8 +314,7 @@ int grid::CopyOverlappingMassFieldNoStar(grid *OtherGrid,
 	/* Clean up if we have transfered data. */
 
 	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-
-		OtherGrid->DeleteAllFields();
+		OtherGrid->DeleteAllFieldsNoStar();
 
 	return SUCCESS;
 
