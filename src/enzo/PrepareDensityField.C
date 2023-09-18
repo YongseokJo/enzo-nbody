@@ -106,6 +106,17 @@ int ComputePotentialFieldLevelZero(TopGridData *MetaData,
 		HierarchyEntry *Grids[], int NumberOfGrids);
 #endif
 
+#ifdef NBODY
+#ifdef FAST_SIB
+int ComputePotentialFieldLevelZeroNoStar(TopGridData *MetaData,
+		SiblingGridList SiblingList[],
+		HierarchyEntry *Grids[], int NumberOfGrids);
+#else
+int ComputePotentialFieldLevelZeroNoStar(TopGridData *MetaData,
+		HierarchyEntry *Grids[], int NumberOfGrids);
+#endif
+#endif
+
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
 
@@ -151,6 +162,9 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	int NumberOfGrids = GenerateGridArray(LevelArray, level, &Grids);
 	SiblingGridList *SiblingList = SiblingGridListStorage[level];
 
+
+
+
 	/************************************************************************/
 	/* Grids: Deposit particles in their GravitatingMassFieldParticles.
 		 (Do a batch of grids at a time; this is a loop over the batches)
@@ -194,6 +208,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		/* Finally, receive the data and process it. */
 
 		fprintf(stdout,"4-2\n"); // by YS
+		CommunicationReceiveHandler();
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("DepositParticleMassField");
@@ -207,6 +222,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #ifdef FORCE_MSG_PROGRESS 
 	CommunicationBarrier();
 #endif
+
 
 
 	////////////// GravitatingMassFieldParticles for No Star
@@ -247,7 +263,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	} // ENDFOR grid batches
 	LCAPERF_STOP("DepositParticleMassField");
 
-
 #endif
 	////////////// GravitatingMassFieldParticles for No Star Ends
 	///
@@ -255,7 +270,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	///
 
 // by YS debug
-#ifdef NBODY 
+#ifdef NBODY_
 
 	int ndiff=0;
 	float diff=0;
@@ -573,7 +588,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 #endif
 
 
-	CommunicationBarrier(); //by YS
+	//CommunicationBarrier(); //by YS
 
 
 
@@ -741,8 +756,6 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
 
 
-
-
 	/************************************************************************/
 	/* Here Active particles have the opportunity to deposit mass into the
 		 temporary mass buffers.
@@ -776,8 +789,27 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		LCAPERF_STOP("ComputePotentialFieldLevelZero");
 	}
 
-	//CommunicationBarrier();// by Jo
-	fprintf(stdout,"4-11"); // by YS
+
+	CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
+
+#ifdef NBODY
+	if (level == 0) {
+		TIME_MSG("ComputePotentialFieldLevelZero");
+		LCAPERF_START("ComputePotentialFieldLevelZero");
+		TIMER_START("ComputePotentialFieldLevelZero");
+		if (traceMPI) 
+			fprintf(tracePtr, "PrepareDensityField: P(%"ISYM"): CPFLZero "
+					"(send-receive)\n", MyProcessorNumber);
+#ifdef FAST_SIB
+		ComputePotentialFieldLevelZeroNoStar(MetaData, SiblingList,
+				Grids, NumberOfGrids);
+#else
+		ComputePotentialFieldLevelZeroNoStar(MetaData, Grids, NumberOfGrids);
+#endif
+		TIMER_STOP("ComputePotentialFieldLevelZero");
+		LCAPERF_STOP("ComputePotentialFieldLevelZero");
+	}
+#endif
 
 
 
@@ -802,14 +834,26 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 
 
+
+
+/*================================================================================================================*/
+/*================================================================================================================*/
+/*================================================================================================================*/
+/*================================================================================================================*/
+/*================================================================================================================*/
+/*================================================================================================================*/
+
+
+
+
+
 	/************************************************************************/
 	/* Compute a first iteration of the potential and share BV's. */
-	int iterate;
 	if (level > 0) {
 		LCAPERF_START("SolveForPotential");
 		TIMER_START("SolveForPotential");
 		CopyPotentialFieldAverage = 1;
-		for (iterate = 0; iterate < PotentialIterations; iterate++) {
+		for (int iterate = 0; iterate < PotentialIterations; iterate++) {
 
 			if (iterate > 0)
 				CopyPotentialFieldAverage = 2;
@@ -918,7 +962,9 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 				CommunicationReceiveHandler();
 #endif
-
+			} // ENDFOR grid batches
+		} // ENDFOR iterations
+	} // ENDIF level > 0
 
 
 
@@ -927,6 +973,43 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 /******************************************************************************************/
 				//No Star Starts
 /******************************************************************************************/
+
+
+	/************************************************************************/
+	/* Compute a first iteration of the potential and share BV's. */
+	if (level > 0) {
+		LCAPERF_START("SolveForPotential");
+		TIMER_START("SolveForPotential");
+		CopyPotentialFieldAverage = 1;
+		for (int iterate = 0; iterate < PotentialIterations; iterate++) {
+
+			if (iterate > 0)
+				CopyPotentialFieldAverage = 2;
+
+
+			/*
+			for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
+				Grids[grid1]->GridData->SolveForPotential(level, EvaluateTime);
+				if (CopyGravPotential)
+					Grids[grid1]->GridData->CopyPotentialToBaryonField();
+			}
+			fprintf(stdout,"4-12"); // by YS
+
+			if (traceMPI) fprintf(tracePtr, "ITPOT post-recv\n");
+			*/
+
+
+#ifdef FORCE_MSG_PROGRESS 
+			CommunicationBarrier();
+#endif
+
+
+			TIME_MSG("CopyPotentialField");
+			for (StartGrid = 0; StartGrid < NumberOfGrids; 
+					StartGrid += GRIDS_PER_LOOP) {
+				EndGrid = min(StartGrid + GRIDS_PER_LOOP, NumberOfGrids);
+
+
 #ifdef BITWISE_IDENTICALITY
 				CommunicationDirection = COMMUNICATION_SEND_RECEIVE;
 #else
@@ -1015,14 +1098,13 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 /******************************************************************************************/
 				//No Star Ends
 /******************************************************************************************/
-#endif // ENDIF nbody
 			} // ENDFOR grid batches
 		} // ENDFOR iterations
 		CopyPotentialFieldAverage = 0;
 		TIMER_STOP("SolveForPotential");
 		LCAPERF_STOP("SolveForPotential");
 	} // ENDIF level > 0
-
+#endif // ENDIF nbody
 
 
 

@@ -133,7 +133,8 @@ int grid::UpdateParticleVelocity(float TimeStep)
 
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
-				ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY ) 
+					ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
 #endif
 			}
 

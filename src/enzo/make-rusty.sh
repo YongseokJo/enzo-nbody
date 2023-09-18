@@ -25,8 +25,9 @@ make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks
 make show-config
 make show-flags
 make -j3
-cp enzo.exe enzo_spare.exe
-#cp enzo.exe enzo_test.exe
+#cp enzo.exe enzo_spare.exe
+#cp enzo.exe enzo_spare_v100.exe
+cp enzo.exe enzo_test.exe
 #cp enzo.exe enzo_const.exe
 #cp enzo.exe enzo_1e6.exe
 echo "Make done!"

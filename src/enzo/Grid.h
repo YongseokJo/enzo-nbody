@@ -1261,6 +1261,7 @@ class grid
 		/* Gravity: set the potential boundary for isolated BC's */
 
 		int SetIsolatedPotentialBoundary();
+		int SetIsolatedPotentialBoundaryNoStar();
 
 		/* Gravity: Set the external acceleration fields. */
 
@@ -1586,10 +1587,10 @@ class grid
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
-				if (ParticleAccelerationNoStar[dim] != NULL) {
+				//if (ParticleAccelerationNoStar[dim] != NULL) {
 					delete [] ParticleAccelerationNoStar[dim];
 					ParticleAccelerationNoStar[dim] = NULL;
-				}
+				//}
 #endif
 				//#endif
 				delete [] ActiveParticleAcceleration[dim];
@@ -1781,6 +1782,20 @@ class grid
 			else
 				return 0;
 		}
+
+#define GravTest
+#ifdef GravTest
+		void ReturnParticles(int *numpart, float *pos[], float *acc[]) {
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++ ) {
+				for (int i=0; i<NumberOfParticles; i++) {
+					pos[dim][*numpart+i] = ParticlePosition[dim][i];
+					acc[dim][*numpart+i] = ParticleAcceleration[dim][i];
+					//ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAcceleration[dim][i];
+				}
+			}
+			*numpart += NumberOfParticles;
+		}
+#endif
 
 
 		/* Reduce ParticleAccelerationNoStar so that it can have only acceleration

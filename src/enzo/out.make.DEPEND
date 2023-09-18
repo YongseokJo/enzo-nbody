@@ -2258,6 +2258,14 @@ makedepend: warning:  OutputFromEvolveLevel.C, line 11: cannot find include file
 	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
 	not in ./mpi.h
 	not in /usr/include/mpi.h
+makedepend: warning:  OutputParticles.C, line 14: cannot find include file "mpi.h"
+	not in mpi.h
+	not in mpi.h
+	not in /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/include/mpi.h
+	not in /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/include/mpi.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
+	not in ./mpi.h
+	not in /usr/include/mpi.h
 makedepend: warning:  ParallelFDMCollapseInitialize.C, line 20: cannot find include file "mpi.h"
 	not in mpi.h
 	not in mpi.h

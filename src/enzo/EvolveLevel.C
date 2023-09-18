@@ -109,6 +109,11 @@ void RunEventHooks(char *, HierarchyEntry *Grid[], TopGridData &MetaData) {}
 #define IMPLICIT_MACRO 
 #endif
 
+//#define GravTest
+#ifdef GravTest
+int OutputParitcles(LevelHierarchyEntry *LevelArray[],int level);
+#endif
+
 #ifdef NBODY
 int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
 int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
@@ -583,6 +588,10 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 				fprintf(stderr,"PNC done.\n", level);  // by YS
 				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
 				//}
+#endif
+
+#define GravTest
+#ifdef GravTest
 #endif
 
 
