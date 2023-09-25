@@ -12,7 +12,7 @@
      &               KSPAIR,NRUN,MODEL,NC,NZERO,NBZERO,NBIN0,NHI0,
      &               NAME0,NCH,NCHAOS,IDUM1,KZ(50),NNBOPT,NIMBH,
      &               ITAIL0,NTAIL, !Tidal tail position indicators
-     &               NEW2(5),EPHASE
+     &               NEW2(5),IEPHASE
 
       COMMON/PARAMS/ ETAI,ETAR,DTADJ,DELTAT,TCRIT,QE,RBAR,ZMBAR,
      &               DTMIN,RMIN,ETAU,CMSEP2,ECLOSE,GMIN,GMAX,ETA0,
@@ -39,7 +39,7 @@
      &               NDUMP,NBPREV,NEWHI,NSTEPB,NBFLUX,NMTRY,NWARN,
      &               NIRECT,NURECT,NBRECT,NRRECT,KSMAG,NDUM(2),NPOP(10),
      &               NBLCKR,NIRRF,KSTART,NDUMMY(97)
-
+ 
       COMMON/PLPOT/  MP,AP2,VIR,MP0,MPDOT,TDELAY,RTIDE0,QVIR,EPL,
      &               PLDUM(3)
 
@@ -78,4 +78,5 @@
 
 *     Not dump common variables
       COMMON/LISTS/  ILIST(NMAX),JLIST(NMAX),JPERT(5*LMAX)
+
 

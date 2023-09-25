@@ -44,12 +44,10 @@
       REAL*8 DTOUT
       SAVE DTOUT
 
-*     added by sykim
-      IF (EPHASE.EQ.2) THEN
-         EPHASE = 0
+      IF (IEPHASE.EQ.2) THEN
+         IEPHASE = 0
          GO TO 1
       END IF
-*     end added by sykim
 
 *
 *       Update quantized value of STEPM for large N (first time only).
@@ -166,9 +164,7 @@
 
 #ifdef GPU
          NN = NTOT + 10
-         write(6,*) "OPEN starts" ! by YS
          CALL GPUNB_OPEN(NN,rank)
-         write(6,*) "OPEN ends" ! by YS
 *         CALL GPUPOT_INIT_FLOAT(rank)
 *         CALL GPUPOT_INIT(rank,NN)
 #endif
@@ -214,8 +210,8 @@
       call cputim(tttbegin)
 
 *     Reset control & regularization indicators.
+      IEPHASE = 0
       IPHASE = 0
-      EPHASE = 0
       IKS = 0
 *
       IF (IQ.LT.0) ICALL = 0
@@ -237,11 +233,7 @@
       IF(NLSTDELAY(1).GT.0) call delay_add_tlist(T0,STEP,DTK)
 
 *     Determine NXTLEN, TMIN and NXTLEVEL
-      call next_tlist(TMIN,DTK,T0)
-
-
-*     end added by sykim
-       
+      call next_tlist(TMIN,DTK,T0)      
 
 #ifdef DEBUG
 *     --07/07/14 23:44-lwang-debug--------------------------------------*
@@ -335,11 +327,6 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
      
 *       Set new time and save block time (for regularization terminations).
       TIME = TMIN
-
-*       added by sykim, continue here when ending
-   31 CONTINUE
-*       end added by sykim
-
       TBLOCK = TIME
       TTOT = TIME + TOFF
 *
@@ -400,12 +387,10 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *       Also check output time in case DTADJ & DELTAT not commensurate.
       IF (TIME.GT.TNEXT) THEN
           TIME = TNEXT
-          EPHASE = 2
+          IEPHASE = 2
           CALL OUTPUT
-*         GO TO 1
-          GO TO 100 ! exit for return to ENZO
+          GO TO 101
       END IF
-
 *
 *       See whether to advance any close encounters at first new time.
       IF ((TIME.GT.TPREV).AND.(TIME.NE.TCRIT)) THEN
@@ -591,10 +576,7 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
             T0(I) = TIME
             TIMENW(I) = T0(I) + STEP(I)
 *     Set non-zero indicator for new regular force.
-*     edited by sykim. may be wrong... need to check
-*            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
-             IF (T0R(I) + STEPR(I).GT.TIME) THEN
-*     end edited by sykim
+            IF ((T0R(I) + STEPR(I).GT.TIME)) THEN
 *     Extrapolate regular force & first derivatives to obtain F & FDOT.
               DTR = TIME - T0R(I)
               F(1,I) = 0.5*(FRDOT(1,I)*DTR + FR(1,I) + FI(1,I))
@@ -913,16 +895,7 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 *       Send all single particles to GPU memory
          call cputim(tt51)
          NN = NTOT - IFIRST + 1
-         !write(6,*) "SEND starts" ! by YS
-         !write(6,*) "NN=",NN ! by YS
-         !write(6,*) "NTOT=",NTOT ! by YS
-#ifdef  INTPOLATION
-         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
-     &                  FENZO(1,IFIRST))
-#else
          CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
-#endif 
-         !write(6,*) "SEND ends" ! by YS
          call cputim(tt52)
 *     --09/26/13 16:58-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -948,9 +921,7 @@ c$$$      end if
 #endif
 *
             call cputim(tt1)
-            write(6,*) "CALC_REG starts" ! by YS
             CALL CALC_REG_ON_GPU(IREG,1,NREG)
-            write(6,*) "CALC_REG ends" ! by YS
             call cputim(tt2)
             ttgrcalc = ttgrcalc + (tt2-tt1)*60.0
 *
@@ -1037,9 +1008,7 @@ c$$$      end if
 *
 
             call cputim(tt1)
-            write(6,*) "CALC_REG starts 2" ! by YS
             CALL CALC_REG_ON_GPU(IREG,istart,iend)
-            write(6,*) "CALC_REG ends 2" ! by YS
             call cputim(tt2)
             ttgrcalc2 = ttgrcalc2 + (tt2-tt1)*60.0
             ttreg = ttreg + (tt2-tt1)*60.0
@@ -1289,13 +1258,6 @@ c$$$         ttmov = ttmov +(tt334-tt333)*60
       call cputim(ttiout2)
       ttout = ttout + (ttiout2 - ttiout1)*60.
 
-*     added by sykim, to end the calculation at TMIN
-*     everything must be returned before new sorting of particles    
-      IF (TIME.EQ.TCRIT) THEN
-          IPHASE = 3
-          GO TO 100
-      END IF
-
 *     Resorting the NXTLST
       call cputim(tt335)
       call sort_tlist(STEP,DTK,.false.)
@@ -1521,6 +1483,8 @@ C      END IF
 *
 *     Set current global time.
       TTOT = TIME + TOFF
+
+ 101  CONTINUE
 
       RETURN
 *

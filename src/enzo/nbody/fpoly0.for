@@ -73,12 +73,7 @@
 *
 #ifdef GPU
 *       Send all single particles to the GPU.
-#ifdef INTERPOLATION
-      CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
-     &              FENZO(1,IFIRST)) ! by YS Jo
-#else
       CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
-#endif
 *
 *       Define maximum GPU neighbour number and initialize counters.
       NBMAX = MIN(NNBMAX + 150,LMAX-5)
@@ -127,15 +122,8 @@
 *
 *       Evaluate forces, first derivatives and neighbour lists for new block.
  31       I = JNEXT + IFIRST
-         write(6,*) "regf starts in foly" ! by YS
-#ifdef INTERPOLATION
           CALL GPUNB_REGF(NI,H2I,DTR,X(1,I),XDOT(1,I),GPUACC,GPUJRK,
-     &         GPUPHI,FENZO(1,I),LMAX,NNBMAX,LISTGP,M_FLAG) ! by YS Jo
-#else
-          CALL GPUNB_REGF(NI,H2I,DTR,X(1,I),XDOT(1,I),GPUACC,GPUJRK,
-     &         GPUPHI,LMAX,NNBMAX,LISTGP,M_FLAG) ! by YS Jo
-#endif
-          write(6,*) "regf end in foly" ! by YS
+     &         GPUPHI,LMAX,NNBMAX,LISTGP,M_FLAG)
 *       Check neighbour lists for overflow or zero membership (NNB = 1).
 *!$omp parallel do private(LL,NNB,I,RI2) reduction(+:NOFL2)
           DO 50 LL = 1,NI
@@ -298,9 +286,10 @@ c$$$     &            'IREG',IREG(IOFF:2+IOFF)
       IF (KZ(14).GT.0) THEN
           CALL XTRNLD(istart+ifirst-1,iend+ifirst-1,1)
       END IF
+*
 
 
-*       added by SY kim - to include FENZO on initialization
+*       added by sykim - to include FENZO on initialization
 
         DO I = 1,NTOT
 
@@ -310,11 +299,10 @@ c$$$     &            'IREG',IREG(IOFF:2+IOFF)
 
         END DO
 
-*       end added by SY kim
+*       end added by sykim
 
 
 
-*
 *
 #ifdef PARALLEL
       isend = rank + 1

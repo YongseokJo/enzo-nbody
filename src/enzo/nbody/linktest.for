@@ -1,15 +1,8 @@
-      SUBROUTINE LINKTEST(EN,NUM)
+      SUBROUTINE LINKTEST(EN)
      
       include 'common6.h'
  
       INTEGER I,J,J2,K,EN
-
-      INTEGER NUM,NEXTNUM
-      INTEGER INTNUM,INTNEXTNUM
-
-      REAL*8 LOGNUM,LOGNEXTNUM
-      CHARACTER (len=20) OLDFILE,NEWFILE
-      CHARACTER (len=20) OLDFORM,NEWFORM
       
       REAL*8 EBODY(EN),EX1(EN),EX2(EN),EX3(EN)
       REAL*8 EXDOT1(EN),EXDOT2(EN),EXDOT3(EN)
@@ -24,34 +17,14 @@
 
       REAL*8 ELU,EVU,EMU,ETU
 
-*     enzo code units. set to 1 for nbody-only runs
+*     read data from initial file
 
       ELU = 1.0D0
       EVU = 1.0D0
       EMU = 1.0D0
       ETU = 1.0D0
 
-
-*     make appropriate file names
-
-      NEXTNUM = NUM+1
-
-      LOGNUM = LOG10(REAL(NUM))
-      INTNUM = INT(LOGNUM)+1
-
-      LOGNEXTNUM = LOG10(REAL(NEXTNUM))
-      INTNEXTNUM = INT(LOGNEXTNUM)+1
-
-      write (OLDFORM,"(A5,I1,A4)") '(A3,I',INTNUM,',A4)'
-      write (NEWFORM,"(A5,I1,A4)") '(A3,I',INTNEXTNUM,',A4)'
-
-      write (OLDFILE,OLDFORM) "out",NUM,'.dat'
-      write (NEWFILE,NEWFORM) "out",NEXTNUM,'.dat'
-
-
-*     open and read files
-
-      OPEN (UNIT=10,STATUS ="UNKNOWN",FILE=OLDFILE)
+      OPEN (UNIT=10,FILE='dat.10')
       OPEN (UNIT=33,FILE='dt.dat')
    
       DO 5 I = 1,EN
@@ -63,29 +36,14 @@
 
       READ (33,*) EDT
 
-      EDT = EDT*3.1556952D13
-
-
-*     input = in conventional astronomical units
-*     Msun, pc, km/s, Myr
-
-
+      EDT = 500.00D0
 
       DO 7 J = 1,EN
-
-           EBODY(J) = EBODY(J)*1.9891D33
-
-           EX1(J) = EX1(J)*3.0857D18
-           EX2(J) = EX2(J)*3.0857D18
-           EX3(J) = EX3(J)*3.0857D18
-           EXDOT1(J) = EXDOT1(J)*1D5
-           EXDOT2(J) = EXDOT2(J)*1D5
-           EXDOT3(J) = EXDOT3(J)*1D5
 
            EF1(J) = 0.0D0
            EF2(J) = 0.0D0
            EF3(J) = 0.0D0
-
+           
            EH11(J) = 0.0D0
            EH12(J) = 0.0D0
            EH13(J) = 0.0D0
@@ -115,28 +73,13 @@
      &            EH41,EH42,EH43,EDT,
      &            EMU,ELU,EVU,ETU)     
 
-       open (UNIT=17,STATUS ="UNKNOWN",FILE=NEWFILE)
-
-      DO 9 J2 = 1,EN
-
-           EBODY(J2) = EBODY(J2)/1.9891D33
-           EX1(J2) = EX1(J2)/3.0857D18
-           EX2(J2) = EX2(J2)/3.0857D18
-           EX3(J2) = EX3(J2)/3.0857D18
-           EXDOT1(J2) = EXDOT1(J2)/1D5
-           EXDOT2(J2) = EXDOT2(J2)/1D5
-           EXDOT3(J2) = EXDOT3(J2)/1D5
-
-    9 CONTINUE
-
+       open (UNIT=17,STATUS="NEW",FILE='out.dat')
 
        DO K = 1, EN
             WRITE (17,'(7f20.8)')  EBODY(K),
      &      EX1(K),EX2(K),EX3(K),EXDOT1(K),
      &      EXDOT2(K),EXDOT3(K)
        END DO
-
-      write(6,*) 'writing first output'
 
       close(10)
       close(17)

@@ -67,6 +67,10 @@
       REAL*8 ELENGTHU,EMASSU,EVELU,ETIMEU,EFORCEU
       REAL*8 EDT
 
+
+*     variables for addition of new particles
+      REAL*8 BODYNEW,XNEW(3),VNEW(3)
+
 *     end added by sykim
 
 *     common variables for MPI by YS
@@ -299,7 +303,7 @@
       call cputim(tt8)
       ttadj = ttadj + (tt8-tt7)*60.
 
-      TNEXT = DELTAT ! added by  sykim
+      TNEXT = TNEXT + DELTAT  ! added by  sykim
 
 
 * (R.Sp.)Set time flag and step number flags for beginning of run
@@ -311,6 +315,8 @@
 *
       call cputim(tt2)
       ttinitial = ttinitial + (tt2-ttota)*60.
+
+      IEPHASE = 0
 
 *       Advance solutions until next output or change of procedure.
 
@@ -324,6 +330,8 @@
       call cputim(tt2) 
       ttint = ttint + (tt2-tt1)*60.
 *
+      IF (IEPHASE.EQ.2) GO TO 19
+
 
       IF (IPHASE.EQ.1) THEN
 *       Prepare new KS regularization.
@@ -347,6 +355,7 @@
 *       diagnostics.
           call cputim(tt7)
           CALL ADJUST
+
 *
       ELSE IF (IPHASE.EQ.4) THEN
 *       Switch to unperturbed three-body regularization.
@@ -388,8 +397,10 @@
 
       END IF
 
+   19 CONTINUE
+
 *----communication-with-ENZO-YS------------------------------------------*
-      IF ((EPHASE.EQ.2).OR.(EPHASE.EQ.3)) THEN
+      IF ((IEPHASE.EQ.2).OR.(IEPHASE.EQ.3)) THEN
 
       SHUFFLECNT = 0
 
@@ -400,10 +411,10 @@
 
          DO JP = 1,N
             IF (IE.EQ.EID(JP)) THEN
-               EBODY(JP) = BODY(IP)*EMASSU
+               EBODY(JP) = EBODY(IP)*EMASSU
                DO KP = 1,3
-                  EX(KP,JP) = X(KP,IP)*ELENGTHU
-                  EXDOT(KP,JP) = XDOT(KP,IP)*EVELU
+                  EX(KP,JP) = EX(KP,IP)*ELENGTHU
+                  EXDOT(KP,JP) = EXDOT(KP,IP)*EVELU
                END DO
             if (JP.LE.3) write(0,*) 'enzo id matches!'
             SHUFFLECNT = SHUFFLECNT + 1
@@ -474,7 +485,41 @@
           write (0,*) 'fortran: force=', EF(1,1)
 *     MPI done!
 
-*      Recieve forces from ENZO and update them
+*     add new particles - added by sykim
+
+   31 CONTINUE
+
+      IF (N.NE.EN) THEN
+
+       DO IR = 1,EN
+         FINDNEW = .true.
+         DO JR = 1,N
+           IF (EIDINIT(JR).EQ.EID(IR)) THEN
+              FINDNEW = .false.
+           END IF
+         END DO
+
+         IF (FINDNEW) THEN
+          BODYNEW = EBODY(IR)/EMASSU 
+ 
+          XNEW(1) = EX(1,IR)/ELENGTHU
+          XNEW(2) = EX(2,IR)/ELENGTHU
+          XNEW(3) = EX(3,IR)/ELENGTHU
+
+          VNEW(1) = EXDOT(1,IR)/EVELU
+          VNEW(2) = EXDOT(2,IR)/EVELU
+          VNEW(3) = EXDOT(3,IR)/EVELU
+          
+          EIDINIT(N+1) = EID(IR)
+          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
+         END IF
+
+       END DO
+
+       END IF
+
+
+*     update forces from ENZO
        
        DO IR = 1,NTOT
 
@@ -512,7 +557,7 @@
         END DO
 
         CLOSE(3)
-      OUTC = OUTC + 1
+        OUTC = OUTC + 1
 
 
           DELTAT = EDT/ETIMEU
