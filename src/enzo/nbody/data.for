@@ -39,9 +39,9 @@
 *
 *       edited by sykim
 *       Check option for reading initial conditions from input file.
-*      if(rank.eq.0)then
+      if(rank.eq.0)then
 *
-*      IREAD = 0
+      IREAD = 0
 
 *      OPEN(UNIT=10,STATUS='UNKNOWN',FILE='dat2.10')
 

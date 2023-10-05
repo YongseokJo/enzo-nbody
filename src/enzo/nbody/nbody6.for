@@ -70,6 +70,7 @@
 
 *     variables for addition of new particles
       REAL*8 BODYNEW,XNEW(3),VNEW(3)
+      LOGICAL FINDNEW
 
 *     end added by sykim
 
@@ -191,6 +192,8 @@
 *     what was force unit recieved from ENZO again? -sykim
 *      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
       EFORCEU = EVELU*EVELU/ELENGTHU
+
+      ZMBAR = EBODY(1)*EMU/(1.9891D33)
 
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
