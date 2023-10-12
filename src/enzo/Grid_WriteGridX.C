@@ -418,12 +418,8 @@ int grid::WriteGridX(FILE *fptr, char *base_name, int grid_id)
     }
  
     /* If present, write out the GravitatingMassFieldParticles. */
- 
-#ifdef NBODY
-		if (GravitatingMassFieldParticles[0] != NULL) {
-#else
+
 		if (GravitatingMassFieldParticles != NULL) {
-#endif
 
       /* Set dimensions. */
  
@@ -446,17 +442,11 @@ int grid::WriteGridX(FILE *fptr, char *base_name, int grid_id)
 	         (j-StartIndex[1])*ActiveDim[0]              +
 	         (k-StartIndex[2])*ActiveDim[0]*ActiveDim[1] ] =
 		     float32(
-#ifdef NBODY
-			     GravitatingMassFieldParticles[0][ i +
-			       j*GravitatingMassFieldParticlesDimension[0] +
-			       k*GravitatingMassFieldParticlesDimension[0]*
-			         GravitatingMassFieldParticlesDimension[1]]
-#else
+
 			     GravitatingMassFieldParticles[ i +
 			       j*GravitatingMassFieldParticlesDimension[0] +
 			       k*GravitatingMassFieldParticlesDimension[0]*
 			         GravitatingMassFieldParticlesDimension[1]]
-#endif
 			     );
  
  

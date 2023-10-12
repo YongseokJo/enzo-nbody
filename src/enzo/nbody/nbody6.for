@@ -38,8 +38,10 @@
 
       REAL*8, pointer :: EBODY(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
-      REAL*8, pointer :: EP(:) 
-      INTEGER, pointer :: EID(:)
+      REAL*8, pointer :: newEBODY(:), newEX(:,:)
+      REAL*8, pointer :: newEXDOT(:,:), newEF(:,:) !, EH(:,:,:)
+*      REAL*8, pointer :: EP(:) 
+      INTEGER, pointer :: EID(:), newEID(:)
 *     initial ID of particles recieved from ENZO
 
       INTEGER EIDINIT(NMAX)
@@ -99,7 +101,8 @@
 
 
 *-----MPI-scheme-of-nbody-added-by-YS-----------------------------------*
-      OUTC = 1
+      OUTC  = 1
+      newEN = 0
 
       write (0,*) 'In the Nbody6 '
 *     Massive MPI Communication with Enzo code! (subroutine later) by SY
@@ -128,7 +131,7 @@
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
-      allocate(EP(EN))
+*      allocate(EP(EN))
       DO  I = 1,3
         call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, istatus,ierr)
@@ -139,8 +142,8 @@
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &            ICOMM, istatus,ierr)
       END DO
-      call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
-     &            ICOMM, istatus,ierr)
+*      call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+*     &            ICOMM, istatus,ierr)
       call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
       call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
@@ -211,9 +214,9 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8,f20.8)')  
+     &          f20.8,f20.8,f20.8,f20.8,f20.8)')  
      &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
+     &         (EF(K,J),K=1,3), TNEXT*ETIMEU
         END DO
 
         CLOSE(3)
@@ -450,8 +453,24 @@
           call MPI_SEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
      &           ICOMM, ierr)
           END DO
+
+          ! does not have to send IDs but should be in the same order as
+          ! when received
+          DO  I = 1,3
+          call MPI_SEND(newEX(I,:), newEN, MPI_DOUBLE_PRECISION, 0, 500,
+     &           ICOMM, ierr)
+          call MPI_SEND(newEXDOT(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
+     &           600, ICOMM, ierr)
+          END DO
           call MPI_BARRIER(ICOMM,ierr)
-*          deallocate(EF)
+          IF (newEN.NE.0) THEN
+            deallocate(newEID)
+            deallocate(newEBODY)
+            deallocate(newEX)
+            deallocate(newEXDOT)
+            deallocate(newEF)
+            newEN = 0
+          END  IF
           write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
 
@@ -469,15 +488,48 @@
           write (6,*) 'fortran: read in'
 
           call MPI_BARRIER(ICOMM,ierr)
-          call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM, istatus,
+*        Old Particles
+          call MPI_RECV(EID, EN, MPI_INTEGER, 0, 25, ICOMM, istatus,
      &         ierr)
             DO I = 1,3
-               call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
+               call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 50,
      &         ICOMM, istatus,ierr)
             END DO
-            call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
-     &         ICOMM, istatus,ierr)
+*            call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+*     &         ICOMM, istatus,ierr)
 
+
+*        New Particles
+          call MPI_RECV(newEN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
+     &         ierr)
+          IF (newEN.NE.0) THEN
+            allocate(newEID(newEN))
+            allocate(newEBODY(newEN))
+            allocate(newEX(3,newEN))
+            allocate(newEXDOT(3,newEN))
+            allocate(newEF(3,newEN))
+            call MPI_RECV(newEID, newEN, MPI_INTEGER, 0, 200, ICOMM, istatus,
+     &         ierr)
+            call MPI_RECV(newEBODY, newEN, MPI_DOUBLE_PRECISION, 0, 250,
+     &          ICOMM, istatus, ierr)
+            DO I = 1,3
+               call MPI_RECV(newEX(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
+     &         300, ICOMM, istatus,ierr)
+               call MPI_RECV(newEXDOT(I,:), newEN, MPI_DOUBLE_PRECISION,
+     &         0, 400, ICOMM, istatus,ierr)
+               call MPI_RECV(newEF(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
+     &         500, ICOMM, istatus,ierr)
+            END DO
+          END IF
+
+      ! test printout
+      IF (newEN.NE.0) THEN
+        write (0,*) 'fortran: newEN=', newEN
+        DO J = 1,newEN 
+        write (0,*) 'fortran: X=', newEX(1,J)
+        END DO
+      END IF
+*        Units
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
           call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
@@ -554,9 +606,9 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8, f20.8)')  
+     &          f20.8,f20.8,f20.8,f20.8,f20.8)')  
      &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
+     &         (EF(K,J),K=1,3), TNEXT*ETIMEU
         END DO
 
         CLOSE(3)

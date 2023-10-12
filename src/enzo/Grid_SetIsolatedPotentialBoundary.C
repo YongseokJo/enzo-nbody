@@ -30,15 +30,9 @@ int grid::SetIsolatedPotentialBoundary()
 
 	if (MyProcessorNumber != ProcessorNumber)
 		return SUCCESS;
-#ifdef NBODY
-	if (PotentialField[0] == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
-		ENZO_FAIL("Potential NULL or gravity unitialized.\n");
-	}
-#else
 	if (PotentialField == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
 		ENZO_FAIL("Potential NULL or gravity unitialized.\n");
 	}
-#endif
 
 	/* Set start index and dimension of active part of potential field. */
 
@@ -51,41 +45,6 @@ int grid::SetIsolatedPotentialBoundary()
 	}
 
 
-#ifdef NBODY
-	/* First, copy potential values along boundaries into i-direction. */
-	for (k = GravStart[2]; k <= GravEnd[2]; k++)
-		for (j = GravStart[1]; j <= GravEnd[1]; j++) {
-			for (i = 0; i < GravStart[0]; i++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(GravStart[0],j,k)];
-			}
-			for (i = GravEnd[0]+1; i < GravitatingMassFieldDimension[0]; i++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(GravEnd[0],j,k)];
-			}
-		}
-	/* Next copy along the j-direction. */
-
-	for (k = GravStart[2]; k <= GravEnd[2]; k++)
-		for (i = 0; i < GravitatingMassFieldDimension[0]; i++) {
-			for (j = 0; j < GravStart[1]; j++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(i,GravStart[1],k)];
-			}
-			for (j = GravEnd[1]+1; j < GravitatingMassFieldDimension[1]; j++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(i,GravEnd[1],k)];
-			}
-		}
-
-	/* Finally copy along the k-direction. */
-
-	for (j = 0; j < GravitatingMassFieldDimension[1]; j++)
-		for (i = 0; i < GravitatingMassFieldDimension[0]; i++) {
-			for (k = 0; k < GravStart[2]; k++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(i,j,GravStart[2])];
-			}
-			for (k = GravEnd[2]+1; k < GravitatingMassFieldDimension[2]; k++) {
-				PotentialField[0][GINDEX(i,j,k)] = PotentialField[0][GINDEX(i,j,GravEnd[2])];
-			}
-		}
-#else
 	/* First, copy potential values along boundaries into i-direction. */
 	for (k = GravStart[2]; k <= GravEnd[2]; k++)
 		for (j = GravStart[1]; j <= GravEnd[1]; j++) {
@@ -116,9 +75,6 @@ int grid::SetIsolatedPotentialBoundary()
 		}
 
 
-#endif
-
-
 	return SUCCESS;
 }
 
@@ -129,7 +85,7 @@ int grid::SetIsolatedPotentialBoundaryNoStar()
 
 	if (MyProcessorNumber != ProcessorNumber)
 		return SUCCESS;
-	if (PotentialField[1] == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
+	if (PotentialFieldNoStar == NULL || GravitatingMassFieldCellSize == FLOAT_UNDEFINED) {
 		ENZO_FAIL("Potential NULL or gravity unitialized.\n");
 	}
 
@@ -149,10 +105,10 @@ int grid::SetIsolatedPotentialBoundaryNoStar()
 	for (k = GravStart[2]; k <= GravEnd[2]; k++)
 		for (j = GravStart[1]; j <= GravEnd[1]; j++) {
 			for (i = 0; i < GravStart[0]; i++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(GravStart[0],j,k)];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(GravStart[0],j,k)];
 			}
 			for (i = GravEnd[0]+1; i < GravitatingMassFieldDimension[0]; i++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(GravEnd[0],j,k)];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(GravEnd[0],j,k)];
 			}
 		}
 	/* Next copy along the j-direction. */
@@ -160,10 +116,10 @@ int grid::SetIsolatedPotentialBoundaryNoStar()
 	for (k = GravStart[2]; k <= GravEnd[2]; k++)
 		for (i = 0; i < GravitatingMassFieldDimension[0]; i++) {
 			for (j = 0; j < GravStart[1]; j++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(i,GravStart[1],k)];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(i,GravStart[1],k)];
 			}
 			for (j = GravEnd[1]+1; j < GravitatingMassFieldDimension[1]; j++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(i,GravEnd[1],k)];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(i,GravEnd[1],k)];
 			}
 		}
 
@@ -172,10 +128,10 @@ int grid::SetIsolatedPotentialBoundaryNoStar()
 	for (j = 0; j < GravitatingMassFieldDimension[1]; j++)
 		for (i = 0; i < GravitatingMassFieldDimension[0]; i++) {
 			for (k = 0; k < GravStart[2]; k++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(i,j,GravStart[2])];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(i,j,GravStart[2])];
 			}
 			for (k = GravEnd[2]+1; k < GravitatingMassFieldDimension[2]; k++) {
-				PotentialField[1][GINDEX(i,j,k)] = PotentialField[1][GINDEX(i,j,GravEnd[2])];
+				PotentialFieldNoStar[GINDEX(i,j,k)] = PotentialFieldNoStar[GINDEX(i,j,GravEnd[2])];
 			}
 		}
   return SUCCESS;

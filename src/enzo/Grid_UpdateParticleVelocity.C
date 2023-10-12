@@ -81,7 +81,7 @@ int grid::UpdateParticleVelocity(float TimeStep)
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
 				// by YS Jo
-				if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
+				if ( ParticleType[i] == PARTICLE_TYPE_NBODY || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW ) continue;
 				//&& GridLevel != MaximumRefinementLevel )
 #endif				
 

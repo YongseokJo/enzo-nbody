@@ -213,11 +213,10 @@ void MatchAccelerationWithIndex(void) {
 
 
 
-int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]) {
+void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[], int *LocalNumberOfNbodyParticles) {
 
-	int LocalNumberOfNbodyParticles=0;
+	*LocalNumberOfNbodyParticles=0;
 	int level;
-	int num_tmp; // delete
   LevelHierarchyEntry *Temp;
 	NumberOfNbodyParticles = 0;
 
@@ -226,22 +225,51 @@ int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]) {
 	for (level = 0; level < MAX_DEPTH_OF_HIERARCHY-1; level++) {
 		for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
 			Temp->GridData->SetNumberOfNbodyParticles();
-			LocalNumberOfNbodyParticles += Temp->GridData->ReturnNumberOfNbodyParticles();
+			*LocalNumberOfNbodyParticles += Temp->GridData->ReturnNumberOfNbodyParticles();
+		}
+	}
+
+#ifdef USE_MPI
+	MPI_Allreduce(LocalNumberOfNbodyParticles, &NumberOfNbodyParticles, 1,
+			IntDataType, MPI_SUM, enzo_comm);
+#else
+	NumberOfNbodyParticles = *LocalNumberOfNbodyParticles;
+#endif
+
+}
+
+
+
+void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],
+		int *LocalNumberOfNbodyParticles, int *NewLocalNumberOfNbodyParticles) {
+
+	*LocalNumberOfNbodyParticles=0;
+	*NewLocalNumberOfNbodyParticles=0;
+	int level;
+  LevelHierarchyEntry *Temp;
+	NumberOfNbodyParticles = 0;
+
+	//fprintf(stderr,"In the FindTotalNbody\n");
+
+	for (level = 0; level < MAX_DEPTH_OF_HIERARCHY-1; level++) {
+		for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
+			Temp->GridData->SetNumberOfNbodyParticles();
+			*LocalNumberOfNbodyParticles += Temp->GridData->ReturnNumberOfNbodyParticles();
+			*NewLocalNumberOfNbodyParticles += Temp->GridData->ReturnNumberOfNewNbodyParticles();
 		}
 	}
 
 #ifdef USE_MPI
 	//MPI_Allgather(&LocalNumberOfNbodyParticles, 1, MPI_INT, &NumberOfNbodyParticles, 1, MPI_INT, enzo_comm);
-	MPI_Allreduce(&LocalNumberOfNbodyParticles, &NumberOfNbodyParticles, 1,
+	MPI_Allreduce(LocalNumberOfNbodyParticles, &NumberOfNbodyParticles, 1,
+			IntDataType, MPI_SUM, enzo_comm);
+	MPI_Allreduce(NewLocalNumberOfNbodyParticles, &NumberOfNewNbodyParticles, 1,
 			IntDataType, MPI_SUM, enzo_comm);
 #else
-	NumberOfNbodyParticles = LocalNumberOfNbodyParticles;
+	NumberOfNbodyParticles = *LocalNumberOfNbodyParticles;
 #endif
 
-	return LocalNumberOfNbodyParticles;
 }
-
-
 
 
 

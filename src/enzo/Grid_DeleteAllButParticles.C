@@ -33,32 +33,24 @@ void grid::DeleteAllButParticles()
  
   for (i = 0; i < MAX_DIMENSION; i++) {
 #ifdef NBODY
-    delete [] AccelerationField[i][0];
-    delete [] AccelerationField[i][1];
-    delete [] ParticleAcceleration[i];
-    ParticleAcceleration[i]      = NULL;
+    delete [] AccelerationFieldNoStar[i];
 		if (ParticleAccelerationNoStar[i] != NULL) {
 			delete [] ParticleAccelerationNoStar[i];
 			ParticleAccelerationNoStar[i] = NULL;
 		}
-    AccelerationField[i][0]         = NULL;
-    AccelerationField[i][1]         = NULL;
-#else
+    AccelerationFieldNoStar[i]         = NULL;
+#endif
     delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i];
     AccelerationField[i]         = NULL;
     ParticleAcceleration[i]      = NULL;
-#endif
   }
 #ifdef NBODY
-  delete [] ParticleAcceleration[MAX_DIMENSION];
-  ParticleAcceleration[MAX_DIMENSION] = NULL;
 	delete [] ParticleAccelerationNoStar[MAX_DIMENSION];
 	ParticleAccelerationNoStar[MAX_DIMENSION] = NULL;
-#else
+#endif
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
-#endif
  
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];
@@ -78,20 +70,15 @@ void grid::DeleteAllButParticles()
 
 
 #ifdef NBODY
-  delete [] PotentialField[0];
-  delete [] GravitatingMassField[0];
-  delete [] GravitatingMassFieldParticles[0];
-  delete [] PotentialField[1];
-  delete [] GravitatingMassField[1];
-  delete [] GravitatingMassFieldParticles[1];
+  delete [] PotentialFieldNoStar;
+  delete [] GravitatingMassFieldNoStar;
+  delete [] GravitatingMassFieldParticlesNoStar;
  
-  PotentialField[0]                = NULL;
-  GravitatingMassField[0]          = NULL;
-  GravitatingMassFieldParticles[0] = NULL;
-  PotentialField[1]                = NULL;
-  GravitatingMassField[1]          = NULL;
-  GravitatingMassFieldParticles[1] = NULL;
-#else
+  PotentialFieldNoStar                = NULL;
+  GravitatingMassFieldNoStar          = NULL;
+  GravitatingMassFieldParticlesNoStar = NULL;
+#endif
+
   delete [] PotentialField;
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
@@ -99,6 +86,5 @@ void grid::DeleteAllButParticles()
   PotentialField                = NULL;
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
-#endif
  
 }

@@ -54,24 +54,13 @@ int grid::ClearGravitatingMassField()
   //    fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
 		//fprintf(stdout,"Proc:%d, is this NULL\n", MyProcessorNumber); // by YS
-#ifdef NBODY
-  if (GravitatingMassField[0] == NULL)
-     GravitatingMassField[0] = new float[size];
-  if (GravitatingMassField[0] == NULL)
-    ENZO_FAIL("malloc error (out of memory?)\n");
-#else
+
   if (GravitatingMassField == NULL) 
     GravitatingMassField = new float[size];
-#endif
 
  
   for (i = 0; i < size; i++) {
-#ifdef NBODY
-    GravitatingMassField[0][i] = 0.0;
-    //GravitatingMassField[1][i] = 0.0;
-#else
     GravitatingMassField[i] = 0.0;
-#endif
 	}
   return SUCCESS;
 }
@@ -102,14 +91,14 @@ int grid::ClearGravitatingMassFieldNoStar()
   //if (GravitatingMassField[1] != NULL)
 		//fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
  
-  if (GravitatingMassField[1] == NULL) 
-     GravitatingMassField[1] = new float[size];
+  if (GravitatingMassFieldNoStar == NULL) 
+     GravitatingMassFieldNoStar = new float[size];
 
-  if (GravitatingMassField[1] == NULL) 
+  if (GravitatingMassFieldNoStar == NULL) 
     ENZO_FAIL("malloc error (out of memory?)\n");
  
   for (i = 0; i < size; i++) 
-    GravitatingMassField[1][i] = 0.0;
+    GravitatingMassFieldNoStar[i] = 0.0;
  
   return SUCCESS;
 }

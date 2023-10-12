@@ -34,11 +34,8 @@ int grid::PrepareGreensFunction()
  
   /* Error check. */
  
-#ifdef NBODY
-  if (PotentialField[0] != NULL) {
-#else
+
   if (PotentialField != NULL) {
-#endif
     ENZO_FAIL("Potential field not null.\n");
   }
  
@@ -54,12 +51,9 @@ int grid::PrepareGreensFunction()
     size *= GravitatingMassFieldDimension[dim];
  
 #ifdef NBODY
-  //PotentialField = new float*[2];
-  PotentialField[0] = new float[size];
-  PotentialField[1] = new float[size];
-#else
-  PotentialField = new float[size];
+  PotentialFieldNoStar = new float[size];
 #endif
+  PotentialField = new float[size];
  
   /* Set the constant to be used. */
  
@@ -89,25 +83,21 @@ int grid::PrepareGreensFunction()
 	r *= GravitatingMassFieldCellSize;
 #ifdef NBODY
 	if (GridRank == 3) {
-	  PotentialField[0][n] = GravConst_factor/r;
-	  PotentialField[1][n] = GravConst_factor/r;
+	  PotentialFieldNoStar[n] = GravConst_factor/r;
 	}
 	if (GridRank == 2) {
-	  PotentialField[0][n] = GravConst_factor*log(r);
-	  PotentialField[1][n] = GravConst_factor*log(r);
+	  PotentialFieldNoStar[n] = GravConst_factor*log(r);
 	}
 	if (GridRank == 1) {
-	  PotentialField[0][n] = GravConst_factor*r;
-	  PotentialField[1][n] = GravConst_factor*r;
+	  PotentialFieldNoStar[n] = GravConst_factor*r;
 	}
-#else
+#endif
 	if (GridRank == 3)
 	  PotentialField[n] = GravConst_factor/r;
 	if (GridRank == 2)
 	  PotentialField[n] = GravConst_factor*log(r);
 	if (GridRank == 1)
 	  PotentialField[n] = GravConst_factor*r;
-#endif
 
  
       }

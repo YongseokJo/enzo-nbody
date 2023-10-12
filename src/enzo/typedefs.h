@@ -326,7 +326,9 @@ const star_type
   Kravtsov = PARTICLE_TYPE_STAR,
   CenOstriker = PARTICLE_TYPE_STAR,
   AccretingParticle = PARTICLE_TYPE_MUST_REFINE;
-
+#ifdef NBODY
+const star_type  NbodyStar = PARTICLE_TYPE_NBODY_NEW; // by YS
+#endif
 /* Define a float/int union. */
 
 union float_int {

@@ -48,10 +48,12 @@ class EnzoProblemType;
 #ifdef NBODY
 #define HERMITE_ORDER 4
 EXTERN int NumberOfNbodyParticles;
+EXTERN int NumberOfNewNbodyParticles;
 EXTERN int NumberOfNbodyParticlesOld;
 EXTERN int *NbodyParticleID;
 EXTERN int *NbodyParticleIDOld;
 EXTERN int *NbodyParticleIDTemp;
+EXTERN int *NewNbodyParticleIDTemp;
 EXTERN float *NbodyParticleMass;
 EXTERN float *NbodyParticlePosition[MAX_DIMENSION];
 EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];

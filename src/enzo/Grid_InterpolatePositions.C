@@ -39,18 +39,10 @@ int grid::InterpolatePositions(FLOAT *Position[], int dim, float *Field,
 
 	/* Set the pointer to the AccelerationField or the PotentialField. */
 
-#ifdef NBODY
-	float *InterpolationField = AccelerationField[dim][0];
-#else
 	float *InterpolationField = AccelerationField[dim];
 
-#endif
 	if (dim == GridRank) {
-#ifdef NBODY
-		InterpolationField = PotentialField[0];
-#else
 		InterpolationField = PotentialField;
-#endif
 	}
 
 	/* Error check. */
@@ -90,10 +82,10 @@ int grid::InterpolatePositionsNoStar(FLOAT *Position[], int dim, float *Field,
 
 	/* Set the pointer to the AccelerationField or the PotentialField. */
 
-	float *InterpolationField = AccelerationField[dim][1];
+	float *InterpolationField = AccelerationFieldNoStar[dim];
 
 	if (dim == GridRank)
-		InterpolationField = PotentialField[1];
+		InterpolationField = PotentialFieldNoStar;
 
 	/* Error check. */
 

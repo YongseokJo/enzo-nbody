@@ -261,6 +261,9 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 					case 109:
 						errcode = grid_one->CopyPotentialFieldNoStar(grid_two, EdgeOffset);
 						break;
+					case 110:
+						errcode = grid_one->InterpolateAccelerationsNoStar(grid_two);
+						break;
 #endif
 
 					case 10:

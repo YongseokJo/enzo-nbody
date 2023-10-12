@@ -94,10 +94,6 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	float TimeDifference = 0;
 	FLOAT LeftEdge[MAX_DIMENSION], OriginalLeftEdge[MAX_DIMENSION];
 	float *DepositFieldPointer, *OriginalDepositFieldPointer;
-#ifdef NBODY
-	int NoStarIndex = NoStar ? 1 : 0;
-	//fprintf(stderr, "NoStarIndex=%d", NoStarIndex);
-#endif
 
 
 	/* 1) GravitatingMassField. */
@@ -107,7 +103,10 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassField(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer = TargetGrid->GravitatingMassField[NoStarIndex];
+		if (NoStar)
+			DepositFieldPointer = TargetGrid->GravitatingMassFieldNoStar;
+		else
+			DepositFieldPointer = TargetGrid->GravitatingMassField;
 #else
 		DepositFieldPointer = TargetGrid->GravitatingMassField;
 #endif
@@ -126,7 +125,10 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			TargetGrid->InitializeGravitatingMassFieldParticles(RefineBy);
 		/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
 #ifdef NBODY
-		DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles[NoStarIndex];
+		if (NoStar)
+			DepositFieldPointer = TargetGrid->GravitatingMassFieldParticlesNoStar;
+		else
+			DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles;
 #else
 		DepositFieldPointer = TargetGrid->GravitatingMassFieldParticles;
 #endif
@@ -286,7 +288,8 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				MassFactorTemp = MassFactor;
 
 			for (i = 0; i < NumberOfParticles; i++) {
-				if (ParticleType[i] == PARTICLE_TYPE_NBODY) // suspicous
+				if ((ParticleType[i] == PARTICLE_TYPE_NBODY) ||
+						(ParticleType[i] == PARTICLE_TYPE_NBODY_NEW)) 
 					ParticleMassTemp[i] = 0;
 				else
 					ParticleMassTemp[i] = ParticleMass[i]*MassFactorTemp;
