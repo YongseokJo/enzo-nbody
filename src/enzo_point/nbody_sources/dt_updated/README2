@@ -1,0 +1,18 @@
+1. the things I have changed in this code
+
+? removed input file and put the relevant parameters in the code
+? removed unnecessary output files
+
+in this code, I will finally put out only the files that I need... don't worry!
+
+2. the things I will change after compiling this
+
+- check escaping conditions and remove that
+- check for external force options and remove that
+- remove unnecessary files (like stellar evolution) from code
+
+3. from bottom up mode, I would have to check with intgrt.f.... as usuall.....
+
+
+
+4. notes when editing this code

@@ -28,7 +28,7 @@
 
       ETAI = 0.02D0
       ETAR = 0.02D0
-      RS0 = 0.19587108D0
+      RS0 = 0.18780202 ! for binaries !0.19587108D0
       DTADJ = 1.00D0
 !      DELTAT = 1.00D0
       TCRIT = 502.00D0

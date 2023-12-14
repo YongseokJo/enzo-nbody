@@ -11,10 +11,35 @@
      &                NAMEM(MMAX),NAMEG(MMAX),KSTARM(MMAX),IFLAG(MMAX)
       REAL*8  EB(KMAX),ECC(KMAX),RCM(KMAX),ECM(KMAX),PB(KMAX),AS(30)
       REAL*8  XX(3,3),VV(3,3)
-      CHARACTER*27 OUTFILE
+ 
+*      edited by sykim for outputs 
+      CHARACTER*27 OUTFILE1
       CHARACTER*29 OUTFILE2
+      CHARACTER*20 OUTFORM1
+      CHARACTER*20 OUTFORM2
       CHARACTER*20 TCHAR
+
+      DATA BTCOUNT /1/ ! by sykim
+      INTEGER BTCNUM ! by sykim
+      SAVE BTCOUNT ! by sykim
 *
+*       added by sykim
+*       write down appropriate time names for outputs
+
+        write (6,*) 'file name output starts for binary - SY' 
+
+        BTCNUM = INT(LOG10(REAL(BTCOUNT))) + 1
+
+        write(OUTFORM1,"(A5,I1,A1)") '(A7,I',BTCNUM,')'        
+        write(OUTFORM2,"(A5,I1,A1)") '(A9,I',BTCNUM,')'  
+
+        write(OUTFILE1,OUTFORM1) 'bdat.9_',INT(BTCOUNT)
+        write(OUTFILE2,OUTFORM2) 'bwdat.19_',INT(BTCOUNT)
+
+        write (6,*) 'file name output ends for binary - SY'
+
+*       end added by sykim
+
 *       Form binding energy and central distance for each KS pair.
       ZMBIN = 0.0
       DO 10 JPAIR = 1,NPAIRS
@@ -143,29 +168,30 @@ c$$$    9     CONTINUE
 *
 *       Write formatted data bank on unit 9.
 *
-*      if(rank.eq.0)then
+      if(rank.eq.0)then
 *     Split the bdat.9 by time
 *         call string_left(TCHAR,TTOT,DELTAT)
 *         write(OUTFILE,118) TCHAR
 * 118     format('bdat.9_',A20)
-*         OPEN (UNIT=9,STATUS='UNKNOWN',FORM='FORMATTED',FILE=OUTFILE)
+         write(6,*) 'bdat starts - sykim'
+         OPEN (UNIT=9,STATUS='UNKNOWN',FORM='FORMATTED',FILE=OUTFILE1)
          
-*         WRITE (9,30)  NPAIRS, MODEL, NRUN, N, NC, NMERGE, (AS(K),K=1,7)
-* 30      FORMAT (3I4,I6,2I4,2X,F7.1,2F7.2,F7.3,F8.1,2F9.4)
-*         WRITE (9,35)  (AS(K),K=8,17)
-* 35      FORMAT (10F11.6)
-*         WRITE (9,40)  (AS(K),K=18,30)
-* 40      FORMAT (13F10.5)
-*         WRITE (9,*) 'NAME(I1)    NAME(I2)    ',
-*     &        'M1[M*]                    M2[M*]                    ',
-*     &        'EB[NB]                    ECC                       ',
-*     &        'P[Days]                   SEMI[AU]                  ',
-*     &        'RI[PC]                    VI[km/s]                  ',
-*     &        'K*(I1)      K*(I2)      ',
-*     &        'ZN[NB]                    RP[NB]                    ',
-*     &        'STEP(I1)[NB]              NAME(ICM)                 ',
-*     &        'ECM[NB]                   K*(ICM)      '
-*      end if
+         WRITE (9,30)  NPAIRS, MODEL, NRUN, N, NC, NMERGE, (AS(K),K=1,7)
+ 30      FORMAT (3I4,I6,2I4,2X,F7.1,2F7.2,F7.3,F8.1,2F9.4)
+         WRITE (9,35)  (AS(K),K=8,17)
+ 35      FORMAT (10F11.6)
+         WRITE (9,40)  (AS(K),K=18,30)
+ 40      FORMAT (13F10.5)
+         WRITE (9,*) 'NAME(I1)    NAME(I2)    ',
+     &        'M1[M*]                    M2[M*]                    ',
+     &        'EB[NB]                    ECC                       ',
+     &        'P[Days]                   SEMI[AU]                  ',
+     &        'RI[PC]                    VI[km/s]                  ',
+     &        'K*(I1)      K*(I2)      ',
+     &        'ZN[NB]                    RP[NB]                    ',
+     &        'STEP(I1)[NB]              NAME(ICM)                 ',
+     &        'ECM[NB]                   K*(ICM)      '
+      end if
 *
       DO 50 JPAIR = 1,NPAIRS
           J1 = 2*JPAIR - 1
@@ -188,29 +214,30 @@ c$$$    9     CONTINUE
      &         BODY(J2)*ZMBAR, EB(JPAIR), ECC(JPAIR), PB(JPAIR), 
      &         SEMI*RAU, RI*RBAR, VI*VSTAR, KSTAR(J1), KSTAR(J2),
      &         ZN, RP, STEP(J1), NAME(N+JPAIR), ECM(JPAIR), KCM
-*   45     FORMAT (2I8,1P,8E13.5,0P,3I8,3I4)
+   45     FORMAT (2I8,1P,8E13.5,0P,3I8,3I4)
    50 CONTINUE
       CALL FLUSH(9)
       CLOSE(9)
 *
 *       Include optional table of wide binaries on fort.19.
 
-*      if(rank.eq.0) then
+      if(rank.eq.0) then
 *     Split the bwdat.9 by time
 *         write(OUTFILE2,119) TCHAR
 * 119     format('bwdat.19_',A20)
-*         OPEN (UNIT=19,STATUS='UNKNOWN',FORM='FORMATTED',FILE=OUTFILE2)
+         write(6,*) 'bwdat starts - sykim'
+         OPEN (UNIT=19,STATUS='UNKNOWN',FORM='FORMATTED',FILE=OUTFILE2)
 
 
-*         WRITE (19,55)  TIME+TOFF, (TIME+TOFF)*TSTAR, N
-* 55      FORMAT(' WIDE PAIRS    T TPHYS N ',1P,E27.16,E27.16,0P,I12)
-*         WRITE (19,*) 'NAME(I1)    NAME(I2)    ',
-*     &        'M(I1)[M*]                 M(I2)[M*]                 ',
-*     &        'EB[NB]                    ECC                       ',
-*     &        'P[Days]                   SEMI[AU]                  ',
-*     &        'RI[PC]                    VI[km/s]                  ',
-*     &        'K*(I1)      K*(I2)      '
-*      end if
+         WRITE (19,55)  TIME+TOFF, (TIME+TOFF)*TSTAR, N
+ 55      FORMAT(' WIDE PAIRS    T TPHYS N ',1P,E27.16,E27.16,0P,I12)
+         WRITE (19,*) 'NAME(I1)    NAME(I2)    ',
+     &        'M(I1)[M*]                 M(I2)[M*]                 ',
+     &        'EB[NB]                    ECC                       ',
+     &        'P[Days]                   SEMI[AU]                  ',
+     &        'RI[PC]                    VI[km/s]                  ',
+     &        'K*(I1)      K*(I2)      '
+      end if
 *       Adopt a generous criterion for semi-major axis of wide binaries.
       RB1 = 0.1*RSCALE
       RB2 = RB1**2
@@ -271,17 +298,19 @@ c$$$    9     CONTINUE
             RI = SQRT(RI)
             VI = SQRT(VI)
 *     Print basic binary parameters (SEMI in AU, period in years).
-*            if(rank.eq.0) then
-*               WRITE (19,*)  NAME(I), NAME(JMIN), BODY(I)*ZMBAR,
-*     &              BODY(JMIN)*ZMBAR, HB, ECC1, TK, SEMI*RAU, RI*RBAR,
-*     &              VI*VSTAR, KSTAR(I), KSTAR(JMIN)
-*            end if
-* 75         FORMAT (F8.3,F9.1,1P,E9.1,0P,2F6.1,2I7,2I4)
+            if(rank.eq.0) then
+               WRITE (19,*)  NAME(I), NAME(JMIN), BODY(I)*ZMBAR,
+     &              BODY(JMIN)*ZMBAR, HB, ECC1, TK, SEMI*RAU, RI*RBAR,
+     &              VI*VSTAR, KSTAR(I), KSTAR(JMIN)
+            end if
+ 75         FORMAT (F8.3,F9.1,1P,E9.1,0P,2F6.1,2I7,2I4)
          END IF
  80   CONTINUE
       CALL FLUSH(19)
       CLOSE(19)
-*     
+*    
+      BTCOUNT = BTCOUNT + 1
+ 
       RETURN
 *
       END
