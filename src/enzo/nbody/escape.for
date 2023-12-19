@@ -20,11 +20,5 @@
       SAVE FIRST
       DATA FIRST/.true./
 *
-*     deleted by sykim
-*     we don't need escaper removal
-
-*
-      RETURN
-
       END
 

@@ -901,15 +901,6 @@ void GPUNB_profile(int irank) {
 #endif
 }
 
-// by YS Jo
-void GPUNB_return() {
-	fprintf(stderr,"GPU return and reset variables!");
-	is_open = false;
-	devinit = false;
-  return;
-}
-
-
 extern "C" {
 	void gpunb_devinit_(int *irank){
 		GPUNB_devinit(*irank);
@@ -920,10 +911,6 @@ extern "C" {
 	void gpunb_close_(){
 		GPUNB_close();
 	}
-
-  void gpunb_return_(){
-    GPUNB_return();
-  }
 	void gpunb_send_(
 			int *nj,
 			double mj[],

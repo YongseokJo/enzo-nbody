@@ -17,6 +17,12 @@
 #define MPIINIT 0
 #endif
 #endif
+
+*       input needed for xtrnl10.F (KZ14 = 2, standard solar input)
+
+      GMG = 9.56543900e+10 
+      RG0 = 8.50000000
+
 *
 *       Check option for cluster in circular galactic orbit.
       IF (KZ(14).NE.1) GO TO 20
@@ -68,22 +74,7 @@
       IF (KZ(14).EQ.2) THEN
 *
 *       Read galaxy mass and central distance (solar units and kpc).
-*         disabled by sykim, hard-code input parameters
-*         if(rank.eq.0) READ (5,*)  GMG, RG0
-
-*         write(6,*) "xtrnl0.F input",GMG,RG0
-
-*       added by sykim, hard-code input parameters
-*      parameters needed for xtrnl0.F
-
-          GMG = 9.56543900D+10
-          RG0 = 8.50000000D0
-
-          write(6,*) "xtrnl0.F input",GMG,RG0
-
-*       end added by sykim
-
-
+         if(rank.eq.0) READ (5,*)  GMG, RG0
 #if MPIINIT
       CALL MPI_BCAST(GMG,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
       CALL MPI_BCAST(RG0,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
@@ -230,14 +221,14 @@ C          IF (RTIDE.EQ.0.0D0) RTIDE = 10.0
                   VB2 = GMB/RI*(1.0 + AR/RI)**(GAM-3.0)
                   VCIRC2 = GMG/SQRT(RI2) + DISK*RI2/A2**1.5 +
      &                                     V02*RI2/(RL2 + RI2)
-                  if(rank.eq.0) WRITE (52,50)  SQRT(VCIRC2)*VSTAR,
-     &                 RI*RBAR/1000.0
-   50             FORMAT (' CIRCULAR VELOCITY:    VC[km/s] RI[KPC] ',
-     &                 F12.6,F10.5)
+*                  if(rank.eq.0) WRITE (52,50)  SQRT(VCIRC2)*VSTAR,
+*     &                 RI*RBAR/1000.0
+*   50             FORMAT (' CIRCULAR VELOCITY:    VC[km/s] RI[KPC] ',
+*     &                 F12.6,F10.5)
                   RI = RI + DR
    60         CONTINUE
-              CALL FLUSH(52)
-              CLOSE(52)
+*              CALL FLUSH(52)
+*              CLOSE(52)
 *
               A2 = R02 + (A + B)**2
               VB2 = GMB/SQRT(R02)*(1.0 + AR/SQRT(R02))**(GAM-3.0)

@@ -38,9 +38,8 @@
 
       REAL*8, pointer :: EBODY(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
-      REAL*8, pointer :: EP(:)
+      REAL*8, pointer :: EP(:) 
       INTEGER, pointer :: EID(:)
-      REAL*8 :: ECOMX(3), ECOMV(3), ECOMF(3) 
 *     initial ID of particles recieved from ENZO
 
       INTEGER EIDINIT(NMAX)
@@ -67,6 +66,10 @@
 
       REAL*8 ELENGTHU,EMASSU,EVELU,ETIMEU,EFORCEU
       REAL*8 EDT
+
+
+*     variables for addition of new particles
+      REAL*8 BODYNEW,XNEW(3),VNEW(3)
 
 *     end added by sykim
 
@@ -231,33 +234,12 @@
 
 *     move the variable recieved from ENZO to nbody
 
-*-----------COM-----------------------------------------------------*
-      DO JS = 1,3
-         ECOMX(JS) = 0
-         ECOMV(JS) = 0
-         ECOMF(JS) = 0
-         DO IS = 1,N
-           ECOMX(JS)= ECOMX(JS) + EX(JS,IS)
-           ECOMV(JS)= ECOMV(JS) + EXDOT(JS,IS)
-           ECOMF(JS)= ECOMF(JS) + EF(JS,IS)
-         END DO
-         ECOMX(JS) = ECOMX(JS)/N
-         ECOMV(JS) = ECOMV(JS)/N
-         ECOMF(JS) = ECOMF(JS)/N
-         DO IS = 1,N
-           EX(JS,IS)    = EX(JS,IS)    - ECOMX(JS)
-           EXDOT(JS,IS) = EXDOT(JS,IS) - ECOMV(JS)
-           EF(JS,IS)    = EF(JS,IS)    - ECOMF(JS)
-         END DO
-      END DO
-*-------------------------------------------------------------------*
-
       DO IS = 1,N
          EIDINIT(IS) = EID(IS)
          BODY(IS) = EBODY(IS)/EMASSU
          DO JS = 1,3
-           X(JS,IS)     = EX(JS,IS)/ELENGTHU
-           XDOT(JS,IS)  = EXDOT(JS,IS)/EVELU
+           X(JS,IS) = EX(JS,IS)/ELENGTHU
+           XDOT(JS,IS) = EXDOT(JS,IS)/EVELU
            FENZO(JS,IS) = EF(JS,IS)/EFORCEU
          END DO
          !FENZO(1,IS) = 0.05D0
@@ -321,7 +303,7 @@
       call cputim(tt8)
       ttadj = ttadj + (tt8-tt7)*60.
 
-      TNEXT = TNEXT + DELTAT ! added by  sykim
+      TNEXT = TNEXT + DELTAT  ! added by  sykim
 
 
 * (R.Sp.)Set time flag and step number flags for beginning of run
@@ -333,7 +315,7 @@
 *
       call cputim(tt2)
       ttinitial = ttinitial + (tt2-ttota)*60.
-    
+
       IEPHASE = 0
 
 *       Advance solutions until next output or change of procedure.
@@ -349,6 +331,8 @@
       ttint = ttint + (tt2-tt1)*60.
 *
       IF (IEPHASE.EQ.2) GO TO 19
+
+
       IF (IPHASE.EQ.1) THEN
 *       Prepare new KS regularization.
       call cputim(tt1)
@@ -371,6 +355,7 @@
 *       diagnostics.
           call cputim(tt7)
           CALL ADJUST
+
 *
       ELSE IF (IPHASE.EQ.4) THEN
 *       Switch to unperturbed three-body regularization.
@@ -414,7 +399,6 @@
 
    19 CONTINUE
 
-
 *----communication-with-ENZO-YS------------------------------------------*
       IF ((IEPHASE.EQ.2).OR.(IEPHASE.EQ.3)) THEN
 
@@ -445,28 +429,8 @@
           write (0,*) 'fortran: RDENS=',RDENS(1),RDENS(2),RDENS(3)
           write (0,*) '# of matched shuffles', SHUFFLECNT
 
-*-------------------------------------------------------------------*
-
-*-----------COM Application to X and XDOT---------------------------*
-      write (0,*) 'fortran: COM=', ECOMX(2), ECOMV(2), ECOMF(2), EDT 
-      write (0,*) 'fortran: bofore, EX=', EX(2,1), ', EV=',EXDOT(2,1)
-      DO JS = 1,3
-        ECOMX(JS) = ECOMX(JS) 
-     &              + ECOMV(JS)*EDT 
-     &              + ECOMF(JS)*EDT*EDT/2
-        ECOMV(JS) = ECOMV(JS) + ECOMF(JS)*EDT
-        DO IS = 1,NTOT
-          EX(JS,IS)    = EX(JS,IS)    + ECOMX(JS) 
-          EXDOT(JS,IS) = EXDOT(JS,IS) + ECOMV(JS) 
-        END DO
-      END DO
-      write (0,*) 'fortran: after, EX=', EX(2,1), ', EV=',EXDOT(2,1)
-*-------------------------------------------------------------------*
-
 *---------------------------------------------------------------------*
 *    send particles to ENZO
-
-
 
 *     MPI starts, refer to FinalizeNbodyComputation.C for the counter
 *     part  by YS
@@ -485,6 +449,7 @@
           END DO
           call MPI_BARRIER(ICOMM,ierr)
 *          deallocate(EF)
+          write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
 
 *----------------------------------------------------------------------*
@@ -520,22 +485,41 @@
           write (0,*) 'fortran: force=', EF(1,1)
 *     MPI done!
 
-*      Recieve forces from ENZO and update them
+*     add new particles - added by sykim
 
-*-----------COM FORCE-----------------------------------------------*
-      DO JS = 1,3
-         ECOMF(JS) = 0
-         DO IS = 1,N
-           ECOMF(JS)= ECOMF(JS) + EF(JS,IS)
-         END DO
-         ECOMF(JS) = ECOMF(JS)/N
-         DO IS = 1,N
-           EF(JS,IS)= EF(JS,IS) - ECOMF(JS)
-         END DO
-      END DO
-      ! can it be updated to always COM velocity? by YS
-*-------------------------------------------------------------------*
+   31 CONTINUE
 
+*      IF (N.NE.EN) THEN
+
+*       DO IR = 1,EN
+*         FINDNEW = .true.
+*         DO JR = 1,N
+*           IF (EIDINIT(JR).EQ.EID(IR)) THEN
+*              FINDNEW = .false.
+*           END IF
+*         END DO
+
+*         IF (FINDNEW) THEN
+*          BODYNEW = EBODY(IR)/EMASSU 
+ 
+*          XNEW(1) = EX(1,IR)/ELENGTHU
+*          XNEW(2) = EX(2,IR)/ELENGTHU
+*          XNEW(3) = EX(3,IR)/ELENGTHU
+
+*          VNEW(1) = EXDOT(1,IR)/EVELU
+*          VNEW(2) = EXDOT(2,IR)/EVELU
+*          VNEW(3) = EXDOT(3,IR)/EVELU
+          
+*          EIDINIT(N+1) = EID(IR)
+*          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
+*         END IF
+
+*       END DO
+
+*       END IF
+
+
+*     update forces from ENZO
        
        DO IR = 1,NTOT
 
@@ -554,34 +538,33 @@
 
        END DO
 
-#ifdef output
+
         ! output
-        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
-        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
-        write(OUTFILE,OUTFORM) 'output_',OUTC
-        OPEN (UNIT=3,STATUS='UNKNOWN',
-     &         FILE=OUTFILE)
+*        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
+*        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+*        write(OUTFILE,OUTFORM) 'output_',OUTC
+*        OPEN (UNIT=3,STATUS='UNKNOWN',
+*     &         FILE=OUTFILE)
 
-        OUTCNUM = NAME(J)
-        DO J = 1, NTOT
+*        OUTCNUM = NAME(J)
+*        DO J = 1, NTOT
 
-          WRITE (3,
-     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8, f20.8)')  
-     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
-        END DO
+*          WRITE (3,
+*     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
+*     &          f20.8,f20.8,f20.8,f20.8,f20.8, f20.8)')  
+*     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
+*     &         (F(K,J),K=1,3), EP(J), TNEXT*ETIMEU
+*        END DO
 
-        CLOSE(3)
-      OUTC = OUTC + 1
-#endif
+*        CLOSE(3)
+*        OUTC = OUTC + 1
 
 
-          DELTAT = EDT/ETIMEU
-          TNEXT = TNEXT + DELTAT  ! is it right? SY
+        DELTAT = EDT/ETIMEU
+        TNEXT = TNEXT + DELTAT  ! is it right? SY
 
-          write (6,*) 'timesteps', TNEXT, DELTAT
-          write (6,*) 'recieved and restarting'
+        write (6,*) 'timesteps', TNEXT, DELTAT
+        write (6,*) 'recieved and restarting'
 
 
 *----end-added-by-YS-----------------------------------------------------*

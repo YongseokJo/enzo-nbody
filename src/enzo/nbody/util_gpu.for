@@ -17,10 +17,6 @@
       REAL*8 GPU_POT(maxthr)
 #endif
       REAL*8 x_i(3,maxthr), v_i(3,maxthr)
-      ! added by sykim, backgroud acc      
-#ifdef INTERPOLATION
-      REAL*8 bgacc_i(3,maxthr)
-#endif
       REAL*8 GPU_A(3,maxthr), GPU_JERK(3,maxthr)
 *      REAL*8 FI_HOST(3,maxthr),FID_HOST(3,maxthr)
 *     If it's in parallel loop, flag_p = .true.
@@ -55,25 +51,13 @@
             GPU_DTR(ii) = STEPR(idi)
             x_i(1:3,ii) = X(1:3,idi)
             v_i(1:3,ii) = XDOT(1:3,idi)
-#ifdef INTERPOLATION
-            bgacc_i(1:3,ii) = FENZO(1:3,idi) !added by sykim
-#endif
          END DO
 !$omp end parallel do
 
 *     GPU first call with first values of GPU_POT, GPU_A & GPU_JERK
  550     call cputim(tt53)
-
-         write(6,*) "REGF starts" ! by YS
-#ifdef INTERPOLATION
-         CALL gpunb_regf(ni,GPU_RS,GPU_DTR,x_i,v_i,GPU_A,GPU_JERK,
-     &        GPU_POT,bgacc_i,lmax,nnbmax,LISTGP,M_FLAG)
-              ! bgacc_i added by sykim
-#else
          CALL gpunb_regf(ni,GPU_RS,GPU_DTR,x_i,v_i,GPU_A,GPU_JERK,
      &        GPU_POT,lmax,nnbmax,LISTGP,M_FLAG)
-#endif
-         write(6,*) "REGF ends" ! by YS
          call cputim(tt54)
          ttgpu = ttgpu + (tt54-tt53)*60.0
 
@@ -162,15 +146,11 @@ C$$$#endif
 
 *     Correction
 *!$omp parallel do if(ni.GE.ithread) private(II,I)
-         write(6,*) "regcor starts" ! by YS
          DO II = 1, ni
             I = IREG(L+II-1)
 #ifndef GPU
             x_i(1:3,II) = x(1:3,I)
             v_i(1:3,II) = xdot(1:3,I)
-#ifdef INTERPOLATION
-            FENZO(1:3,I) = bgacc_i(1:3,II)
-#endif
 #endif
 *     --04/19/14 12:44-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -187,9 +167,8 @@ c$$$               END DO
 c$$$               call flush(102+rank)
 c$$$            END IF
 *     --04/19/14 12:44-lwang-end----------------------------------------*
-         ! edited by sykim
-            CALL regcor_gpu(I,x_i(1,II),v_i(1,II), !bgacc_i(1,II),
-     &           GPU_A(1,II),GPU_JERK(1,II),LISTGP(1,II))
+            CALL regcor_gpu(I,x_i(1,II),v_i(1,II),GPU_A(1,II),
+     &           GPU_JERK(1,II),LISTGP(1,II))
 c$$$#ifdef SIMD
 *     Only when Neighbor list is modified, update it for AVX/SSE library
 C$$$            IF(ICFLAG.GT.0.AND..NOT.FLAG_P) THEN
@@ -197,7 +176,6 @@ c$$$            CALL IRR_SIMD_SET_LIST(I,LIST(1,I))
 C$$$            END IF
 c$$$#endif
          END DO
-         write(6,*) "regcor ends" ! by YS
 *!$omp end parallel do
       END DO
 

@@ -22,12 +22,10 @@
 #define MPIINIT 0
 #endif
 #endif
-*
-*     unnecessary files deleted by sykim
 
       IF (KZ(22).GT.0)
      &OPEN (UNIT=10,STATUS='UNKNOWN',FORM='FORMATTED',FILE='dat.10')
-
+ 
 *
       RETURN
       END

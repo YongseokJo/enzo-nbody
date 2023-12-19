@@ -28,14 +28,14 @@
 
       ETAI = 0.02D0
       ETAR = 0.02D0
-      RS0 = 0.18780202 ! for binaries !0.19587108D0
+      RS0 = 0.19587108D0
       DTADJ = 1.00D0
 !      DELTAT = 1.00D0
-      TCRIT = 502.00D0
+      TCRIT = 510.00D0
       QE = 1.0D10
       RBAR = 2.58811228D0
-      ZMBAR = 100.00000000D0
-      write(6,*) 'ZMBAR = ',ZMBAR
+!      ZMBAR = 100.00000000D0
+
 
       KZ(1) = 2
       KZ(2) = 2
@@ -52,7 +52,7 @@
       KZ(12) = 0
       KZ(13) = 0
       KZ(14) = 0 !edited
-      KZ(15) = 2 !0 for starmake
+      KZ(15) = 2 !edited
       KZ(16) = 1
       KZ(17) = 1
       KZ(18) = 0
@@ -68,7 +68,7 @@
       KZ(27) = 0
       KZ(28) = 0
       KZ(29) = 0
-      KZ(30) = 2 ! 0 for starmake
+      KZ(30) = 2 !edited
 
       KZ(31) = 0
       KZ(32) = 0
