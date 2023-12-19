@@ -38,10 +38,8 @@
 
       REAL*8, pointer :: EBODY(:),EX(:,:)
       REAL*8, pointer :: EXDOT(:,:), EF(:,:) !, EH(:,:,:)
-      REAL*8, pointer :: newEBODY(:), newEX(:,:)
-      REAL*8, pointer :: newEXDOT(:,:), newEF(:,:) !, EH(:,:,:)
-*      REAL*8, pointer :: EP(:) 
-      INTEGER, pointer :: EID(:), newEID(:)
+      REAL*8, pointer :: EP(:) 
+      INTEGER, pointer :: EID(:)
 *     initial ID of particles recieved from ENZO
 
       INTEGER EIDINIT(NMAX)
@@ -72,7 +70,6 @@
 
 *     variables for addition of new particles
       REAL*8 BODYNEW,XNEW(3),VNEW(3)
-      LOGICAL FINDNEW
 
 *     end added by sykim
 
@@ -101,8 +98,7 @@
 
 
 *-----MPI-scheme-of-nbody-added-by-YS-----------------------------------*
-      OUTC  = 1
-      newEN = 0
+      OUTC = 1
 
       write (0,*) 'In the Nbody6 '
 *     Massive MPI Communication with Enzo code! (subroutine later) by SY
@@ -131,7 +127,7 @@
       allocate(EX(3,EN))
       allocate(EXDOT(3,EN))
       allocate(EF(3,EN))
-*      allocate(EP(EN))
+      allocate(EP(EN))
       DO  I = 1,3
         call MPI_RECV(EX(I,:), EN, MPI_DOUBLE_PRECISION, 0, 300,
      &           ICOMM, istatus,ierr)
@@ -142,8 +138,8 @@
         call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &            ICOMM, istatus,ierr)
       END DO
-*      call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
-*     &            ICOMM, istatus,ierr)
+      call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &            ICOMM, istatus,ierr)
       call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
       call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
@@ -196,8 +192,6 @@
 *      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
       EFORCEU = EVELU*EVELU/ELENGTHU
 
-      ZMBAR = EBODY(1)*EMU/(1.9891D33)
-
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
 
@@ -214,9 +208,9 @@
 
           WRITE (3,
      &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8)')  
+     &          f20.8,f20.8,f20.8,f20.8,f20.8,f20.8)')  
      &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), TNEXT*ETIMEU
+     &         (EF(K,J),K=1,3), EP(J), TNEXT*ETIMEU
         END DO
 
         CLOSE(3)
@@ -453,26 +447,8 @@
           call MPI_SEND(EXDOT(I,:), EN, MPI_DOUBLE_PRECISION, 0, 400,
      &           ICOMM, ierr)
           END DO
-
-          ! does not have to send IDs but should be in the same order as
-          ! when received
-          write (0,*) 'fortran: newEN=', newEN
-          write (6,*) 'fortran: newEN=', newEN
-          IF (newEN.GT.0) THEN
-            DO  I = 1,3
-            call MPI_SEND(newEX(I,:), newEN, MPI_DOUBLE_PRECISION, 0, 
-     &           500, ICOMM, ierr)
-            call MPI_SEND(newEXDOT(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
-     &           600, ICOMM, ierr)
-            END DO
-            deallocate(newEID)
-            deallocate(newEBODY)
-            deallocate(newEX)
-            deallocate(newEXDOT)
-            deallocate(newEF)
-            newEN = 0
-          END  IF
           call MPI_BARRIER(ICOMM,ierr)
+*          deallocate(EF)
           write (0,*) 'fortran: EX=', EX(1,1), ', EV=',EXDOT(1,1)
 *     MPI done!
 
@@ -490,48 +466,15 @@
           write (6,*) 'fortran: read in'
 
           call MPI_BARRIER(ICOMM,ierr)
-*        Old Particles
-          call MPI_RECV(EID, EN, MPI_INTEGER, 0, 25, ICOMM, istatus,
+          call MPI_RECV(EID, EN, MPI_INTEGER, 0, 250, ICOMM, istatus,
      &         ierr)
             DO I = 1,3
-               call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 50,
+               call MPI_RECV(EF(I,:), EN, MPI_DOUBLE_PRECISION, 0, 500,
      &         ICOMM, istatus,ierr)
             END DO
-*            call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
-*     &         ICOMM, istatus,ierr)
+            call MPI_RECV(EP, EN, MPI_DOUBLE_PRECISION, 0, 500,
+     &         ICOMM, istatus,ierr)
 
-
-*        New Particles
-          call MPI_RECV(newEN, 1, MPI_INTEGER, 0, 100, ICOMM, istatus,
-     &         ierr)
-          IF (newEN.GT.0) THEN
-            allocate(newEID(newEN))
-            allocate(newEBODY(newEN))
-            allocate(newEX(3,newEN))
-            allocate(newEXDOT(3,newEN))
-            allocate(newEF(3,newEN))
-            call MPI_RECV(newEID, newEN, MPI_INTEGER, 0, 200, ICOMM, istatus,
-     &         ierr)
-            call MPI_RECV(newEBODY, newEN, MPI_DOUBLE_PRECISION, 0, 250,
-     &          ICOMM, istatus, ierr)
-            DO I = 1,3
-               call MPI_RECV(newEX(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
-     &         300, ICOMM, istatus,ierr)
-               call MPI_RECV(newEXDOT(I,:), newEN, MPI_DOUBLE_PRECISION,
-     &         0, 400, ICOMM, istatus,ierr)
-               call MPI_RECV(newEF(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
-     &         500, ICOMM, istatus,ierr)
-            END DO
-          END IF
-
-      ! test printout
-      IF (newEN.GT.0) THEN
-        write (6,*) 'fortran: newEN=', newEN
-        DO J = 1,newEN 
-        write (6,*) 'fortran: X=', newEX(1,J)
-        END DO
-      END IF
-*        Units
           call MPI_RECV(EDT, 1, MPI_DOUBLE_PRECISION, 0, 600,
      &            ICOMM, istatus,ierr)
           call MPI_RECV(ETU, 1, MPI_DOUBLE_PRECISION, 0, 700,
@@ -546,34 +489,34 @@
 
    31 CONTINUE
 
-      IF (N.NE.EN) THEN
+*      IF (N.NE.EN) THEN
 
-       DO IR = 1,EN
-         FINDNEW = .true.
-         DO JR = 1,N
-           IF (EIDINIT(JR).EQ.EID(IR)) THEN
-              FINDNEW = .false.
-           END IF
-         END DO
+*       DO IR = 1,EN
+*         FINDNEW = .true.
+*         DO JR = 1,N
+*           IF (EIDINIT(JR).EQ.EID(IR)) THEN
+*              FINDNEW = .false.
+*           END IF
+*         END DO
 
-         IF (FINDNEW) THEN
-          BODYNEW = EBODY(IR)/EMASSU 
+*         IF (FINDNEW) THEN
+*          BODYNEW = EBODY(IR)/EMASSU 
  
-          XNEW(1) = EX(1,IR)/ELENGTHU
-          XNEW(2) = EX(2,IR)/ELENGTHU
-          XNEW(3) = EX(3,IR)/ELENGTHU
+*          XNEW(1) = EX(1,IR)/ELENGTHU
+*          XNEW(2) = EX(2,IR)/ELENGTHU
+*          XNEW(3) = EX(3,IR)/ELENGTHU
 
-          VNEW(1) = EXDOT(1,IR)/EVELU
-          VNEW(2) = EXDOT(2,IR)/EVELU
-          VNEW(3) = EXDOT(3,IR)/EVELU
+*          VNEW(1) = EXDOT(1,IR)/EVELU
+*          VNEW(2) = EXDOT(2,IR)/EVELU
+*          VNEW(3) = EXDOT(3,IR)/EVELU
           
-          EIDINIT(N+1) = EID(IR)
-          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
-         END IF
+*          EIDINIT(N+1) = EID(IR)
+*          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
+*         END IF
 
-       END DO
+*       END DO
 
-       END IF
+*       END IF
 
 
 *     update forces from ENZO
@@ -597,31 +540,31 @@
 
 
         ! output
-        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
-        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
-        write(OUTFILE,OUTFORM) 'output_',OUTC
-        OPEN (UNIT=3,STATUS='UNKNOWN',
-     &         FILE=OUTFILE)
+*        OUTCNUM = INT(LOG10(REAL(OUTC)))+1
+*        write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+*        write(OUTFILE,OUTFORM) 'output_',OUTC
+*        OPEN (UNIT=3,STATUS='UNKNOWN',
+*     &         FILE=OUTFILE)
 
-        OUTCNUM = NAME(J)
-        DO J = 1, NTOT
+*        OUTCNUM = NAME(J)
+*        DO J = 1, NTOT
 
-          WRITE (3,
-     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
-     &          f20.8,f20.8,f20.8,f20.8,f20.8)')  
-     &         (EX(K,J),K=1,3), (EXDOT(K,J),K=1,3),
-     &         (EF(K,J),K=1,3), TNEXT*ETIMEU
-        END DO
+*          WRITE (3,
+*     &         '(f20.8,f20.8,f20.8,f20.8,f20.8,
+*     &          f20.8,f20.8,f20.8,f20.8,f20.8, f20.8)')  
+*     &         (X(K,J),K=1,3), (XDOT(K,J),K=1,3),
+*     &         (F(K,J),K=1,3), EP(J), TNEXT*ETIMEU
+*        END DO
 
-        CLOSE(3)
-        OUTC = OUTC + 1
+*        CLOSE(3)
+*        OUTC = OUTC + 1
 
 
-          DELTAT = EDT/ETIMEU
-          TNEXT = TNEXT + DELTAT  ! is it right? SY
+        DELTAT = EDT/ETIMEU
+        TNEXT = TNEXT + DELTAT  ! is it right? SY
 
-          write (6,*) 'timesteps', TNEXT, DELTAT
-          write (6,*) 'recieved and restarting'
+        write (6,*) 'timesteps', TNEXT, DELTAT
+        write (6,*) 'recieved and restarting'
 
 
 *----end-added-by-YS-----------------------------------------------------*
