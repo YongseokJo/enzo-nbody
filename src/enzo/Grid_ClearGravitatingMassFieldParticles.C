@@ -48,30 +48,18 @@ int grid::ClearGravitatingMassFieldParticles()
   /* Allocate and clear the field. */
  
  
-#ifdef NBODY
-  //if (GravitatingMassFieldParticles[0] != NULL)
-    //fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
-	/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
-  if (GravitatingMassFieldParticles[0] == NULL) {
-		GravitatingMassFieldParticles[0] = new float[size];
-#else
+
   //if (GravitatingMassFieldParticles != NULL)
     //fprintf(stderr, "ClearGravitatingMassField: Warning! Field not NULL.\n");
   if (GravitatingMassFieldParticles  == NULL) {
 		GravitatingMassFieldParticles = new float[size];
-#endif
 	}
-	if (GravitatingMassFieldParticles[0] == NULL) {
+	if (GravitatingMassFieldParticles == NULL) {
 		ENZO_FAIL("malloc error (out of memory?)\n");
   }
  
   for (int i = 0; i < size; i++) {
-#ifdef NBODY
-    //GravitatingMassFieldParticles[1][i] = 0.0;
-    GravitatingMassFieldParticles[0][i] = 0.0;
-#else
     GravitatingMassFieldParticles[i] = 0.0;
-#endif
 	}
  
   return SUCCESS;
@@ -105,14 +93,14 @@ int grid::ClearGravitatingMassFieldParticlesNoStar()
  
 	/*In principle, this field should be initialized in the above function.*/
 	/* by YS Jo, 0 for the original field; 1 for the gravity with stars */
-  if (GravitatingMassFieldParticles[1] == NULL) {
-    GravitatingMassFieldParticles[1] = new float[size];
+  if (GravitatingMassFieldParticlesNoStar == NULL) {
+    GravitatingMassFieldParticlesNoStar = new float[size];
 	}
-  if (GravitatingMassFieldParticles[1] == NULL) 
+  if (GravitatingMassFieldParticlesNoStar == NULL) 
     ENZO_FAIL("malloc error (out of memory?)\n");
 
   for (int i = 0; i < size; i++) 
-    GravitatingMassFieldParticles[1][i] = 0.0;
+    GravitatingMassFieldParticlesNoStar[i] = 0.0;
 
   return SUCCESS;
 }

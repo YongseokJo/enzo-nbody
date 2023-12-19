@@ -246,11 +246,8 @@ int grid::ProjectToPlane(FLOAT ProjectedFieldLeftEdge[],
  
   /* 3) Dark matter density. */
  
-#ifdef NBODY
-	if (GravitatingMassFieldParticles[0] != NULL) {
-#else
+
 	if (GravitatingMassFieldParticles != NULL) {
-#endif
 
     float *temp = new float[size];
     for (i = 0; i < size; i++)
@@ -274,11 +271,7 @@ int grid::ProjectToPlane(FLOAT ProjectedFieldLeftEdge[],
 		   (max(0, Offset[0]) - Offset[0]);
 	for (i = max(0,Offset[0]); i < GridDimension[0]-max(0,Offset[0]);
 	     i++, bfindex++, dmindex++)
-#ifdef NBODY
-	  temp[bfindex] = GravitatingMassFieldParticles[0][dmindex];
-#else
 	  temp[bfindex] = GravitatingMassFieldParticles[dmindex];
-#endif
       }
  
     FORTRAN_NAME(projplane)(temp, NULL,

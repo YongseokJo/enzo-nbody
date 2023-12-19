@@ -287,6 +287,22 @@ c$$$     &            'IREG',IREG(IOFF:2+IOFF)
           CALL XTRNLD(istart+ifirst-1,iend+ifirst-1,1)
       END IF
 *
+
+
+*       added by sykim - to include FENZO on initialization
+
+        DO I = 1,NTOT
+
+          FR(1,I) = FR(1,I) + FENZO(1,I)
+          FR(2,I) = FR(2,I) + FENZO(2,I)
+          FR(3,I) = FR(3,I) + FENZO(3,I)
+
+        END DO
+
+*       end added by sykim
+
+
+
 *
 #ifdef PARALLEL
       isend = rank + 1

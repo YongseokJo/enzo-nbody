@@ -1260,7 +1260,12 @@ OBJS_NBODY_ALL= \
 OBJS_NBODY= \
 						NbodyRoutines.o \
 						PrepareNbodyComputation.o\
+						FinalizeNbodyComputation.o\
 						nbody/nbody6.o \
+						nbody/intgrt.o \
+						nbody/adjust.o \
+						nbody/addinit.o \
+						nbody/add_star.o \
 						nbody/absorb.o \
 						nbody/add_tlist.o \
 						nbody/assess.o \
@@ -1305,6 +1310,7 @@ OBJS_NBODY= \
 						nbody/core.o \
 						nbody/corerd.o \
 						nbody/counter_reset.o \
+						nbody/creation.o \
 						nbody/cstab2.o \
 						nbody/cstab3.o \
 						nbody/cstab4.o \
@@ -1544,7 +1550,6 @@ OBJS_NBODY= \
 						nbody/zcnsts.o \
 						nbody/zero.o \
 						nbody/zfuncs.o \
-						nbody/adjust.o \
 						nbody/binpop.o \
 						nbody/checkl.o \
 						nbody/cputim.o \
@@ -1567,7 +1572,6 @@ OBJS_NBODY= \
 						nbody/input.o \
 						nbody/insert.o \
 						nbody/instar.o \
-						nbody/intgrt.o \
 						nbody/jacobi.o \
 						nbody/kick.o \
 						nbody/ksinit.o \

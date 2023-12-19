@@ -89,12 +89,6 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 	InitialRegion->Processor = ProcessorNumber;
 	InitialRegion->Data      = NULL;
 
-	//fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[0]); // by YS
-	//fprintf(stdout,"Proc:%d,GravitatingMassFieldAddr: %d\n", MyProcessorNumber, GravitatingMassField[1]); // by YS
-	//fprintf(stdout,"Proc:%d,GravitatingMassField: %f\n", MyProcessorNumber, GravitatingMassField[0][0]); // by YS
-	//fprintf(stdout,"Proc:%d,GravitatingMassField: %f\n", MyProcessorNumber, GravitatingMassField[1][0]); // by YS
-	//fprintf(stdout,"GravitatingMassField: %f\n", GravitatingMassField[0][1]); // by YS
-	//fprintf(stdout,"GravitatingMassField: %f\n", GravitatingMassField[1][1]); // by YS
 	fprintf(stdout,"4-10-30-3\n"); // by YS
 	/* If the data is on this processor then copy it to a new region. */
 
@@ -107,16 +101,16 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 		float *FieldPointer = NULL;
 		if (Field == GRAVITATING_MASS_FIELD) {
 			if (NoStar) {
-				FieldPointer = GravitatingMassField[1];
+				FieldPointer = GravitatingMassFieldNoStar;
 			} else {
-				FieldPointer = GravitatingMassField[0];
+				FieldPointer = GravitatingMassField;
 			}
 		}
 		if (Field == POTENTIAL_FIELD) {
 			if (NoStar) {
-				FieldPointer = PotentialField[1];
+				FieldPointer = PotentialFieldNoStar;
 			} else {
-				FieldPointer = PotentialField[0];
+				FieldPointer = PotentialField;
 			}
 		}
 #else
@@ -153,9 +147,9 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 #ifdef NBODY
 			delete FieldPointer;
 			if (NoStar) {
-				PotentialField[1] = NULL;
+				PotentialFieldNoStar = NULL;
 			} else {
-				PotentialField[0] = NULL;
+				PotentialField = NULL;
 			}
 #else
 			delete FieldPointer;

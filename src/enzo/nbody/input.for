@@ -16,28 +16,26 @@
 #define MPIINIT 0
 #endif
 #endif
-*
-*       Make a formal call to define input parameters & counters.
-C      CALL DEFINE
 
-*      added by sykim, hard-coded input parameters
-*     parameters needed for input.F
-
-      N = 1000
+*       input needed for input.F
+!      N = 1000
       NFIX = 1
       NCRIT = 20
       NRAND = 10000
       NNBOPT = 31
-      NRUN = 1
+      NRUN = 1 
+*       1 is left out... why? 
 
       ETAI = 0.02D0
       ETAR = 0.02D0
-      RS0 = 0.20807868D0
+      RS0 = 0.19587108D0
       DTADJ = 1.00D0
-      DELTAT = 1.00D0
+!      DELTAT = 1.00D0
+      TCRIT = 502.00D0
       QE = 1.0D10
       RBAR = 2.58811228D0
-      ZMBAR= 100.000000D0
+!      ZMBAR = 100.00000000D0
+      write(6,*) 'ZMBAR = ',ZMBAR
 
       KZ(1) = 2
       KZ(2) = 2
@@ -53,8 +51,8 @@ C      CALL DEFINE
       KZ(11) = 0
       KZ(12) = 0
       KZ(13) = 0
-      KZ(14) = 2
-      KZ(15) = 2
+      KZ(14) = 0 !edited
+      KZ(15) = 2 !0 for starmake
       KZ(16) = 1
       KZ(17) = 1
       KZ(18) = 0
@@ -63,14 +61,14 @@ C      CALL DEFINE
 
       KZ(21) = 1
       KZ(22) = 2
-      KZ(23) = 1
+      KZ(23) = 0 !edited
       KZ(24) = 0
       KZ(25) = 0
       KZ(26) = 2
       KZ(27) = 0
       KZ(28) = 0
       KZ(29) = 0
-      KZ(30) = 2
+      KZ(30) = 2 ! 0 for starmake
 
       KZ(31) = 0
       KZ(32) = 0
@@ -94,34 +92,26 @@ C      CALL DEFINE
       KZ(49) = 0
       KZ(50) = 0
 
-      DTMIN = 1.0D-5
-      RMIN = 1.0D-4
+      DTMIN = 1.0D-05
+      RMIN = 1.0D-04
       ETAU = 0.1D0
       ECLOSE = 1.0D0
       GMIN = 5.0D-05
       GMAX = 0.01D0
       SMAX = 1.0D0
-
-*      end added by sykim
-
-*      disabled by sykim, hard-code input parameters
+*
+*       Make a formal call to define input parameters & counters.
+C      CALL DEFINE
 *
 *      IF(rank.eq.0)THEN
 *       Read & print the main input parameters.
 *         READ (5,*)  N, NFIX, NCRIT, NRAND, NNBOPT, NRUN
-* Termination time in physical units, TCRITP, read in nbody6.F
+C Termination time in physical units, TCRITP, read in nbody6.F
 *         READ (5,*)  ETAI, ETAR, RS0, DTADJ, DELTAT, TCRIT,
-*     &              QE, RBAR, ZMBAR
+*     &               QE, RBAR, ZMBAR
 *         READ (5,*)  (KZ(J),J=1,50)
 *         READ (5,*)  DTMIN, RMIN, ETAU, ECLOSE, GMIN, GMAX, SMAX
 *      END IF
-
-      write(6,*) 'check input'
-
-      write(6,*) ETAI, ETAR, RS0, DTADJ, DELTAT, TCRIT,
-     &           QE, RBAR, ZMBAR
-      write(6,*) DTMIN, RMIN, ETAU, ECLOSE, GMIN, GMAX, SMAX
-
 
 *     Check SMAX to make sure it have correct value
       if(rank.eq.0) THEN
@@ -171,41 +161,41 @@ C      CALL DEFINE
 
 #ifdef ENSEMBLE
       NRAND = NRAND + 17*rank
-      WRITE (6,11)rank,NRAND
-   11 FORMAT (//,' Run configured for ensemble average PE ',I5,
-     *   ' NRAND=',I9)
+*      WRITE (6,11)rank,NRAND
+*   11 FORMAT (//,' Run configured for ensemble average PE ',I5,
+*     *   ' NRAND=',I9)
 #endif
 
-      if(rank.eq.0)then
-         WRITE (6,10)
-   10    FORMAT (/////,15X,'N  NFIX  NCRIT  NRAND  NNBOPT  NRUN')
-         WRITE (6,12)  N, NFIX, NCRIT, NRAND, NNBOPT, NRUN
-   12    FORMAT (/,I16,I6,2I7,I8,I6)
+*      if(rank.eq.0)then
+*         WRITE (6,10)
+*   10    FORMAT (/////,15X,'N  NFIX  NCRIT  NRAND  NNBOPT  NRUN')
+*         WRITE (6,12)  N, NFIX, NCRIT, NRAND, NNBOPT, NRUN
+*   12    FORMAT (/,I16,I6,2I7,I8,I6)
 *
 C New: (Aug.1998, P.Kroupa)
-         WRITE(6,15)
-   15    FORMAT (//,12X,' ETAI      ETAR      RS0       DTADJ',
-     &                  '     DELTAT',
-     &                  '     TCRITP    TCRIT     QE', 
-     &                  '        RBAR       ZMBAR')
-         WRITE (6,20)  ETAI, ETAR, RS0, DTADJ, DELTAT, TCRITP, TCRIT, 
-     &              QE, RBAR,
-     &              ZMBAR
-   20    FORMAT (/,10X,1P10E10.1)
+*         WRITE(6,15)
+*   15    FORMAT (//,12X,' ETAI      ETAR      RS0       DTADJ',
+*     &                  '     DELTAT',
+*     &                  '     TCRITP    TCRIT     QE', 
+*     &                  '        RBAR       ZMBAR')
+*         WRITE (6,20)  ETAI, ETAR, RS0, DTADJ, DELTAT, TCRITP, TCRIT, 
+*     &              QE, RBAR,
+*     &              ZMBAR
+*   20    FORMAT (/,10X,1P10E10.1)
 *
-         WRITE (6,22)
-   22    FORMAT (//,12X,'OPTIONS')
-         WRITE (6,24)  (J,J=1,50)
-   24    FORMAT (/,9X,50I3)
-         WRITE (6,26)  (KZ(J),J=1,50)
-   26    FORMAT (/,9X,50I3)
-         WRITE (6,28)
-   28    FORMAT (//,12X,'DTMIN     RMIN      ETAU      ECLOSE    GMIN',
-     &        '      GMAX     SMAX')
-         WRITE (6,30)  DTMIN, RMIN, ETAU, ECLOSE, GMIN, GMAX, SMAX
-   30    FORMAT (/,9X,1P7E10.1)
-      end if
-      call flush(6)
+*         WRITE (6,22)
+*   22    FORMAT (//,12X,'OPTIONS')
+*         WRITE (6,24)  (J,J=1,50)
+*   24    FORMAT (/,9X,50I3)
+*         WRITE (6,26)  (KZ(J),J=1,50)
+*   26    FORMAT (/,9X,50I3)
+*         WRITE (6,28)
+*   28    FORMAT (//,12X,'DTMIN     RMIN      ETAU      ECLOSE    GMIN',
+*     &        '      GMAX     SMAX')
+*         WRITE (6,30)  DTMIN, RMIN, ETAU, ECLOSE, GMIN, GMAX, SMAX
+*   30    FORMAT (/,9X,1P7E10.1)
+*      end if
+*      call flush(6)
 *
 *       Define total particle number & neighbour membership range.
       NTOT = N

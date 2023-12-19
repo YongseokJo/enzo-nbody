@@ -16,13 +16,22 @@ static double get_wtime(){
 }
 #endif
 
-struct Jparticle{
-  float3 pos;
+struct __align__(16) Jparticle{
   float  mass;
-  float3 vel;
   float  pad;
+  float3 pos;
+  float3 vel;
+#ifdef INTERPOLATION
+  float3 acc; 
+	// by YS Jo
+#endif
+
   Jparticle(int) {}
+#ifdef INTERPOLATION
+  Jparticle(double mj, double xj[3], double vj[3],double aj[3]){
+#else
   Jparticle(double mj, double xj[3], double vj[3]){
+#endif
     pos.x = xj[0];
     pos.y = xj[1];
     pos.z = xj[2];
@@ -38,6 +47,17 @@ struct Jparticle{
     NAN_CHECK(vj[0]);
     NAN_CHECK(vj[1]);
     NAN_CHECK(vj[2]);
+
+#ifdef INTERPOLATION
+    acc.x = aj[0];
+    acc.y = aj[1];
+    acc.z = aj[2];
+		// by YS Jo
+    NAN_CHECK(aj[0]);
+    NAN_CHECK(aj[1]);
+    NAN_CHECK(aj[2]);
+#endif
+
   }
   __device__ Jparticle() {}
 };

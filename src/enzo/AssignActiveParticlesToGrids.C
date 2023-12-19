@@ -108,7 +108,7 @@ int AssignActiveParticlesToGrids(
 	  LevelMax and assign the particle to the
 	  SavedGrid on that processor.  */
       struct { Eint32 value; Eint32 rank; } sendbuf, recvbuf;
-      MPI_Comm_rank(MPI_COMM_WORLD, &sendbuf.rank);
+      MPI_Comm_rank(enzo_comm, &sendbuf.rank);
       NumberOfGrids = GenerateGridArray(LevelArray, GlobalLevelMax, &LevelGrids); 
       // We're moving it, make sure that the particle position is fixed (if required).
       ParticleList[i]->SetPositionPeriod(period);

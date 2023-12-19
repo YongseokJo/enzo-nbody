@@ -59,22 +59,17 @@ void grid::CleanUp()
  
 
 #ifdef NBODY	
-  delete [] GravitatingMassField[0];
-  delete [] GravitatingMassField[1];
-  delete [] GravitatingMassFieldParticles[0];
-  delete [] GravitatingMassFieldParticles[1];
+  delete [] GravitatingMassFieldNoStar;
+  delete [] GravitatingMassFieldParticlesNoStar;
 
-  GravitatingMassField[0]          = NULL;
-  GravitatingMassField[1]          = NULL;
-  GravitatingMassFieldParticles[0] = NULL;
-  GravitatingMassFieldParticles[1] = NULL;
-#else
+  GravitatingMassFieldNoStar          = NULL;
+  GravitatingMassFieldParticlesNoStar = NULL;
+#endif
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
 
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
-#endif
 
 #ifdef SAB
   for (i = 0; i < MAX_DIMENSION; i++)

@@ -243,13 +243,8 @@ int grid::ZeusSolver(float *gamma, int igamfield, int nhy,
 					ZEUSLinearArtificialViscosity,
 					ZEUSQuadraticArtificialViscosity,
 					gamma, dtFixed, dx, dy, dz, gravity, 
-#ifdef NBODY
-					AccelerationField[0][0], AccelerationField[1][0],
-					AccelerationField[2][0],
-#else
 					AccelerationField[0], AccelerationField[1],
 					AccelerationField[2],
-#endif
 					minsupecoef,lapcoef) == FAIL) {
 			fprintf(stderr, "P(%"ISYM"): Error in ZeusFDM on step %"ISYM" (dt=%"GSYM")\n", MyProcessorNumber, nhy, dtFixed);
 			fprintf(stderr, "  grid dims = %"ISYM" %"ISYM" %"ISYM"\n", GridDimension[0], GridDimension[1], GridDimension[2]);
@@ -265,13 +260,8 @@ int grid::ZeusSolver(float *gamma, int igamfield, int nhy,
 					ZEUSLinearArtificialViscosity,
 					ZEUSQuadraticArtificialViscosity, PressureFree,
 					gamma, dtFixed, pmin, dx, dy, dz, gravity, 
-#ifdef NBODY
-					AccelerationField[0][0], AccelerationField[1][0],
-					AccelerationField[2][0],
-#else
 					AccelerationField[0], AccelerationField[1],
 					AccelerationField[2],
-#endif
 					bottom, minsupecoef, CRModel, CRgamma) == FAIL) {
 			fprintf(stderr, "P(%"ISYM"): Error in ZeusSource on step %"ISYM" (dt=%"GSYM")\n", MyProcessorNumber,
 					nhy, dtFixed);

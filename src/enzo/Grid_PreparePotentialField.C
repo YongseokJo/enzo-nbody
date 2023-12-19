@@ -77,26 +77,14 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	// grids are on the same processor.
 	if (MyProcessorNumber == ProcessorNumber &&
 			CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
-#ifdef NBODY
-		if (PotentialField[0] != NULL) 
-			delete [] PotentialField[0];
-		PotentialField[0] = new float[size];
-#else
+
 		if (PotentialField != NULL) 
 			delete [] PotentialField;
 		PotentialField = new float[size];
-#endif
 	}
 
 
-#define NO_NBODY_NOSTAR_GRAVITY
-#ifdef NBODY_NOSTAR_GRAVITY
-	float diff=0.0;
-	for (int i=0; i<size; i++) {
-		diff = GravitatingMassField[0][i] - GravitatingMassField[1][i];
-		if (diff != 0.0) fprintf(stdout, "diff=%f\n",diff);
-	}
-#endif
+	fprintf(stderr, "Now okay?\n");
 
 	/* Declarations. */
 
@@ -177,17 +165,6 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	float *Temp1 = new float[size1];
 	float *Temp2 = new float[size2];
 
-#ifdef NBODY
-	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField[0],
-			PotentialField[0], &GridRank,
-			ParentDim, ParentDim+1, ParentDim+2,
-			GravitatingMassFieldDimension,
-			GravitatingMassFieldDimension+1,
-			GravitatingMassFieldDimension+2,
-			ParentOffset, ParentOffset+1, ParentOffset+2,
-			Refinement, Refinement+1, Refinement+2,
-			Temp1, Temp2);
-#else
 	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField,
 			PotentialField, &GridRank,
 			ParentDim, ParentDim+1, ParentDim+2,
@@ -197,23 +174,12 @@ int grid::PreparePotentialField(grid *ParentGrid)
 			ParentOffset, ParentOffset+1, ParentOffset+2,
 			Refinement, Refinement+1, Refinement+2,
 			Temp1, Temp2);
-#endif
 
 	delete [] Temp1;
 	delete [] Temp2;
 
 #else /* SPLINE */
 
-#ifdef NBODY	
-	FORTRAN_NAME(prolong)(ParentGrid->PotentialField[0],
-			PotentialField[0], &GridRank,
-			ParentDim, ParentDim+1, ParentDim+2,
-			GravitatingMassFieldDimension,
-			GravitatingMassFieldDimension+1,
-			GravitatingMassFieldDimension+2,
-			ParentOffset, ParentOffset+1, ParentOffset+2,
-			Refinement, Refinement+1, Refinement+2);
-#else
 	FORTRAN_NAME(prolong)(ParentGrid->PotentialField,
 			PotentialField, &GridRank,
 			ParentDim, ParentDim+1, ParentDim+2,
@@ -222,7 +188,6 @@ int grid::PreparePotentialField(grid *ParentGrid)
 			GravitatingMassFieldDimension+2,
 			ParentOffset, ParentOffset+1, ParentOffset+2,
 			Refinement, Refinement+1, Refinement+2);
-#endif
 
 #endif /* SPLINE */
 
@@ -230,22 +195,13 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	for (int i=0;i<GridDimension[0]+6; i++) {
 		int igrid = GRIDINDEX_NOGHOST(i,(6+GridDimension[0])/2,(6+GridDimension[0])/2);
 		int igrid2 =  ( 18 * (*(ParentDim+1)) + 18 ) * (*ParentDim)+i;
-#ifdef NBODY
-		printf("i: %i \tParent %g  \t Sub %g\n", i, ParentGrid->PotentialField[0][igrid2], PotentialField[0][igrid]);
-#else
 		printf("i: %i \tParent %g  \t Sub %g\n", i, ParentGrid->PotentialField[igrid2], PotentialField[igrid]);
-#endif
 	}
 
 	float maxPot=-1e30, minPot=1e30;    
 	for (int i=0;i<size; i++) {
-#ifdef NBODY
-		maxPot = max(maxPot,PotentialField[i][0]);
-		minPot = min(minPot,PotentialField[i][0]);
-#else
 		maxPot = max(maxPot,PotentialField[i]);
 		minPot = min(minPot,PotentialField[i]);
-#endif
 	}
 	if (debug1) printf("PreparePotential: Potential minimum: %g \t maximum: %g\n", minPot, maxPot);
 #endif
@@ -254,13 +210,8 @@ int grid::PreparePotentialField(grid *ParentGrid)
 
 	if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
 
-#ifdef NBODY
-		delete [] ParentGrid->PotentialField[0];
-		ParentGrid->PotentialField[0] = NULL;
-#else
 		delete [] ParentGrid->PotentialField;
 		ParentGrid->PotentialField = NULL;
-#endif
 	}
 
 	return SUCCESS;
@@ -298,9 +249,9 @@ int grid::PreparePotentialFieldNoStar(grid *ParentGrid)
 	// grids are on the same processor.
 	if (MyProcessorNumber == ProcessorNumber &&
 			CommunicationDirection != COMMUNICATION_POST_RECEIVE) {
-		if (PotentialField[1] != NULL) 
-			delete [] PotentialField[1];
-		PotentialField[1] = new float[size];
+		if (PotentialFieldNoStar != NULL) 
+			delete [] PotentialFieldNoStar;
+		PotentialFieldNoStar = new float[size];
 	}
 
 
@@ -383,8 +334,8 @@ int grid::PreparePotentialFieldNoStar(grid *ParentGrid)
 	float *Temp1 = new float[size1];
 	float *Temp2 = new float[size2];
 
-	FORTRAN_NAME(int_spline)(ParentGrid->PotentialField[1],
-			PotentialField[1], &GridRank,
+	FORTRAN_NAME(int_spline)(ParentGrid->PotentialFieldNoStar,
+			PotentialFieldNoStar, &GridRank,
 			ParentDim, ParentDim+1, ParentDim+2,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
@@ -397,8 +348,8 @@ int grid::PreparePotentialFieldNoStar(grid *ParentGrid)
 
 #else /* SPLINE */
 
-	FORTRAN_NAME(prolong)(ParentGrid->PotentialField[1],
-			PotentialField[1], &GridRank,
+	FORTRAN_NAME(prolong)(ParentGrid->PotentialFieldNoStar,
+			PotentialFieldNoStar, &GridRank,
 			ParentDim, ParentDim+1, ParentDim+2,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
@@ -420,8 +371,8 @@ int grid::PreparePotentialFieldNoStar(grid *ParentGrid)
 	/* Clean up parent. */
 
 	if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
-		delete [] ParentGrid->PotentialField[1];
-		ParentGrid->PotentialField[1] = NULL;
+		delete [] ParentGrid->PotentialFieldNoStar;
+		ParentGrid->PotentialFieldNoStar = NULL;
 	}
 
 	return SUCCESS;

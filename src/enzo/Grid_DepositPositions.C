@@ -53,11 +53,7 @@ int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
   /* 1) GravitatingMassField. */
  
   if (DepositField == GRAVITATING_MASS_FIELD) {
-#ifdef NBODY
-    DepositFieldPointer = GravitatingMassField[0];
-#else
     DepositFieldPointer = GravitatingMassField;
-#endif
     CellSize            = float(GravitatingMassFieldCellSize);
     for (dim = 0; dim < GridRank; dim++) {
       LeftEdge[dim]  = GravitatingMassFieldLeftEdge[dim];
@@ -68,11 +64,7 @@ int grid::DepositPositions(FLOAT *Position[], float *Mass, int Number,
   /* 2) GravitatingMassFieldParticles. */
  
   else if (DepositField == GRAVITATING_MASS_FIELD_PARTICLES) {
-#ifdef NBODY
-    DepositFieldPointer = GravitatingMassFieldParticles[0];
-#else
     DepositFieldPointer = GravitatingMassFieldParticles;
-#endif
     CellSize            = float(GravitatingMassFieldParticlesCellSize);
     for (dim = 0; dim < GridRank; dim++) {
       LeftEdge[dim]  = GravitatingMassFieldParticlesLeftEdge[dim];

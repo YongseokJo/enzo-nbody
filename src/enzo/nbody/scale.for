@@ -8,6 +8,14 @@
       LOGICAL LSCALE
 *      Scaling if initial model is constructed or King model is read
       LSCALE = KZ(22).LT.2.OR.KZ(22).GE.6
+
+
+*       input needed for scale.F
+
+      Q = 0.5D0
+      VXROT = 0.0D0 
+      VZROT = 0.0D0
+      RTIDE = 0.0D0
 *
 #ifdef PARALLEL
 #define MPIINIT 1
@@ -19,20 +27,7 @@
 #endif
 #endif
 *
-
-*      added by sykim, hard-code input parameters
-*      parameters needed for scale.F
-
-      Q = 0.50D0
-      VXROT = 0.0D0
-      VZROT = 0.0D0
-      RTIDE = 0.0D0
-
-*      end added by sykim
-
-
 *       Read virial ratio, rotation scaling factors, boundary radius & tidal radius.
-*      disabled by sykim, hard-code input parameters
 *      if(rank.eq.0)then
 *      READ (5,*)  Q, VXROT, VZROT, RTIDE
 

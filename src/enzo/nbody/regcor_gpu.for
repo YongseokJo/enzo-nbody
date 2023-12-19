@@ -116,6 +116,17 @@ C$$$      END IF
           CALL XTRNLF(XI,XIDOT,DFIRR,FREG,DFD,FDR,1)
 *
       END IF
+
+*       added on 23.04.24 by sykim
+*       add external force recieved from ENZO
+
+        DO 23 K=1,3
+          FREG(K) = FREG(K) + FENZO(K,I)
+   23   CONTINUE
+
+*       end added by sykim
+
+
 *
 *       Check for zero neighbour number.
       IF (NNB.EQ.0) THEN

@@ -109,8 +109,14 @@ void RunEventHooks(char *, HierarchyEntry *Grid[], TopGridData &MetaData) {}
 #define IMPLICIT_MACRO 
 #endif
 
+//#define GravTest
+#ifdef GravTest
+int OutputParitcles(LevelHierarchyEntry *LevelArray[],int level);
+#endif
+
 #ifdef NBODY
 int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
+int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
 #endif
 
 #define EXTRA_OUTPUT_MACRO(A,B) ExtraOutput(A,LevelArray,MetaData,level,Exterior IMPLICIT_MACRO,B);
@@ -321,6 +327,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 	/* Create a SUBling list of the subgrids */
 	LevelHierarchyEntry **SUBlingList;
+
 
 	/* Initialize the chaining mesh used in the FastSiblingLocator. */
 
@@ -562,10 +569,32 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 #ifdef SAB
 				} // End of loop over grids
 
+
+
+
 				fprintf(stdout,"6\n");  // by YS
 																//Ensure the consistency of the AccelerationField
 				SetAccelerationBoundary(Grids, NumberOfGrids,SiblingList,level, MetaData,
 						Exterior, LevelArray[level], LevelCycleCount[level]);
+
+#ifdef NBODY
+				//if (level == MaximumRefinementLevel) {
+				fprintf(stdout,"6.5\n");  // by YS
+				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				/* Create a master list of all nbody particles */
+				if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
+					ENZO_FAIL("Error in NbodyParticleFindAll.");
+				}
+				fprintf(stderr,"PNC done.\n", level);  // by YS
+				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				//}
+#endif
+
+#define GravTest
+#ifdef GravTest
+#endif
+
+
 
 				fprintf(stdout,"7\n");  // by YS
 				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
@@ -577,6 +606,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 					/* Call Schrodinger solver. */
 
+				if (MyProcessorNumber == ROOT_PROCESSOR)
 					fprintf(stdout,"8\n");  // by YS
 					if (QuantumPressure == 1)
 						Grids[grid1]->GridData->SchrodingerSolver(LevelCycleCount[level]);
@@ -609,6 +639,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					}//usehydro
 				}//grids
 
+				if (MyProcessorNumber == ROOT_PROCESSOR)
 				fprintf(stdout,"9\n");  // by YS
 				if( HydroMethod == HD_RK || HydroMethod == MHD_RK ){
 #ifdef FAST_SIB
@@ -687,13 +718,13 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 #ifdef NBODY
 				//if (level == MaximumRefinementLevel) {
-					fprintf(stdout,"10\n");  // by YS
-					fprintf(stderr,"level=%d\n", level);  // by YS
-					/* Create a master list of all nbody particles */
-					if (PrepareNbodyComputation(LevelArray, level) == FAIL) {
-						ENZO_FAIL("Error in NbodyParticleFindAll.");
-					}
-					fprintf(stderr,"PNC done.\n", level);  // by YS
+				fprintf(stdout,"10\n");  // by YS
+				/* Create a master list of all nbody particles */
+				if (FinalizeNbodyComputation(LevelArray, level) == FAIL) {
+					ENZO_FAIL("Error in NbodyParticleFindAll.");
+				}
+				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				fprintf(stderr,"FNC done.\n");  // by YS
 				//}
 #endif
 
@@ -706,15 +737,18 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 					/* Update particle positions (if present). */
 
+				fprintf(stdout,"11\n");  // by YS
 					UpdateParticlePositions(Grids[grid1]->GridData);
 
+				fprintf(stdout,"12\n");  // by YS
 					/*Trying after solving for radiative transfer */
 #ifdef EMISSIVITY
 					/*                                                                                                           
-																																																											 clear the Emissivity of the level below, after the level below                                            
-																																																											 updated the current level (it's parent) and before the next
-																																																											 timestep at the current level.                                                                            
-																																																											 */
+					clear the Emissivity of the level below, after the level below                                            
+					updated the current level (it's parent) and before the next
+					timestep at the current level.                                                                            
+					*/
+
 					/*    if (StarMakerEmissivityField > 0) {
 								LevelHierarchyEntry *Temp;
 								Temp = LevelArray[level];
@@ -735,6 +769,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 						(Grids[grid1]->NextGridNextLevel, level ,dtLevelAbove,
 						 NumberOfNewActiveParticles[grid1]);
 
+				fprintf(stdout,"13\n");  // by YS
 					/* Include shock-finding */
 
 					Grids[grid1]->GridData->ShocksHandler();
@@ -777,6 +812,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 						Grids[grid1]->GridData->DeleteAccelerationField();
 #endif //!SAB
 
+				fprintf(stdout,"14\n");  // by YS
 					Grids[grid1]->GridData->DeleteParticleAcceleration();
 
 					if (UseFloor) 
@@ -793,13 +829,17 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 					if (UseMagneticSupernovaFeedback)
 						Grids[grid1]->GridData->MagneticSupernovaList.clear(); 
+
+					fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
 				} //end loop over grids
 
+				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
 				/* Finalize (accretion, feedback etc) for Active particles. */
 				ActiveParticleFinalize(Grids, MetaData, NumberOfGrids, LevelArray,
 						level, NumberOfNewActiveParticles);
 
 
+				fprintf(stdout,"15\n");  // by YS
 
 
 				/* Finalize (accretion, feedback, etc.) star particles */
@@ -807,6 +847,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 						level, AllStars, TotalStarParticleCountPrevious, OutputNow);
 
 
+				fprintf(stdout,"16\n");  // by YS
 
 
 				/* For each grid: a) interpolate boundaries from the parent grid.
@@ -842,6 +883,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 					/* For each grid, delete the GravitatingMassFieldParticles. */
 
+				fprintf(stdout,"17\n");  // by YS
 					for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
 						Grids[grid1]->GridData->DeleteGravitatingMassFieldParticles();
 
@@ -859,6 +901,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					Grids[grid1]->GridData->SetTimeStep(dtThisLevel[level]);
 			}
 
+				fprintf(stdout,"18\n");  // by YS
 			if (LevelArray[level+1] != NULL) {
 				if (EvolveLevel(MetaData, LevelArray, level+1, dtThisLevel[level], Exterior
 #ifdef TRANSFER
@@ -957,6 +1000,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 				FinalizeFluxes(Grids,SubgridFluxesEstimate,NumberOfGrids,NumberOfSubgrids);
 
+				fprintf(stdout,"19\n");  // by YS
 			/* Check for mass flux across outer boundaries of domain */
 			ComputeDomainBoundaryMassFlux(Grids, level, NumberOfGrids, MetaData);
 

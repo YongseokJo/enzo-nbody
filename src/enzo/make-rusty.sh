@@ -10,8 +10,10 @@ cd ../../
 ./configure
 cd src/enzo/
 
-module add gcc/7.5.0
-module add openmpi4
+#module add gcc/7.5.0
+#module add openmpi4
+module add intel-oneapi-compilers
+module add intel-oneapi-mpi
 module add ucx
 module add cuda
 #module add openmpi/1.10.7
@@ -23,7 +25,11 @@ make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks
 make show-config
 make show-flags
 make -j3
-cp enzo.exe enzo_spare.exe
+#cp enzo.exe enzo_spare.exe
+#cp enzo.exe enzo_spare_v100.exe
+cp enzo.exe enzo_test.exe
+#cp enzo.exe enzo_const.exe
+#cp enzo.exe enzo_1e6.exe
 echo "Make done!"
 pwd
 date

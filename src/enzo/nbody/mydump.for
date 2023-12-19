@@ -12,10 +12,7 @@
 #ifdef TT
       INCLUDE 'tt.h'
 #endif
-
-*     deleted by sykim
-*     we do not need mydump output
-       
+         
 *
       RETURN
 *

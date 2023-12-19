@@ -20,21 +20,35 @@
 #define MPIINIT 0
 #endif
 #endif
-*
 
+
+*       input needed for data.F
+
+      ALPHA = 0.0D0
+      BODY1 = 1.0D0
+      BODYN = 1.0D0
+      NBIN0 = 0
+      NHI0 = 0
+      ZMET = 0.02D0
+      EPOCH0 = 0.0D0
+      DTPLOT = 100.0D0
+
+*
 *       Set provisional total mass (rescaled in routine SCALE).
       ZMASS = FLOAT(N)
 *
+*       edited by sykim
 *       Check option for reading initial conditions from input file.
       if(rank.eq.0)then
 *
       IREAD = 0
 
-*      disabled by sykim. input is recieved from enzo
+*      OPEN(UNIT=10,STATUS='UNKNOWN',FILE='dat2.10')
 
 *      IF (KZ(22).EQ.2.OR.KZ(22).EQ.6.OR.
 *     &     KZ(22).EQ.9.OR.KZ(22).EQ.10) THEN
 *          DO 5 I = 1,N
+*              write(6,*) "I = ",I
 *              READ (10,*)  BODY(I), (X(K,I),K=1,3), (XDOT(K,I),K=1,3)
 *    5     CONTINUE
 *
@@ -42,11 +56,19 @@
 *      IF (KZ(23).GE.3) READ (10,*) RTIDE
 *          PRINT*,' rank ',rank,N,' body data read from unit 10 ',
 *     *    ' RTIDE =',RTIDE
+*      CLOSE(10)
 *      END IF
 *       End reading NBODY input data format.
-*
-*     end disabled by sykim
+*       end edited by sykim
 
+*       Read tidal radius if cutoff required
+*      IF (KZ(23).GE.3) READ (10,*) RTIDE
+*          PRINT*,' rank ',rank,N,' body data read from unit 10 ',
+*     *    ' RTIDE =',RTIDE
+
+*       End reading NBODY input data format.
+
+*
 *        Read TREE input format
       IF (KZ(22).EQ.3.OR.KZ(22).EQ.7) THEN
           READ(10,*) N
@@ -116,24 +138,7 @@
 *
 *       Read mass function parameters, # primordials, Z-abundance & epoch.
 *       And plot interval for HR diagram.
-
-*      added by sykim, hard-code input parameters
-*      parameters needed for data.F
-
-      ALPHAS = 0.0D0
-      BODY1 = 1.0D0
-      BODYN = 1.0D0
-      NBIN0 = 0
-      NHI0 = 0
-      ZMET = 0.02D0
-      EPOCH0 = 0.0D0
-      DTPLOT = 100.0D0
-
-*       end added by sykim
-
-
-*      disabled by sykim, hard-code input parameters
-*      if(rank.eq.0)then
+      if(rank.eq.0)then
 *         READ (5,*) ALPHAS, BODY1, BODYN, NBIN0, NHI0, ZMET, EPOCH0, 
 *     &        DTPLOT
 
@@ -158,7 +163,7 @@
      &           '0.0001 - 0.03'
             STOP
          endif
-*       end if
+      end if
 #ifdef PARALLEL
       CALL MPI_BCAST(ALPHAS,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
       CALL MPI_BCAST(BODY1,1,MPI_REAL8,0,MPI_COMM_WORLD,ierr)
@@ -221,14 +226,14 @@
 *
    50 CONTINUE
 *
-      if(rank.eq.0)then
-      WRITE (6,15) ALPHAS, BODY1, BODYN, ZMASS, NBIN0, NHI0,
-     &     ZMET, EPOCH0
-   15 FORMAT (/,12X,' ALPHAS =',F5.2,
-     &    '  BODY1 =',F5.1,'  BODYN =',F5.2,' ZMASS =',1P,E12.5,0P,
-     &    ' NBIN0 =',I5,' NHI0 =',I5,' ZMET =',F7.4,' EPOCH0 =',F5.2)
-      end if
-      call flush(6)
+*      if(rank.eq.0)then
+*      WRITE (6,15) ALPHAS, BODY1, BODYN, ZMASS, NBIN0, NHI0,
+*     &     ZMET, EPOCH0
+*   15 FORMAT (/,12X,' ALPHAS =',F5.2,
+*     &    '  BODY1 =',F5.1,'  BODYN =',F5.2,' ZMASS =',1P,E12.5,0P,
+*     &    ' NBIN0 =',I5,' NHI0 =',I5,' ZMET =',F7.4,' EPOCH0 =',F5.2)
+*      end if
+*      call flush(6)
 *
       RETURN
 *

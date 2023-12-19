@@ -96,8 +96,12 @@ int grid::CommunicationMoveGrid(int ToProcessor, int MoveParticles,
 	(CommunicationDirection == COMMUNICATION_SEND ||
 	 CommunicationDirection == COMMUNICATION_SEND_RECEIVE)) {
       if (DeleteAllFields == TRUE) {
-	if (MoveParticles == TRUE)
+	if (MoveParticles == TRUE) {
 	  this->DeleteAllFields();
+#ifdef NBODY
+	  this->DeleteAllFieldsNoStar();
+#endif
+	}
 	else
 	  this->DeleteAllButParticles();
 #ifdef UNUSED

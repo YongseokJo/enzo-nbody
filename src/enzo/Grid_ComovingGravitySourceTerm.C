@@ -54,13 +54,8 @@ int grid::ComovingGravitySourceTerm()
       gmf_index = (k*GravitatingMassFieldDimension[1] + j)*
 	GravitatingMassFieldDimension[0];
       for (i = 0; i < GravitatingMassFieldDimension[0]; i++, gmf_index++) {
-#ifdef NBODY
-	GravitatingMassField[0][gmf_index] =
-	  GravitatingMassField[0][gmf_index] - AverageDensity;
-#else
 	GravitatingMassField[gmf_index] =
 	  GravitatingMassField[gmf_index] - AverageDensity;
-#endif
       }
     }
  
@@ -100,8 +95,8 @@ int grid::ComovingGravitySourceTermNoStar()
 			gmf_index = (k*GravitatingMassFieldDimension[1] + j)*
 				GravitatingMassFieldDimension[0];
 			for (i = 0; i < GravitatingMassFieldDimension[0]; i++, gmf_index++) {
-				GravitatingMassField[1][gmf_index] =
-					GravitatingMassField[1][gmf_index] - AverageDensity;
+				GravitatingMassFieldNoStar[gmf_index] =
+					GravitatingMassFieldNoStar[gmf_index] - AverageDensity;
 			}
 		}
  

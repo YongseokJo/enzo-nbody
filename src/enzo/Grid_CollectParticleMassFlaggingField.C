@@ -62,7 +62,7 @@ int grid::CollectParticleMassFlaggingField(void)
     buffer[i] = ParticleMassFlaggingField[i];
 
   MPI_Reduce(buffer, ParticleMassFlaggingField, Count, DataType, MPI_SUM, 
-	     ProcessorNumber, MPI_COMM_WORLD);
+	     ProcessorNumber, enzo_comm);
 
   delete [] buffer;
 

@@ -335,6 +335,7 @@ c$$$     &        EBIN,EMERGE
 *     
 *     See whether standard output is due.
       IF (TIME.GE.TNEXT) THEN
+         IEPHASE = 3
          CALL OUTPUT
 *     
 *     Include optional diagnostics for the hardest binary below ECLOSE.
@@ -380,9 +381,7 @@ c$$$     &        EBIN,EMERGE
 *     
 *     Check termination criteria (TIME > TCRIT & N <= NCRIT).
 *     
-C     New (Aug. 1998): P.Kroupa
-*     edited by sykim
-      IF (TTOT*TSCALE.GT.TCRITp.OR.TTOT.GE.TCRIT - 20.0*DTMIN
+      IF (TTOT*TSCALE.GT.TCRITp.OR.TTOT.GT.TCRIT - 20.0*DTMIN
      &     .OR.N.LE.NCRIT) THEN
 *     Terminate after optional COMMON save.
          if(rank.eq.0) THEN
@@ -429,15 +428,8 @@ C     New (Aug. 1998): P.Kroupa
 #ifdef PARALLEL
          IF(rank.EQ.0)THEN
 #endif
-           ttotal=(tt1-ttota)*60.
-           PRINT*,' Total CPU=',ttotal
-
-           IPHASE = 13
-
-*           by YS Jo to reset variables
-             
-*           by sykim to reset count
-           CALL RESET_COUNT
+            ttotal=(tt1-ttota)*60.
+            PRINT*,' Total CPU=',ttotal
 
 #ifdef PARALLEL
          END IF
@@ -449,11 +441,11 @@ C     New (Aug. 1998): P.Kroupa
 *         CALL MPI_ABORT(MPI_COMM_WORLD,ierr)
          CALL MPI_FINALIZE
 #endif
+         STOP
+*     
+      END IF
 
-         RETURN
-*     
-       END IF
-*     
+     
 *     Check optional truncation of time.
       IF (KZ(35).GT.0.AND.TIME.GE.DTOFF) THEN
          CALL OFFSET(DTOFF)

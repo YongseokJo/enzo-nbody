@@ -205,45 +205,7 @@ note: include buffer zones of this grid but not the other grid. */
 				OnBoundary = TRUE;
 
 			if (OnlyBoundary == TRUE && OnBoundary == FALSE) {
-
 				/* Only copy the endpoints. */
-#ifdef NBODY 
-				if (CopyPotentialFieldAverage == 2) {
-					if (Start[0] == 0) {
-						PotentialField[0][thisindex] = 0.5*(PotentialField[0][thisindex] +
-								OtherGrid->PotentialField[0][otherindex]);
-					}
-					if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
-						PotentialField[0][thisindex+Dim[0]-1] =
-							0.5*(PotentialField[0][thisindex+Dim[0]-1] +
-									OtherGrid->PotentialField[0][otherindex+Dim[0]-1]);
-					}
-				} else {
-					if (Start[0] == 0) {
-						PotentialField[0][thisindex] = OtherGrid->PotentialField[0][otherindex];
-					}
-					if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
-						PotentialField[0][thisindex+Dim[0]-1] =
-							OtherGrid->PotentialField[0][otherindex+Dim[0]-1];
-					}
-				}
-
-			} else {
-
-				/* Copy the whole line. */
-
-				if (CopyPotentialFieldAverage == 2)
-					for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++){
-						PotentialField[0][thisindex] = 0.5*(PotentialField[0][thisindex] +
-								OtherGrid->PotentialField[0][otherindex]);
-					}
-				else
-					for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-						PotentialField[0][thisindex] = OtherGrid->PotentialField[0][otherindex];
-					}
-
-			}
-#else
 			if (CopyPotentialFieldAverage == 2) {
 				if (Start[0] == 0)
 					PotentialField[thisindex] = 0.5*(PotentialField[thisindex] +
@@ -273,7 +235,6 @@ note: include buffer zones of this grid but not the other grid. */
 					PotentialField[thisindex] = OtherGrid->PotentialField[otherindex];
 
 		}
-#endif
 	}
 
 /* Clean up if we have transfered data. */
@@ -459,22 +420,22 @@ note: include buffer zones of this grid but not the other grid. */
 				/* Only copy the endpoints. */
 				if (CopyPotentialFieldAverage == 2) {
 					if (Start[0] == 0) {
-						PotentialField[1][thisindex] = 0.5*(PotentialField[1][thisindex] +
-								OtherGrid->PotentialField[1][otherindex]);
+						PotentialFieldNoStar[thisindex] = 0.5*(PotentialFieldNoStar[thisindex] +
+								OtherGrid->PotentialFieldNoStar[otherindex]);
 					}
 					if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
 
-						PotentialField[1][thisindex+Dim[0]-1] =
-							0.5*(PotentialField[1][thisindex+Dim[0]-1] +
-									OtherGrid->PotentialField[1][otherindex+Dim[0]-1]);
+						PotentialFieldNoStar[thisindex+Dim[0]-1] =
+							0.5*(PotentialFieldNoStar[thisindex+Dim[0]-1] +
+									OtherGrid->PotentialFieldNoStar[otherindex+Dim[0]-1]);
 					}
 				} else {
 					if (Start[0] == 0) {
-						PotentialField[1][thisindex] = OtherGrid->PotentialField[1][otherindex];
+						PotentialFieldNoStar[thisindex] = OtherGrid->PotentialFieldNoStar[otherindex];
 					}
 					if (Start[0]+Dim[0] == GravitatingMassFieldDimension[0]) {
-						PotentialField[1][thisindex+Dim[0]-1] =
-							OtherGrid->PotentialField[1][otherindex+Dim[0]-1];
+						PotentialFieldNoStar[thisindex+Dim[0]-1] =
+							OtherGrid->PotentialFieldNoStar[otherindex+Dim[0]-1];
 					}
 				}
 
@@ -484,22 +445,22 @@ note: include buffer zones of this grid but not the other grid. */
 
 				if (CopyPotentialFieldAverage == 2)
 					for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++){
-						PotentialField[1][thisindex] = 0.5*(PotentialField[1][thisindex] +
-								OtherGrid->PotentialField[1][otherindex]);
+						PotentialFieldNoStar[thisindex] = 0.5*(PotentialFieldNoStar[thisindex] +
+								OtherGrid->PotentialFieldNoStar[otherindex]);
 					}
 				else
 					for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-						PotentialField[1][thisindex] = OtherGrid->PotentialField[1][otherindex];
+						PotentialFieldNoStar[thisindex] = OtherGrid->PotentialFieldNoStar[otherindex];
 					}
 
 			}
-	}
+		} // end for
 
-/* Clean up if we have transfered data. */
+	/* Clean up if we have transfered data. */
 
-if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-	OtherGrid->DeleteAllFields();
+	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
+		OtherGrid->DeleteAllFieldsNoStar();
 
 	return SUCCESS;
-	}
+}
 #endif

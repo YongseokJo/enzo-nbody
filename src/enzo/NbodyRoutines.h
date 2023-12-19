@@ -19,7 +19,8 @@
 
 
 
-int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[]);
+int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],int *LocalNumberOfNbodyParticles);
+int FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],int *LocalNumberOfNbodyParticles, int *NewLocalNumberOfNbodyParticles);
 int FindStartIndex(int* LocalNumberOfNbodyParticles);
 void InitializeNbodyArrays(void);
 void CopyNbodyArrayToOld(void);

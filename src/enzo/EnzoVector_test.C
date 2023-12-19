@@ -74,14 +74,14 @@ int EnzoVector::test()
   fprintf(stdout,"  p%"ISYM": z->copy(x), printing to test2_vec\n", MyProcessorNumber); fflush(NULL);
   z->write("test2_vec",0);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the axpy operation
   z->axpy(-1.0,x);
   fprintf(stdout,"  p%"ISYM": axpy test error = %"FSYM"\n", MyProcessorNumber, z->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the vector absolute value
@@ -91,7 +91,7 @@ int EnzoVector::test()
   x->axpy(-1.0,y);
   fprintf(stdout,"  p%"ISYM": abs test error = %"FSYM"\n", MyProcessorNumber, x->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the vector scale operation
@@ -101,7 +101,7 @@ int EnzoVector::test()
   y->axpy(1.0,x);
   fprintf(stdout,"  p%"ISYM": scale test error = %"FSYM"\n", MyProcessorNumber, y->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the vector linear sum operation
@@ -110,14 +110,14 @@ int EnzoVector::test()
   z->linearsum(2.0,x,-3.0,y);
   fprintf(stdout,"  p%"ISYM": linearsum test error = %"FSYM"\n", MyProcessorNumber, z->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the addconst operation
   y->addconst(-2.0);
   fprintf(stdout,"  p%"ISYM": addconst test error = %"FSYM"\n", MyProcessorNumber, y->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
   
   // test the product operation
@@ -128,7 +128,7 @@ int EnzoVector::test()
   x->axpy(-1.0,z);
   fprintf(stdout,"  p%"ISYM": product test error = %"FSYM"\n", MyProcessorNumber, x->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
   
   // test the quotient operation
@@ -137,7 +137,7 @@ int EnzoVector::test()
   y->axpy(-1.0,x);
   fprintf(stdout,"  p%"ISYM": quotient test error = %"FSYM"\n", MyProcessorNumber, y->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
   
   // test the minquotient operation
@@ -145,7 +145,7 @@ int EnzoVector::test()
   y->constant(2.0);
   fprintf(stdout,"  p%"ISYM": minquotient test error = %"FSYM"\n", MyProcessorNumber, x->minquotient(y)-1.5); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the inverse operation
@@ -155,7 +155,7 @@ int EnzoVector::test()
   z->axpy(-1.0,y);
   fprintf(stdout,"  p%"ISYM": inverse test error = %"FSYM"\n", MyProcessorNumber, z->infnorm()); fflush(NULL);
 #ifdef USE_MPI
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 #endif
 
   // test the communication routine

@@ -113,9 +113,9 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
   MPI_Arg node_number;
   MPI_Datatype DataTypeInt = (sizeof(Eint64) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
 
-  err = MPI_Comm_size(MPI_COMM_WORLD, &nt);
+  err = MPI_Comm_size(enzo_comm, &nt);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
-  err = MPI_Comm_rank(MPI_COMM_WORLD, &id);
+  err = MPI_Comm_rank(enzo_comm, &id);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
   err = MPI_Get_processor_name(node_name, &lname);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
@@ -136,7 +136,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
 
   fprintf(stderr, "MPI Task %"ISYM" of %"ISYM" is on node %s [%"ISYM"] with %lld MBytes free\n", id, nt, node_name, node_number, free);
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
 //  Get a list of the actual node names to define properties
 //  MAX_TASKS_PER_NODE is the number running in this job and NOT
@@ -163,9 +163,9 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
     free_input[id/MAX_TASKS_PER_NODE] = free;
   }
 
-  MPI_Allreduce(node_input, actual_node, nn, DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(node_input, actual_node, nn, DataTypeInt, MPI_SUM, enzo_comm);
 
-  MPI_Allreduce(free_input, actual_free, nn, DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(free_input, actual_free, nn, DataTypeInt, MPI_SUM, enzo_comm);
 
 // Define node properties
 // As long as the total number of freecpu[] is > nt this should work
@@ -244,7 +244,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
     fprintf(stderr, "+++++++++++++++++++++++++++++++++++\n");
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
 /* Here we have on every task
    grid[i]               the grid number
@@ -283,7 +283,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
 
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   for ( i = 0; i < nt; i++ ) {
 
@@ -300,7 +300,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
   }
   if ( id == 0 ) fprintf(stderr, "+++++++++++++++++++++++++++++++++++\n");
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   for ( m = 1; m < nt; m++ ) {
     last1 = nt-m+1;
@@ -334,7 +334,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
     fprintf(stderr, "+++++++++++++++++++++++++++++++++++\n");
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   for ( i = 0; i < nt; i++ ) {
     nodemem[task_node[i]] = nodemem[task_node[i]] + grid_size[i];
@@ -346,7 +346,7 @@ int AssignGridToTaskMap(Eint64 GridIndex[], Eint64 Memory[], int Ntask)
   }
   if ( id == 0 ) fprintf(stderr, "+++++++++++++++++++++++++++++++++++\n");
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   delete [] grid_size;
   delete [] grid;

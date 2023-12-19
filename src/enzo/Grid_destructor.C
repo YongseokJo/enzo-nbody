@@ -55,14 +55,12 @@ grid::~grid()
     delete [] ParticleVelocity[i];
     delete [] ParticleAcceleration[i];
 #ifdef NBODY
-    delete [] AccelerationField[i][0];
-    delete [] AccelerationField[i][1];
+    delete [] AccelerationFieldNoStar[i];
 		if (ParticleAccelerationNoStar[i] != NULL) {
 			delete [] ParticleAccelerationNoStar[i];
 		}
-#else
-    delete [] AccelerationField[i];
 #endif
+    delete [] AccelerationField[i];
     delete [] RandomForcingField[i];
     if (PhaseFctMultEven[i] != NULL) delete[] PhaseFctMultEven[i];
     if (PhaseFctMultOdd[i] != NULL) delete[] PhaseFctMultOdd[i];
@@ -135,17 +133,14 @@ grid::~grid()
   delete [] ParticleNumber;
   delete [] ParticleType;
 #ifdef NBODY
-  delete [] PotentialField[0];
-  delete [] GravitatingMassField[0];
-  delete [] GravitatingMassFieldParticles[0];
-  delete [] PotentialField[1];
-  delete [] GravitatingMassField[1];
-  delete [] GravitatingMassFieldParticles[1];
-#else
+  delete [] PotentialFieldNoStar;
+  delete [] GravitatingMassFieldNoStar;
+  delete [] GravitatingMassFieldParticlesNoStar;
+#endif
   delete [] PotentialField;
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
-#endif
+
   delete [] FlaggingField;
   delete [] MassFlaggingField;
   delete [] ParticleMassFlaggingField;

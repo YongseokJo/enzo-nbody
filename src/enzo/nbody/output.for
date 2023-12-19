@@ -21,10 +21,17 @@
       REAL*4  XS(3,NMAX),VS(3,NMAX),BODYS(NMAX),RHOS(NMAX),AS(20)
       REAL*4  XJ(3,6),VJ(3,6),BODYJ(6)
       REAL*4  XNS(NMAX),PHI(NMAX)
+      INTEGER OUTCOUNT ! defined by sy
+      INTEGER OUTCNUM ! defined by sy
+      DATA OUTCOUNT /1/
       CHARACTER*27 OUTFILE
       CHARACTER*27 OUTTAIL
       CHARACTER*20 TCHAR
+      CHARACTER*20 OUTFORM ! by SY
+      SAVE OUTCOUNT ! by SY
 *
+      OUTCOUNT = OUTCOUNT + 1 ! by sykim for conf.3 naming
+
 *     Call Computation of Moments of Inertia (with Chr. Theis)
       IF(KZ(49).GT.0) CALL ELLAN
 
@@ -199,37 +206,37 @@
       END IF
 
 *     Output global features and counters into global.30
-      IF(rank.eq.0) then
-         IF(kstart.eq.1.and.ttot.eq.0.0) then
-         write (30,76) 
- 76      format('TIME[NB} TIME[Myr] TCR[Myr] DE BE(3) ',
-     &           'RSCALE[PC] RTIDE[PC] RDENS[PC] RC[PC]  RHOD[M*] ',
-     &           'RHOM[M*] MC[M*] CMAX <Cn> Ir/R RCM VCM AZ ',
-     &           'EB/E EM/E VRMS ',
-     &           'N NS NPAIRS NUPKS NPKS NMERGE MULT <NB> NC NESC ',
-     &           'NSTEPI NSTEPB NSTEPR NSTEPU NSTEPT NSTEPQ NSTEPC ',
-     &           'NBLOCK NBLCKR NNPRED ',
-     &           'NIRRF NBCORR NBFLUX NBFULL NBVOID NICONV NLSMIN ',
-     &           'NBSMIN NBDIS NBDIS2 NCMDER ',
-     &           'NFAST NBFAST ',
-     &           'NKSTRY NKSREG NKSHYP NKSPER NKSMOD',
-     &           'NTTRY NTRIP NQUAD NCHAIN NMERG NEWHI')
-         END IF
-         write (30,77) TTOT,TTOT*TSTAR,TCR*TSTAR,ERROR,BE(3),
-     &        RSCALE*RBAR,RTIDE*RBAR,RD*RBAR,RC*RBAR,RHOD*ZMBAR/RBAR**3,
-     &        RHOM*ZMBAR/RBAR**3,ZMC*ZMBAR,CMAX,CNNB,COST,CMR(4),
-     &        CMRDOT(4),AZ,EB,EM,VRMS,
-     &        N,NS,NPAIRS,IUNP,NP,NMERGE,MULT,NNB,NC,NESC,
-     &        NSTEPI,NSTEPB,NSTEPR,NSTEPU,NSTEPT,NSTEPQ,NSTEPC,
-     &        NBLOCK,NBLCKR,NNPRED,
-     &        NIRRF,NBCORR,NBFLUX,NBFULL,NBVOID,NICONV,NLSMIN,NBSMIN,
-     &        NBDIS,NBDIS2,NCMDER,
-     &        NFAST,NBFAST,
-     &        NKSTRY,NKSREG,NKSHYP,NKSPER,NKSMOD,
-     &        NTTRY,NTRIP,NQUAD,NCHAIN,NMERG,NEWHI
- 77      format(21E26.17,44I12)
-         call flush(30)
-      END IF
+*      IF(rank.eq.0) then
+*         IF(kstart.eq.1.and.ttot.eq.0.0) then
+*         write (30,76) 
+* 76      format('TIME[NB} TIME[Myr] TCR[Myr] DE BE(3) ',
+*     &           'RSCALE[PC] RTIDE[PC] RDENS[PC] RC[PC]  RHOD[M*] ',
+*     &           'RHOM[M*] MC[M*] CMAX <Cn> Ir/R RCM VCM AZ ',
+*     &           'EB/E EM/E VRMS ',
+*     &           'N NS NPAIRS NUPKS NPKS NMERGE MULT <NB> NC NESC ',
+*     &           'NSTEPI NSTEPB NSTEPR NSTEPU NSTEPT NSTEPQ NSTEPC ',
+*     &           'NBLOCK NBLCKR NNPRED ',
+*     &           'NIRRF NBCORR NBFLUX NBFULL NBVOID NICONV NLSMIN ',
+*     &           'NBSMIN NBDIS NBDIS2 NCMDER ',
+*     &           'NFAST NBFAST ',
+*     &           'NKSTRY NKSREG NKSHYP NKSPER NKSMOD',
+*     &           'NTTRY NTRIP NQUAD NCHAIN NMERG NEWHI')
+*         END IF
+*         write (30,77) TTOT,TTOT*TSTAR,TCR*TSTAR,ERROR,BE(3),
+*     &        RSCALE*RBAR,RTIDE*RBAR,RD*RBAR,RC*RBAR,RHOD*ZMBAR/RBAR**3,
+*     &        RHOM*ZMBAR/RBAR**3,ZMC*ZMBAR,CMAX,CNNB,COST,CMR(4),
+*     &        CMRDOT(4),AZ,EB,EM,VRMS,
+*     &        N,NS,NPAIRS,IUNP,NP,NMERGE,MULT,NNB,NC,NESC,
+*     &        NSTEPI,NSTEPB,NSTEPR,NSTEPU,NSTEPT,NSTEPQ,NSTEPC,
+*     &        NBLOCK,NBLCKR,NNPRED,
+*     &        NIRRF,NBCORR,NBFLUX,NBFULL,NBVOID,NICONV,NLSMIN,NBSMIN,
+*     &        NBDIS,NBDIS2,NCMDER,
+*     &        NFAST,NBFAST,
+*     &        NKSTRY,NKSREG,NKSHYP,NKSPER,NKSMOD,
+*     &        NTTRY,NTRIP,NQUAD,NCHAIN,NMERG,NEWHI
+* 77      format(21E26.17,44I12)
+*         call flush(30)
+*      END IF
 *
 *       Check output for mass loss or tidal capture.
       IF (KZ(19).GT.0.OR.KZ(27).GT.0) THEN
@@ -303,9 +310,12 @@ C      END IF
 *       Exit if error exceeds restart tolerance (TIME < TADJ means no CHECK).
       IF (ABS(ERROR).GT.5.0*QE.AND.TIME.LT.TADJ) GO TO 100
 *
+      write(0,*) "start checking diverse options-SY"
 *       Check optional analysis & output of KS binaries.
       IF (KZ(8).GT.0.AND.NPAIRS.GT.0) THEN
+          write(0,*) "start BINOUT - SY"
           CALL BINOUT
+          write(0,*) "end BINOUT -SY"
       END IF
 *
 *       Include optional diagnostics of block-steps.
@@ -320,10 +330,12 @@ C      END IF
 *
 *       See whether to write data bank of binary diagnostics on unit 9.
       IF (KZ(8).GE.2) THEN
+          write(0,*) "BINDAT starts - SY"
           CALL BINDAT
           IF (KZ(18).GE.4) THEN
               CALL HIDAT
           END IF
+          write(0,*) "BINDAT ends - SY"
       END IF
 *
 *       Check optional diagnostics of evolving stars.
@@ -507,15 +519,24 @@ c$$$     &           nmerge,name(j1),name(j2),name(icm)
 *
 *        Write all data in binary format on unit 3 = conf.3.
 *
-      if(rank.eq.0)then
+      if(rank.eq.-1)then
 *     Split the conf.3 files by time
-         call string_left(TCHAR,TTOT,DELTAT)
-         write(OUTFILE,118) TCHAR
- 118     format('conf.3_',A20)
+         write(0,*) "string starts - SY"
+!         call string_left(TCHAR,TTOT,DELTAT)
+         OUTCNUM = INT(LOG10(REAL(OUTCOUNT)))+1
+         write(OUTFORM,"(A5,I1,A4)") '(A7,I',OUTCNUM,',A4)'
+         write(OUTFILE,OUTFORM) 'conf.3_',OUTCOUNT
+         write(0,*) "OUTCNUM=",OUTCNUM
+         write(0,*) "OUTCOUNT=",OUTCOUNT
+         write(0,*) "string ends - SY"
+!         write(OUTFILE,118) TCHAR
+! 118     format('conf.3_',A20)
 
          IF(KZ(46).EQ.1.OR.KZ(46).EQ.3) THEN
             if(rank.eq.0.AND.TTOT.GT.0.0D0) THEN
+               write(0,*) "custom_update starts- SY"
                call custom_update_file(TTOT,DELTAT)
+               write(0,*) "custom_update ends - SY"
             END IF
          END IF
 
@@ -576,8 +597,8 @@ c$$$     &           nmerge,name(j1),name(j2),name(icm)
       end if
 *
 *       Update next output interval and initialize the corresponding error.
-  100 TNEXT = TNEXT + DELTAT
-      ERROR = 0.0D0
+*  100 TNEXT = TNEXT + DELTAT
+  100 ERROR = 0.0D0
 *
       RETURN
 *

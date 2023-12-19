@@ -44,12 +44,10 @@
       REAL*8 DTOUT
       SAVE DTOUT
 
-*     included by YS Jo
-
-      IF (TIME.EQ.0.0) THEN
-          IPSTART = .true.
+      IF (IEPHASE.EQ.2) THEN
+         IEPHASE = 0
+         GO TO 1
       END IF
-
 
 *
 *       Update quantized value of STEPM for large N (first time only).
@@ -212,6 +210,7 @@
       call cputim(tttbegin)
 
 *     Reset control & regularization indicators.
+      IEPHASE = 0
       IPHASE = 0
       IKS = 0
 *
@@ -234,40 +233,7 @@
       IF(NLSTDELAY(1).GT.0) call delay_add_tlist(T0,STEP,DTK)
 
 *     Determine NXTLEN, TMIN and NXTLEVEL
-      call next_tlist(TMIN,DTK,T0)
-
-
-*     added by sykim, to terminate at EDT(time from enzo)
-      IF (TMIN.GE.TCRIT) THEN
-
-          write(6,*) "TMIN",TMIN,"TCRIT",TCRIT
-          write (6,*) "TCRIT exceeded TMIN"
-*     change variables so that every particle would be evaluated
-          NXTLEN = NXTLIMIT
-          NREG = NXTLIMIT
-          
-          DO ICRIT = 1,NXTLEN
-                     
-*              TIMENW(ICRIT) = TCRIT : include this?
-              JCRIT = NXTLST(ICRIT)
-              IREG(ICRIT) = JCRIT
-
-              IF (JCRIT.GT.N) THEN
-                  IPAIR = JCRIT - N
-                  IF (LIST(1,2*IPAIR-1).GT.0) NSTEPB = NSTEPB + 1
-              END IF
-
-          END DO
-          
-          LSKIP = NXTLEN
-          TIME = TCRIT
-
-          GO TO 31
-
-      END IF
-
-*     end added by sykim
-       
+      call next_tlist(TMIN,DTK,T0)      
 
 #ifdef DEBUG
 *     --07/07/14 23:44-lwang-debug--------------------------------------*
@@ -361,11 +327,6 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
      
 *       Set new time and save block time (for regularization terminations).
       TIME = TMIN
-
-*       added by sykim, continue here when ending
-   31 CONTINUE
-*       end added by sykim
-
       TBLOCK = TIME
       TTOT = TIME + TOFF
 *
@@ -411,13 +372,6 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *
 *       Check for new regularization at end of block.
       IF (IKS.GT.0) THEN
-*       added by sykim
-          IF(TIME.GE.TCRIT) THEN
-              write(6,*) "need to check IKS"
-              IPHASE  = 3
-              GO TO 100
-          END IF
-*       end added by sykim
           TIME = TPREV
           IPHASE = 1
           GO TO 100
@@ -433,8 +387,9 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *       Also check output time in case DTADJ & DELTAT not commensurate.
       IF (TIME.GT.TNEXT) THEN
           TIME = TNEXT
+          IEPHASE = 2
           CALL OUTPUT
-          GO TO 1
+          GO TO 101
       END IF
 *
 *       See whether to advance any close encounters at first new time.
@@ -621,9 +576,7 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
             T0(I) = TIME
             TIMENW(I) = T0(I) + STEP(I)
 *     Set non-zero indicator for new regular force.
-*     edited by sykim. may be wrong... need to check
-            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
-*     end edited by sykim
+            IF ((T0R(I) + STEPR(I).GT.TIME)) THEN
 *     Extrapolate regular force & first derivatives to obtain F & FDOT.
               DTR = TIME - T0R(I)
               F(1,I) = 0.5*(FRDOT(1,I)*DTR + FR(1,I) + FI(1,I))
@@ -1305,13 +1258,6 @@ c$$$         ttmov = ttmov +(tt334-tt333)*60
       call cputim(ttiout2)
       ttout = ttout + (ttiout2 - ttiout1)*60.
 
-*     added by sykim, to end the calculation at TMIN
-*     everything must be returned before new sorting of particles    
-      IF (TIME.EQ.TCRIT) THEN
-          IPHASE = 3
-          GO TO 100
-      END IF
-
 *     Resorting the NXTLST
       call cputim(tt335)
       call sort_tlist(STEP,DTK,.false.)
@@ -1537,6 +1483,8 @@ C      END IF
 *
 *     Set current global time.
       TTOT = TIME + TOFF
+
+ 101  CONTINUE
 
       RETURN
 *

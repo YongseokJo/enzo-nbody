@@ -50,25 +50,29 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
      three communication modes (post-receive). */
 
   if (CommunicationDirection == COMMUNICATION_POST_RECEIVE ||
-      CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
- 
-    /* Initialize the gravitating mass field parameters (if necessary). */
- 
-    if (Grid->GridData->InitializeGravitatingMassFieldParticles(RefineBy)
-                                                                  == FAIL) {
-      ENZO_FAIL("Error in grid->InitializeGravitatingMassFieldParticles.\n");
-    }
- 
-    /* Clear the GravitatingMassFieldParticles. */
- 
-    if (Grid->GridData->ClearGravitatingMassFieldParticles() == FAIL) {
-      ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
-    }
+			CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
+
+		/* Initialize the gravitating mass field parameters (if necessary). */
+
+		if (Grid->GridData->InitializeGravitatingMassFieldParticles(RefineBy)
+				== FAIL) {
+			ENZO_FAIL("Error in grid->InitializeGravitatingMassFieldParticles.\n");
+		}
+
+		/* Clear the GravitatingMassFieldParticles. */
 
 #ifdef NBODY
-		if (Grid->GridData->ClearGravitatingMassFieldParticlesNoStar() == FAIL) {
-			ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
-    }
+		if (!NoStar) {
+#endif
+			if (Grid->GridData->ClearGravitatingMassFieldParticles() == FAIL) {
+				ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
+			}
+#ifdef NBODY
+		} else {
+			if (Grid->GridData->ClearGravitatingMassFieldParticlesNoStar() == FAIL) {
+				ENZO_FAIL("Error in grid->ClearGravitatingMassFieldParticles.\n");
+			}
+		}
 #endif
 		fprintf(stdout,"4-1-1\n"); // by YS
  

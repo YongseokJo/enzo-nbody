@@ -259,11 +259,8 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
       break;
       
     case gPotentialField:
-#ifdef NBODY
-			if(this->PotentialField[0]){
-#else
+
 			if(this->PotentialField){
-#endif
 				for(i = 0; i < this->GridRank; i++){
   	  cell_width[i] = GravitatingMassFieldCellSize;
    	  sindex[i] = this->GridStartIndex[i] + GRAVITY_BUFFER_SIZE;
@@ -274,20 +271,14 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       sindex, eindex,
 			       cell_width);
 	
-#ifdef NBODY
-  	array->Array = this->PotentialField[0];
-#else
+
   	array->Array = this->PotentialField;
-#endif
       }
       break;
       
     case gAccelerationField:
-#ifdef NBODY
-      if(this->AccelerationField[0][0]){
-#else
+
       if(this->AccelerationField[0]){
-#endif
 	array = new EnzoArray<float>(this->GridRank,
 			       this->GridDimension,
 			       this->GridStartIndex,
@@ -295,21 +286,15 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       cell_width);
 	
   	for(i = 0; i < this->GridRank; i++){
-#ifdef NBODY
-  	  array->Vector[i] = this->AccelerationField[i][0];
-#else
+
   	  array->Vector[i] = this->AccelerationField[i];
-#endif
   	}
       }
       break;
       
     case gGravitatingMassField:
-#ifdef NBODY
-			if(this->GravitatingMassField[0]){
-#else
+
 			if(this->GravitatingMassField){
-#endif
 				for(i = 0; i < this->GridRank; i++){
 	  cell_width[i] = GravitatingMassFieldCellSize;
 	  sindex[i] = this->GridStartIndex[i] + GRAVITY_BUFFER_SIZE;
@@ -319,11 +304,8 @@ EnzoArray<float> *grid::CreateFieldArrayFloat(field_type field){
 			       this->GravitatingMassFieldDimension,
 			       sindex, eindex,
 			       cell_width);
-#ifdef NBODY	
-  	array->Array = this->GravitatingMassField[0];
-#else
+
   	array->Array = this->GravitatingMassField;
-#endif
       }
       break;
       

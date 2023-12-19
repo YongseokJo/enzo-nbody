@@ -79,16 +79,15 @@ int grid::UpdateParticlePosition(float TimeStep, int OffProcessorUpdate)
  
 
     for (i = 0; i < NumberOfParticles; i++)
+      ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
 			// by YS Jo
 			//if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
 					//&& GridLevel != MaximumRefinementLevel )
 
-      ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
  
     /* wrap particle positions for periodic case.
        (now done in CommunicationTransferParticles) */
  
-      
     }
   }
 
@@ -162,9 +161,8 @@ int grid::UpdateParticlePositionNoStar(float TimeStep, int OffProcessorUpdate)
 			for (i = 0; i < NumberOfParticles; i++) {
 				/* Only particle not nbody will be updated */
 				//&& GridLevel != MaximumRefinementLevel )
-				if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
-
-				ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY || ParticleType[i] != PARTICLE_TYPE_NBODY_NEW) 
+					ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
 
 			} // ENDFOR particles
 				/* wrap particle positions for periodic case.

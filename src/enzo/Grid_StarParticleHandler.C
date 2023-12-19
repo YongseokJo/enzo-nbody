@@ -649,26 +649,14 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
  
   float *dmfield = new float[size];
   int StartIndex[MAX_DIMENSION], Zero[] = {0,0,0};
-#ifdef NBODY
-  if (level <= MaximumGravityRefinementLevel &&
-			GravitatingMassFieldParticles[0] != NULL) {
-#else
+
   if (level <= MaximumGravityRefinementLevel &&
 			GravitatingMassFieldParticles != NULL) {
-#endif
 		for (dim = 0; dim < MAX_DIMENSION; dim++)
       StartIndex[dim] =
       nint((CellLeftEdge[dim][0] - GravitatingMassFieldParticlesLeftEdge[dim])/
 	   GravitatingMassFieldParticlesCellSize);
-#ifdef NBODY
-    FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles[0], dmfield,
-			 GravitatingMassFieldParticlesDimension,
-			 GravitatingMassFieldParticlesDimension+1,
-			 GravitatingMassFieldParticlesDimension+2,
-			 GridDimension, GridDimension+1, GridDimension+2,
-			 Zero, Zero+1, Zero+2,
-			 StartIndex, StartIndex+1, StartIndex+2);
-#else
+
     FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles, dmfield,
 			 GravitatingMassFieldParticlesDimension,
 			 GravitatingMassFieldParticlesDimension+1,
@@ -676,7 +664,6 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 			 GridDimension, GridDimension+1, GridDimension+2,
 			 Zero, Zero+1, Zero+2,
 			 StartIndex, StartIndex+1, StartIndex+2);
-#endif
   } else
     for (i = 0; i < size; i++)
       dmfield[i] = 0;
@@ -1154,8 +1141,14 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
       if (ComovingCoordinates)
 	StarMakerOverDensityThreshold /= mh / DensityUnits;  
 
-      for (i = NumberOfNewParticlesSoFar; i < NumberOfNewParticles; i++)
+      for (i = NumberOfNewParticlesSoFar; i < NumberOfNewParticles; i++) {
+			// by YS, have to have an option for this from config file.
+#ifdef NBODY
+          tg->ParticleType[i] = NbodyStar;
+#else
           tg->ParticleType[i] = NormalStarType;
+#endif
+			}
     } 
 
     if (STARMAKE_METHOD(SPRINGEL_HERNQUIST_STAR)) {

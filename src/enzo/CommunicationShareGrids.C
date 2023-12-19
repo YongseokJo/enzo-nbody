@@ -134,7 +134,7 @@ int CommunicationShareGrids(HierarchyEntry *GridHierarchyPointer[],
   MPI_Datatype DataTypeInt1 = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
   MPI_Datatype DataTypeInt2 = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
    
-  MPI_Allgather(&GridsToSend, Sendcount, DataTypeInt1, SharedListCount, Recvcount, DataTypeInt2, MPI_COMM_WORLD);
+  MPI_Allgather(&GridsToSend, Sendcount, DataTypeInt1, SharedListCount, Recvcount, DataTypeInt2, enzo_comm);
  
   /* Allocate buffers and generated displacement list. */
  
@@ -151,7 +151,7 @@ int CommunicationShareGrids(HierarchyEntry *GridHierarchyPointer[],
    
   MPI_Allgatherv(SendList, Sendcount, MPI_PackedGrid, SharedList,
 		 MPI_SharedListCount, MPI_SharedListDisplacements, MPI_PackedGrid,
-		 MPI_COMM_WORLD);
+		 enzo_comm);
 
 #ifdef MPI_INSTRUMENTATION
   endtime = MPI_Wtime();
