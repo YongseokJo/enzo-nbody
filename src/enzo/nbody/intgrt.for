@@ -44,12 +44,12 @@
       REAL*8 DTOUT
       SAVE DTOUT
 
-*     included by YS Jo
-
-      IF (TIME.EQ.0.0) THEN
-          IPSTART = .true.
+*     added by sykim
+      IF (EPHASE.EQ.2) THEN
+         EPHASE = 0
+         GO TO 1
       END IF
-
+*     end added by sykim
 
 *
 *       Update quantized value of STEPM for large N (first time only).
@@ -166,7 +166,9 @@
 
 #ifdef GPU
          NN = NTOT + 10
+         write(6,*) "OPEN starts" ! by YS
          CALL GPUNB_OPEN(NN,rank)
+         write(6,*) "OPEN ends" ! by YS
 *         CALL GPUPOT_INIT_FLOAT(rank)
 *         CALL GPUPOT_INIT(rank,NN)
 #endif
@@ -213,6 +215,7 @@
 
 *     Reset control & regularization indicators.
       IPHASE = 0
+      EPHASE = 0
       IKS = 0
 *
       IF (IQ.LT.0) ICALL = 0
@@ -236,35 +239,6 @@
 *     Determine NXTLEN, TMIN and NXTLEVEL
       call next_tlist(TMIN,DTK,T0)
 
-
-*     added by sykim, to terminate at EDT(time from enzo)
-      IF (TMIN.GE.TCRIT) THEN
-
-          write(6,*) "TMIN",TMIN,"TCRIT",TCRIT
-          write (6,*) "TCRIT exceeded TMIN"
-*     change variables so that every particle would be evaluated
-          NXTLEN = NXTLIMIT
-          NREG = NXTLIMIT
-          
-          DO ICRIT = 1,NXTLEN
-                     
-*              TIMENW(ICRIT) = TCRIT : include this?
-              JCRIT = NXTLST(ICRIT)
-              IREG(ICRIT) = JCRIT
-
-              IF (JCRIT.GT.N) THEN
-                  IPAIR = JCRIT - N
-                  IF (LIST(1,2*IPAIR-1).GT.0) NSTEPB = NSTEPB + 1
-              END IF
-
-          END DO
-          
-          LSKIP = NXTLEN
-          TIME = TCRIT
-
-          GO TO 31
-
-      END IF
 
 *     end added by sykim
        
@@ -411,13 +385,6 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *
 *       Check for new regularization at end of block.
       IF (IKS.GT.0) THEN
-*       added by sykim
-          IF(TIME.GE.TCRIT) THEN
-              write(6,*) "need to check IKS"
-              IPHASE  = 3
-              GO TO 100
-          END IF
-*       end added by sykim
           TIME = TPREV
           IPHASE = 1
           GO TO 100
@@ -433,9 +400,12 @@ C         IF(J.EQ.9951) print*,'L',L,'J',J,'T',TIME
 *       Also check output time in case DTADJ & DELTAT not commensurate.
       IF (TIME.GT.TNEXT) THEN
           TIME = TNEXT
+          EPHASE = 2
           CALL OUTPUT
-          GO TO 1
+*         GO TO 1
+          GO TO 100 ! exit for return to ENZO
       END IF
+
 *
 *       See whether to advance any close encounters at first new time.
       IF ((TIME.GT.TPREV).AND.(TIME.NE.TCRIT)) THEN
@@ -622,7 +592,8 @@ c$$$            XDOT(1:3,I) = XNDOT(1:3,I)
             TIMENW(I) = T0(I) + STEP(I)
 *     Set non-zero indicator for new regular force.
 *     edited by sykim. may be wrong... need to check
-            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
+*            IF ((T0R(I) + STEPR(I).GT.TIME).OR.(TIME.EQ.TCRIT)) THEN
+             IF (T0R(I) + STEPR(I).GT.TIME) THEN
 *     end edited by sykim
 *     Extrapolate regular force & first derivatives to obtain F & FDOT.
               DTR = TIME - T0R(I)
@@ -942,7 +913,16 @@ c$$$      ttnewt = ttnewt + (ttt33 - ttt32)*60.
 *       Send all single particles to GPU memory
          call cputim(tt51)
          NN = NTOT - IFIRST + 1
+         !write(6,*) "SEND starts" ! by YS
+         !write(6,*) "NN=",NN ! by YS
+         !write(6,*) "NTOT=",NTOT ! by YS
+#ifdef  INTPOLATION
+         CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST),
+     &                  FENZO(1,IFIRST))
+#else
          CALL GPUNB_SEND(NN,BODY(IFIRST),X(1,IFIRST),XDOT(1,IFIRST))
+#endif 
+         !write(6,*) "SEND ends" ! by YS
          call cputim(tt52)
 *     --09/26/13 16:58-lwang-debug--------------------------------------*
 ***** Note:------------------------------------------------------------**
@@ -968,7 +948,9 @@ c$$$      end if
 #endif
 *
             call cputim(tt1)
+            write(6,*) "CALC_REG starts" ! by YS
             CALL CALC_REG_ON_GPU(IREG,1,NREG)
+            write(6,*) "CALC_REG ends" ! by YS
             call cputim(tt2)
             ttgrcalc = ttgrcalc + (tt2-tt1)*60.0
 *
@@ -1055,7 +1037,9 @@ c$$$      end if
 *
 
             call cputim(tt1)
+            write(6,*) "CALC_REG starts 2" ! by YS
             CALL CALC_REG_ON_GPU(IREG,istart,iend)
+            write(6,*) "CALC_REG ends 2" ! by YS
             call cputim(tt2)
             ttgrcalc2 = ttgrcalc2 + (tt2-tt1)*60.0
             ttreg = ttreg + (tt2-tt1)*60.0

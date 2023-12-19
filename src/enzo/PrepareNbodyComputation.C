@@ -32,25 +32,8 @@
 #include "NbodyRoutines.h"  //added  
 #include "phys_constants.h"
 
-
-
-extern "C" void FORTRAN_NAME(nbody6)(
-		int* NumberOfNbodyParticles, float* NbodyParticleMass,
-		float* x, float* y, float* z,
-		float* vx, float* vy, float* vz,
-		float* ax, float* ay, float* az,
-		float* hax1, float* hay1, float* haz1,
-		float* hax2, float* hay2, float* haz2,
-		float* hax3, float* hay3, float* haz3,
-		float* hax4, float* hay4, float* haz4,
-		float* dt,
-		float* MassUnits, float* LengthUnits, float *VelocityUnits, 
-		float *TimeUnits
-		);
-//float *NbodyParticlePosition[0], float *NbodyParticlePosition[1], float *NbodyParticlePosition[2], float *NbodyParticleVelocity[0], float *NbodyParticleVelocity[1],
-//float *NbodyParticleVelocity[2],
-//float ** NbodyParticleAcceleration[HERMITE_ORDER], float** NbodyParticleAccelerationNoStar, float* scale_factor
-
+void InitializeNbodyArrays(bool NbodyFirst);
+void InitializeNbodyArrays(void);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
 int GetUnits(float *DensityUnits, float *LengthUnits,
@@ -65,338 +48,374 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 	LevelHierarchyEntry *Temp;
 	int start_index;
 
-	if (MyProcessorNumber == ROOT_PROCESSOR && NbodyFirst) {
-		NbodyParticleIDOld =  NULL;
-		NumberOfNbodyParticlesOld = 0;
-		for (int dim=0; dim<MAX_DIMENSION; dim++) 
-			for (int order=0; order<HERMITE_ORDER; order++)
-				NbodyParticleAccelerationOld[dim][order] = NULL;
-		NbodyFirst=FALSE;
-		fprintf(stderr,"Proc %d: All Good 0, NbodyFirst=%d\n", MyProcessorNumber,NbodyFirst);
-		fprintf(stderr,"ID Old = %d\n",NbodyParticleIDOld);
-		fprintf(stderr,"Num Old = %d\n",NumberOfNbodyParticlesOld);
-	}
-
-	fprintf(stderr,"All Good 1\n");
+	//fprintf(stderr,"All Good 1\n");
 
 	/* Store AccelerationNoStar of particles to sustainable ParticleAttribute */
 	for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel)
 		Temp->GridData->CopyAccelerationToAttribute();
 
-	fprintf(stderr,"All Good 2\n");
+	//fprintf(stderr,"All Good 2\n");
 
 
-	if (level == MaximumRefinementLevel) {
+	if (LevelArray[level+1] == NULL) {
+	//if (level == MaximumRefinementLevel) {
+	fprintf(stderr,"Level = %d\n",level);
 
 		LocalNumberOfNbodyParticles = FindTotalNumberOfNbodyParticles(LevelArray);
 
-		int *NbodyParticleIDTemp;
-		float *NbodyParticleMassTemp;
-		float *NbodyParticlePositionTemp[MAX_DIMENSION];
-		float *NbodyParticleVelocityTemp[MAX_DIMENSION];
-		float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
-
-		NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
-		NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-			NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-			NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
-		}
-
-
-
-		/* Get particle information from Grids */
-		int count = 0;
-		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
-			for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel) 
-				if (Temp->GridData->CopyNbodyParticles(&count, NbodyParticleIDTemp, NbodyParticleMassTemp,
-							NbodyParticlePositionTemp, NbodyParticleVelocityTemp, NbodyParticleAccelerationNoStarTemp) == FAIL) {
-					//NbodyParticleAccelerationTemp
-					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
-				}
-
-		if (count != LocalNumberOfNbodyParticles)
-			ENZO_FAIL("Error in grid::CopyNbodyParticles.");
-
+		if (NumberOfNbodyParticles == 0)
+			return SUCCESS;
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
 
-		fprintf(stderr,"Done?1\n");
 
-		/* We need to gather all the information from other processes */
+		/* Do direct calculation!*/
+		float dt = 1e-3, scale_factor=1.0;
+		float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+					TemperatureUnits=1;
+		double MassUnits=1;
+		float GridTime, TimeStep;
+		//GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
+		//TimeStep = LevelArray[MaximumRefinementLevel]->GridData->ReturnTimeStep(); // Not sure ?
+		GridTime = LevelArray[level]->GridData->ReturnTime(); // Not sure ?
+		TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure ?
+		if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
+					&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
+			ENZO_FAIL("Error in GetUnits.");
+		}
 
 
-		/**
-			for (i=0; i<LocalNumberOfNbodyParticles;i++ )
-			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
-		 **/
+		/* At first, all the Nbody info should be updated to fortran codes only once*/
+		if (NbodyFirst) {
+			NbodyParticleIDOld =  NULL;
+			NumberOfNbodyParticlesOld = 0;
+			//int *NbodyParticleIDTemp;
+			float *NbodyParticleMassTemp;
+			float *NbodyParticlePositionTemp[MAX_DIMENSION];
+			float *NbodyParticleVelocityTemp[MAX_DIMENSION];
+			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION+1];
+
+			NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
+			NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
+				NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
+			}
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+				NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
+			}
+
+			/* Get particle information from Grids */
+			int count = 0;
+			for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
+				for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel) 
+					if (Temp->GridData->CopyNbodyParticles(&count, NbodyParticleIDTemp, NbodyParticleMassTemp,
+								NbodyParticlePositionTemp, NbodyParticleVelocityTemp, NbodyParticleAccelerationNoStarTemp) == FAIL) {
+						//NbodyParticleAccelerationTemp
+						ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+					}
+
+			if (count != LocalNumberOfNbodyParticles)
+				ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+
 
 #ifdef USE_MPI
-		if (MyProcessorNumber == ROOT_PROCESSOR) {
+			if (MyProcessorNumber == ROOT_PROCESSOR) {
+				/* Receiving Index, NumberOfParticles, NbodyArrays from other processs */
+				int* start_index_all;
+				int* LocalNumberAll;
+				start_index_all = new int[NumberOfProcessors];
+				LocalNumberAll = new int[NumberOfProcessors];
+				MPI_Request request;
+				MPI_Status status;
+				int ierr;
+				int errclass,resultlen;
+				char err_buffer[MPI_MAX_ERROR_STRING];
 
-			/* Initialize the nbody array used for direct Nbody calculation*/
-			InitializeNbodyArrays();
+				MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
+				MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
-			/* Receiving Index, NumberOfParticles, NbodyArrays from other processs */
-			int* start_index_all;
-			int* LocalNumberAll;
-			start_index_all = new int[NumberOfProcessors];
-			LocalNumberAll = new int[NumberOfProcessors];
-			MPI_Request request;
-			MPI_Status status;
-
-
-			MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
-			MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
-
-			CommunicationBarrier();
-
-			for (i=0;i<NumberOfProcessors;i++) {
-				fprintf(stderr,"proc=%d: (%d, %d)\n",i, start_index_all[i],LocalNumberAll[i]);
-			}
+				/* Initialize the nbody array used for direct Nbody calculation*/
+				InitializeNbodyArrays(NbodyFirst);
 
 
-			MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
-					NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD, &request);
-			MPI_Wait(&request, &status);
 
-			MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
-					NbodyParticleID, LocalNumberAll, start_index_all, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-			MPI_Wait(&request, &status);
-
-			fprintf(stderr,"Done?1-1\n");
-
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				MPI_Igatherv(NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NbodyParticlePosition[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
+				/*-----------------------------------------------*/
+				/******  Gather Arrays from other processes  *****/
+				/*-----------------------------------------------*/
+				MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
+						NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
 				MPI_Wait(&request, &status);
 
-				MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NbodyParticleVelocity[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
+				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
+						NbodyParticleID, LocalNumberAll, start_index_all, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
 				MPI_Wait(&request, &status);
 
-				MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-				MPI_Wait(&request, &status);
-			}
-			fprintf(stderr,"Done?1-2\n");
+				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+					MPI_Igatherv(NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NbodyParticlePosition[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
 
-
-			//if (NbodyParticleIDOld != NULL) {
-			if (NumberOfNbodyParticlesOld != 0) {
-				/* Now Assign Acceleration History According to ParticleID */
-				MatchAccelerationWithIndex();
-			}
-
-			/* Do direct calculation!*/
-			float dt = 1e-3, scale_factor=1.0;
-
-			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
-						TemperatureUnits=1;
-			double MassUnits=1;
-			float GridTime, TimeStep;
-			GridTime = LevelArray[MaximumRefinementLevel]->GridData->ReturnTime(); // Not sure ?
-			TimeStep = LevelArray[MaximumRefinementLevel]->GridData->ReturnTimeStep(); // Not sure ?
-			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
-						&TimeUnits, &VelocityUnits, &MassUnits, GridTime) == FAIL) {
-				ENZO_FAIL("Error in GetUnits.");
-			}
-
-			fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
-
-			/**
-				fprintf(stderr, "id: %d, pos:(%f,%f,%f), vel:(%f,%f,%f), mass:%f\n", 
-				NbodyParticleID[0], 
-				NbodyParticlePosition[0][0]*LengthUnits/kpc_cm, NbodyParticlePosition[1][0]*LengthUnits/kpc_cm, NbodyParticlePosition[2][0]*LengthUnits/kpc_cm, 
-				NbodyParticleVelocity[0][0]*1e-5*VelocityUnits,NbodyParticleVelocity[1][0]*1e-5*VelocityUnits,NbodyParticleVelocity[2][0]*1e-5*VelocityUnits,
-				NbodyParticleMass[0]*MassUnits/SolarMass);
-
-
-				for (i=0;i<NumberOfNbodyParticles;i++) {
-				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
-				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
-				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
+					MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NbodyParticleVelocity[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
 				}
-			 **/
 
-
-			FORTRAN_NAME(nbody6)(&NumberOfNbodyParticles, NbodyParticleMass,
-					NbodyParticlePosition[0], NbodyParticlePosition[1], NbodyParticlePosition[2],
-					NbodyParticleVelocity[0], NbodyParticleVelocity[1], NbodyParticleVelocity[2],
-					NbodyParticleAccelerationNoStar[0], NbodyParticleAccelerationNoStar[1], NbodyParticleAccelerationNoStar[2],
-					NbodyParticleAcceleration[0][0], NbodyParticleAcceleration[1][0], NbodyParticleAcceleration[2][0],
-					NbodyParticleAcceleration[0][1], NbodyParticleAcceleration[1][1], NbodyParticleAcceleration[2][1],
-					NbodyParticleAcceleration[0][2], NbodyParticleAcceleration[1][2], NbodyParticleAcceleration[2][2],
-					NbodyParticleAcceleration[0][3], NbodyParticleAcceleration[1][3], NbodyParticleAcceleration[2][3],
-					&dt, &MassUnits, &LengthUnits, &VelocityUnits, &TimeUnits);
-
-
-			fprintf(stderr,"NBODY Ends!\n");
-			fprintf(stdout,"NBODY Ends!\n");
-
-			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
-			/**
-				for (i=0;i<NumberOfNbodyParticles;i++) {
-				fprintf(stderr, "mass:%e \n", NbodyParticleMass[i]);
-				fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][i]);
-				fprintf(stderr, "id:%d \n", NbodyParticleID[i]);
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
 				}
-			 **/
+				fprintf(stderr,"Done?1-2\n");
 
 
-			/* Copy ID and Acc to Old arrays!*/
-			CopyNbodyArrayToOld();
-			fprintf(stderr,"Done?2\n");
+
+				fprintf(stdout, "First TimeStep: %e, %f\n", TimeStep, TimeUnits);
+
+				//fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
+				//fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
+				//fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
+				//fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
+				//fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
+
+				/*----------------------------------------------------------*/
+				/******** Send Arrays to Fortran Nbody6++  First Time  *****/
+				/*--------------------------------------------------------*/
+				MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
+				MPI_Send(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, 1, 200, inter_comm);
+				MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
+				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+					MPI_Send(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm);
+					MPI_Send(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm);
+				}
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
+				}
+				MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
+				MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
+				MPI_Send(&LengthUnits, 1, MPI_DOUBLE, 1, 800, inter_comm);
+				MPI_Send(&MassUnits, 1, MPI_DOUBLE, 1, 900, inter_comm);
+				MPI_Send(&VelocityUnits, 1, MPI_DOUBLE, 1, 1000, inter_comm);
+
+				if (start_index_all != NULL)
+					delete [] start_index_all;
+				start_index_all = NULL;
+				if (LocalNumberAll != NULL)
+					delete [] LocalNumberAll;
+				LocalNumberAll = NULL;
+				DeleteNbodyArrays();
+
+			} // endif : root processor
+			else {
+				/* Sending Index, NumberOfParticles, NbodyArrays to the root processs */
+
+				MPI_Request request;
+				MPI_Status status;
+
+				MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+				MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
 
-			CommunicationBarrier();
-
-			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
-			for (i=0;i<NumberOfProcessors;i++) {
-				fprintf(stderr,"(%d, %d)",start_index_all[i],LocalNumberAll[i]);
-			}
-
-			MPI_Iscatterv(NbodyParticleMass, LocalNumberAll, start_index_all, MPI_DOUBLE,
-					NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-			MPI_Wait(&request, &status);
-			MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
-					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-			MPI_Wait(&request, &status);
-
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				MPI_Iscatterv(NbodyParticlePosition[dim], LocalNumberAll, start_index_all, MPI_DOUBLE,
-						NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,
-						&request);
+				MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
+						NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
 				MPI_Wait(&request, &status);
-				MPI_Iscatterv(NbodyParticleVelocity[dim], LocalNumberAll, start_index_all, MPI_DOUBLE,
-						NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,
-						&request);
+
+				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
+						NULL, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm, &request);
 				MPI_Wait(&request, &status);
-			}
 
-			CommunicationBarrier();
-			if (start_index_all != NULL)
-				delete [] start_index_all;
-			start_index_all = NULL;
-			if (LocalNumberAll != NULL)
-				delete [] LocalNumberAll;
-			LocalNumberAll = NULL;
-			DeleteNbodyArrays();
+				for (int dim=0; dim<MAX_DIMENSION; dim++) {
+					MPI_Igatherv(NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
+
+					MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
+				}
+
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
+				}
 
 
-		} else {
-			/* Sending Index, NumberOfParticles, NbodyArrays to the root processs */
-
-			MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
-			MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
-
-			CommunicationBarrier();
-
-			MPI_Request request;
-			MPI_Status status;
-			/**
-				if (LocalNumberOfNbodyParticles != 0)
-				MPI_Ssend(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
-				ROOT_PROCESSOR, MyProcessorNumber, MPI_COMM_WORLD);
-			 **/
-
-			MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
-					NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD, &request);
-			MPI_Wait(&request, &status);
-			MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
-					NULL, NULL, NULL, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD, &request);
-			MPI_Wait(&request, &status);
-
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				MPI_Igatherv(NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-				MPI_Wait(&request, &status);
-				MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-				MPI_Wait(&request, &status);
-				MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
-						NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,&request);
-				MPI_Wait(&request, &status);
-			}
-
-			CommunicationBarrier();
-
-			/* Receiving Index, NumberOfParticles, NbodyArrays from the root processs */
-			MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
-					NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,
-					&request);
-			MPI_Wait(&request, &status);
-			MPI_Iscatterv(NULL, NULL, NULL, IntDataType,
-					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD,
-					&request);
-			MPI_Wait(&request, &status);
-
-			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
-						NbodyParticlePositionTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,
-						&request);
-				MPI_Wait(&request, &status);
-				MPI_Iscatterv(NULL, NULL, NULL, MPI_DOUBLE,
-						NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE, ROOT_PROCESSOR, MPI_COMM_WORLD,
-						&request);
-				MPI_Wait(&request, &status);
-			}
-			CommunicationBarrier();
-		} // end else
+			} // endelse: other processor
 #endif
 
-		/**
-			for (i=0; i<LocalNumberOfNbodyParticles;i++ )
-			fprintf(stderr, "proc=%d, local: %d,  %e\n", MyProcessorNumber,i,NbodyParticleMassTemp[i]);
-		 **/
+			NbodyFirst=FALSE;
+			fprintf(stderr,"Proc %d: All Good 0, NbodyFirst=%d\n", MyProcessorNumber,NbodyFirst);
+			fprintf(stderr,"Done?3\n");
+			/* Destruct Arrays*/
+			/*
+			if (NbodyParticleIDTemp != NULL)
+				delete [] NbodyParticleIDTemp;
+			NbodyParticleIDTemp = NULL;
+			*/
 
-		fprintf(stderr,"Done?3\n");
-		/* Update Particle Velocity and Position Back to Grids */
-		count = 0;
-		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
-			for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel)
-				if (Temp->GridData->UpdateNbodyParticles(&count, NbodyParticleIDTemp, NbodyParticleMassTemp,
-							NbodyParticlePositionTemp, NbodyParticleVelocityTemp) == FAIL) {
-					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+			if (NbodyParticleMassTemp != NULL)
+				delete [] NbodyParticleMassTemp;
+			NbodyParticleMassTemp = NULL;
+
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				if (NbodyParticlePositionTemp[dim] != NULL)
+					delete [] NbodyParticlePositionTemp[dim];
+				NbodyParticlePositionTemp[dim] = NULL;
+
+				if (NbodyParticleVelocityTemp[dim] != NULL)
+					delete [] NbodyParticleVelocityTemp[dim];
+				NbodyParticleVelocityTemp[dim] = NULL;
+			}
+
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
+					delete [] NbodyParticleAccelerationNoStarTemp[dim];
+				NbodyParticleAccelerationNoStarTemp[dim] = NULL;
+			}
+		}// endif: nbody first 
+		else {
+			//int *NbodyParticleIDTemp;
+			//float *NbodyParticleMassTemp;
+			//float *NbodyParticleVelocityTemp[MAX_DIMENSION]; // feedback can affect velocity
+			float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION+1];
+
+			NbodyParticleIDTemp   = new int[LocalNumberOfNbodyParticles];
+			//NbodyParticleMassTemp = new float[LocalNumberOfNbodyParticles];
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+				//NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
+				NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
+			}
+
+			/* Get particle information from Grids */
+			int count = 0;
+			for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++)
+				for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel) 
+					if (Temp->GridData->CopyNbodyParticles(&count, NbodyParticleIDTemp, NbodyParticleAccelerationNoStarTemp) == FAIL) {
+						//NbodyParticleAccelerationTemp
+						ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+					}
+
+			if (count != LocalNumberOfNbodyParticles)
+				ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+
+#ifdef USE_MPI
+			if (MyProcessorNumber == ROOT_PROCESSOR) {
+				/* Receiving Index, NumberOfParticles, NbodyArrays from other processs */
+				int* start_index_all;
+				int* LocalNumberAll;
+				start_index_all = new int[NumberOfProcessors];
+				LocalNumberAll = new int[NumberOfProcessors];
+				MPI_Request request;
+				MPI_Status status;
+				int ierr;
+				int errclass,resultlen;
+				char err_buffer[MPI_MAX_ERROR_STRING];
+
+				MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
+				MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
+
+				/* Initialize the nbody array used for direct Nbody calculation*/
+				InitializeNbodyArrays();
+
+
+
+				/*-----------------------------------------------*/
+				/******  Gather Arrays from other processes  *****/
+				/*-----------------------------------------------*/
+				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
+						NbodyParticleID, LocalNumberAll, start_index_all, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
+				MPI_Wait(&request, &status);
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NbodyParticleAccelerationNoStar[dim], LocalNumberAll, start_index_all, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
+				}
+				fprintf(stderr,"Done?1-2\n");
+
+
+
+				fprintf(stdout, "TimeStep: %e, %f\n", TimeStep, TimeUnits);
+				/*-----------------------------------------------*/
+				/******** Send Arrays to Fortran Nbody6++    *****/
+				/*-----------------------------------------------*/
+				//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, inter_comm);
+				CommunicationInterBarrier();
+				MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
+				}
+				ierr = MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
+				ierr = MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
+				ierr = CommunicationInterBarrier();
+
+				/**
+				if (ierr == MPI_SUCCESS) {
+					fprintf(stderr,"Receiving from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
+				} else {
+					fprintf(stderr,"Error receiving message from process %d with tag %d\n", status.MPI_SOURCE, status.MPI_TAG);
+					MPI_Error_class(ierr,&errclass);
+					if (errclass== MPI_ERR_RANK) {
+						fprintf(stderr,"Invalid rank used in MPI send call\n");
+						MPI_Error_string(ierr,err_buffer,&resultlen);
+						fprintf(stderr,err_buffer);
+						MPI_Finalize();
+					}
+				}
+				**/
+
+				if (start_index_all != NULL)
+					delete [] start_index_all;
+				start_index_all = NULL;
+				if (LocalNumberAll != NULL)
+					delete [] LocalNumberAll;
+				LocalNumberAll = NULL;
+				DeleteNbodyArrays();
+			} // endif : root processor
+			else {
+				/* Sending Index, NumberOfParticles, NbodyArrays to the root processs */
+
+				MPI_Request request;
+				MPI_Status status;
+
+				MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+				MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+
+
+				//MPI_Igatherv(NbodyParticleMassTemp, LocalNumberOfNbodyParticles, MPI_DOUBLE,
+				//		NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm, &request);
+				//MPI_Wait(&request, &status);
+				MPI_Igatherv(NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType,
+						NULL, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm, &request);
+				MPI_Wait(&request, &status);
+
+				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					//MPI_Igatherv(NbodyParticleVelocityTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+					//			NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					//	MPI_Wait(&request, &status);
+					MPI_Igatherv(NbodyParticleAccelerationNoStarTemp[dim], LocalNumberOfNbodyParticles, MPI_DOUBLE,
+							NULL, NULL, NULL, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm,&request);
+					MPI_Wait(&request, &status);
 				}
 
-		fprintf(stderr,"Done?4\n");
+			} // endelse: other processor
+#endif
 
+			/* Destruct Arrays*/
+			/*
+			if (NbodyParticleIDTemp != NULL)
+				delete [] NbodyParticleIDTemp;
+			NbodyParticleIDTemp = NULL;
+			*/
 
-
-		/* Destruct Arrays*/
-		if (NbodyParticleIDTemp != NULL)
-			delete [] NbodyParticleIDTemp;
-		NbodyParticleIDTemp = NULL;
-		fprintf(stderr,"Done?5\n");
-
-		if (NbodyParticleMassTemp != NULL)
-			delete [] NbodyParticleMassTemp;
-		NbodyParticleMassTemp = NULL;
-		fprintf(stderr,"Done?6\n");
-
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			if (NbodyParticlePositionTemp[dim] != NULL)
-				delete [] NbodyParticlePositionTemp[dim];
-			NbodyParticlePositionTemp[dim] = NULL;
-			fprintf(stderr,"Done?7\n");
-
-			if (NbodyParticleVelocityTemp[dim] != NULL)
-				delete [] NbodyParticleVelocityTemp[dim];
-			NbodyParticleVelocityTemp[dim] = NULL;
-			fprintf(stderr,"Done?8\n");
-
-			if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
-				delete [] NbodyParticleAccelerationNoStarTemp[dim];
-			NbodyParticleAccelerationNoStarTemp[dim] = NULL;
-			fprintf(stderr,"Done?9\n");
-		}
-			CommunicationBarrier();
-		fprintf(stderr,"Done?10\n");
-
-		} // ENDIF level
-		return SUCCESS;
-	}
+			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+				if (NbodyParticleAccelerationNoStarTemp[dim] != NULL)
+					delete [] NbodyParticleAccelerationNoStarTemp[dim];
+				NbodyParticleAccelerationNoStarTemp[dim] = NULL;
+			}
+		} // endelse: not first
+	} // ENDIF level
+	return SUCCESS;
+}
 #endif
 

@@ -131,7 +131,7 @@ int StarParticleFindAll(LevelHierarchyEntry *LevelArray[], Star *&AllStars)
 		Eint32 *displace = new Eint32[NumberOfProcessors];
 
 		MPI_Allgather(&LocalNumberOfStars, 1, MPI_INT, nCount, 1, MPI_INT, 
-				MPI_COMM_WORLD);
+				enzo_comm);
 
 		/* Generate displacement list. */
 
@@ -194,7 +194,7 @@ int StarParticleFindAll(LevelHierarchyEntry *LevelArray[], Star *&AllStars)
 
 			MPI_Allgatherv(sendBuffer, LocalNumberOfStars, MPI_STAR,
 					recvBuffer, nCount, displace, MPI_STAR,
-					MPI_COMM_WORLD);
+					enzo_comm);
 
 			AllStars = StarBufferToList(recvBuffer, TotalNumberOfStars);
 

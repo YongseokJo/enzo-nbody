@@ -153,13 +153,8 @@ int grid::AddOverlappingParticleMassField(grid *OtherGrid,
 					          (j + StartOther[1]))*OtherDim[0] +
 				            (0 + StartOther[0]);
 			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-#ifdef NBODY
-				GravitatingMassField[0][thisindex] +=
-					OtherGrid->GravitatingMassFieldParticles[0][otherindex];
-#else
 				GravitatingMassField[thisindex] +=
 					OtherGrid->GravitatingMassFieldParticles[otherindex];
-#endif
 			}
 		}
 
@@ -304,15 +299,15 @@ int grid::AddOverlappingParticleMassFieldNoStar(grid *OtherGrid,
 					          (j + StartOther[1]))*OtherDim[0] +
 				            (0 + StartOther[0]);
 			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-				GravitatingMassField[1][thisindex] +=
-					OtherGrid->GravitatingMassFieldParticles[1][otherindex];
+				GravitatingMassFieldNoStar[thisindex] +=
+					OtherGrid->GravitatingMassFieldParticlesNoStar[otherindex];
 			}
 		}
 
 	/* Clean up if we have transfered data. */
 
 	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-		OtherGrid->DeleteAllFields();
+		OtherGrid->DeleteAllFieldsNoStar();
 
 	return SUCCESS;
 }

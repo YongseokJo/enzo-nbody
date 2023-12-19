@@ -207,14 +207,14 @@ int grid::CommunicationSendParticles(grid *ToGrid, int ToProcessor,
 
 		if (MyProcessorNumber == ProcessorNumber)
 			CommunicationBufferedSend(buffer, Count, ParticleDataType,
-					Dest, MPI_SENDPART_TAG, MPI_COMM_WORLD,
+					Dest, MPI_SENDPART_TAG, enzo_comm,
 					BUFFER_IN_PLACE);
 
 		if (MyProcessorNumber == ToProcessor) {
 
 			if (CommunicationDirection == COMMUNICATION_POST_RECEIVE) {
 				MPI_Irecv(buffer, Count, ParticleDataType, Source,
-						MPI_SENDPART_TAG, MPI_COMM_WORLD,
+						MPI_SENDPART_TAG, enzo_comm,
 						CommunicationReceiveMPI_Request+CommunicationReceiveIndex);
 
 				//	printf("Posting receive from P%"ISYM" for %"ISYM" particles in "
@@ -236,7 +236,7 @@ int grid::CommunicationSendParticles(grid *ToGrid, int ToProcessor,
 
 			if (CommunicationDirection == COMMUNICATION_SEND_RECEIVE)
 				MPI_Recv(buffer, Count, ParticleDataType, Source,
-						MPI_SENDPART_TAG, MPI_COMM_WORLD, &status);
+						MPI_SENDPART_TAG, enzo_comm, &status);
 
 		} // ENDIF (MyProcessorNumber == ToProcessor)
 

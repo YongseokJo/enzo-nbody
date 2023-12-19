@@ -156,11 +156,11 @@ int CommunicationLoadBalanceRootGrids(LevelHierarchyEntry *LevelArray[],
   } // ENDIF ROOT_PROCESSOR
 
 #ifdef USE_MPI
-  MPI_Bcast(&NumberOfRootGrids, 1, IntDataType, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  MPI_Bcast(&NumberOfRootGrids, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
   if (MyProcessorNumber != ROOT_PROCESSOR)
     RootProcessors = new int[NumberOfRootGrids];
   MPI_Bcast(RootProcessors, NumberOfRootGrids, IntDataType, ROOT_PROCESSOR, 
-	    MPI_COMM_WORLD);
+	    enzo_comm);
 #endif
 
   /* Move the grids to their new processors */

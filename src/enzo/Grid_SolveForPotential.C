@@ -44,14 +44,12 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;
 #ifdef NBODY
-  if (GravitatingMassField[0] == NULL)  // if this is not set we have nothing to do.
-		return SUCCESS;
-  if (GravitatingMassField[1] == NULL)  // if this is not set we have nothing to do.
-		return SUCCESS;
-#else
-  if (GravitatingMassField == NULL)  // if this is not set we have nothing to do.
+  if (GravitatingMassFieldNoStar == NULL)  // if this is not set we have nothing to do.
 		return SUCCESS;
 #endif
+  if (GravitatingMassField == NULL)  // if this is not set we have nothing to do.
+		return SUCCESS;
+
 
   LCAPERF_START("grid_SolveForPotential");
  
@@ -82,9 +80,8 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   tol_dim = max(sqrt(float(size))*1e-6, tol_dim);
  
 #ifdef NBODY
-	float *rhs[2];
-	rhs[0]	= new float[size];
-	rhs[1]	= new float[size];
+	float *rhs1 = new float[size];
+	float *rhs2 = new float[size];
 #else
   float *rhs = new float[size];
 #endif
@@ -96,11 +93,11 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #ifdef SMOOTH_SOURCE
  
 #ifdef NBODY
-	FORTRAN_NAME(smooth2)(GravitatingMassField[0], rhs[0], &GridRank,
+	FORTRAN_NAME(smooth2)(GravitatingMassField, rhs1, &GridRank,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);
-	FORTRAN_NAME(smooth2)(GravitatingMassField[1], rhs[1], &GridRank,
+	FORTRAN_NAME(smooth2)(GravitatingMassFieldNoStar, rhs2, &GridRank,
 			GravitatingMassFieldDimension,
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);
@@ -120,19 +117,34 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 			GravitatingMassFieldDimension+1,
 			GravitatingMassFieldDimension+2);
 #endif
+
+#ifdef NBODY
+  for (i = 0; i < size; i++) {
+    rhs1[i] *= Constant;
+    rhs2[i] *= Constant;
+	}
+#else
   for (i = 0; i < size; i++)
     rhs[i] *= Constant;
+#endif
  
 #else /* SMOOTH_SOURCE */
  
+
+
   for (i = 0; i < size; i++) {
 #ifdef NBODY
-    rhs[0][i] = GravitatingMassField[0][i] * Constant;
-    rhs[1][i] = GravitatingMassField[1][i] * Constant;
+    rhs1[i] = GravitatingMassField[i] * Constant;
+    rhs2[i] = GravitatingMassFieldNoStar[i] * Constant;
 #else
     rhs[i] = GravitatingMassField[i] * Constant;
 #endif
 	}
+	/*
+	fprintf(stderr, "ndiff = %d\n", ndiff);
+	fprintf(stderr, "npdiff = %d\n", npdiff);
+	*/
+
  
 #endif /* SMOOTH_SOURCE */
  
@@ -148,13 +160,13 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   int iteration = 0;
 #endif /* UNUSED */
 #ifdef NBODY 
-  if (MultigridSolver(rhs[0], PotentialField[0], GridRank,
+  if (MultigridSolver(rhs1, PotentialField, GridRank,
 		      GravitatingMassFieldDimension, norm, mean,
 		      GravitySmooth, tol_dim, MAX_ITERATION) == FAIL) {
     ENZO_FAIL("Error in MultigridDriver.\n");
   }
 
-  if (MultigridSolver(rhs[1], PotentialField[1], GridRank,
+  if (MultigridSolver(rhs2, PotentialFieldNoStar, GridRank,
 		      GravitatingMassFieldDimension, norm, mean,
 		      GravitySmooth, tol_dim, MAX_ITERATION) == FAIL) {
     ENZO_FAIL("Error in MultigridDriver.\n");
@@ -184,8 +196,8 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
   /* Clean up. */
  
 #ifdef NBODY
-  delete [] rhs[0];
-  delete [] rhs[1];
+  delete [] rhs1;
+  delete [] rhs2;
 #else
   delete [] rhs;
 #endif
@@ -195,32 +207,22 @@ int grid::SolveForPotential(int level, FLOAT PotentialTime)
 #ifdef POTENTIALDEBUGOUTPUT
   for (int i=0;i<GridDimension[0]; i++) {
     int igrid = GRIDINDEX_NOGHOST(i,(GridEndIndex[0]+GridStartIndex[0])/2,(GridEndIndex[0]+GridStartIndex[0])/2);
-#ifdef NBODY
-		printf("i: %i \t SolvedSub %g\n", i, PotentialField[0][igrid]);
-		printf("i: %i \t SolvedSub %g\n", i, PotentialField[1][igrid]);
-#else
+
 		printf("i: %i \t SolvedSub %g\n", i, PotentialField[igrid]);
-#endif
 	}
   float maxPot=-1e30, minPot=1e30;    
   float maxGM=-1e30, minGM=1e30;
   for (int i=0;i<size; i++) {
-#ifdef NBODY
-		maxPot = max(maxPot,PotentialField[0][i]);
-		minPot = min(minPot,PotentialField[0][i]);
-    maxGM = max(maxGM,GravitatingMassField[0][i]);
-    minGM = min(minGM,GravitatingMassField[0][i]);
-#else
+
 		maxPot = max(maxPot,PotentialField[i]);
 		minPot = min(minPot,PotentialField[i]);
     maxGM = max(maxGM,GravitatingMassField[i]);
     minGM = min(minGM,GravitatingMassField[i]);
-#endif
   }
   if (debug1) printf("SolvedPotential: Potential minimum: %g \t maximum: %g\n", minPot, maxPot);
   if (debug1) printf("SolvedPotential: GM minimum: %g \t maximum: %g\n", minGM, maxGM);
 
-#endif
+#endif // POTENTIALDEBUGOUTPUT
  
   LCAPERF_STOP("grid_SolveForPotential");
   return SUCCESS;

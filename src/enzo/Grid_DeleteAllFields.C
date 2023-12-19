@@ -32,33 +32,14 @@ void grid::DeleteAllFields()
   this->DeleteParticles();
  
   for (i = 0; i < MAX_DIMENSION; i++) {
-#ifdef NBODY
-    delete [] AccelerationField[i][0];
-    delete [] AccelerationField[i][1];
     delete [] ParticleAcceleration[i];
-    ParticleAcceleration[i]         = NULL;
-		if (ParticleAccelerationNoStar[i] != NULL) {
-		delete [] ParticleAccelerationNoStar[i];
-		ParticleAccelerationNoStar[i] = NULL;
-		}
-    AccelerationField[i][0]         = NULL;
-    AccelerationField[i][1]         = NULL;
-#else
-    delete [] ParticleAcceleration[i];
-    ParticleAcceleration[i]      = NULL;
     delete [] AccelerationField[i];
+    ParticleAcceleration[i]      = NULL;
     AccelerationField[i]         = NULL;
-#endif
   }
-#ifdef NBODY
+
   delete [] ParticleAcceleration[MAX_DIMENSION];
   ParticleAcceleration[MAX_DIMENSION] = NULL;
-	delete [] ParticleAccelerationNoStar[MAX_DIMENSION];
-	ParticleAccelerationNoStar[MAX_DIMENSION] = NULL;
-#else
-  delete [] ParticleAcceleration[MAX_DIMENSION];
-  ParticleAcceleration[MAX_DIMENSION] = NULL;
-#endif
 
   for (i = 0; i < MAX_NUMBER_OF_BARYON_FIELDS; i++) {
     delete [] BaryonField[i];
@@ -99,21 +80,6 @@ void grid::DeleteAllFields()
     }
   }
 
-#ifdef NBODY
-  delete [] PotentialField[0];
-  delete [] PotentialField[1];
-  delete [] GravitatingMassField[0];
-  delete [] GravitatingMassField[1];
-  delete [] GravitatingMassFieldParticles[0];
-  delete [] GravitatingMassFieldParticles[1];
- 
-  PotentialField[0]                = NULL;
-  PotentialField[1]                = NULL;
-  GravitatingMassField[0]          = NULL;
-  GravitatingMassField[1]          = NULL;
-  GravitatingMassFieldParticles[0] = NULL;
-  GravitatingMassFieldParticles[1] = NULL;
-#else
   delete [] PotentialField;
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
@@ -121,6 +87,38 @@ void grid::DeleteAllFields()
   PotentialField                = NULL;
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
-#endif
  
 }
+
+
+#ifdef NBODY
+void grid::DeleteAllFieldsNoStar()
+{
+
+  int i, j;
+
+  for (i = 0; i < MAX_DIMENSION; i++) {
+
+    delete [] AccelerationFieldNoStar[i];
+		if (ParticleAccelerationNoStar[i] != NULL) {
+		delete [] ParticleAccelerationNoStar[i];
+		ParticleAccelerationNoStar[i] = NULL;
+		}
+    AccelerationFieldNoStar[i]         = NULL;
+
+  }
+
+	delete [] ParticleAccelerationNoStar[MAX_DIMENSION];
+	ParticleAccelerationNoStar[MAX_DIMENSION] = NULL;
+
+
+  delete [] PotentialFieldNoStar;
+  delete [] GravitatingMassFieldNoStar;
+  delete [] GravitatingMassFieldParticlesNoStar;
+
+  PotentialFieldNoStar                = NULL;
+  GravitatingMassFieldNoStar          = NULL;
+  GravitatingMassFieldParticlesNoStar = NULL;
+
+}
+#endif

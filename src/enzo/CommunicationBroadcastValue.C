@@ -49,7 +49,7 @@ int CommunicationBroadcastValue(Eint32 *Value, int BroadcastProcessor)
   MPI_Arg Root = BroadcastProcessor;
   MPI_Arg stat;
 
-  stat = MPI_Bcast((void*) Value, Count, DataTypeInt, Root, MPI_COMM_WORLD);
+  stat = MPI_Bcast((void*) Value, Count, DataTypeInt, Root, enzo_comm);
     if( stat != MPI_SUCCESS ){ENZO_FAIL("");}
  
 #ifdef MPI_INSTRUMENTATION
@@ -83,7 +83,7 @@ int CommunicationBroadcastValue(Eint64 *Value, int BroadcastProcessor)
   MPI_Arg Root = BroadcastProcessor;
   MPI_Arg stat;
 
-  stat = MPI_Bcast((void*) Value, Count, DataTypeInt, Root, MPI_COMM_WORLD);
+  stat = MPI_Bcast((void*) Value, Count, DataTypeInt, Root, enzo_comm);
     if( stat != MPI_SUCCESS ){ENZO_FAIL("");}
  
 #ifdef MPI_INSTRUMENTATION
@@ -117,7 +117,7 @@ int CommunicationBroadcastValues(Eint32 *Values, int Number, int BroadcastProces
   MPI_Arg Root = BroadcastProcessor;
   MPI_Arg stat;
 
-  stat = MPI_Bcast((void*) Values, Count, DataTypeInt, Root, MPI_COMM_WORLD);
+  stat = MPI_Bcast((void*) Values, Count, DataTypeInt, Root, enzo_comm);
     if( stat != MPI_SUCCESS ){ENZO_FAIL("");}
  
 #ifdef MPI_INSTRUMENTATION
@@ -151,7 +151,7 @@ int CommunicationBroadcastValues(Eint64 *Values, int Number, int BroadcastProces
   MPI_Arg Root = BroadcastProcessor;
   MPI_Arg stat;
 
-  stat = MPI_Bcast((void*) Values, Count, DataTypeInt, Root, MPI_COMM_WORLD);
+  stat = MPI_Bcast((void*) Values, Count, DataTypeInt, Root, enzo_comm);
     if( stat != MPI_SUCCESS ){ENZO_FAIL("");}
  
 #ifdef MPI_INSTRUMENTATION

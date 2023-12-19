@@ -204,11 +204,8 @@ int grid::AnalyzeTrackPeaks(int level, int ReportLevel)
 		  temperature[index], temperature[index]/
 		  POW(BaryonField[DensNum][index], Gamma-1));
 
-#ifdef NBODY
-		if (SelfGravity && GravitatingMassFieldParticles[0] != NULL) {
-#else
+
 		if (SelfGravity && GravitatingMassFieldParticles != NULL) {
-#endif
 
 	    int gdims[3], gindex;
 	    for (dim = 0; dim < 3; dim++)
@@ -218,11 +215,7 @@ int grid::AnalyzeTrackPeaks(int level, int ReportLevel)
 	    gindex = (gdims[2]*GravitatingMassFieldParticlesDimension[1] +
 		      gdims[1])*GravitatingMassFieldParticlesDimension[0] +
 		      gdims[0];
-#ifdef NBODY
-			fprintf(fptr, "%"GSYM" ", GravitatingMassFieldParticles[0][gindex]);
-#else
 			fprintf(fptr, "%"GSYM" ", GravitatingMassFieldParticles[gindex]);
-#endif
 		}
 	  else
 	    fprintf(fptr, "%"GSYM" ", tiny_number);

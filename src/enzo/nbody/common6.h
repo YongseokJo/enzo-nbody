@@ -12,7 +12,7 @@
      &               KSPAIR,NRUN,MODEL,NC,NZERO,NBZERO,NBIN0,NHI0,
      &               NAME0,NCH,NCHAOS,IDUM1,KZ(50),NNBOPT,NIMBH,
      &               ITAIL0,NTAIL, !Tidal tail position indicators
-     &               NEW2(5)
+     &               NEW2(5),EPHASE
 
       COMMON/PARAMS/ ETAI,ETAR,DTADJ,DELTAT,TCRIT,QE,RBAR,ZMBAR,
      &               DTMIN,RMIN,ETAU,CMSEP2,ECLOSE,GMIN,GMAX,ETA0,
@@ -65,7 +65,7 @@
      &               BODY0(NMAX),EPOCH(NMAX),SPIN(NMAX),XSTAR(NMAX),
      &               ZLMSTY(NMAX),FIDOT(3,NMAX),D0(3,NMAX),
      &               FRDOT(3,NMAX),D0R(3,NMAX),KSTAR(NMAX),NAME(NMAX),
-     &               IMINR(NMAX),LIST(LMAX,NMAX)
+     &               IMINR(NMAX),LIST(LMAX,NMAX),FENZO(3,NMAX)
 
 *
       COMMON/PAIRS/  U(4,KMAX),U0(4,KMAX),UDOT(4,KMAX),FU(4,KMAX),

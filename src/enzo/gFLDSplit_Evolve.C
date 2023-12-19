@@ -27,6 +27,7 @@
 #include "CosmologyParameters.h"
 
 #include "phys_constants.h"
+#include "communicators.h"
 
 //#define FAIL_ON_NAN
 #define NO_FAIL_ON_NAN
@@ -59,7 +60,7 @@ int gFLDSplit::Evolve(HierarchyEntry *ThisGrid, float dthydro)
 #ifdef USE_MPI
   //  check that MyProcessorNumber agrees with MPI process ID
   MPI_Arg MPI_id;
-  MPI_Comm_rank(MPI_COMM_WORLD, &MPI_id);
+  MPI_Comm_rank(enzo_comm, &MPI_id);
   if (MyProcessorNumber != MPI_id) {
     fprintf(stderr, "ERROR: Enzo PID %"ISYM" doesn't match MPI ID %"ISYM"\n", 
 	    MyProcessorNumber, int(MPI_id));
@@ -69,7 +70,7 @@ int gFLDSplit::Evolve(HierarchyEntry *ThisGrid, float dthydro)
 
   // in case MPI is not included
 #ifndef MPI_INT
-  int MPI_COMM_WORLD = 0;
+  int enzo_comm = 0;
 #endif
 
   // start MPI timer for overall solver
@@ -213,9 +214,9 @@ int gFLDSplit::Evolve(HierarchyEntry *ThisGrid, float dthydro)
   MPI_Datatype DataType = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
   MPI_Arg one = 1;
   float dtmp;
-  MPI_Allreduce(&(UMaxVals[1]), &dtmp, one, DataType, MPI_MAX, MPI_COMM_WORLD);
+  MPI_Allreduce(&(UMaxVals[1]), &dtmp, one, DataType, MPI_MAX, enzo_comm);
   UMaxVals[1] = dtmp;
-  MPI_Allreduce(&(UTypVals[1]), &dtmp, one, DataType, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(&(UTypVals[1]), &dtmp, one, DataType, MPI_SUM, enzo_comm);
   UTypVals[1] = dtmp/NumberOfProcessors;  // estimate based on equidistribution
 #endif
   UTypVals[1] /= ecScale;
@@ -827,16 +828,16 @@ int gFLDSplit::RadStep(HierarchyEntry *ThisGrid, int eta_set)
   HYPRE_StructSolver preconditioner;    // HYPRE preconditioner structure
   switch (Krylov_method) {
   case 0:   // PCG
-    HYPRE_StructPCGCreate(MPI_COMM_WORLD, &solver);
+    HYPRE_StructPCGCreate(enzo_comm, &solver);
     break;
   case 2:   // GMRES
-    HYPRE_StructGMRESCreate(MPI_COMM_WORLD, &solver);
+    HYPRE_StructGMRESCreate(enzo_comm, &solver);
     break;
   default:  // BiCGStab
-    HYPRE_StructBiCGSTABCreate(MPI_COMM_WORLD, &solver);
+    HYPRE_StructBiCGSTABCreate(enzo_comm, &solver);
     break;
   }
-  HYPRE_StructPFMGCreate(MPI_COMM_WORLD, &preconditioner);
+  HYPRE_StructPFMGCreate(enzo_comm, &preconditioner);
   
   // Multigrid solver: for periodic dims, only coarsen until grid no longer divisible by 2
   Eint32 max_levels, level=-1;

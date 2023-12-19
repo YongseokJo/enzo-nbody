@@ -312,30 +312,42 @@ c$$$     &        EBIN,EMERGE
 #ifdef GPU      
 *     GPU profile
       call gpunb_profile(rank)
+      write(0,*) 'gpunb_profile(rank) finished'
 *      call gpupot_mdot_profile(rank)
 #endif
 #ifdef SIMD
 *     AVX/SSE profile
       call irr_simd_profile(rank)
+      write(0,*) 'irr_simd_profile finished'
 #endif      
 *     
 *     Perform automatic error control (RETURN on restart with KZ(2) > 1).
       CALL CHECK(DE)
+      write(0,*) 'check(DE) finished'
       IF (ABS(DE).GT.5.0*QE) GO TO 70
 *     
 *     Check for escaper removal.
       IF (KZ(23).GT.0) THEN
+         write(0,*) "ESCAPE started"
          CALL ESCAPE
+         write(0,*) "ESCAPE finished"
       END IF
 *     
 *     Check correction for c.m. displacements.
       IF (KZ(31).GT.0) THEN
+         write(0,*) "CMCORR started"
          CALL CMCORR
+         write(0,*) "CMCORR finished"
       END IF
 *     
 *     See whether standard output is due.
       IF (TIME.GE.TNEXT) THEN
+         write (0,*) "OUTPUT starts"
+
+         EPHASE = 3
          CALL OUTPUT
+
+         write(0,*) "OUTPUT ends"
 *     
 *     Include optional diagnostics for the hardest binary below ECLOSE.
          IF (KZ(9).EQ.1.OR.KZ(9).EQ.3) THEN
@@ -432,12 +444,12 @@ C     New (Aug. 1998): P.Kroupa
            ttotal=(tt1-ttota)*60.
            PRINT*,' Total CPU=',ttotal
 
-           IPHASE = 13
+           STOP
 
 *           by YS Jo to reset variables
              
 *           by sykim to reset count
-           CALL RESET_COUNT
+*           CALL RESET_COUNT
 
 #ifdef PARALLEL
          END IF
@@ -459,6 +471,7 @@ C     New (Aug. 1998): P.Kroupa
          CALL OFFSET(DTOFF)
       END IF
 *     
+      write(0,*) "OFFSET finished"
  70   RETURN
 *     
       END

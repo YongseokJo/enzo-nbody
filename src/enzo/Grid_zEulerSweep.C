@@ -111,11 +111,7 @@ int grid::zEulerSweep(int j, int NumberOfSubgrids, fluxes *SubgridFluxes[],
     if (GravityOn)
       for (k = 0; k < GridDimension[2]; k++) {
 	index3 = (k*GridDimension[1] + j) * GridDimension[0] + i;
-#ifdef NBODY
-	grslice[index2+k] = AccelerationField[dim][0][index3];
-#else
 	grslice[index2+k] = AccelerationField[dim][index3];
-#endif
       }
 
     if (DualEnergyFormalism)

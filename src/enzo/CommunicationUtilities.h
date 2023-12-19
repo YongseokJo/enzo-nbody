@@ -56,6 +56,7 @@ int CommunicationAllReduceValues(Eint64 *Values, int Number,
 #endif /* USE_MPI */
 
 int CommunicationBarrier();
+int CommunicationInterBarrier();
 int CommunicationShouldExit(int FromProc, int ToProc);
 
 #endif

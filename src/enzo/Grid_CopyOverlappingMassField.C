@@ -155,20 +155,14 @@ int grid::CopyOverlappingMassField(grid *OtherGrid,
 					(j + StartOther[1])               )*OtherDim[0] +
 				(0 + StartOther[0]);
 			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-#ifdef NBODY
-				GravitatingMassField[0][thisindex] =
-					OtherGrid->GravitatingMassField[0][otherindex];
-#else
 				GravitatingMassField[thisindex] =
 					OtherGrid->GravitatingMassField[otherindex];
-#endif
 			}
 		}
 
 	/* Clean up if we have transfered data. */
 
 	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-
 		OtherGrid->DeleteAllFields();
 
 	return SUCCESS;
@@ -307,16 +301,15 @@ int grid::CopyOverlappingMassFieldNoStar(grid *OtherGrid,
 					(j + StartOther[1])               )*OtherDim[0] +
 				(0 + StartOther[0]);
 			for (i = 0; i < Dim[0]; i++, thisindex++, otherindex++) {
-				GravitatingMassField[1][thisindex] =
-					OtherGrid->GravitatingMassField[1][otherindex];
+				GravitatingMassFieldNoStar[thisindex] =
+					OtherGrid->GravitatingMassFieldNoStar[otherindex];
 			}
 		}
 
 	/* Clean up if we have transfered data. */
 
 	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
-
-		OtherGrid->DeleteAllFields();
+		OtherGrid->DeleteAllFieldsNoStar();
 
 	return SUCCESS;
 

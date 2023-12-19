@@ -335,7 +335,7 @@ int CommunicationTransferPhotons(LevelHierarchyEntry *LevelArray[],
 	Size = (i < NumberOfMessages-1) ? PHOTON_BUFFER_SIZE : (nPhoton[proc]-Offset);
 	CommunicationBufferedSend(SendList[proc]+Offset, 
 				  Size, MPI_PhotonList, proc, tag, 
-				  MPI_COMM_WORLD,
+				  enzo_comm,
 				  Size*sizeof(GroupPhotonList));
       } // ENDFOR messages
       delete [] SendList[proc];

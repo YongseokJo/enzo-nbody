@@ -177,7 +177,7 @@ int CommunicationLoadBalancePhotonGrids(HierarchyEntry **Grids[], int *NumberOfG
   MPI_Arg Root = ROOT_PROCESSOR;
   MPI_Arg Count = TotalNumberOfGrids;
   MPI_Bcast ((void*) NewProcessorNumber, Count, IntDataType,
-	     Root, MPI_COMM_WORLD);
+	     Root, enzo_comm);
 #endif
 
   /* Now we know where the grids are going, transfer them. */

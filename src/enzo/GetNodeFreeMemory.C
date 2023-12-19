@@ -60,9 +60,9 @@ int GetNodeFreeMemory(void)
   MPI_Arg node_number;
   MPI_Datatype DataTypeInt = (sizeof(Eint64) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
 
-  err = MPI_Comm_size(MPI_COMM_WORLD, &nt);
+  err = MPI_Comm_size(enzo_comm, &nt);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
-  err = MPI_Comm_rank(MPI_COMM_WORLD, &id);
+  err = MPI_Comm_rank(enzo_comm, &id);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
   err = MPI_Get_processor_name(node_name, &lname);
     if( err != 0 ){my_exit(EXIT_FAILURE);}
@@ -83,7 +83,7 @@ int GetNodeFreeMemory(void)
 
   fprintf(stderr, "Proc %"ISYM" of %"ISYM" is on node %s [%"ISYM"] with %lld MBytes free\n", id, nt, node_name, node_number, free);
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   freemem = new double[MAX_NUMBER_OF_NODES];
   actual_node = new int[MAX_NUMBER_OF_NODES];
@@ -115,9 +115,9 @@ int GetNodeFreeMemory(void)
     free_input[id/MAX_TASKS_PER_NODE] = free;
   }
 
-  MPI_Allreduce(node_input, actual_node, nn, DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(node_input, actual_node, nn, DataTypeInt, MPI_SUM, enzo_comm);
 
-  MPI_Allreduce(free_input, actual_free, nn, DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(free_input, actual_free, nn, DataTypeInt, MPI_SUM, enzo_comm);
 
   for ( i = 0; i < nn; i++) {
     NodeMem[i] = ((double) actual_free[i])/1024.0;
@@ -129,7 +129,7 @@ int GetNodeFreeMemory(void)
       fprintf(stderr, "Logical Node %3"ISYM"  NodeMap %5"ISYM"  NodeMem %6.2lf\n", i, NodeMap[i], NodeMem[i]);
     }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Barrier(enzo_comm);
 
   delete [] node_input;
   delete [] free_input;

@@ -131,12 +131,16 @@ int CopyZonesFromOldGrids(LevelHierarchyEntry *OldGrids,
 				 only delete the grid object on all processors after
 				 everything's done. */
 
-			if (Temp->GridData->ReturnProcessorNumber() == MyProcessorNumber)
+			if (Temp->GridData->ReturnProcessorNumber() == MyProcessorNumber) {
 				Temp->GridData->DeleteAllFields();
+#ifdef NBODY
+				Temp->GridData->DeleteAllFieldsNoStar();
+#endif
+			}
 
 			delete [] SiblingList.GridList;
 
-		}
+		} // for temp
 
 		/* Receive data */
 
