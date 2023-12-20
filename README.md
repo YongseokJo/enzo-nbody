@@ -30,8 +30,10 @@ Mandatory:
 
 List of people who have contributed to the development of ENZO-NBODY:
    
-   * Yongseok Jo               yjo@flatironinstitute.org, kerex@snu.ac.kr
+   * Yongseok Jo               yjo@flatironinstitute.org
    * Seoyoung Kim              mintlux@snu.ac.kr
+   * Ji-hoon Kim               mornkr@snu.ac.kr
+   * Greg Bryan                gb2141@columbia.edu
 
 Thanks to:
-   Ji-hoon Kim (mornkr@snu.ac.kr)
+
