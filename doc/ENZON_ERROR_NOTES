@@ -1,0 +1,7 @@
+231219
+
+few things to note about on nbody part of development
+
+- changing the value of params.h file changes the results
+- ex: NMAX = 1000, KMAX = 500 -> NMAX = 8192, KMAX = 2048
+- probably b/c there is an internal procedure in NBODY that sends particles to GPU in multiples of 1024
