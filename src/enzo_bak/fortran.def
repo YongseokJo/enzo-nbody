@@ -1,8 +1,0 @@
-#define MAX_ANY_SINGLE_DIRECTION 1031
-#define MAX_COLOR 45
-#define RADIATION
-#define NO_CEN_METALS
-#define JHW_METALS_NORMZ 0.1
-#define NSPECIES 13
-#define CORRECTIONSTEPS 30
-#define color_floor 1.d-35

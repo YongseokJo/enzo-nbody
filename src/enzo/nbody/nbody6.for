@@ -526,10 +526,10 @@
             allocate(newEX(3,newEN))
             allocate(newEXDOT(3,newEN))
             allocate(newEF(3,newEN))
-            call MPI_RECV(newEID, newEN, MPI_INTEGER, 0, 200, ICOMM, istatus,
-     &         ierr)
-            call MPI_RECV(newEBODY, newEN, MPI_DOUBLE_PRECISION, 0, 250,
+            call MPI_RECV(newEBODY, newEN, MPI_DOUBLE_PRECISION, 0, 200,
      &          ICOMM, istatus, ierr)
+            call MPI_RECV(newEID, newEN, MPI_INTEGER, 0, 250, ICOMM, istatus,
+     &         ierr)
             DO I = 1,3
                call MPI_RECV(newEX(I,:), newEN, MPI_DOUBLE_PRECISION, 0,
      &         300, ICOMM, istatus,ierr)
