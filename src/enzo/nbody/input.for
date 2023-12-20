@@ -31,7 +31,7 @@
       RS0 = 0.18780202 ! for binaries !0.19587108D0
       DTADJ = 1.00D0
 !      DELTAT = 1.00D0
-      TCRIT = 502.00D0
+      TCRIT = 1.0D20
       QE = 1.0D10
       RBAR = 2.58811228D0
       ZMBAR = 100.00000000D0
