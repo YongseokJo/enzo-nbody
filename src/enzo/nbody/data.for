@@ -27,7 +27,7 @@
       ALPHA = 0.0D0
       BODY1 = 1.0D0
       BODYN = 1.0D0
-      NBIN0 = 500
+      NBIN0 = 0
       NHI0 = 0
       ZMET = 0.02D0
       EPOCH0 = 0.0D0
