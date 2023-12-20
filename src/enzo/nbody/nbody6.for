@@ -413,8 +413,9 @@
       DO 29 IP = 1,NTOT
 
          IF (NAME(IP).GT.N) GO TO 23 
-         IE = EIDINIT(NAME(IP)) ! the id of the ipth particle 
 
+         IF (NAME(IP).LE.EN) THEN
+         IE = EIDINIT(NAME(IP)) ! the id of the ipth particle 
          DO JP = 1,N
             IF (IE.EQ.EID(JP)) THEN
                EBODY(JP) = BODY(IP)*EMASSU
@@ -426,6 +427,21 @@
             SHUFFLECNT = SHUFFLECNT + 1
             END IF
          END DO
+
+        ELSE
+        DO JNP = 1,newEN
+           IF (IE.EQ.newEID(JP)) THEN
+              newEBODY(JNP) = BODY(IP)*EMASSU
+              DO KP = 1,3
+                 newEX(KP,JP) = X(KP,IP)*ELENGTHU
+                 newEXDOT(KP,JP) = XDOT(KP,IP)*EVELU
+              END DO
+           if (JP.LE.3) write(0,*) 'new enzo id matches!'
+           SHUFFLECNT = SHUFFLECNT + 1
+           END IF
+         END DO
+
+        END IF
 
    23   CONTINUE
    29   CONTINUE
@@ -546,36 +562,29 @@
 
    31 CONTINUE
 
-      IF (N.NE.EN) THEN
+      IF (newEN.GT.0) THEN
 
-       DO IR = 1,EN
-         FINDNEW = .true.
-         DO JR = 1,N
-           IF (EIDINIT(JR).EQ.EID(IR)) THEN
-              FINDNEW = .false.
-           END IF
-         END DO
+      DO IR = 1,newEN
+         
+         BODYNEW = newEBODY(IR)/EMASSU
+         XNEW(1) = newEX(1,IR)/ELENGTHU
+         XNEW(2) = newEX(2,IR)/ELENGTHU
+         XNEW(3) = newEX(3,IR)/ELENGTHU
 
-         IF (FINDNEW) THEN
-          BODYNEW = EBODY(IR)/EMASSU 
- 
-          XNEW(1) = EX(1,IR)/ELENGTHU
-          XNEW(2) = EX(2,IR)/ELENGTHU
-          XNEW(3) = EX(3,IR)/ELENGTHU
+         VNEW(1) = newEXDOT(1,IR)/EVELU
+         VNEW(2) = newEXDOT(2,IR)/EVELU
+         VNEW(3) = newEXDOT(3,IR)/EVELU
+      
+         EIDINIT(N+1) = EID(IR)
+         CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
 
-          VNEW(1) = EXDOT(1,IR)/EVELU
-          VNEW(2) = EXDOT(2,IR)/EVELU
-          VNEW(3) = EXDOT(3,IR)/EVELU
-          
-          EIDINIT(N+1) = EID(IR)
-          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
-         END IF
+         FENZO(1,EN+IR) = newEF(1,JR)/EFORCEU
+         FENZO(2,EN+IR) = newEF(2,JR)/EFORCEU
+         FENZO(3,EN+IR) = newEF(3,JR)/EFORCEU
 
-       END DO
+      END DO
 
-       END IF
-
-
+      END IF
 *     update forces from ENZO
        
        DO IR = 1,NTOT
@@ -617,11 +626,11 @@
         OUTC = OUTC + 1
 
 
-          DELTAT = EDT/ETIMEU
-          TNEXT = TNEXT + DELTAT  ! is it right? SY
+        DELTAT = EDT/ETIMEU
+        TNEXT = TNEXT + DELTAT  ! is it right? SY
 
-          write (6,*) 'timesteps', TNEXT, DELTAT
-          write (6,*) 'recieved and restarting'
+        write (6,*) 'timesteps', TNEXT, DELTAT
+        write (6,*) 'recieved and restarting'
 
 
 *----end-added-by-YS-----------------------------------------------------*
