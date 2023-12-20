@@ -429,7 +429,7 @@
          END DO
 
         ELSE
-        DO JNP = 1,newEN
+        DO JP = 1,newEN
            IF (IE.EQ.newEID(JP)) THEN
               newEBODY(JNP) = BODY(IP)*EMASSU
               DO KP = 1,3
