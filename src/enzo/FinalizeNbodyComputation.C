@@ -75,6 +75,9 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
 		start_index_new = FindStartIndex(&NewLocalNumberOfNbodyParticles);
+		fprintf(stderr,"NumberOfParticles=%d in FINAL\n",NumberOfNbodyParticles);
+		fprintf(stderr,"NewNumberOfParticles=%d in FINAL\n",NumberOfNewNbodyParticles);
+
 
 #ifdef USE_MPI
 		if (MyProcessorNumber == ROOT_PROCESSOR) {
@@ -84,7 +87,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			float *NewNbodyParticlePosition[MAX_DIMENSION]; // feedback can affect velocity
 
 			//NewNbodyParticleMass = new float[NumberOfNewNbodyParticles];
-			for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
 				NewNbodyParticlePosition[dim]            = new float[NumberOfNewNbodyParticles];
 				NewNbodyParticleVelocity[dim]            = new float[NumberOfNewNbodyParticles];
 			}
@@ -110,16 +113,17 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 
 
-			if (NumberOfNewNbodyParticles > 0)  {
+			if (NumberOfNewNbodyParticles != 0)  {
 				MPI_Gather(&NewLocalNumberOfNbodyParticles, 1, IntDataType, NewLocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 				MPI_Gather(&start_index_new, 1, IntDataType, start_index_all_new, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 			}
 
 
 
-			  /*-----------------------------------------------*/
-			 /******** Recv Arrays to Fortran Nbody6++    *****/
 			/*-----------------------------------------------*/
+			/******** Recv Arrays to Fortran Nbody6++    *****/
+			/*-----------------------------------------------*/
+			fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
 			InitializeNbodyArrays(1);
 			CommunicationInterBarrier();
 			fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
@@ -141,10 +145,10 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
 			/*
-			MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
-					NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
-			MPI_Wait(&request, &status);
-			*/
+				 MPI_Iscatterv(NbodyParticleID, LocalNumberAll, start_index_all, IntDataType,
+				 NbodyParticleIDTemp, LocalNumberOfNbodyParticles, IntDataType, ROOT_PROCESSOR, enzo_comm,&request);
+				 MPI_Wait(&request, &status);
+				 */
 
 			//CommunicationBarrier();
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -171,37 +175,37 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 
-				fprintf(stderr,"Root:Done?2-5\n");
+			fprintf(stderr,"Root:Done?2-5\n");
 
-		if (start_index_all != NULL)
-			delete [] start_index_all;
-		start_index_all = NULL;
-		if (start_index_all != NULL)
-			delete [] start_index_all_new;
-		start_index_all_new = NULL;
-		if (LocalNumberAll != NULL)
-			delete [] LocalNumberAll;
-		LocalNumberAll = NULL;
-		if (NewLocalNumberAll != NULL)
-			delete [] NewLocalNumberAll;
-		NewLocalNumberAll = NULL;
+			if (start_index_all != NULL)
+				delete [] start_index_all;
+			start_index_all = NULL;
+			if (start_index_all != NULL)
+				delete [] start_index_all_new;
+			start_index_all_new = NULL;
+			if (LocalNumberAll != NULL)
+				delete [] LocalNumberAll;
+			LocalNumberAll = NULL;
+			if (NewLocalNumberAll != NULL)
+				delete [] NewLocalNumberAll;
+			NewLocalNumberAll = NULL;
 
-		/*
-		if (NewNbodyParticleMass != NULL)
-			delete [] NewNbodyParticleMass;
-		NewNbodyParticleMass = NULL;
-		*/
+			/*
+				 if (NewNbodyParticleMass != NULL)
+				 delete [] NewNbodyParticleMass;
+				 NewNbodyParticleMass = NULL;
+				 */
 
 
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			if (NewNbodyParticlePosition[dim] != NULL)
-				delete [] NewNbodyParticlePosition[dim];
-			NewNbodyParticlePosition[dim] = NULL;
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				if (NewNbodyParticlePosition[dim] != NULL)
+					delete [] NewNbodyParticlePosition[dim];
+				NewNbodyParticlePosition[dim] = NULL;
 
-			if (NewNbodyParticleVelocity[dim] != NULL)
-				delete [] NewNbodyParticleVelocity[dim];
-			NewNbodyParticleVelocity[dim] = NULL;
-		}
+				if (NewNbodyParticleVelocity[dim] != NULL)
+					delete [] NewNbodyParticleVelocity[dim];
+				NewNbodyParticleVelocity[dim] = NULL;
+			}
 
 
 			DeleteNbodyArrays();
@@ -247,6 +251,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 		} // end else
 #endif
+
 
 
 		/* Update Particle Velocity and Position Back to Grids */

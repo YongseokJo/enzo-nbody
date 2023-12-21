@@ -267,6 +267,7 @@ void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],
 			IntDataType, MPI_SUM, enzo_comm);
 #else
 	NumberOfNbodyParticles = *LocalNumberOfNbodyParticles;
+	NumberOfNewNbodyParticles = *NewLocalNumberOfNbodyParticles;
 #endif
 
 }

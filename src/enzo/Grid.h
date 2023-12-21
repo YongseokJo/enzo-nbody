@@ -1586,10 +1586,10 @@ class grid
 				delete [] ParticleAcceleration[dim];
 				ParticleAcceleration[dim] = NULL;
 #ifdef NBODY
-				//if (ParticleAccelerationNoStar[dim] != NULL) {
+				if (ParticleAccelerationNoStar[dim] != NULL) {
 					delete [] ParticleAccelerationNoStar[dim];
 					ParticleAccelerationNoStar[dim] = NULL;
-				//}
+				}
 #endif
 				//#endif
 				delete [] ActiveParticleAcceleration[dim];
@@ -1773,7 +1773,7 @@ class grid
 					}
 				}
 			NumberOfNbodyParticlesInGrid = count;
-			NumberOfNewNbodyParticlesInGrid = count;
+			NumberOfNewNbodyParticlesInGrid = count_new;
 		}
 
 		/* */

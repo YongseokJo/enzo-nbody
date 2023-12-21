@@ -1,6 +1,4 @@
-make[1]: Warning: File `DEPEND' has modification time 111 s in the future
 
 Git Branch   enzon-star
-Git Revision 5c5b6c47d2d2ef8d142e5f9c4774947cfc0768a9
+Git Revision 480c0dfd7290e360220e6a9868ab292e13fe3656
 
-make[1]: warning:  Clock skew detected.  Your build may be incomplete.

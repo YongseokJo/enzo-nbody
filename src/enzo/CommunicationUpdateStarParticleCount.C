@@ -88,6 +88,8 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 
 	MPI_Arg GridCount = NumberOfGrids;
 
+	fprintf(stderr,"Num of Grids=%d\n", NumberOfGrids);  // by YS
+
 	int index;
 	for (grid = 0, index = 0; grid < NumberOfGrids; index += 2, grid++) {
 		buffer[index] = PartialParticleCount[grid];

@@ -458,6 +458,7 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 			ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 50, inter_comm);
 		}
 
+		fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);
 		MPI_Send(&NumberOfNewNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 
 		if (NumberOfNewNbodyParticles != 0) {

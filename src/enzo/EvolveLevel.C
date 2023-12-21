@@ -586,7 +586,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					ENZO_FAIL("Error in NbodyParticleFindAll.");
 				}
 				fprintf(stderr,"PNC done.\n", level);  // by YS
-				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				fprintf(stdout,"Proc:%d PNC done\n",MyProcessorNumber);  // by YS
 				//}
 #endif
 
@@ -596,7 +596,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 
 
-				fprintf(stdout,"7\n");  // by YS
+				fprintf(stdout,"Proc: %d 7\n", MyProcessorNumber);  // by YS
 				for (grid1 = 0; grid1 < NumberOfGrids; grid1++) {
 #endif //SAB.
 					/* Copy current fields (with their boundaries) to the old fields
@@ -607,7 +607,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					/* Call Schrodinger solver. */
 
 				if (MyProcessorNumber == ROOT_PROCESSOR)
-					fprintf(stdout,"8\n");  // by YS
+					fprintf(stdout,"Proc: %d  8\n", MyProcessorNumber);  // by YS
 					if (QuantumPressure == 1)
 						Grids[grid1]->GridData->SchrodingerSolver(LevelCycleCount[level]);
 
@@ -622,11 +622,13 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					 * All others (PPM, Zeus, MHD_Li/CT) are called from SolveHydroEquations
 					 */
 
+					fprintf(stdout,"Proc: %d  8-1\n", MyProcessorNumber);  // by YS
 
 					if( UseHydro) {
 						if( HydroMethod != HD_RK && HydroMethod != MHD_RK ){
 							Grids[grid1]->GridData->SolveHydroEquations(LevelCycleCount[level],
 									NumberOfSubgrids[grid1], SubgridFluxesEstimate[grid1], level);
+					fprintf(stdout,"Proc: %d  8-2\n", MyProcessorNumber);  // by YS
 						}else{
 							if (HydroMethod == HD_RK)
 								Grids[grid1]->GridData->RungeKutta2_1stStep
@@ -639,8 +641,8 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					}//usehydro
 				}//grids
 
-				if (MyProcessorNumber == ROOT_PROCESSOR)
-				fprintf(stdout,"9\n");  // by YS
+				//if (MyProcessorNumber == ROOT_PROCESSOR)
+				fprintf(stdout,"Proc: %d  9\n", MyProcessorNumber);  // by YS
 				if( HydroMethod == HD_RK || HydroMethod == MHD_RK ){
 #ifdef FAST_SIB
 					SetBoundaryConditions(Grids, NumberOfGrids, SiblingList, level, MetaData, Exterior, LevelArray[level]);
@@ -718,12 +720,12 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 #ifdef NBODY
 				//if (level == MaximumRefinementLevel) {
-				fprintf(stdout,"10\n");  // by YS
+				fprintf(stdout,"Proc: %d, 10\n",MyProcessorNumber);  // by YS
 				/* Create a master list of all nbody particles */
 				if (FinalizeNbodyComputation(LevelArray, level) == FAIL) {
 					ENZO_FAIL("Error in NbodyParticleFindAll.");
 				}
-				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				fprintf(stdout,"Proc:%d 10-1\n",MyProcessorNumber);  // by YS
 				fprintf(stderr,"FNC done.\n");  // by YS
 				//}
 #endif
@@ -769,7 +771,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 						(Grids[grid1]->NextGridNextLevel, level ,dtLevelAbove,
 						 NumberOfNewActiveParticles[grid1]);
 
-				fprintf(stdout,"13\n");  // by YS
+				fprintf(stdout,"Proc: %d 13\n", MyProcessorNumber);  // by YS
 					/* Include shock-finding */
 
 					Grids[grid1]->GridData->ShocksHandler();
@@ -812,7 +814,7 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 						Grids[grid1]->GridData->DeleteAccelerationField();
 #endif //!SAB
 
-				fprintf(stdout,"14\n");  // by YS
+				fprintf(stdout,"Proc: %d, 14\n",MyProcessorNumber);  // by YS
 					Grids[grid1]->GridData->DeleteParticleAcceleration();
 
 					if (UseFloor) 
@@ -830,10 +832,10 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 					if (UseMagneticSupernovaFeedback)
 						Grids[grid1]->GridData->MagneticSupernovaList.clear(); 
 
-					fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+					fprintf(stdout,"Proc:%d 14-1\n",MyProcessorNumber);  // by YS
 				} //end loop over grids
 
-				fprintf(stdout,"Proc:%d\n",MyProcessorNumber);  // by YS
+				fprintf(stdout,"Proc:%d 14-2\n",MyProcessorNumber);  // by YS
 				/* Finalize (accretion, feedback etc) for Active particles. */
 				ActiveParticleFinalize(Grids, MetaData, NumberOfGrids, LevelArray,
 						level, NumberOfNewActiveParticles);

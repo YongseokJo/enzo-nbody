@@ -428,18 +428,20 @@
             END IF
          END DO
 
-        ELSE
-        DO JP = 1,newEN
+       ELSE
+         IF (newEN.GT.0) THEN
+           DO JP = 1,newEN
            IF (IE.EQ.newEID(JP)) THEN
-              newEBODY(JNP) = BODY(IP)*EMASSU
-              DO KP = 1,3
-                 newEX(KP,JP) = X(KP,IP)*ELENGTHU
-                 newEXDOT(KP,JP) = XDOT(KP,IP)*EVELU
-              END DO
-           if (JP.LE.3) write(0,*) 'new enzo id matches!'
-           SHUFFLECNT = SHUFFLECNT + 1
+             newEBODY(JNP) = BODY(IP)*EMASSU
+             DO KP = 1,3
+             newEX(KP,JP) = X(KP,IP)*ELENGTHU
+             newEXDOT(KP,JP) = XDOT(KP,IP)*EVELU
+             END DO
+             if (JP.LE.3) write(0,*) 'new enzo id matches!'
+             SHUFFLECNT = SHUFFLECNT + 1
            END IF
-         END DO
+           END DO
+         END IF
 
         END IF
 
@@ -459,6 +461,7 @@
           write (0,*) 'fortran: write out'
           write (6,*) 'fortran: write out'
           write (0,*) 'fortran: FN =', N
+          write (0,*) 'fortran: FEN =', EN
 
           call MPI_BARRIER(ICOMM, ierr)
 *          call MPI_SEND(EID, EN, MPI_INTEGER, 0, 250,
