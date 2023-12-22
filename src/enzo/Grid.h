@@ -1798,7 +1798,7 @@ class grid
 		void CopyAccelerationToAttribute(void){
 			if (MyProcessorNumber != ProcessorNumber) return;
 
-			for (int dim=0; dim<MAX_DIMENSION+1; dim++ ) {
+			for (int dim=0; dim<MAX_DIMENSION; dim++ ) {
 				for (int i=0; i<NumberOfParticles; i++) {
 					ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAccelerationNoStar[dim][i];
 					//ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAcceleration[dim][i];
@@ -1868,7 +1868,7 @@ class grid
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
-					for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count)++;
