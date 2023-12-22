@@ -64,11 +64,9 @@ grid::grid()
     ParticleAcceleration[i]          = NULL;
 #ifdef NBODY
 		ParticleAccelerationNoStar[i]       = NULL;
-    AccelerationField[i][0]          = NULL;
-    AccelerationField[i][1]          = NULL;
-#else
-    AccelerationField[i]             = NULL;
+    AccelerationFieldNoStar[i]          = NULL;
 #endif
+    AccelerationField[i]             = NULL;
     GravitatingMassFieldDimension[i] = 0;
     RandomForcingField[i]            = NULL;
     PhaseFctMultEven[i]              = NULL; // WS
@@ -133,17 +131,14 @@ grid::grid()
   ParticleNumber                = NULL;
   ParticleType                  = NULL;
 #ifdef NBODY
-  PotentialField[0]             = NULL;
-  PotentialField[1]             = NULL;
-  GravitatingMassField[1]       = NULL;
-  GravitatingMassField[0]       = NULL;
-  GravitatingMassFieldParticles[0] = NULL;
-  GravitatingMassFieldParticles[1] = NULL;
-#else
+  PotentialFieldNoStar             = NULL;
+  GravitatingMassFieldNoStar       = NULL;
+  GravitatingMassFieldParticlesNoStar = NULL;
+#endif
   PotentialField                = NULL;
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
-#endif
+
   GravityBoundaryType           = GravityUndefined;
   for (i = 0; i < MAX_NUMBER_OF_PARTICLE_ATTRIBUTES; i++)
     ParticleAttribute[i] = NULL;

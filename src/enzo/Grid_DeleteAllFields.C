@@ -32,17 +32,10 @@ void grid::DeleteAllFields()
   this->DeleteParticles();
  
   for (i = 0; i < MAX_DIMENSION; i++) {
-#ifdef NBODY
-    delete [] AccelerationField[i][0];
-    delete [] ParticleAcceleration[i];
-    ParticleAcceleration[i]         = NULL;
-    AccelerationField[i][0]         = NULL;
-#else
     delete [] ParticleAcceleration[i];
     delete [] AccelerationField[i];
     ParticleAcceleration[i]      = NULL;
     AccelerationField[i]         = NULL;
-#endif
   }
 
   delete [] ParticleAcceleration[MAX_DIMENSION];
@@ -87,15 +80,6 @@ void grid::DeleteAllFields()
     }
   }
 
-#ifdef NBODY
-  delete [] PotentialField[0];
-  delete [] GravitatingMassField[0];
-  delete [] GravitatingMassFieldParticles[0];
- 
-  PotentialField[0]                = NULL;
-  GravitatingMassField[0]          = NULL;
-  GravitatingMassFieldParticles[0] = NULL;
-#else
   delete [] PotentialField;
   delete [] GravitatingMassField;
   delete [] GravitatingMassFieldParticles;
@@ -103,7 +87,6 @@ void grid::DeleteAllFields()
   PotentialField                = NULL;
   GravitatingMassField          = NULL;
   GravitatingMassFieldParticles = NULL;
-#endif
  
 }
 
@@ -116,12 +99,12 @@ void grid::DeleteAllFieldsNoStar()
 
   for (i = 0; i < MAX_DIMENSION; i++) {
 
-    delete [] AccelerationField[i][1];
+    delete [] AccelerationFieldNoStar[i];
 		if (ParticleAccelerationNoStar[i] != NULL) {
 		delete [] ParticleAccelerationNoStar[i];
 		ParticleAccelerationNoStar[i] = NULL;
 		}
-    AccelerationField[i][1]         = NULL;
+    AccelerationFieldNoStar[i]         = NULL;
 
   }
 
@@ -129,13 +112,13 @@ void grid::DeleteAllFieldsNoStar()
 	ParticleAccelerationNoStar[MAX_DIMENSION] = NULL;
 
 
-  delete [] PotentialField[1];
-  delete [] GravitatingMassField[1];
-  delete [] GravitatingMassFieldParticles[1];
+  delete [] PotentialFieldNoStar;
+  delete [] GravitatingMassFieldNoStar;
+  delete [] GravitatingMassFieldParticlesNoStar;
 
-  PotentialField[1]                = NULL;
-  GravitatingMassField[1]          = NULL;
-  GravitatingMassFieldParticles[1] = NULL;
+  PotentialFieldNoStar                = NULL;
+  GravitatingMassFieldNoStar          = NULL;
+  GravitatingMassFieldParticlesNoStar = NULL;
 
 }
 #endif

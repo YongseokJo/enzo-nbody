@@ -12,7 +12,7 @@
      &               KSPAIR,NRUN,MODEL,NC,NZERO,NBZERO,NBIN0,NHI0,
      &               NAME0,NCH,NCHAOS,IDUM1,KZ(50),NNBOPT,NIMBH,
      &               ITAIL0,NTAIL, !Tidal tail position indicators
-     &               NEW2(5)
+     &               NEW2(5),IEPHASE
 
       COMMON/PARAMS/ ETAI,ETAR,DTADJ,DELTAT,TCRIT,QE,RBAR,ZMBAR,
      &               DTMIN,RMIN,ETAU,CMSEP2,ECLOSE,GMIN,GMAX,ETA0,
@@ -56,26 +56,8 @@
      &               ITYPE(5),KSAVE(4),KTYPE(0:14,0:14),NEINT,IBLUE,
      &               NGDUM(12),LISTR(MLR),LISTD(MLD),LISTV(MLV)
 
-      COMMON/NBODY/  X(3,NMAX),XDOT(3,NMAX),X0(3,NMAX),X0DOT(3,NMAX),
-     &               F(3,NMAX),FDOT(3,NMAX),BODY(NMAX),RS(NMAX),
-     &               FI(3,NMAX),D1(3,NMAX),D2(3,NMAX),D3(3,NMAX),
-     &               FR(3,NMAX),D1R(3,NMAX),D2R(3,NMAX),D3R(3,NMAX),
-     &               STEP(NMAX),T0(NMAX),STEPR(NMAX),T0R(NMAX),
-     &               TIMENW(NMAX),RADIUS(NMAX),TEV(NMAX),TEV0(NMAX),
-     &               BODY0(NMAX),EPOCH(NMAX),SPIN(NMAX),XSTAR(NMAX),
-     &               ZLMSTY(NMAX),FIDOT(3,NMAX),D0(3,NMAX),
-     &               FRDOT(3,NMAX),D0R(3,NMAX),KSTAR(NMAX),NAME(NMAX),
-     &               IMINR(NMAX),LIST(LMAX,NMAX)
-
-*
-      COMMON/PAIRS/  U(4,KMAX),U0(4,KMAX),UDOT(4,KMAX),FU(4,KMAX),
-     &               FUDOT(4,KMAX),FUDOT2(4,KMAX),FUDOT3(4,KMAX),
-     &               H(KMAX),HDOT(KMAX),HDOT2(KMAX),HDOT3(KMAX),
-     &               HDOT4(KMAX),DTAU(KMAX),TDOT2(KMAX),TDOT3(KMAX),
-     &               R(KMAX),R0(KMAX),GAMMA(KMAX),SF(7,KMAX),H0(KMAX),
-     &               FP0(4,KMAX),FD0(4,KMAX),KBLIST(10*KMAX),
-     &               KSLOW(KMAX),TBLIST
 
 *     Not dump common variables
       COMMON/LISTS/  ILIST(NMAX),JLIST(NMAX),JPERT(5*LMAX)
-*
+
+

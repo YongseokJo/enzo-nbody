@@ -17,6 +17,8 @@ make machine-linux-sy
 make precision-64 integers-32 particle-id-32 max-baryons-30 opt-aggressive lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes nbody-yes photon-no cuda-no
 make show-config
 make show-flags
+mpif90 -c nbody/pointers.f
+mv pointers.* nbody/
 make -j3
 cp enzo.exe enzo_spare.exe
 echo "Make done!"

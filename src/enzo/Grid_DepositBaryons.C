@@ -387,9 +387,9 @@ int grid::DepositBaryons(grid *TargetGrid, FLOAT DepositTime)
       for (i = 0; i < RegionDim[0]; i++, gmindex++, index++) {
 #ifdef NBODY
 				if(NoStar == FALSE)
-					TargetGrid->GravitatingMassField[0][gmindex] += dens_field[index];
+					TargetGrid->GravitatingMassField[gmindex] += dens_field[index];
 				else
-					TargetGrid->GravitatingMassField[1][gmindex] += dens_field[index];
+					TargetGrid->GravitatingMassFieldNoStar[gmindex] += dens_field[index];
 #else
 				TargetGrid->GravitatingMassField[gmindex] += dens_field[index];
 #endif

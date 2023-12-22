@@ -60,13 +60,8 @@ int grid::AttachAcceleration(){
 
 
     if( field < GridRank ){
-#ifdef NBODY
-      BaryonField[field] = AccelerationField[field][0];
-      OldBaryonField[field] = OldAccelerationField[field];
-#else
       BaryonField[field] = AccelerationField[field];
       OldBaryonField[field] = OldAccelerationField[field];
-#endif
 
     }else{
 

@@ -47,10 +47,12 @@ MODULES  =
 VERBOSE  = 1
 ETAGS_COMMAND = "0"
 
-NCXX = cpp #g++
+NCXX = cpp #cpp #g++
 NVCC = nvcc
 #F77 = gfortran
-F77 = mpif77
+#FF = mpifort
+FF = mpif90
+FM = gfortran
 #F77 = mpiifort
 
 LFLAGS=--header-file=libconfig/scanner.h --prefix=libconfig_yy
@@ -199,7 +201,7 @@ verbose: $(EXE).exe
 # Implicit rules
 #-----------------------------------------------------------------------
 
-.SUFFIXES: .c .C .F .F90 .o .cu .pyx .f .cpp .for
+.SUFFIXES: .c .C .F .F90 .o .cu .pyx .cpp .for .f90 .mod
 
 # Inhibit removing any *.o files after compiling
 
@@ -228,47 +230,29 @@ verbose: $(EXE).exe
 	  fi ; \
 	fi)
 
-.f.o:
-	@echo "Compiling $<"
+
+.f90.o:
 	@rm -f $@
+	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(FC) -lstdc++ -c -o $@ $(FFLAGS) $(DEFINES) $*.f >& $(OUTPUT) ; \
+	  $(FF) -ffixed-form -cpp -lstdc++-c -lmpi -fPIC -mcmodel=medium -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES)  $*.f90 >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f"; \
+             echo "$(f90) -cpp -lstdc++ -c -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES) $*.f90"; \
              echo; \
-             $(FC) -c -o $@ $(FFLAGS) $(DEFINES) $*.f; \
+             $(f90) -cpp -lstdc++ -lmpi  -c -o $@ $(FFLAGS) -lmpi  -I./nbody/include $(INCLUDES) $(DEFINES) $*.f90; \
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(FC) -lstdc++ -c -o $@ $(FFLAGS)  $(DEFINES) $*.f >> $(OUTPUT) 2>&1 ; \
+	  $(FF) -ffixed-form -cpp -lstdc++ -c -lmpi  -fPIC -mcmodel=medium  -o $@ $(FFLAGS)  -lmpi -I./nbody/include  $(INCLUDES) $(DEFINES) $*.f90 >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
-	     echo "See $(OUTPUT) for error messages"; \
+	     echo "See $(OUTPUT) f90 error messages"; \
 	     exit 1; \
 	  fi ; \
 	fi)
 
-.for.o:
-	@rm -f $@
-	@echo "Compiling $<"
-	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(F77)  -x f77 -cpp -lstdc++-c -lmpi  -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES)  $*.for >& $(OUTPUT) ; \
-	  if [ ! -e $@ ]; then \
-             echo; \
-             echo "$(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES) $*.for"; \
-             echo; \
-             $(for) -x f77 -cpp -lstdc++ -lmpi  -c -o $@ $(FFLAGS) -lmpi  -I./nbody/include $(INCLUDES) $(DEFINES) $*.for; \
-             echo; \
-             exit 1; \
-          fi ; \
-	else \
-	  $(F77) -x f77 -cpp -lstdc++ -c -lmpi  -o $@ $(FFLAGS)  -lmpi -I./nbody/include  $(INCLUDES) $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
-	  if [ ! -e $@ ]; then \
-	     echo "See $(OUTPUT) for error messages"; \
-	     exit 1; \
-	  fi ; \
-	fi)
+
 
 
 #.src90.f90:
@@ -478,7 +462,7 @@ help:
 clean:
 	-@rm -f *.so *.o uuid/*.o *.mod *.f *.f90 DEPEND.bak *~ $(OUTPUT) enzo.exe \
           auto_show*.C hydro_rk/*.o *.oo hydro_rk/*.oo \
-					nbody/*.o \
+					nbody/*.o nbody/*.mod\
           uuid/*.oo DEPEND TAGS \
           libconfig/*.o \
           python_bridge/problemtype_handler.C \

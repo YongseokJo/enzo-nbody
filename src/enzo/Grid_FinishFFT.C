@@ -72,13 +72,13 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 		if (Field == POTENTIAL_FIELD) {
 #ifdef NBODY
 			if (NoStar) {
-				if (PotentialField[1] == NULL)  
-					PotentialField[1] = new float[size]();
-				FieldPointer = PotentialField[1];
+				if (PotentialFieldNoStar == NULL)  
+					PotentialFieldNoStar = new float[size]();
+				FieldPointer = PotentialFieldNoStar;
 			} else {
-				if (PotentialField[0] == NULL)  
-					PotentialField[0] = new float[size]();
-				FieldPointer = PotentialField[0];
+				if (PotentialField == NULL)  
+					PotentialField = new float[size]();
+				FieldPointer = PotentialField;
 			}
 #else
 			if (PotentialField == NULL)

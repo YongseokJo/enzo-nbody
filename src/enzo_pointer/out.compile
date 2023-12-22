@@ -1,0 +1,413 @@
+In file included from NbodyRoutines.C:24:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+In file included from enzo.C:41:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+NbodyRoutines.C: In function ‘void InitializeNbodyArrays(bool)’:
+NbodyRoutines.C:49:54: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+                                                      ^
+NbodyRoutines.C:49:57: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+                                                         ^
+NbodyRoutines.C:53:50: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                  ^
+NbodyRoutines.C:53:53: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                     ^
+NbodyRoutines.C:59:64: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                ^
+NbodyRoutines.C:59:67: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                   ^
+NbodyRoutines.C:63:64: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                ^
+NbodyRoutines.C:63:67: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                   ^
+NbodyRoutines.C:70:74: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                          ^
+NbodyRoutines.C:70:77: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                             ^
+NbodyRoutines.C: In function ‘void InitializeNbodyArrays()’:
+NbodyRoutines.C:80:54: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+                                                      ^
+NbodyRoutines.C:80:57: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+                                                         ^
+NbodyRoutines.C:84:50: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                  ^
+NbodyRoutines.C:84:53: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                     ^
+NbodyRoutines.C:91:64: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                ^
+NbodyRoutines.C:91:67: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                   ^
+NbodyRoutines.C:98:74: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                          ^
+NbodyRoutines.C:98:77: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                             ^
+NbodyRoutines.C: In function ‘void InitializeNbodyArrays(int)’:
+NbodyRoutines.C:108:50: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                  ^
+NbodyRoutines.C:108:53: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+                                                     ^
+NbodyRoutines.C:114:64: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                ^
+NbodyRoutines.C:114:67: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                   ^
+NbodyRoutines.C:118:64: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                ^
+NbodyRoutines.C:118:67: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+   NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+                                                                   ^
+NbodyRoutines.C: In function ‘void CopyNbodyArrayToOld()’:
+NbodyRoutines.C:167:54: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+  NbodyParticleIDOld =  new int[NumberOfNbodyParticles]{0};
+                                                      ^
+NbodyRoutines.C:167:57: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+  NbodyParticleIDOld =  new int[NumberOfNbodyParticles]{0};
+                                                         ^
+NbodyRoutines.C:170:79: warning: extended initializer lists only available with -std=c++11 or -std=gnu++11 [enabled by default]
+    NbodyParticleAccelerationOld[dim][order] = new float[NumberOfNbodyParticles]{0};
+                                                                               ^
+NbodyRoutines.C:170:82: warning: non-constant array size in new, unable to verify length of initializer-list [enabled by default]
+    NbodyParticleAccelerationOld[dim][order] = new float[NumberOfNbodyParticles]{0};
+                                                                                  ^
+In file included from enzo.C:30:0:
+enzo.C: In function ‘Eint32 main(Eint32, char**)’:
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:333:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("CommunicationTranspose");
+   ^
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:334:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("ComputePotentialFieldLevelZero");
+   ^
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:335:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("RebuildHierarchy");
+   ^
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:336:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("SetBoundaryConditions");
+   ^
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:337:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("SolveHydroEquations");
+   ^
+EnzoTiming.h:412:53: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+ #define TIMER_REGISTER(name) enzo_timer->create(name)
+                                                     ^
+enzo.C:338:3: note: in expansion of macro ‘TIMER_REGISTER’
+   TIMER_REGISTER("Total");
+   ^
+enzo.C:613:37: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+         RegionLevel, "amr.particles") == FAIL)
+                                     ^
+enzo.C:626:35: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+        ProjectionSmooth, &Exterior) == FAIL)
+                                   ^
+enzo.C:767:37: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   PrintMemoryUsage("Call initialize");
+                                     ^
+enzo.C:814:43: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   PrintMemoryUsage("Call evolve hierarchy");
+                                           ^
+In file included from FinalizeNbodyComputation.C:27:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+In file included from PrepareNbodyComputation.C:27:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+PrepareNbodyComputation.C: In function ‘int PrepareNbodyComputation(LevelHierarchyEntry**, int)’:
+PrepareNbodyComputation.C:217:112: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+     MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                                                ^
+PrepareNbodyComputation.C:218:96: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+     MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                                ^
+PrepareNbodyComputation.C:383:112: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+     MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                                                ^
+PrepareNbodyComputation.C:384:96: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+     MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                                ^
+FinalizeNbodyComputation.C: In function ‘int FinalizeNbodyComputation(LevelHierarchyEntry**, int)’:
+FinalizeNbodyComputation.C:178:111: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+    MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                                               ^
+FinalizeNbodyComputation.C:179:95: warning: passing NULL to non-pointer argument 5 of ‘int MPI_Gather(const void*, int, MPI_Datatype, void*, int, MPI_Datatype, int, MPI_Comm)’ [-Wconversion-null]
+    MPI_Gather(&start_index, 1, IntDataType, NULL, NULL, IntDataType, ROOT_PROCESSOR, enzo_comm);
+                                                                                               ^
+nbody/chain.for:34.72:
+
+      SAVE                                                              
+                                                                        1
+Warning: Legacy Extension: Blanket SAVE statement at (1) follows previous SAVE statement
+nbody/invert.for:20.72:
+
+      SAVE                                                              
+                                                                        1
+Warning: Legacy Extension: Blanket SAVE statement at (1) follows previous SAVE statement
+nbody/recoil.for:19.72:
+
+      SAVE                                                              
+                                                                        1
+Warning: Legacy Extension: Blanket SAVE statement at (1) follows previous SAVE statement
+nbody/triple.for:25.72:
+
+      SAVE                                                              
+                                                                        1
+Warning: Legacy Extension: Blanket SAVE statement at (1) follows previous SAVE statement
+nbody/gpunb.gpu.cu(125): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(126): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(127): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(131): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(132): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(133): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(134): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(390): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(391): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(392): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(393): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(395): warning #1444-D: function "__shfl_xor(int, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(180): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(404): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(405): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(406): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(407): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(413): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(414): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(418): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(420): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(422): warning #1444-D: function "__shfl_xor(float, int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(215): here was declared deprecated ("__shfl_xor() is deprecated in favor of __shfl_xor_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(511): warning #1444-D: function "__shfl_up(int, unsigned int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(158): here was declared deprecated ("__shfl_up() is deprecated in favor of __shfl_up_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+nbody/gpunb.gpu.cu(514): warning #1444-D: function "__shfl_up(int, unsigned int, int)"
+/usr/local/cuda-11.8/bin/../targets/x86_64-linux/include/sm_30_intrinsics.hpp(158): here was declared deprecated ("__shfl_up() is deprecated in favor of __shfl_up_sync() and may be removed in a future release (Use -Wno-deprecated-declarations to suppress this warning).")
+
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2295; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2299; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2303; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2307; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2311; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2315; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2319; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2343; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2347; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2351; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2355; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2359; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2363; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2367; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2391; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2395; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2399; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2403; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2407; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2411; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2415; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2439; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2443; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2447; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2451; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2455; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2459; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2463; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2487; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2491; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2495; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2499; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2503; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2507; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2511; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2608; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2615; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2622; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2629; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2636; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+ptxas /tmp/tmpxft_0003974c_00000000-6_gpunb.gpu.ptx, line 2642; warning : Instruction 'shfl' without '.sync' is deprecated since PTX ISA version 6.0 and will be discontinued in a future PTX ISA version
+In file included from MHDLoopInit.C:12:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+MHDLoopInit.C: In function ‘int MHDLoopInit(FILE*, FILE*, HierarchyEntry&, TopGridData&, ExternalBoundary&)’:
+MHDLoopInit.C:30:20: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *DensName = "Density";
+                    ^
+MHDLoopInit.C:31:18: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *TEName = "TotalEnergy";
+                  ^
+MHDLoopInit.C:32:20: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *GEName   = "GasEnergy";
+                    ^
+MHDLoopInit.C:33:20: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *Vel1Name = "x-velocity";
+                    ^
+MHDLoopInit.C:34:20: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *Vel2Name = "y-velocity";
+                    ^
+MHDLoopInit.C:35:20: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *Vel3Name = "z-velocity";
+                    ^
+MHDLoopInit.C:36:18: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *BxName = "Bx";
+                  ^
+MHDLoopInit.C:37:18: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *ByName = "By";
+                  ^
+MHDLoopInit.C:38:18: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *BzName = "Bz";
+                  ^
+MHDLoopInit.C:39:19: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   char *PhiName = "Phi";
+                   ^
+MHDLoopInit.C:62:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDLabel[0] = "BxF";
+               ^
+MHDLoopInit.C:63:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDLabel[1] = "ByF";
+               ^
+MHDLoopInit.C:64:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDLabel[2] = "BzF";
+               ^
+MHDLoopInit.C:66:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeLabel[0] = "Ex";
+                ^
+MHDLoopInit.C:67:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeLabel[1] = "Ey";
+                ^
+MHDLoopInit.C:68:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeLabel[2] = "Ez";
+                ^
+MHDLoopInit.C:71:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[0] = "FourPiGauss";
+               ^
+MHDLoopInit.C:72:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[1] = "FourPiGauss";
+               ^
+MHDLoopInit.C:73:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[2] = "FourPiGauss";
+               ^
+MHDLoopInit.C:75:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[0] = "FourPiGauss";
+                ^
+MHDLoopInit.C:76:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[1] = "FourPiGauss";
+                ^
+MHDLoopInit.C:77:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[2] = "FourPiGauss";
+                ^
+MHDLoopInit.C:79:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[0] = "None";
+               ^
+MHDLoopInit.C:80:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[1] = "None";
+               ^
+MHDLoopInit.C:81:15: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDUnits[2] = "None";
+               ^
+MHDLoopInit.C:83:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[0] = "None";
+                ^
+MHDLoopInit.C:84:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[1] = "None";
+                ^
+MHDLoopInit.C:85:16: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+   MHDeUnits[2] = "None";
+                ^
+In file included from Grid_MHDLoopInitGrid.C:12:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+In file included from ActiveParticle.C:25:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+ActiveParticle.C: In static member function ‘static void ActiveParticleType::ConstructData(grid*, ActiveParticleFormationDataFlags&, ActiveParticleFormationData&)’:
+ActiveParticle.C:270:49: error: cannot convert ‘double’ to ‘double*’ for argument ‘1’ to ‘void copy3d_(double*, double*, int*, int*, int*, int*, int*, int*, int*, int*, int*, int*, int*, int*)’
+           StartIndex, StartIndex+1, StartIndex+2);
+                                                 ^
+In file included from ActiveParticleDepositMass.C:24:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^
+In file included from ActiveParticleFinalize.C:23:0:
+Grid.h:2560:45: warning: non-static data member initializers only available with -std=c++11 or -std=gnu++11 [enabled by default]
+       int _GalaxySimulationInitialization = 0;
+                                             ^

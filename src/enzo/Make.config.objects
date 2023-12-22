@@ -1262,6 +1262,8 @@ OBJS_NBODY= \
 						PrepareNbodyComputation.o\
 						FinalizeNbodyComputation.o\
 						nbody/nbody6.o \
+						nbody/pointallo.o \
+						nbody/pointers.o \
 						nbody/intgrt.o \
 						nbody/adjust.o \
 						nbody/addinit.o \
@@ -1599,5 +1601,5 @@ OBJS_NBODY= \
 						nbody/xtrnlv.o \
 						nbody/gpupot.gpu.o \
 						nbody/gpunb.gpu.o \
-						nbody/reset_count.o 
+						nbody/reset_count.o
 

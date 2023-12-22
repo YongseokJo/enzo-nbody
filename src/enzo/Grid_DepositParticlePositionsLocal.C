@@ -156,18 +156,10 @@ int grid::DepositParticlePositionsLocal(FLOAT DepositTime, int DepositField,
     float *DepositFieldPointer;
     switch (DepositField) {
     case GRAVITATING_MASS_FIELD:
-#ifdef NBODY
-      DepositFieldPointer = GravitatingMassField[0];
-#else
       DepositFieldPointer = GravitatingMassField;
-#endif
       break;
     case GRAVITATING_MASS_FIELD_PARTICLES:
-#ifdef NBODY
-      DepositFieldPointer = GravitatingMassFieldParticles[0];
-#else
       DepositFieldPointer = GravitatingMassFieldParticles;
-#endif
       break;
     case MASS_FLAGGING_FIELD:
       DepositFieldPointer = MassFlaggingField;

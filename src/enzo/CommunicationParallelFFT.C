@@ -114,7 +114,6 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 
 		/* FFT all dims except last (real to complex). */
 
-	fprintf(stdout,"4-10-2-3\n"); // by YS
 		//    fprintf(stderr, "FFT(%"ISYM"): FFT strip1\n", MyProcessorNumber);
 		for (i=0, j=0; i < strip1[MyProcessorNumber].RegionDim[LastIndex]; i++)
 			if (strip1[MyProcessorNumber].Data != NULL) {
@@ -128,7 +127,6 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 
 		if (Rank > 1) {
 
-	fprintf(stdout,"4-10-2-4\n"); // by YS
 			/* Transpose to striped0 regions (reverse order within blocks). */
 
 			//      fprintf(stderr, "FFT(%"ISYM"): strip1 -> strip0\n", MyProcessorNumber);
@@ -155,7 +153,6 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 
 		} // end: if (Rank > 1)
 
-	fprintf(stdout,"4-10-2-5\n"); // by YS
 		/* Set the output to strip0 unless it's only 1D, then use strip1. */
 
 		*OutRegion = ((Rank>1) ? strip0 : strip1);
@@ -174,7 +171,6 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 			*OutRegion = InRegion;
 			*NumberOfOutRegions = NumberOfInRegions;
 		}
-	fprintf(stdout,"4-10-2-5\n"); // by YS
 
 	} // end: if (direction == FFT_FORWARD)
 

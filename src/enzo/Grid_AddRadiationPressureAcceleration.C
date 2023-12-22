@@ -45,14 +45,14 @@ int grid::AddRadiationPressureAcceleration()
   /* Check if acceleration field exists.  If not create it and zero it. */
 
 #ifdef NBODY
-  if (AccelerationField[0][0] == NULL) {
+  if (AccelerationField[0] == NULL) {
     for (dim = 0; dim < GridRank; dim++) {
       //AccelerationField[dim] = new float*[2];
-      AccelerationField[dim][0] = new float[size];
-      AccelerationField[dim][1] = new float[size];
+      AccelerationField[dim] = new float[size];
+      AccelerationFieldNoStar[dim] = new float[size];
       for (i = 0; i < size; i++) {
-				AccelerationField[dim][0][i] = 0;
-				AccelerationField[dim][1][i] = 0;
+				AccelerationField[dim][i] = 0;
+				AccelerationFieldNoStar[dim][i] = 0;
 			}
     }
 #else
@@ -81,11 +81,9 @@ int grid::AddRadiationPressureAcceleration()
 			for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++, index++)
 				for (dim = 0; dim < GridRank; dim++) {
 #ifdef NBODY
-					AccelerationField[dim][0][index] += BaryonField[RPresNum1+dim][index];
-					AccelerationField[dim][1][index] += BaryonField[RPresNum1+dim][index];
-#else
-					AccelerationField[dim][index] += BaryonField[RPresNum1+dim][index];
+					AccelerationFieldNoStar[dim][index] += BaryonField[RPresNum1+dim][index];
 #endif
+					AccelerationField[dim][index] += BaryonField[RPresNum1+dim][index];
 					/*
 						 if (fabs(BaryonField[RPresNum1+dim][index]) > 
 

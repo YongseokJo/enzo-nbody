@@ -113,20 +113,14 @@ int grid::FlagCellsToBeRefinedByTotalJeansLength()
     Off[dim] = (GravitatingMassFieldDimension[dim] - GridDimension[dim])/2;
   
   jj = 0;
-#ifdef NBODY
-	if (PotentialField[0] != NULL)
-#else
+
 	if (PotentialField != NULL)
-#endif
 		for (k = 0; k < GridDimension[2]; k++)
       for (j = 0; j < GridDimension[1]; j++) {
 	index = (((k+Off[2])*GravitatingMassFieldDimension[1]) + (j+Off[1]))*GravitatingMassFieldDimension[0] + Off[0] ;
 	for (i = 0; i < GridDimension[0]; i++, index++)
-#ifdef NBODY
-	  Phi[jj++] = PotentialField[0][index];
-#else
+
 	  Phi[jj++] = PotentialField[index];
-#endif
       }
 
 

@@ -21,9 +21,8 @@ struct Jparticle{
   float  mass;
   float3 vel;
   float  pad;
-  float3 acc;
   Jparticle(int) {}
-  Jparticle(double mj, double xj[3], double vj[3], double aj[3]){
+  Jparticle(double mj, double xj[3], double vj[3]){
     pos.x = xj[0];
     pos.y = xj[1];
     pos.z = xj[2];
@@ -32,11 +31,6 @@ struct Jparticle{
     vel.y = vj[1];
     vel.z = vj[2];
 
-		// by YS Jo
-    acc.x = aj[0];
-    acc.y = aj[1];
-    acc.z = aj[2];
-
     NAN_CHECK(xj[0]);
     NAN_CHECK(xj[1]);
     NAN_CHECK(xj[2]);
@@ -44,11 +38,6 @@ struct Jparticle{
     NAN_CHECK(vj[0]);
     NAN_CHECK(vj[1]);
     NAN_CHECK(vj[2]);
-
-		// by YS Jo
-    NAN_CHECK(aj[0]);
-    NAN_CHECK(aj[1]);
-    NAN_CHECK(aj[2]);
   }
   __device__ Jparticle() {}
 };

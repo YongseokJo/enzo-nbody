@@ -1184,6 +1184,39 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 			} while (LastTemp != NULL);
 
+#ifdef NBODY
+				do {
+
+				GridCount = 0;
+				CommunicationDirection = COMMUNICATION_POST_RECEIVE;
+				CommunicationReceiveIndex = 0;
+				CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
+				Temp = FirstTemp;
+				while (Temp != NULL && GridCount++ < GRIDS_PER_LOOP) {
+					Temp3 = Temp->GridHierarchyEntry;
+					for (Dummy = reallevel; Dummy > MaximumGravityRefinementLevel; Dummy--)
+						Temp3 = Temp3->ParentGrid;
+					Temp->GridData->InterpolateAccelerationsNoStar(Temp3->GridData);
+					Temp = Temp->NextGridThisLevel;
+				} // ENDWHILE
+				LastTemp = Temp;
+
+				CommunicationDirection = COMMUNICATION_SEND;
+				Temp = FirstTemp;
+				while (Temp != LastTemp) {
+					Temp3 = Temp->GridHierarchyEntry;
+					for (Dummy = reallevel; Dummy > MaximumGravityRefinementLevel; Dummy--)
+						Temp3 = Temp3->ParentGrid;
+					Temp->GridData->InterpolateAccelerationsNoStar(Temp3->GridData);
+					Temp = Temp->NextGridThisLevel;
+				}
+				FirstTemp = LastTemp;
+
+				CommunicationReceiveHandler();
+
+			} while (LastTemp != NULL);		
+#endif 
+
 		} // end:  if (!CopyGravPotential)
 
 	} // end: if (reallevel > MaximumGravityRefinementLevel)

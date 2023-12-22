@@ -172,8 +172,8 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 				fprintf(stdout, "First TimeStep: %e, %f\n", TimeStep, TimeUnits);
 
-				fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
-				fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
+				//fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
+				//fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
 				//fprintf(stderr, "mass:%e \n", NbodyParticleMass[0]);
 				//fprintf(stderr, "x:%e \n", NbodyParticlePosition[0][0]);
 				//fprintf(stderr, "vel:%e \n", NbodyParticleVelocity[0][0]);
@@ -191,8 +191,6 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				for (int dim=0; dim<MAX_DIMENSION+1; dim++) {
 					MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
 				}
-				fprintf(stderr,"Potential = %f,", NbodyParticleAccelerationNoStar[MAX_DIMENSION][0]);
-				fprintf(stderr,"Potential = %f", NbodyParticleAccelerationNoStar[MAX_DIMENSION][1]);
 				MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
 				MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
 				MPI_Send(&LengthUnits, 1, MPI_DOUBLE, 1, 800, inter_comm);
