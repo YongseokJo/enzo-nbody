@@ -22,13 +22,15 @@ MACH_FILE  = Make.mach.rusty
 #-----------------------------------------------------------------------
 
 
-LOCAL_HDF5_INSTALL = /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/
+#LOCAL_HDF5_INSTALL = /mnt/sw/nix/store/y21dfwf4vgh0nyqpwk1brp3xz87sxpq6-hdf5-1.8.22/
+LOCAL_HDF5_INSTALL = $(HDF5_BASE)
 #LOCAL_MPI = $(INTEL_PARALLEL_STUDIO_BASE)
 #LOCAL_MPI = $(OPENMPI_BASE)
 LOCAL_MPI = $(INTEL_ONEAPI_MPI_BASE)
 LOCAL_GRACKLE_INSTALL = $(HOME)/packages/grackle/build
 
-LOCAL_CUDA_INSTALL = /mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/
+#LOCAL_CUDA_INSTALL = /mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/
+LOCAL_CUDA_INSTALL = $(CUDA_BASE)
 
 
 #-----------------------------------------------------------------------
