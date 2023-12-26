@@ -8,8 +8,7 @@
       INCLUDE 'common6.h'
       
       INCLUDE 'tlist.h'
-      COMMON/BLKLVL/JHIST(0:NMAX),JHISTR(0:NMAX),JHISTU(0:NMAX)
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
+      COMMON/XPRED/ ipredall
       LOGICAL ipredall
 *
 *

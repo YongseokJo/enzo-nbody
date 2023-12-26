@@ -12,6 +12,7 @@ cd src/enzo/
 
 #module add gcc/7.5.0
 #module add openmpi4
+module add modules/2.1.1-20230405
 module add intel-oneapi-compilers
 module add intel-oneapi-mpi
 module add ucx
@@ -24,6 +25,8 @@ make machine-rusty
 make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes photon-no nbody-yes opt-aggressive cuda-no
 make show-config
 make show-flags
+mpif90 -c nbody/pointers.f
+mv pointers.* nbody/
 make -j3
 #cp enzo.exe enzo_spare.exe
 #cp enzo.exe enzo_spare_v100.exe

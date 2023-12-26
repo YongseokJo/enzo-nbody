@@ -7,8 +7,8 @@
       USE POINTERS
       INCLUDE 'common6.h'
       
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
-      REAL*8 TPRED,TRES,DSAVE(17)
+      COMMON/XPRED/ ipredall
+      REAL*8 DSAVE(17)
       LOGICAL ipredall
 *      EXTERNAL RENAME
 *

@@ -7,8 +7,8 @@
       USE POINTERS
       INCLUDE 'common6.h'
       
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
-      REAL*8 TPRED,DSAVE
+      COMMON/XPRED/ ipredall
+      REAL*8 DSAVE
       LOGICAL ipredall
 *
       ICM = IPAIR + N

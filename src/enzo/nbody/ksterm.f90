@@ -12,9 +12,8 @@
      &                HM(MMAX),UM(4,MMAX),UMDOT(4,MMAX),TMDIS(MMAX),
      &                NAMEM(MMAX),NAMEG(MMAX),KSTARM(MMAX),IFLAG(MMAX)
       REAL*8  DSAVE(16)
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
+      COMMON/XPRED/ ipredall
       LOGICAL ipredall
-      REAL*8 TPRED
 *
 *
 *       Copy pair index from COMMON save and define KS components & c.m.

@@ -7,8 +7,8 @@
       USE POINTERS
       INCLUDE 'common6.h'
       
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
-      REAL*8 TPRED,A(6)
+      COMMON/XPRED/ ipredall
+      REAL*8 A(6)
       LOGICAL ipredall
 *
 *     Remove from NXTLST

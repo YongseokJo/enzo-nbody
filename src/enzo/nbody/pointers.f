@@ -9,9 +9,11 @@
      &                   RADIUS(:),TEV(:),TEV0(:),
      &                   BODY0(:),EPOCH(:),SPIN(:),XSTAR(:),
      &                   ZLMSTY(:),FIDOT(:,:),D0(:,:),
-     &                   FRDOT(:,:),D0R(:,:),FENZO(:,:)
+     &                   FRDOT(:,:),D0R(:,:),FENZO(:,:),
+     &                   TPRED(:), TRES(:)
 
-      INTEGER, POINTER :: NAME(:),IMINR(:),LIST(:,:)     
+      INTEGER, POINTER :: NAME(:),IMINR(:),LIST(:,:), JHIST(:),
+     &                   JHISTR(:), JHISTU(:)
 
       REAL*8, POINTER :: U(:,:),U0(:,:),UDOT(:,:),FU(:,:),
      &                   FUDOT(:,:),FUDOT2(:,:),FUDOT3(:,:),

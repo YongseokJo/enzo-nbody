@@ -9,7 +9,7 @@
       
       INCLUDE 'tlist.h'
 
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
+      COMMON/XPRED/ ipredall
 
       INTEGER INEW,I,J,J1,J2,J3,K,K2,KCASE
       INTEGER IPAIR,I1,I2,ICM

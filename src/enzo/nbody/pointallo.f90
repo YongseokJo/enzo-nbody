@@ -81,5 +81,15 @@
       ALLOCATE(KSLOW(KALL))
       ALLOCATE(TBLIST)
 
+*    recently added by Jo
+
+      ALLOCATE(JHIST(0:NALL))
+      ALLOCATE(JHISTR(0:NALL))
+      ALLOCATE(JHISTU(0:NALL))
+      ALLOCATE(TPRED(NALL))
+      ALLOCATE(TRES(KALL))
+
+
+
 
       END SUBROUTINE

@@ -8,8 +8,8 @@
       INCLUDE 'common6.h'
       
       INCLUDE 'omp_lib.h'
-      COMMON/XPRED/ TPRED(NMAX),TRES(KMAX),ipredall
-      REAL*8 TPRED,TTIME
+      COMMON/XPRED/ ipredall
+      REAL*8 TTIME
       LOGICAL ipredall
 *
       IF(I.LT.ifirst.or.ipredall) return
