@@ -168,7 +168,7 @@ c$$$    9     CONTINUE
 *
 *       Write formatted data bank on unit 9.
 *
-      if(rank.eq.0)then
+      if(rank.eq.-1)then
 *     Split the bdat.9 by time
 *         call string_left(TCHAR,TTOT,DELTAT)
 *         write(OUTFILE,118) TCHAR
@@ -221,7 +221,7 @@ c$$$    9     CONTINUE
 *
 *       Include optional table of wide binaries on fort.19.
 
-      if(rank.eq.0) then
+      if(rank.eq.-1) then
 *     Split the bwdat.9 by time
 *         write(OUTFILE2,119) TCHAR
 * 119     format('bwdat.19_',A20)

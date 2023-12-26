@@ -173,12 +173,14 @@
           MASSU = MASSU + EBODY(I)*EMU/(1.9891D33)
       END DO
 
+      MASSU = 1.0D7 ! added by sykim 231226
+
 *     need to calculate virial radius and put that into LENGTHU0
 *     ** code for calculating virial radius** <- should be added
 
 *     calculates nbody <-> astro units
 
-      LENGTHU = 2.58811228D0 !7.76433685 !2.58811228D0
+      LENGTHU = 10.0D0  !7.76433685 !2.58811228D0
       VELU = 6.557D0*((MASSU/LENGTHU)**(0.5D0))/(100.0D0)
       TIMEU = 14.94D0*(((LENGTHU)**3.0D0/MASSU)**(0.5D0))
 *     added on 0424 - sykim
@@ -196,7 +198,7 @@
 *      EFORCEU = EMASSU*EVELU*EVELU/ELENGTHU
       EFORCEU = EVELU*EVELU/ELENGTHU
 
-      ZMBAR = EBODY(1)*EMU/(1.9891D33)
+      ZMBAR = 200.0D0 !EBODY(1)*EMU/(1.9891D33)
 
 
       write (6,*) 'scaling',LENGTHU,MASSU,VELU,TIMEU
@@ -568,7 +570,13 @@
       IF (newEN.GT.0) THEN
 
       DO IR = 1,newEN
-         
+
+         write(6,*) "new particle ENZO input"
+         write(6,*) "mass, position, velocity"
+         write(6,*) newEBODY(IR)
+         write(6,*) newEX(1,IR),newEX(2,IR),newEX(3,IR)
+         write(6,*) newEXDOT(1,IR),newEXDOT(2,IR),newEXDOT(3,IR)
+
          BODYNEW = newEBODY(IR)/EMASSU
          XNEW(1) = newEX(1,IR)/ELENGTHU
          XNEW(2) = newEX(2,IR)/ELENGTHU
@@ -579,6 +587,12 @@
          VNEW(3) = newEXDOT(3,IR)/EVELU
       
          EIDINIT(N+1) = EID(IR)
+
+         write(6,*) "after conversion"
+         write(6,*) "BODYNEW, XNEW, VNEW"
+         write(6,*) BODYNEW,XNEW,VNEW
+         call flush(6)
+
          CALL CREATION(N+1,BODYNEW,XNEW,VNEW)
 
          FENZO(1,EN+IR) = newEF(1,JR)/EFORCEU

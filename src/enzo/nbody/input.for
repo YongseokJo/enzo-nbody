@@ -28,13 +28,13 @@
 
       ETAI = 0.02D0
       ETAR = 0.02D0
-      RS0 = 0.19587108D0 !0.18780202D0 for binaries
+      RS0 = 1.0D0 !0.19587108D0 !0.18780202D0 for binaries
       DTADJ = 1.00D0
 !      DELTAT = 1.00D0
       TCRIT = 1.0D10
       QE = 1.0D10
-      RBAR = 2.58811228D0
-      ZMBAR = 100.00000000D0
+      RBAR = 10.0D0 !2.58811228D0
+!      ZMBAR = 100.00000000D0
       write(6,*) 'ZMBAR = ',ZMBAR
 
       KZ(1) = 2
