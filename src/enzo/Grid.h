@@ -1855,19 +1855,20 @@ class grid
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
 					fprintf(stderr, "Mass Of NewNbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
-					NewNbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
-					NewNbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					NewNbodyParticleMassTemp[*count_new] = ParticleMass[i]*dv;
+					NewNbodyParticleIDTemp[*count_new]   = ParticleNumber[i];
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-							NewNbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
-							NewNbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
+							NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i]-0.5;
+							NewNbodyParticleVelocityTemp[dim][*count_new] = ParticleVelocity[dim][i];
 						}
-						NewNbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						NewNbodyParticleAccelerationNoStarTemp[dim][*count_new] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count_new)++;
 				} // endif particle_type_nbody_new
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					fprintf(stderr, "Mass Of NbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];

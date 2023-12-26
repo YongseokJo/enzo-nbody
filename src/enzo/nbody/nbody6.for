@@ -169,9 +169,9 @@
 
       MASSU = 0.0D0
 
-      DO I = 1,EN
-          MASSU = MASSU + EBODY(I)*EMU/(1.9891D33)
-      END DO
+*      DO I = 1,EN
+*          MASSU = MASSU + EBODY(I)*EMU/(1.9891D33)
+*      END DO
 
       MASSU = 1.0D7 ! added by sykim 231226
 

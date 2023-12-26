@@ -131,7 +131,11 @@ int grid::InterpolateStarParticlesToGrid(int NumberOfSPFields)
 
       /* Now store particle info */
 
+#ifdef NBODY
+      if (ParticleType[i] == PARTICLE_TYPE_STAR || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+#else
       if (ParticleType[i] == PARTICLE_TYPE_STAR) {
+#endif
 
 	NumberOfStarParticlesInGrid++;
 
