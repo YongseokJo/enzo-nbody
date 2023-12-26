@@ -461,6 +461,9 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);
 		MPI_Send(&NumberOfNewNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 
+		for (int i=0; i<NumberOfNewNbodyParticles; i++)
+			fprintf(stderr, "Mass Of NewNbodyParticles=%lf\n", NewNbodyParticleMass[i]);
+
 		if (NumberOfNewNbodyParticles != 0) {
 			MPI_Send(NewNbodyParticleMass, NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 200, inter_comm);
 			MPI_Send(NewNbodyParticleID, NumberOfNewNbodyParticles, MPI_INT, 1, 250, inter_comm);
