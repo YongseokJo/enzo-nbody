@@ -1,7 +1,7 @@
 #include <stdio.h>
 void auto_show_flags(FILE *fp) {
    fprintf (fp,"\n");
-   fprintf (fp,"CPP = /mnt/sw/nix/store/8dj0b7h3461k153kbgrapkz2q63hmprj-gcc-7.5.0/bin/cpp\n");
+   fprintf (fp,"CPP = /usr/bin/cpp\n");
    fprintf (fp,"CC  = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpicc\n");
    fprintf (fp,"CXX = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpicxx\n");
    fprintf (fp,"FC  = /mnt/sw/nix/store/l19ja561rfvfgv3y387gddf7fgxs8gcw-intel-oneapi-mpi-2021.8.0/mpi/2021.8.0/bin/mpif77\n");
