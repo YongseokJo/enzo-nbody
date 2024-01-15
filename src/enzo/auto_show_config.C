@@ -1,6 +1,6 @@
 #include <stdio.h>
 void auto_show_config(FILE *fp) {
-   fprintf (fp,"make[1]: Warning: File `DEPEND' has modification time 123 s in the future\n");
+   fprintf (fp,"make[1]: Warning: File `DEPEND' has modification time 126 s in the future\n");
    fprintf (fp,"\n");
    fprintf (fp,"   MACHINE: Generic Ubuntu 8.04\n");
    fprintf (fp,"   MACHINE-NAME: linux-mpich\n");

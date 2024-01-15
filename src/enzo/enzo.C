@@ -62,8 +62,7 @@ int FinalizePythonInterface();
 
 
 #ifdef NBODY
-extern "C" void FORTRAN_NAME(nbody6)(MPI_Fint* comm_ptr_enzo,MPI_Comm* comm_ptr_cross, MPI_Comm* comm_ptr_nbody,
-	 	int* MyProcessorNumber);
+int nbody(MPI_Comm *comm, MPI_Comm *inter_comm, MPI_Comm* nbody_comm, int MyProcessorNumber);
 #endif
 		
 
@@ -287,14 +286,14 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 			fprintf(stderr, "inter_comm is not NULL!\n");
 		}
 		//MPI_Comm comm_ptr_enzo = MPI_COMM_WORLD;
-		MPI_Fint fcomm;
-		MPI_Fint finter_comm;
-		MPI_Fint fnbody_comm;
-		fcomm       = MPI_Comm_c2f(MPI_COMM_WORLD);
-		finter_comm = MPI_Comm_c2f(inter_comm);
-		fnbody_comm = MPI_Comm_c2f(nbody_comm);
+		MPI_Comm comm;
+		MPI_Comm inter_comm;
+		MPI_Comm nbody_comm;
+		comm       = MPI_COMM_WORLD;
+		inter_comm = inter_comm;
+		nbody_comm = nbody_comm;
 		fprintf(stderr, "NBODY6++ starts!\n");
-		FORTRAN_NAME(nbody6)(&fcomm, &finter_comm, &fnbody_comm, &MyProcessorNumber);
+		nbody(&comm, &inter_comm, &nbody_comm, MyProcessorNumber);
 		my_exit(EXIT_SUCCESS);
 	} 
 #endif
