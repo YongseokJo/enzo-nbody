@@ -1,4 +1,4 @@
-#include "Particle.h"
+#include "../global.h"
 #include "../defs.h"
 #include <vector>
 #include <iostream>
@@ -91,7 +91,7 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 			}
 			r[p]  = sqrt(r2);
 
-			if (NNB >100 && r[0] < ptcl->RadiusOfAC) {
+			if (NNB >100 && (r[0] < this->RadiusOfAC || r[0] < ptcl->RadiusOfAC)) {
 				NumberOfAC++;
 				this->ACList.push_back(ptcl);
 				// irregular acceleration

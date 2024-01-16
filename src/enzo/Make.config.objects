@@ -1262,6 +1262,7 @@ OBJS_NBODY= \
 						PrepareNbodyComputation.o\
 						FinalizeNbodyComputation.o\
 						nbody/nbody.o\
+						nbody/InitializeTimeStep.o\
 					  nbody/ReadWrite.o\
 					  nbody/CreateComputationChain.o\
 						nbody/InitializeParticles.o\

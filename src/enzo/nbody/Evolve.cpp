@@ -41,6 +41,12 @@ void Evolve(std::vector<Particle*> &particle) {
 			// 1. regular force calculation; 2. enzo communication; 3. data dump
 			// Even this can be parallelized. 
 			if (EvolveParticle.size() == 0) {
+				if (IsEnzoCommunication) {
+					SendToEzno(particle);
+					ReceiveFromEzno(particle);
+					global_time = 0.;
+					MinRegTime  = 0.;
+				}
 				// It's time to compute regular force.
 				if (global_time == MinRegTime) {
 					std::cout <<  "Regular force calculating...\n" << std::flush;
@@ -48,17 +54,13 @@ void Evolve(std::vector<Particle*> &particle) {
 						if (ptcl->isRegular) {
 							fprintf(stderr, "Particle ID=%d, Time=%.4e, dtIrr=%.4e, dtReg=%.4e\n",ptcl->getPID(), ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->TimeStepReg);
 							std::cerr << std::flush;
-							ptcl->calculateRegForce(particle, MinRegTime); // this only does acceleration computation without update.
+							// This only computes accelerations without updating particles.
+							ptcl->calculateRegForce(particle, MinRegTime); 
 						}
 					UpdateMinRegTime(particle, &MinRegTime);
 					if (MinRegTime >= 1) 
 						exit(EXIT_FAILURE);
 					// after regular force, find particles to evolve again
-				}
-				if (IsEnzoCommunication) {
-					
-					SendToEzno(particle);
-					ReceiveFromEzno(particle);
 				}
 				if (IsOutput) {
 					writeParticle(particle, MinRegTime, ++outNum);
@@ -131,7 +133,7 @@ void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle
 
 		if ( (MinRegTime >= next_time) // Regular timestep
 				 && ptcl->checkNeighborForEvolution()  // neighbor
-				 && (EnzoTimeMark >= next_time) ) { // Enzo timestep
+				 && (EnzoTimeStep >= next_time) ) { // Enzo timestep
 			ptcl->isEvolve = 1;
 			list.push_back(ptcl);
 		}
@@ -139,7 +141,7 @@ void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle
 		if (time > global_time)
 			global_time = time;
 
-		if (IsEnzoCommunication && EnzoTimeMark > next_time) 
+		if (IsEnzoCommunication && EnzoTimeStep > next_time) 
 			IsEnzoCommunication = false;
 	}
 	std::cerr << "EvolveParticle: ";

@@ -5,9 +5,11 @@
 
 Particle* FirstParticleInEnzo;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
-double EnzoTimeMark;
 
+void InitializeParticle(int newNNB, Particle* newParticle, std::vector<Particle*> &particle);
 int CommunicationInterBarrier();
+int newNNB = 0;
+
 
 int InitialCommunication(std::vector<Particle*> &particle) {
 
@@ -50,7 +52,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	EnzoTime         = TimeUnits/yr*time_unit;
 	EnzoAcceleration = LengthUnits*LengthUnits/TimeUnits/pc/pc*yr*position_unit*position_unit/time_unit;
 
-	EnzoTimeMark    += TimeStep*EnzoTime;
+	EnzoTimeStep     = TimeStep*EnzoTime;
 
 	Particle* ptclPtr;
 	Particle* ptcl = new Particle[NNB];
@@ -143,10 +145,12 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 			ptclPtr = nullptr;
 		}
 		ptcl[i].setParticleInfo(newPID, newMass, newPosition, newVelocity, newBackgroundAcceleration, -1, i, ptclPtr);
+		//initialize current time
 		particle.push_back(&ptcl[i]);
 	}
 
-	// Adjust accelerations according to new particles
+	// This includes modification of regular force and irregular force
+	InitializeParticle(newNNB, ptcl, particle); 
 
 	delete PID, BackgroundAcceleration, newPID, newMass, newPosition, newVelocity, newBackgroundAcceleration;
 
@@ -164,15 +168,29 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	int i;
 	Particle *ptcl;
 	ptcl = FirstParticleInEnzo;
-	// Construct arrays
-	while (ptcl) {
-		ptcl->predictParticleSecondOrder(EnzoTimeMark);
-		for (int i=0; i<Dim; i++) {
-			Position[dim] = ptcl->PredPosition[dim]
-		}
+	
+	for (int dim=0; dim<Dim; dim++) {
+		Position[dim]    = new double[NNB-newNNB];
+		Velocity[dim]    = new double[NNB-newNNB];
+		newPosition[dim] = new double[newNNB];
+		newVelocity[dim] = new double[newNNB];
 	}
-	// for 
-	// here we have to predict particles
+	// Construct arrays
+	int count=0;
+	while (ptcl) {
+		if (count < NNB-newNNB)
+			for (int dim=0; dim<Dim; dim++) {
+				Position[count][dim] = ptcl->Position[dim];
+				Velocity[count][dim] = ptcl->Velocity[dim];
+			}
+		else 
+			for (int dim=0; dim<Dim; dim++) {
+				newPosition[count-NNB][dim] = ptcl->Position[dim];
+				newVelocity[count-NNB][dim] = ptcl->Velocity[dim];
+			}
+		count++;
+		ptcl = ptcl->NextParticleInEnzo;
+	}
 
 
 	CommunicationInterBarrier();

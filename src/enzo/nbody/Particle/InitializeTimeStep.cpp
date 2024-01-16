@@ -1,10 +1,10 @@
-#include "Particle.h"
+#include <iostream>
 #include <cmath>
+#include "../global.h"
 
-
+/*
 double getNewTimeStep(double f[3][4], double df[3][4]);
 double getBlockTimeStep(double dt);
-
 
 void Particle::initializeTimeStep() {
 
@@ -55,6 +55,6 @@ void Particle::initializeTimeStep() {
 		CurrentTimeIrr = CurrentTimeReg;
 	}
 }
-
+*/
 
 

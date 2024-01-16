@@ -33,6 +33,8 @@ class Particle
 		double CurrentTimeReg;
 		double TimeStepIrr;
 		double TimeStepReg;
+		int TimeLevelIrr;
+		int TimeLevelReg;
 		double PredPosition[Dim];
 		double PredVelocity[Dim];
 		double a_tot[Dim][HERMITE_ORDER];
@@ -59,6 +61,8 @@ class Particle
 			PredTimeReg    = 0;
 			TimeStepIrr    = 0;
 			TimeStepReg    = 0;
+			TimeLevelIrr   = 9999;
+			TimeLevelReg   = 9999;
 			isEvolve       = 0;
 			isRegular      = 0;
 			for (int i=0; i<Dim; i++) {

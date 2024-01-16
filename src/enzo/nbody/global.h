@@ -5,10 +5,11 @@
 
 extern std::vector<int> LevelList;
 extern int NNB;
+extern int newNNB;
 extern double global_time;
-extern const double dt_min=0.03125;
-extern const int dt_level_min=-5;
-extern double dt_block;
+extern const double dt_min;
+extern const int dt_level_min;
+extern double dt_block;  // this stores the minimum time step
 extern int dt_block_level;
 
 
@@ -22,6 +23,7 @@ extern Particle* FirstEnzoParticle;
 extern double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 extern double EnzoTime;
 extern bool IsEnzoCommunication;
+extern double EnzoTimeStep;
 
 
 // i/o

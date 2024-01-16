@@ -9,9 +9,11 @@ using namespace std;
 
 //Global Variables
 int NNB; double global_time; //bool debug;
-double dt_min=1e-20;
 std::vector<int> LevelList;
 //MPI_Comm  comm, inter_comm, nbody_comm;
+double EnzoTimeStep;
+const double dt_min = -5;
+const int dt_level_min = 0.03125;
 
 int nbody(int MyProcessorNumber) {
 	cout << "Staring Nbody+ ..." << endl;
@@ -37,7 +39,7 @@ int nbody(int MyProcessorNumber) {
 		std::cout << std::endl;
 	 ***/
 
-	initializeParticle(particle);
+	InitializeParticle(particle);
 
 
 	//createComputationChain(particle);
