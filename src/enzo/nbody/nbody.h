@@ -1,5 +1,5 @@
-#include "Particle/Particle.h"
-#include <mpi.h>
+//#include "Particle/Particle.h"
+//#include <mpi.h>
 
 //int readData(std::vector<Particle*> &particle);
 int createComputationChain(std::vector<Particle*> &particle);

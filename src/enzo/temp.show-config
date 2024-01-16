@@ -1,4 +1,4 @@
-make[1]: Warning: File `DEPEND' has modification time 126 s in the future
+make[1]: Warning: File `DEPEND' has modification time 124 s in the future
 
    MACHINE: Generic Ubuntu 8.04
    MACHINE-NAME: linux-mpich

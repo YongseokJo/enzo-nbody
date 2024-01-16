@@ -1,4 +1,4 @@
-#include "Particle.h"
+#include "../global.h"
 #include <cmath>
 
 double Particle::getDistanceTo(Particle *particle) {
@@ -20,7 +20,20 @@ void Particle::setParticleInfo(double *data, int PID) {
 	this->ParticleType = Star;
 }
 
-void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], int i) {
+void Particle::setParticleInfo(double *data, int PID, Particle* NextParticleInEnzo) {
+	this->PID          = PID;
+	this->Position[0]  = data[0];
+	this->Position[1]  = data[1];
+	this->Position[2]  = data[2];
+	this->Velocity[0]  = data[3];
+	this->Velocity[1]  = data[4];
+	this->Velocity[2]  = data[5];
+	this->Mass         = data[6];
+	this->ParticleType = Star;
+	this->NextParticleInEnzo = NextParticleInEnzo;
+}
+
+void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], int i, Particle* NextParticleInEnzo) {
 	this->PID          = PID[i];
 	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
 																		 *EnzoAcceleration;
@@ -28,10 +41,11 @@ void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], in
 																		 *EnzoAcceleration;
 	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
 																		 *EnzoAcceleration;
+	this->NextParticleInEnzo = NextParticleInEnzo;
 }
 
 void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
-		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int i) {
+		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int i, Particle* NextParticleInEnzo) {
 	this->PID          = PID[i];
 	this->Mass         = Mass[i]*EnzoMass;
 	this->Position[0]  = Position[0][i]*EnzoLength;
@@ -47,11 +61,12 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
 																		 *EnzoAcceleration;
 	this->ParticleType = Star;
+	this->NextParticleInEnzo = NextParticleInEnzo;
 }
 
 
 void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
-		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int ParticleType, int i) {
+		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int ParticleType, int i, Particle* NextParticleInEnzo) {
 	this->PID          = PID[i];
 	this->Mass         = Mass[i]*EnzoMass;
 	this->Position[0]  = Position[0][i]*EnzoLength;
@@ -67,6 +82,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
 																		 *EnzoAcceleration;
 	this->ParticleType = ParticleType;
+	this->NextParticleInEnzo = NextParticleInEnzo;
 }
 
 

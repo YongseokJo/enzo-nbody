@@ -1,8 +1,8 @@
+#include <mpi.h>
 #include <iostream>
 //#include "defs.h"
 #include "global.h"
 #include "nbody.h"
-#include <mpi.h>
 
 
 using namespace std;
@@ -40,7 +40,7 @@ int nbody(int MyProcessorNumber) {
 	initializeParticle(particle);
 
 
-	createComputationChain(particle);
+	//createComputationChain(particle);
 
 	for (Particle* elem: particle) {
 		std::cout << elem->TimeStepIrr <<" ";

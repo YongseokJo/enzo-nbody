@@ -1,6 +1,6 @@
 #include <stdio.h>
 void auto_show_flags(FILE *fp) {
-   fprintf (fp,"make[1]: Warning: File `DEPEND' has modification time 126 s in the future\n");
+   fprintf (fp,"make[1]: Warning: File `DEPEND' has modification time 124 s in the future\n");
    fprintf (fp,"\n");
    fprintf (fp,"CPP = /usr/bin/cpp\n");
    fprintf (fp,"CC  = /appl/intel/oneapi/mpi/2021.4.0/bin/mpicc\n");

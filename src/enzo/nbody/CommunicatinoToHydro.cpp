@@ -2,10 +2,10 @@
 #include <iostream>
 #include "global.h"
 #include "defs.h"
-#include "Particle/Particle.h"
 
+Particle* FirstParticleInEnzo;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
-double EnzoTimeStep;
+double EnzoTimeMark;
 
 int CommunicationInterBarrier();
 
@@ -14,6 +14,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	int *PID;
 	double *Mass, *Position[Dim], *Velocity[Dim], *BackgroundAcceleration[Dim];
 	double TimeStep, TimeUnits, LengthUnits, VelocityUnits, MassUnits;
+
 
 	MPI_Request request;
 	MPI_Status status;
@@ -24,8 +25,8 @@ int InitialCommunication(std::vector<Particle*> &particle) {
   MPI_Recv(&PID, NNB, MPI_INT, 0, 250, inter_comm, &status);
 	Mass = new double[NNB];
   MPI_Recv(&Mass, NNB, MPI_DOUBLE, 0, 200, inter_comm, &status);
-	for (int dim=0; dim<Dim; dim++) {
 
+	for (int dim=0; dim<Dim; dim++) {
 		Position[dim] = new double[NNB];
 		Velocity[dim] = new double[NNB];
 		MPI_Recv(&Position[dim], NNB, MPI_DOUBLE, 0, 300, inter_comm, &status);
@@ -49,13 +50,20 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	EnzoTime         = TimeUnits/yr*time_unit;
 	EnzoAcceleration = LengthUnits*LengthUnits/TimeUnits/pc/pc*yr*position_unit*position_unit/time_unit;
 
-	EnzoTimeStep     = TimeStep*EnzoTime;
+	EnzoTimeMark    += TimeStep*EnzoTime;
 
-	for (int i=0; i<NNB; i++)
-		particle[i]->setParticleInfo(PID, Mass, Position, Velocity, BackgroundAcceleration, i);
-
+	Particle* ptclPtr;
+	Particle* ptcl = new Particle[NNB];
+	for (int i=0; i<NNB; i++) {
+		if (i<(NNB)-1)
+			ptclPtr = &ptcl[i+1];
+		else
+			ptclPtr = nullptr;
+		ptcl[i].setParticleInfo(PID, Mass, Position, Velocity, BackgroundAcceleration, i, ptclPtr);
+		particle.push_back(&ptcl[i]);
+	}
 	std::cout << "Particle loaded." << std::endl;
-
+	delete PID, Mass, Position, Velocity, BackgroundAcceleration;
 }
 
 
@@ -102,21 +110,45 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	CommunicationInterBarrier();
 
 
-	EnzoTimeStep     = TimeStep*EnzoTime;
+	EnzoTimeStep = TimeStep*EnzoTime;
 
 	// Update Existing Particles
-	for (int i=0; i<NNB; i++)
-		particle[i]->setParticleInfo(PID, BackgroundAcceleration, i);
+	// need to update if the ids match between Enzo and Nbody
+	// set the last next pointer array to null
 
+	Particle* updatedNextPtr;
+	updatedNextPtr = nullptr;
+
+	// loop for PID, going backwards to update the NextParticle
+	for (int i=NNB-1; i>=0; i--) {
+		for (int j=0; j<NNB; j++) {
+			if (PID[i] == particle[j]->PID) {
+				particle[i]->setParticleInfo(PID, BackgroundAcceleration, i, updatedNextPtr);
+				updatedNextPtr = particle[i];
+				if (i==0)
+					FirstParticleInEnzo = particle[j];
+				continue;
+			}
+		}
+	}
+
+
+	Particle* ptclPtr;
 	Particle *ptcl = new Particle[newNNB];
 	// Update New Particles
 	for (int i=0; i<newNNB; i++) {
-		ptcl[i].setParticleInfo(newPID, newMass, newPosition, newVelocity, newBackgroundAcceleration, -1, ++i);
+		if (i<(newNNB-1)) {
+			ptclPtr = &ptcl[(i+1)];
+		} else {
+			ptclPtr = nullptr;
+		}
+		ptcl[i].setParticleInfo(newPID, newMass, newPosition, newVelocity, newBackgroundAcceleration, -1, i, ptclPtr);
 		particle.push_back(&ptcl[i]);
 	}
 
 	// Adjust accelerations according to new particles
 
+	delete PID, BackgroundAcceleration, newPID, newMass, newPosition, newVelocity, newBackgroundAcceleration;
 
 }
 
@@ -129,8 +161,20 @@ int SendToEzno(std::vector<Particle*> &particle) {
 
 	double *Position[Dim], *Velocity[Dim], *newPosition[Dim], *newVelocity[Dim];
 
-	// I have to maintain the order
-	//for 
+	int i;
+	Particle *ptcl;
+	ptcl = FirstParticleInEnzo;
+	// Construct arrays
+	while (ptcl) {
+		ptcl->predictParticleSecondOrder(EnzoTimeMark);
+		for (int i=0; i<Dim; i++) {
+			Position[dim] = ptcl->PredPosition[dim]
+		}
+	}
+	// for 
+	// here we have to predict particles
+
+
 	CommunicationInterBarrier();
 	//fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
 	for (int dim=0; dim<Dim; dim++) {
@@ -147,6 +191,9 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		}
 	CommunicationInterBarrier();
 
+	for (int dim=0; dim<Dim; dim++) {
+		delete Position[dim], Velocity[dim], newPosition[dim], newVelocity[dim];
+	}
 }
 
 

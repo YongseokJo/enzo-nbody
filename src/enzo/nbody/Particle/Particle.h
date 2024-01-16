@@ -9,20 +9,20 @@
 
 #include <iostream>
 #include "../defs.h"
-#include "../global.h"
+//#include "../global.h"
 
 
 class Particle
 {
 	private:
-		int PID;
-		int ParticleType;
 
 		// Variables for KS Regularization (117p in GNS by Aarseth, will be added)	
 		//
 		//
 
 	public:
+		int PID;
+		int ParticleType;
 		double Mass;
 		double Velocity[Dim];
 		double Position[Dim];
@@ -39,7 +39,7 @@ class Particle
 		double a_reg[Dim][HERMITE_ORDER];
 		double a_irr[Dim][HERMITE_ORDER];
 		double BackgroundAcceleration[Dim];
-		Particle* NextParticle;
+		Particle* NextParticleInEnzo;
 		std::vector<Particle*> ACList;     // list of AC neighbor 
 		int NumberOfAC; // number of neighbors
 		double RadiusOfAC;
@@ -52,7 +52,6 @@ class Particle
 			Mass           = 0;
 			NumberOfAC     = 0; // number of neighbors
 			RadiusOfAC     = InitialRadiusOfAC;
-			NextParticle   = 0;
 			ParticleType   = -9999;
 			CurrentTimeIrr = 0.; // consistent with actual current time
 			CurrentTimeReg = 0.;
@@ -73,6 +72,7 @@ class Particle
 					a_irr[i][j] = 0;
 				}
 			}
+			NextParticleInEnzo = nullptr;
 		}
 
 		void updateParticle(double mass, double *vel, double pos[], int particletype) {
@@ -87,11 +87,12 @@ class Particle
 		}
 		double getDistanceTo(Particle *particle);
 		void setParticleInfo(double *data, int PID);
-		void setParticleInfo(int *PID, double *Mass, double *Position[Dim],
-				 double *Velocity[Dim], double *BackgroundAcceleration[Dim], int i);
-		void setParticleInfo(int *PID, double *Mass, double *Position[Dim],
-				 double *Velocity[Dim], double *BackgroundAcceleration[Dim], int ParticleType, int i);
-		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], int i);
+		void setParticleInfo(double *data, int PID, Particle* NextParticleInEnzo);
+		void setParticleInfo(int *PID, double *Mass, double *Position[Dim], double *Velocity[Dim],
+			 	double *BackgroundAcceleration[Dim], int i, Particle* NextParticleInEnzo);
+		void setParticleInfo(int *PID, double *Mass, double *Position[Dim], double *Velocity[Dim],
+			 	double *BackgroundAcceleration[Dim],  int ParticleType, int i, Particle* NextParticleInEnzo);
+		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], int i, Particle* NextParticleInEnzo);
 		void initializeTimeStep();
 		int getPID() {return PID;};
 		void calculateIrrForce();

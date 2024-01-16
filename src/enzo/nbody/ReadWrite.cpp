@@ -4,7 +4,6 @@
 #include <sstream>
 #include <sys/stat.h>
 #include <iomanip>
-#include "Particle/Particle.h"
 #include "global.h"
 
 

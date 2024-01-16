@@ -1,13 +1,13 @@
 #include <vector>
 #include <iostream>
-#include "Particle/Particle.h"
 #include <cmath>
+#include "global.h"
 #include "defs.h"
 
 
 
 
-void findNeighbor(std::vector<Particle*> &particle);
+void FindNeighbor(std::vector<Particle*> &particle);
 void calculateAcceleration(std::vector<Particle*> &particle);
 void direct_sum(double *x, double *v, double r2, double vx,
 		double mass, double a[3], double adot[3]);
@@ -23,7 +23,7 @@ void direct_sum(double *x, double *v, double r2, double vx,
 void initializeParticle(std::vector<Particle*> &particle) {
 
 	std::cout << "Initialization starts." << std::endl;
-	findNeighbor(particle);
+	FindNeighbor(particle);
 
 	calculateAcceleration(particle);
 	std::cout << "Timestep initializing..." << std::endl;
@@ -45,7 +45,7 @@ void initializeParticle(std::vector<Particle*> &particle) {
  *  Modified: 2024.01.10  by Yongseok Jo
  *
  */
-void findNeighbor(std::vector<Particle*> &particle) {
+void FindNeighbor(std::vector<Particle*> &particle) {
 
 	// No need to find neighbors if the total number of particles is less than 100
 	if (NNB<=100) return;
@@ -174,5 +174,6 @@ void calculateAcceleration(std::vector<Particle*> &particle) {
 		} // endfor dim
 	} // endfor ptcl1
 }
+
 
 

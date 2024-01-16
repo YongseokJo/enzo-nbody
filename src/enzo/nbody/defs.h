@@ -1,18 +1,29 @@
 
+
 #define HERMITE_ORDER 4
 #define Dim 3
 
-// Particle Type Definition
-#define Star 0
-#define TypeIStar 1
-#define TypeIIStar 2
-#define TypeIIIStar 3
-#define DeadStar 3
+#define UpdateFrequency 10
 
-#define Blackhole 9
-// Fake Particles for KS regularization
-#define BlackholeBiniary -2
-#define Binary -1
+
+
+// Particle Type Definition
+// Particle type defined by combination of binary switches
+// fictious (2^8), new (2^7), single (2^6), black hole (2^5), dead star (2^4)
+// TypeIII (2^3), TypeII (2^2), TypeI (2^1), normal star or particle (2^0) 
+// for example, normal signle particle is 001000001 = 2^6 + 2^0 = 65
+// new black hole single particle is 011100000 = 2^7+2^6+2^5 = 
+// fictious particles are usually COM particles for regularization
+#define NormalStar 1
+#define TypeIStar 2
+#define TypeIIStar 4
+#define TypeIIIStar 8
+#define DeadStar 16
+#define Blackhole 32
+#define SingleParticle 64
+#define NewParticle 128
+#define FicticiousParticle 256
+
 
 #define DONE    1
 #define FAIL   -1
