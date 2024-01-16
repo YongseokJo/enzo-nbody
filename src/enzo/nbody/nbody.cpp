@@ -11,26 +11,32 @@ using namespace std;
 int NNB; double global_time; //bool debug;
 double dt_min=1e-20;
 std::vector<int> LevelList;
+//MPI_Comm  comm, inter_comm, nbody_comm;
 
-int nbody(MPI_Comm *comm, MPI_Comm *inter_comm, MPI_Comm* nbody_comm, int MyProcessorNumber) {
-	cout << "This Nbody+." << endl;
+int nbody(int MyProcessorNumber) {
+	cout << "Staring Nbody+ ..." << endl;
 	std::vector<Particle*> particle{};
-	//particle = new std::vector<Particle*>();
+
+	//comm        = com;
+	//inter_comm  = inter_com;
+	//nbody_comm  = nbody_com;
+
 	global_time = 0.;
 	//debug = true;
 
-	InitialCommunication(*inter_comm, particle);
+	InitialCommunication(particle);
 	//Parser(argc, argv);
 
 	//if (readData(particle) == FAIL)
 		//fprintf(stderr, "Read Data Failed!\n");
 
 	/***
-	for (Particle* elem: particle) {
+		for (Particle* elem: particle) {
 		std::cout << elem->Position[0] <<" ";
-	}
+		}
 		std::cout << std::endl;
-		***/
+	 ***/
+
 	initializeParticle(particle);
 
 

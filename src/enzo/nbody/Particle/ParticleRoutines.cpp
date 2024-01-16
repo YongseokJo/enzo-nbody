@@ -20,21 +20,53 @@ void Particle::setParticleInfo(double *data, int PID) {
 	this->ParticleType = Star;
 }
 
+void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], int i) {
+	this->PID          = PID[i];
+	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
+																		 *EnzoAcceleration;
+}
 
 void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int i) {
 	this->PID          = PID[i];
-	this->Mass         = Mass[i];
-	this->Position[0]  = Position[0][i];
-	this->Position[1]  = Position[1][i];
-	this->Position[2]  = Position[2][i];
-	this->Velocity[0]  = Velocity[0][i];
-	this->Velocity[1]  = Velocity[1][i];
-	this->Velocity[2]  = Velocity[2][i];
-	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i];
-	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i];
-	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i];
+	this->Mass         = Mass[i]*EnzoMass;
+	this->Position[0]  = Position[0][i]*EnzoLength;
+	this->Position[1]  = Position[1][i]*EnzoLength;
+	this->Position[2]  = Position[2][i]*EnzoLength;
+	this->Velocity[0]  = Velocity[0][i]*EnzoVelocity;
+	this->Velocity[1]  = Velocity[1][i]*EnzoVelocity;
+	this->Velocity[2]  = Velocity[2][i]*EnzoVelocity;
+	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
+																		 *EnzoAcceleration;
 	this->ParticleType = Star;
+}
+
+
+void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
+		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int ParticleType, int i) {
+	this->PID          = PID[i];
+	this->Mass         = Mass[i]*EnzoMass;
+	this->Position[0]  = Position[0][i]*EnzoLength;
+	this->Position[1]  = Position[1][i]*EnzoLength;
+	this->Position[2]  = Position[2][i]*EnzoLength;
+	this->Velocity[0]  = Velocity[0][i]*EnzoVelocity;
+	this->Velocity[1]  = Velocity[1][i]*EnzoVelocity;
+	this->Velocity[2]  = Velocity[2][i]*EnzoVelocity;
+	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
+																		 *EnzoAcceleration;
+	this->ParticleType = ParticleType;
 }
 
 

@@ -41,7 +41,7 @@ void Evolve(std::vector<Particle*> &particle) {
 					ptcl->calculateRegForce(particle, MinRegTime); // this only does acceleration computation.
 				}
 			}
-				writeParticle(particle, MinRegTime, ++outNum);
+				//writeParticle(particle, MinRegTime, ++outNum);
 				UpdateMinRegTime(particle, &MinRegTime);
 				UpdateEvolveParticle(particle, EvolveParticle, MinRegTime);
 			}

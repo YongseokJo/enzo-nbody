@@ -62,7 +62,7 @@ int FinalizePythonInterface();
 
 
 #ifdef NBODY
-int nbody(MPI_Comm *comm, MPI_Comm *inter_comm, MPI_Comm* nbody_comm, int MyProcessorNumber);
+int nbody(int MyProcessorNumber);
 #endif
 		
 
@@ -286,14 +286,14 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 			fprintf(stderr, "inter_comm is not NULL!\n");
 		}
 		//MPI_Comm comm_ptr_enzo = MPI_COMM_WORLD;
-		MPI_Comm comm;
-		MPI_Comm inter_comm;
-		MPI_Comm nbody_comm;
-		comm       = MPI_COMM_WORLD;
-		inter_comm = inter_comm;
-		nbody_comm = nbody_comm;
+		//MPI_Comm comm;
+		//MPI_Comm inter_comm;
+		//MPI_Comm nbody_comm;
+		//comm       = MPI_COMM_WORLD;
+		//inter_comm = inter_comm;
+		//nbody_comm = nbody_comm;
 		fprintf(stderr, "NBODY6++ starts!\n");
-		nbody(&comm, &inter_comm, &nbody_comm, MyProcessorNumber);
+		nbody(MyProcessorNumber);
 		my_exit(EXIT_SUCCESS);
 	} 
 #endif

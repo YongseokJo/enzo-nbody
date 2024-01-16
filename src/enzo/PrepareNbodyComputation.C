@@ -475,7 +475,7 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		}
 
 		ierr = MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
-		ierr = MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
+		//ierr = MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
 		ierr = CommunicationInterBarrier();
 
 
