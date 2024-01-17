@@ -188,25 +188,28 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		/*----------------------------------------------------------*/
 		/******** Send Arrays to Fortran Nbody6++  First Time  *****/
 		/*--------------------------------------------------------*/
+		CommunicationInterBarrier();
 		MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
-		MPI_Send(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, 1, 200, inter_comm);
-		MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			MPI_Send(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm);
-			MPI_Send(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm);
+		if (NumberOfNbodyParticles != 0) {
+			MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 250, inter_comm);
+			MPI_Send(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, 1, 200, inter_comm);
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				MPI_Send(NbodyParticlePosition[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 300, inter_comm);
+				MPI_Send(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm);
+			}
+			// the fourth component of acceleration carries potential
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
+			}
 		}
-		// the fourth component of acceleration carries potential
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm);
-		}
-		MPI_Send(&TimeStep, 1, MPI_DOUBLE, 1, 600, inter_comm);
-		MPI_Send(&TimeUnits, 1, MPI_DOUBLE, 1, 700, inter_comm);
-		MPI_Send(&LengthUnits, 1, MPI_DOUBLE, 1, 800, inter_comm);
-		MPI_Send(&MassUnits, 1, MPI_DOUBLE, 1, 900, inter_comm);
+		MPI_Send(&TimeStep,      1, MPI_DOUBLE, 1,  600, inter_comm);
+		MPI_Send(&TimeUnits,     1, MPI_DOUBLE, 1,  700, inter_comm);
+		MPI_Send(&LengthUnits,   1, MPI_DOUBLE, 1,  800, inter_comm);
+		MPI_Send(&MassUnits,     1, MPI_DOUBLE, 1,  900, inter_comm);
 		MPI_Send(&VelocityUnits, 1, MPI_DOUBLE, 1, 1000, inter_comm);
+		CommunicationInterBarrier();
 
 
-	fprintf(stderr,"checkpoint2\n");
 		if (start_index_all != NULL)
 			delete [] start_index_all;
 		start_index_all = NULL;
@@ -214,8 +217,6 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 			delete [] LocalNumberAll;
 		LocalNumberAll = NULL;
 		DeleteNbodyArrays();
-
-	fprintf(stderr,"checkpoint2-1\n");
 
 	} // endif : root processor
 	else {
@@ -256,7 +257,6 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 	} // endelse: other processor
 #endif
 
-	fprintf(stderr,"checkpoint3\n");
 	/* Destruct Arrays*/
 	if (NbodyParticleMassTemp != NULL)
 		delete [] NbodyParticleMassTemp;
@@ -277,7 +277,6 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 			delete [] NbodyParticleAccelerationNoStarTemp[dim];
 		NbodyParticleAccelerationNoStarTemp[dim] = NULL;
 	}
-	fprintf(stderr,"checkpoint4\n");
 	return SUCCESS;
 }
 
@@ -453,9 +452,11 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		/*-----------------------------------------------*/
 		//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 100, inter_comm);
 		CommunicationInterBarrier();
-		MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 25, inter_comm);
-		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 50, inter_comm);
+		if (NumberOfNbodyParticles != 0) {
+			MPI_Send(NbodyParticleID, NumberOfNbodyParticles, MPI_INT, 1, 25, inter_comm);
+			for (int dim=0; dim<MAX_DIMENSION; dim++) {
+				ierr = MPI_Send(NbodyParticleAccelerationNoStar[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 50, inter_comm);
+			}
 		}
 
 		fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);

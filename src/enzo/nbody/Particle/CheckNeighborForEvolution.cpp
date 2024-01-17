@@ -1,10 +1,10 @@
-#include "Particle.h"
+#include "../global.h"
 
 
 bool Particle::checkNeighborForEvolution() {
 	int count=0;
 	for (Particle* ptcl:ACList) {
-		if ((this->CurrentTimeIrr+this->TimeStepIrr - mytolerance) <=ptcl->CurrentTimeIrr+ptcl->TimeStepIrr) {
+		if ((this->CurrentTimeIrr+this->TimeStepIrr) <= (ptcl->CurrentTimeIrr+ptcl->TimeStepIrr)) {
 			count++;
 		}
 	}

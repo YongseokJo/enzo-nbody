@@ -160,7 +160,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		adot[dim] = 0.;
 	}
 
-	std::cout << "Entering calculateAcceleration  ..." << std::endl;
+	std::cout << "nbody+: Entering CalculateInitialAcceleration  ..." << std::endl;
 
 	j=0;
 	//ptcl1->predictParticleSecondOrder(newTime);
@@ -262,7 +262,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 
 	} // endfor ptcl2
 		
-	std::cout << "\ntotal acceleartion\n" << std::flush;
+	std::cout << "\nnbody+: total acceleartion\n" << std::flush;
 	for (int dim=0; dim<Dim; dim++)	 {
 		for (int order=0; order<HERMITE_ORDER; order++) {
 			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order];

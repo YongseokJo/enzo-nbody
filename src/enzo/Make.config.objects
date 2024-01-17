@@ -1276,7 +1276,6 @@ OBJS_NBODY= \
 					  nbody/Evolve.o\
 						nbody/Particle/CheckNeighborForEvolution.o\
 						nbody/Particle/UpdateEvolveParticle.o\
-						nbody/parser.o \
 						nbody/CommunicatinoToHydro.o \
 
 

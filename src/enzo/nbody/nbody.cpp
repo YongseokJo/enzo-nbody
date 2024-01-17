@@ -44,9 +44,11 @@ int nbody(int MyProcessorNumber) {
 
 	//createComputationChain(particle);
 
+	/*
 	for (Particle* elem: particle) {
 		std::cout << elem->TimeStepIrr <<" ";
 	}
+	*/
 
 	/*
 	for (Particle* elem: particle) {

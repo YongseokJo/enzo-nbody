@@ -22,7 +22,6 @@ extern bool restart;
 extern Particle* FirstEnzoParticle;
 extern double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 extern double EnzoTime;
-extern bool IsEnzoCommunication;
 extern double EnzoTimeStep;
 
 

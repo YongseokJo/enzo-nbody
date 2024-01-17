@@ -61,9 +61,9 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 		x[i]            = 0.;
 		v[i]            = 0.;
 	}
-	treg[0] = CurrentTimeReg; // current time of particle
-	treg[1] = CurrentTimeReg + TimeStepReg; // the time to be advanced to
-	dt = TimeStepReg;
+	treg[0] = CurrentTimeReg*EnzoTimeStep; // current time of particle
+	treg[1] = (CurrentTimeReg + TimeStepReg)*EnzoTimeStep; // the time to be advanced to
+	dt = TimeStepReg*EnzoTimeStep;
 	ACList.clear();
 	NumberOfAC = 0;
 
@@ -157,7 +157,7 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 
 	// update the regular time step
 	if (NumberOfAC == 0)
-		updateParticle(CurrentTimeReg+TimeStepReg, a_tot);
+		updateParticle((CurrentTimeReg+TimeStepReg)*EnzoTimeStep, a_tot);
 	CurrentTimeReg += TimeStepReg;
 	this->calculateTimeStepReg(a_reg, a_reg);
 	this->isRegular = 0;
