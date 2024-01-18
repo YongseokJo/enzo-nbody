@@ -42,6 +42,8 @@ void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Pa
 	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
 																		 *EnzoAcceleration;
 	this->NextParticleInEnzo = NextParticleInEnzo;
+	this->CurrentTimeReg             = 0;
+	this->CurrentTimeIrr             = 0;
 }
 
 void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
@@ -62,6 +64,8 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 																		 *EnzoAcceleration;
 	this->ParticleType               = NormalStar+SingleParticle;
 	this->NextParticleInEnzo         = NextParticleInEnzo;
+	this->CurrentTimeReg             = 0;
+	this->CurrentTimeIrr             = 0;
 }
 
 
@@ -83,6 +87,8 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 																		 *EnzoAcceleration;
 	this->ParticleType = ParticleType;
 	this->NextParticleInEnzo = NextParticleInEnzo;
+	this->CurrentTimeReg             = 0;
+	this->CurrentTimeIrr             = 0;
 }
 
 

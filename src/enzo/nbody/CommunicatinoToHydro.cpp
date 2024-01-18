@@ -53,17 +53,19 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	std::cout << "Data received!\n" << std::endl;
 
 	// Enzo to Nbody unit convertors
-	EnzoMass         = MassUnits/Msun*mass_unit;
-	EnzoLength       = LengthUnits/pc*position_unit;
-	EnzoVelocity     = VelocityUnits/pc*yr*position_unit/time_unit;
-	EnzoTime         = TimeUnits/yr*time_unit;
-	EnzoAcceleration = LengthUnits*LengthUnits/TimeUnits/pc/pc*yr*position_unit*position_unit/time_unit;
+	EnzoMass         = MassUnits/Msun/mass_unit;
+	EnzoLength       = LengthUnits/pc/position_unit;
+	EnzoVelocity     = VelocityUnits/pc*yr/velocity_unit;
+	EnzoTime         = TimeUnits/yr/time_unit;
+	EnzoAcceleration = LengthUnits/TimeUnits/TimeUnits/pc*yr*yr/position_unit*time_unit*time_unit;
 
 	EnzoTimeStep     = TimeStep*EnzoTime;
+	std::cout << "enzo Time:" << TimeStep << std::endl;
+	std::cout << "nbody Time:" << EnzoTimeStep << std::endl;
 
+	Particle* ptclPtr;
+	Particle* ptcl = new Particle[NNB];
 	if (NNB != 0) {
-		Particle* ptclPtr;
-		Particle* ptcl = new Particle[NNB];
 		for (int i=0; i<NNB; i++) {
 			if (i == NNB-1)
 				ptclPtr = nullptr;
@@ -72,6 +74,12 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 			ptcl[i].setParticleInfo(PID, Mass, Position, Velocity, BackgroundAcceleration, ptclPtr, i);
 			particle.push_back(&ptcl[i]);
 		}
+
+		FirstParticleInEnzo = &ptcl[0];
+		std::cout << "enzo Pos:" << Position[0][0] << ", " << Position[0][1] << std::endl;
+		std::cout << "nbody Pos:" << Position[0][0]*EnzoLength << ", " << Position[0][1]*EnzoLength << std::endl;
+		std::cout << "enzo  Mass:" << Mass[0] << std::endl;
+		std::cout << "nbody Mass:" << Mass[0]*EnzoMass << std::endl;
 		std::cout << NNB << " particles loaded!" << std::endl;
 		delete PID, Mass, Position, Velocity, BackgroundAcceleration;
 	}
@@ -185,6 +193,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
 int SendToEzno(std::vector<Particle*> &particle) {
 
+	fprintf(stdout, "NBODY+: Entering SentToEnzo...\n");
 	if (NNB == 0)
 		return DONE;
 	MPI_Request request;
@@ -194,8 +203,8 @@ int SendToEzno(std::vector<Particle*> &particle) {
 
 	int i;
 	Particle *ptcl;
-	ptcl = FirstParticleInEnzo;
 	
+	fprintf(stdout, "NBODY+: 1\n");
 	for (int dim=0; dim<Dim; dim++) {
 		Position[dim]    = new double[NNB-newNNB];
 		Velocity[dim]    = new double[NNB-newNNB];
@@ -205,22 +214,35 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			newVelocity[dim] = new double[newNNB];
 		}
 	}
+	fprintf(stdout, "NBODY+: 2\n");
 	// Construct arrays
-	int count=0;
-	while (ptcl != nullptr) {
-		if (count < NNB-newNNB)
-			for (int dim=0; dim<Dim; dim++) {
-				Position[count][dim] = ptcl->Position[dim];
-				Velocity[count][dim] = ptcl->Velocity[dim];
-			}
-		else 
-			for (int dim=0; dim<Dim; dim++) {
-				newPosition[count-NNB][dim] = ptcl->Position[dim];
-				newVelocity[count-NNB][dim] = ptcl->Velocity[dim];
-			}
-		count++;
+	ptcl = FirstParticleInEnzo;
+	if (ptcl == nullptr) 
+		fprintf(stdout, "NBODY+: Warrning! FirstParticleInEnzo is Null!\n");
+
+	for (int i=0; i<NNB; i++) {
+		fprintf(stdout, "NBODY+: 3\n");
+		for (int dim=0; dim<Dim; dim++) {
+			fprintf(stdout, "NBODY+: 3-1\n");
+			Position[dim][i] = ptcl->Position[dim]/EnzoLength;
+			Velocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;
+		}
+			fprintf(stdout, "NBODY+: 3-2\n");
 		ptcl = ptcl->NextParticleInEnzo;
 	}
+
+	if (newNNB > 0) {
+		for (int i=0; i<newNNB; i++) {
+			fprintf(stdout, "NBODY+: 4\n");
+			for (int dim=0; dim<Dim; dim++) {
+				Position[dim][i] = ptcl->Position[dim]/EnzoLength;
+				Velocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;
+			}
+			ptcl = ptcl->NextParticleInEnzo;
+		}
+	}
+	if (ptcl != nullptr) 
+		fprintf(stdout, "NBODY+: Warrning! NextParticleInEnzo does not match!\n");
 
 
 	fprintf(stdout, "NBODY+: Waiting for Enzo to sent data...\n");

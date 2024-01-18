@@ -20,15 +20,31 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	double timestep_min=1e30;
 	double dtIrr, dtReg;
 	for (Particle* ptcl: particle) {
-		dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
-		getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
+		if (ptcl->NumberOfAC != 0) {
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
+			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
+		}
+		else {
+			ptcl->TimeLevelIrr = ptcl->TimeLevelReg;
+			ptcl->TimeStepIrr  = ptcl->TimeStepReg;
+		}
+
+		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
+		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
 
 		ptcl->CurrentTimeIrr = 0;
 		ptcl->CurrentTimeReg = 0;
 
+	}
+	
 
+	for (Particle* ptcl: particle) {
+		while (ptcl->TimeStepIrr > ptcl->TimeStepReg) {
+			ptcl->TimeStepIrr *= 0.5; 
+			ptcl->TimeLevelIrr--; 
+		}
 		if (ptcl->TimeStepIrr < timestep_min) { 
 			dt_block       = ptcl->TimeStepIrr;
 			dt_block_level = ptcl->TimeLevelIrr;
@@ -36,20 +52,17 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	}
 
 	for (Particle* ptcl: particle) {
-		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
-		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
-
-		while (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
-			ptcl->TimeStepIrr *= 0.5; 
-			ptcl->TimeLevelIrr--; 
-		}
-
 		if (ptcl->TimeLevelIrr < dt_block_level + dt_level_min ) {
 			std::cerr << "Timestep is too small" << std::endl;
 			ptcl->TimeStepIrr  = std::max(dt_block*dt_min, ptcl->TimeStepIrr);
 			ptcl->TimeLevelIrr = std::max(dt_block_level+dt_level_min, ptcl->TimeLevelIrr);
 		}
 	}
+
+	fprintf(stdout,"nbody+: dtIrr = %e, dtReg= %e, TimeStepIrr=%e, TimeStepReg=%e",
+			dtIrr, dtReg, particle[0]->TimeStepIrr, particle[0]->TimeStepReg);
+	fprintf(stdout,"nbody+:dt_block = %e, dt_block_level= %d, EnzoTimeStep=%e", 
+			dt_block, dt_level_min, EnzoTimeStep);
 }
 
 
@@ -61,10 +74,16 @@ int InitializeTimeStep(Particle* particle, int size) {
 
 	for (int i=0; i<size; i++){
 		ptcl = &particle[i];
-		dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
-		getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
+		if (ptcl->NumberOfAC != 0) {
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
+			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
+		}
+		else {
+			ptcl->TimeLevelIrr = ptcl->TimeLevelReg;
+			ptcl->TimeStepIrr  = ptcl->TimeStepReg;
+		}
 
 		ptcl->CurrentTimeIrr = 0;
 		ptcl->CurrentTimeReg = 0;
@@ -80,7 +99,7 @@ int InitializeTimeStep(Particle* particle, int size) {
 		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
 		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
 
-		while (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
+		while (ptcl->TimeStepIrr > ptcl->TimeStepReg) {
 			ptcl->TimeStepIrr *= 0.5; 
 			ptcl->TimeLevelIrr--; 
 		}

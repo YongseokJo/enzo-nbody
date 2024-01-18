@@ -11,6 +11,9 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	double TimeStepIrrTmp;
 	int TimeLevelTmp;
 
+	if (this->NumberOfAC == 0)
+		return;
+
 	getBlockTimeStep(getNewTimeStep(f, df), TimeLevelTmp, TimeStepIrrTmp);
 
 	while (CurrentTimeIrr+TimeStepIrrTmp > CurrentTimeReg+TimeStepReg) {
@@ -50,7 +53,7 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	}
 }
 
-// Update TimeStepReg
+// Update TimeStepReg // need to review
 void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
 	fprintf(stdout, "Number of AC=%d\n", NumberOfAC);
 	//std::cout << NumberOfAC << std::flush;
@@ -60,13 +63,9 @@ void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
 
 
 	if (TimeStepRegTmp > 2*TimeStepReg) {
-		if (fmod(CurrentTimeReg, 2*TimeStepReg)==0) {
+		if (fmod(CurrentTimeReg, 2*TimeStepReg)==0 && CurrentTimeReg != 0) {
 			TimeStepRegTmp = 2*TimeStepReg;
-			TimeLevelTmp++;
-			while (fmod(CurrentTimeReg, 2*TimeStepRegTmp)==0) {
-				TimeStepRegTmp *= 2;
-				TimeLevelTmp++;
-			}
+			TimeLevelTmp   = TimeLevelReg + 1;
 		}
 		else {
 			TimeStepRegTmp = TimeStepReg;
@@ -74,7 +73,7 @@ void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
 		}
 	}
 	else if (TimeStepRegTmp < TimeStepReg) {
-		if (0.5*TimeStepReg > TimeStepRegTmp) {
+		if (TimeStepRegTmp < 0.5*TimeStepReg ) {
 			TimeStepRegTmp = TimeStepReg/4;
 			TimeLevelTmp -= 2;
 		}
@@ -100,5 +99,10 @@ void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
 	while (TimeStepIrr >= TimeStepReg) {
 		TimeStepIrr *= 0.5;
 		TimeLevelIrr--;
+	}
+
+	if (this->NumberOfAC == 0) {
+		TimeStepIrr  = TimeStepReg;
+		TimeLevelIrr = TimeLevelReg;
 	}
 }

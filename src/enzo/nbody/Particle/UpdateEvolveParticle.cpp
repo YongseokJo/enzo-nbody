@@ -1,16 +1,13 @@
-#include "Particle.h"
+#include "../global.h"
 
 
 void Particle::updateEvolveParticle(std::vector<Particle*> &list, double MinRegTime) {
-	double cond;
-	cond	= MinRegTime-(CurrentTimeIrr+TimeStepIrr);
-	//if (PID == 227) {
-	//fprintf(stderr,"UpdateEVolve, PID=%d\n",PID);
-	//fprintf(stderr, "RegTime=%e, CurrentTime=%e, TimeStep=%e\n",MinRegTime, CurrentTimeIrr,TimeStepIrr);
-	//std::cerr << cond <<std::flush;
-	//fprintf(stderr,"\n");
-	//}
-	if (MinRegTime >= (this->CurrentTimeIrr+this->TimeStepIrr - mytolerance)
+
+	double next_time;
+
+	next_time = CurrentTimeIrr + TimeStepIrr;
+
+	if (MinRegTime >= next_time 
 			&& (this->checkNeighborForEvolution())) {
 		return;
 	} else {

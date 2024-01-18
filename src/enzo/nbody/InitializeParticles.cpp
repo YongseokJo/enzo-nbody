@@ -163,20 +163,19 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 	std::cout << "nbody+: Entering CalculateInitialAcceleration  ..." << std::endl;
 
 	j=0;
+
 	//ptcl1->predictParticleSecondOrder(newTime);
-	
 	for (Particle *ptcl2:particle) {
 		r2 = 0;
 		vx = 0;
 		v2 = 0;
-		
+
 		if (ptcl1 == ptcl2) {
 			continue;
 		}
 
 		// updated the predicted positions and velocities just in case
 		// if current time = the time we need, then PredPosition and PredVelocity is same as Position and Velocity
-			
 		//ptcl2->predictParticleSecondOrder(newTime);
 
 
@@ -261,7 +260,6 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		}
 
 	} // endfor ptcl2
-		
 	std::cout << "\nnbody+: total acceleartion\n" << std::flush;
 	for (int dim=0; dim<Dim; dim++)	 {
 		for (int order=0; order<HERMITE_ORDER; order++) {

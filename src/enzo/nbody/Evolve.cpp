@@ -31,39 +31,40 @@ void Evolve(std::vector<Particle*> &particle) {
 
 	MinRegTime = 0.;
 	if (NNB == 0) goto Communication;
+
 	// This part can be parallelized.
 	while (true) {
 		freq %= UpdateFrequency;
 		if ((++freq == 0) || (EvolveParticle.size() == 0)) {
 			// double check whether no evolve particle
 			UpdateEvolveParticle(particle, EvolveParticle, MinRegTime);
+			std::cout <<  "global_time=" << global_time << ", MinRegTime=" << MinRegTime << std::flush;
+			std::cout <<  "NNB=" << NNB << ", newNNB=" << newNNB << std::flush;
 
 			// if no particles to compute, we have to do one of them:
 			// 1. regular force calculation; 2. enzo communication; 3. data dump
 			// Even this can be parallelized.
-			if (EvolveParticle.size() == 0 && (NNB == 0 || global_time == 1.)) {
+			if (EvolveParticle.size() == 0 && (NNB == 0 || global_time >= 1)) {
 Communication:
-				while (NNB == 0) {
+				do {
 					SendToEzno(particle);
 					ReceiveFromEzno(particle);
-				}
+				} while(NNB==0);
 				global_time = 0.;
 				MinRegTime  = 0.;
 			}
 			// It's time to compute regular force.
-			if (global_time == MinRegTime && EvolveParticle.size()==0) {
+			if ((global_time == 0.) || (global_time == MinRegTime) && (EvolveParticle.size()==0)) {
 				std::cout <<  "Regular force calculating...\n" << std::flush;
 				for (Particle* ptcl:particle)
 					if (ptcl->isRegular) {
-						fprintf(stderr, "Particle ID=%d, Time=%.4e, dtIrr=%.4e, dtReg=%.4e\n",ptcl->getPID(), ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->TimeStepReg);
+						fprintf(stdout, "Particle ID=%d, Time=%.4e, dtIrr=%.4e, dtReg=%.4e\n",ptcl->getPID(), ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->TimeStepReg);
 						std::cerr << std::flush;
 						// This only computes accelerations without updating particles.
 						ptcl->calculateRegForce(particle, MinRegTime);
 					}
 				UpdateMinRegTime(particle, &MinRegTime);
 				UpdateEvolveParticle(particle, EvolveParticle, MinRegTime);
-				if (MinRegTime >= 1)
-					exit(EXIT_FAILURE);
 				// after regular force, find particles to evolve again
 			}
 			if (IsOutput) {
@@ -78,9 +79,9 @@ Communication:
 		std::cout << "Irregular force calculating...\n" << std::flush;
 		for (Particle* ptcl: EvolveParticleCopy) {
 			EvolvedTime = ptcl->CurrentTimeIrr+ptcl->TimeStepIrr;
-			fprintf(stderr, "PID=%d, MinRegTime= %e, EvloveTime = %e\n",
+			fprintf(stdout, "PID=%d, MinRegTime= %e, EvloveTime = %e\n",
 					ptcl->getPID(),MinRegTime, EvolvedTime);
-			fprintf(stderr, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
+			fprintf(stdout, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
 					ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->CurrentTimeReg, ptcl->TimeStepReg);
 
 			ptcl->calculateIrrForce(); // this includes particle position and time evolution.
@@ -132,14 +133,12 @@ void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle
 		time      = ptcl->CurrentTimeIrr;
 		next_time = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
 
-	std::cout << "nbody+: " << time << std::endl;
-	std::cout << "nbody+: 1" << std::endl;
 		if ((MinRegTime >= next_time) // Regular timestep
 				&& ptcl->checkNeighborForEvolution()) { // neighbor
 			ptcl->isEvolve = 1;
 			list.push_back(ptcl);
 		}
-	std::cout << "nbody+: 2" << std::endl;
+
 		//set global time as the time of a particle that has most advanced
 		if (time > global_time)
 			global_time = time;

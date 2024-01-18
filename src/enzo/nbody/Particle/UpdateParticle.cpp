@@ -22,9 +22,9 @@ void Particle::predictParticleSecondOrder(double next_time) {
 
 	double dt;
 	if (NumberOfAC == 0)
-		dt = next_time - CurrentTimeReg;
+		dt = (next_time - CurrentTimeReg)*EnzoTimeStep;
 	else
-		dt = next_time - CurrentTimeIrr;
+		dt = (next_time - CurrentTimeIrr)*EnzoTimeStep;
 
 	if ( (dt == 0) ) {
 		for (int dim=0; dim<Dim; dim++) {
@@ -62,9 +62,10 @@ void Particle::correctParticleFourthOrder(double next_time, double a[3][4]) {
 	double dt3,dt4,dt5;
 
 	if (NumberOfAC == 0) 
-		dt = next_time - CurrentTimeReg;
+		dt = (next_time - CurrentTimeReg)*EnzoTimeStep;
 	else
-		dt = next_time - CurrentTimeIrr;
+		dt = (next_time - CurrentTimeIrr)*EnzoTimeStep;
+
 	dt3 = dt*dt*dt;
 	dt4 = dt3*dt;
 	dt5 = dt4*dt;

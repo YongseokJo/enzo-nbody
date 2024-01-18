@@ -42,7 +42,6 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 	int maxNeighborNum = 250;
 	double rs2 = 0.1;  // scale radius...? need to check
 
-
 	double dt, r[2], r2, vx;
 	double a0_reg[2][Dim], a0dot_reg[2][Dim], x[Dim], v[Dim];
 	double a0_irr[2][Dim], a0dot_irr[2][Dim];
@@ -63,7 +62,7 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 	}
 	treg[0] = CurrentTimeReg*EnzoTimeStep; // current time of particle
 	treg[1] = (CurrentTimeReg + TimeStepReg)*EnzoTimeStep; // the time to be advanced to
-	dt = TimeStepReg*EnzoTimeStep;
+	dt      = TimeStepReg*EnzoTimeStep;
 	ACList.clear();
 	NumberOfAC = 0;
 
@@ -80,7 +79,7 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 
 			ptcl->predictParticleSecondOrder(treg[p]);
 			this->predictParticleSecondOrder(treg[p]);
-				fprintf(stdout, "x1=%lf, x2=%lf\n", this->Position[0], ptcl->Position[0]);
+			fprintf(stdout, "x1=%lf, x2=%lf\n", this->Position[0], ptcl->Position[0]);
 			for (int dim=0; dim<Dim; dim++) {
 				// When particles are not at the current time, extrapolate up to 2nd order
 				x[dim] = ptcl->PredPosition[dim] - this->PredPosition[dim];
@@ -99,23 +98,24 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 			}
 			else {
 				// regular acceleration
-				fprintf(stdout, "r2=%lf, vx=%lf\n", r2, vx);
+				//fprintf(stdout, "r2=%lf, vx=%lf\n", r2, vx);
 				direct_sum(x ,v, r2, vx, ptcl->Mass, a0_reg, a0dot_reg, p);
-				fprintf(stdout, "a0_reg=%lf\n", a0_reg[0][0]);
+				//fprintf(stdout, "a0_reg=%lf\n", a0_reg[0][0]);
 			}
-			if (p == 0) 
-				for (int dim=0; dim<Dim; dim++) {
-					a_tot[dim][0] = a0_reg[0][dim]    + a0_irr[0][dim];
-					a_tot[dim][1] = a0dot_reg[0][dim] + a0dot_irr[0][dim];
-				}
+
 		} // endfor ptcl
-	}// endfor i, 0 for current time, 1 for provisional
+		if (p == 0)  // this updates a_tot so that it can be used to predict position for provisional
+			for (int dim=0; dim<Dim; dim++) {
+				a_tot[dim][0] = a0_reg[0][dim]    + a0_irr[0][dim];
+				a_tot[dim][1] = a0dot_reg[0][dim] + a0dot_irr[0][dim];
+			}
+	} // endfor i, 0 for current time, 1 for provisional
 
 
 
 	dt2 = dt*dt;
-	dt3 = dt2*dt;
-	dt4 = dt3*dt;
+	dt3 = dt*dt2;
+	dt4 = dt*dt3;
 	// calculated the final corrected forces
 	for (int dim=0; dim<Dim; dim++) {
 		da_dt2  = (   a0_reg[0][dim] - a0_reg[1][dim]   ) / dt2;
@@ -157,8 +157,8 @@ void Particle::calculateRegForce(std::vector<Particle*> &particle, double MinReg
 
 	// update the regular time step
 	if (NumberOfAC == 0)
-		updateParticle((CurrentTimeReg+TimeStepReg)*EnzoTimeStep, a_tot);
-	CurrentTimeReg += TimeStepReg;
+		updateParticle(CurrentTimeReg+TimeStepReg, a_tot);
+	CurrentTimeReg = CurrentTimeIrr;
 	this->calculateTimeStepReg(a_reg, a_reg);
 	this->isRegular = 0;
 }

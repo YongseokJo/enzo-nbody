@@ -18,6 +18,7 @@ void direct_sum(double *x, double *v, double r2, double vx,
  *
  */
 
+
 void Particle::calculateIrrForce() {
 
 	if (this->NumberOfAC == 0) {
@@ -116,7 +117,8 @@ void Particle::calculateIrrForce() {
 	} // endfor dim
 
 	// update the current irregular time and irregular time steps
-	this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);
+	//this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);
+	this->updateParticle(CurrentTimeIrr+TimeStepIrr, a_tot);
 	CurrentTimeIrr += TimeStepIrr;
 	this->calculateTimeStepIrr(a_tot, a_irr); // calculate irregular time step based on total force
 }
