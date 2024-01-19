@@ -26,6 +26,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	CommunicationInterBarrier();
 	fprintf(stdout, "NBODY+: Receiving data from Enzo...\n");
   MPI_Recv(&NNB, 1, MPI_INT, 0, 100, inter_comm, &status);
+	fprintf(stdout, "NBODY+: NNB=%d\n", NNB);
 	if (NNB != 0) {
 		PID = new int[NNB];
 		MPI_Recv(PID, NNB, MPI_INT, 0, 250, inter_comm, &status);
@@ -150,8 +151,9 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		for (int i=NNB-1; i>=0; i--) {
 			for (int j=0; j<NNB; j++) {
 				if (PID[i] == particle[j]->PID) {
-					particle[i]->setParticleInfo(PID, BackgroundAcceleration, updatedNextPtr, i);
+					particle[i]->setParticleInfo(BackgroundAcceleration, updatedNextPtr, i);
 					updatedNextPtr = particle[i];
+					fprintf(stdout, "NBODY+: pid= %d, x=%e\n",particle[i]->PID,particle[i]->Position[0]);
 					if (i==0)
 						FirstParticleInEnzo = particle[j];
 					continue;
@@ -160,6 +162,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		} //endfor i
 	} //endif nnb
 
+	fprintf(stdout, "NBODY+: FirstParticleInEnzo PID=%d in ReceiveFromEzno \n",FirstParticleInEnzo->PID);
 
 	if (newNNB > 0) {
 		Particle* ptclPtr;
@@ -204,7 +207,6 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	int i;
 	Particle *ptcl;
 	
-	fprintf(stdout, "NBODY+: 1\n");
 	for (int dim=0; dim<Dim; dim++) {
 		Position[dim]    = new double[NNB-newNNB];
 		Velocity[dim]    = new double[NNB-newNNB];
@@ -214,26 +216,27 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			newVelocity[dim] = new double[newNNB];
 		}
 	}
-	fprintf(stdout, "NBODY+: 2\n");
+
+	fprintf(stdout, "NBODY+: FirstParticleInEnzo PID=%d in SendToEzno \n",FirstParticleInEnzo->PID);
 	// Construct arrays
 	ptcl = FirstParticleInEnzo;
-	if (ptcl == nullptr) 
-		fprintf(stdout, "NBODY+: Warrning! FirstParticleInEnzo is Null!\n");
+	if (ptcl == nullptr)
+		fprintf(stdout, "NBODY+: Warning! FirstParticleInEnzo is Null!\n");
 
+	fprintf(stdout, "NBODY+: size=%d\n",particle.size());
 	for (int i=0; i<NNB; i++) {
-		fprintf(stdout, "NBODY+: 3\n");
 		for (int dim=0; dim<Dim; dim++) {
-			fprintf(stdout, "NBODY+: 3-1\n");
 			Position[dim][i] = ptcl->Position[dim]/EnzoLength;
 			Velocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;
 		}
-			fprintf(stdout, "NBODY+: 3-2\n");
+		fprintf(stdout, "NBODY+: pid= %d, x=%e\n",ptcl->PID,Position[0][i]);
 		ptcl = ptcl->NextParticleInEnzo;
+		if (ptcl == nullptr)
+			fprintf(stdout, "NBODY+: Warning! FirstParticleInEnzo is Null! No!\n");
 	}
 
 	if (newNNB > 0) {
 		for (int i=0; i<newNNB; i++) {
-			fprintf(stdout, "NBODY+: 4\n");
 			for (int dim=0; dim<Dim; dim++) {
 				Position[dim][i] = ptcl->Position[dim]/EnzoLength;
 				Velocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;

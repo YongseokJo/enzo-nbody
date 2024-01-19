@@ -23,6 +23,10 @@ int InitializeTimeStep(std::vector<Particle*> &particle);
 
 void InitializeParticle(std::vector<Particle*> &particle) {
 
+	if (NNB == 0) {
+		std::cout << "Initialization skips." << std::endl;
+		return;
+	}
 	std::cout << "Initialization starts." << std::endl;
 
 	// loop over particles to initialize their values

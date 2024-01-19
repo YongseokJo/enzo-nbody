@@ -97,6 +97,7 @@ class Particle
 		void setParticleInfo(int *PID, double *Mass, double *Position[Dim], double *Velocity[Dim],
 			 	double *BackgroundAcceleration[Dim],  int ParticleType, Particle* NextParticleInEnzo, int i);
 		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
+		void setParticleInfo(double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
 		void initializeTimeStep();
 		int getPID() {return PID;};
 		void calculateIrrForce();

@@ -31,10 +31,11 @@ void Particle::setParticleInfo(double *data, int PID, Particle* NextParticleInEn
 	this->Mass         = data[6];
 	this->ParticleType = NormalStar+SingleParticle;
 	this->NextParticleInEnzo = NextParticleInEnzo;
+	this->isRegular      = true;
 }
 
 void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
-	this->PID          = PID[i];
+	this->PID                        = PID[i];
 	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
 																		 *EnzoAcceleration;
 	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
@@ -44,7 +45,22 @@ void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Pa
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
+	this->isRegular      = true;
 }
+
+void Particle::setParticleInfo(double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
+	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
+																		 *EnzoAcceleration;
+	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
+																		 *EnzoAcceleration;
+	this->NextParticleInEnzo = NextParticleInEnzo;
+	this->CurrentTimeReg             = 0;
+	this->CurrentTimeIrr             = 0;
+	this->isRegular      = true;
+}
+
 
 void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 		double *Velocity[Dim], double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
@@ -66,6 +82,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 	this->NextParticleInEnzo         = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
+	this->isRegular      = true;
 }
 
 
@@ -89,6 +106,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
+	this->isRegular      = true;
 }
 
 

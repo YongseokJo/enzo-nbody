@@ -30,7 +30,10 @@ void Evolve(std::vector<Particle*> &particle) {
 	//UpdateMinRegTime(particle, &MinRegTime);
 
 	MinRegTime = 0.;
-	if (NNB == 0) goto Communication;
+	if (NNB == 0) { 
+		std::cout << "nbody+: no particle to be calculated ..." << std::endl;
+		goto Communication;
+	}
 
 	// This part can be parallelized.
 	while (true) {
@@ -121,7 +124,7 @@ void UpdateMinRegTime(std::vector<Particle*> &particle, double* MinRegTime) {
 		}
 	}
 	std::cerr << '\n' << std::flush;
-	*MinRegTime = time;
+	(*MinRegTime) = time;
 }
 
 
