@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
-#include "global.h"
 #include <cmath>
+#include "global.h"
 #include "defs.h"
 
 
@@ -36,8 +36,8 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 	}
 
 	std::cout << "Timestep initializing..." << std::endl;
-
 	InitializeTimeStep(particle);
+	std::cout << "Timestep finished." << std::flush;
 	for (Particle* elem:particle) {
 		for (int dim=0; dim<Dim; dim++) {
 			elem->PredPosition[dim] =  elem->Position[dim];
@@ -54,9 +54,9 @@ void InitializeParticle(std::vector<Particle*> &particle) {
  *  Date    : 2024.01.16  by Seoyoung Kim
  *
  */
-void InitializeParticle(int newNNB, Particle* newParticle, std::vector<Particle*> &particle) {
+void InitializeParticle(Particle* newParticle, std::vector<Particle*> &particle) {
 
-	std::cout << "Initialization of New Particles starts." << std::endl;
+	std::cout << "Initialization of " << newNNB << " New Particles starts." << std::endl;
 
 	// loop over particles to initialize acceleration
 	for (int i=0; i<newNNB; i++) {
@@ -69,7 +69,9 @@ void InitializeParticle(int newNNB, Particle* newParticle, std::vector<Particle*
 		}
 	}
 
+	std::cout << "Timestep initializing..." << std::endl;
 	InitializeTimeStep(newParticle, newNNB);
+	std::cout << "Timestep finished." << std::flush;
 
 	std::cout << "Initialization of New Particles finished." << std::endl;
 }
@@ -88,7 +90,6 @@ void InitializeParticle(int newNNB, Particle* newParticle, std::vector<Particle*
 // recieve the time we want to calculate the neighbor information, 
 // (which would be EnzoTimeMark in the case of New Particles)
 // the particle we want to find the neighbors of and the full particle list
-
 void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 
 	// No need to find neighbors if the total number of particles is less than 100
@@ -100,17 +101,14 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 	std::cout << "Finding neighbors ..." << std::endl;
 
 	//ptcl1->predictParticleSecondOrder(newTime);
-
 	// search for neighbors for ptcl
-
 	for (Particle *ptcl2:particle) {
 
 		r2 = 0.0;
 
 		//ptcl2->predictParticleSecondOrder(newTime);
-
 		for (int dim=0; dim<Dim; dim++) {
-			dx = (ptcl2->PredPosition[dim] - ptcl1->PredPosition[dim]);
+			dx = ptcl2->PredPosition[dim] - ptcl1->PredPosition[dim];
 			r2 += dx*dx;
 		}
 
@@ -120,18 +118,11 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 		}
 	}
 
-	/***
-		if (debug) {
-		std::cout << particle[2]->NumberOfAC << std::endl;
-		for (Particle* element : particle[2]->ACList)
-		std::cout << element->getPID() << " ";
-		}
-		for (int i=0; i<NNB; i++) {
-		std::cout << particle[i]->NumberOfAC << ' ';
-		}
-	 ***/
 	std::cout << "Finding neighbors finished" << std::endl;
 }
+
+
+
 
 /*
  *  Purporse: calculate 0th, 1st, 2nd, 3rd Derivative of Force
@@ -146,8 +137,6 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 // recieve the time we want to calculate the acceleration information, 
 // (which would be EnzoTimeMark in the case of New Particles)
 // the particle we want to calculate and the full particle list
-
-
 void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &particle) {
 
 	int j=0;
@@ -264,7 +253,8 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		}
 
 	} // endfor ptcl2
-	std::cout << "\nnbody+: total acceleartion\n" << std::flush;
+
+	std::cout << "\nNBODY+: total acceleartion\n" << std::flush;
 	for (int dim=0; dim<Dim; dim++)	 {
 		for (int order=0; order<HERMITE_ORDER; order++) {
 			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order];

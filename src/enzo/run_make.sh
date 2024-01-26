@@ -9,9 +9,6 @@
 
 pwd; hostname; date
 
-module add cuda
-moudle add cudnn
-
 ./make-rusty.sh
 
 date

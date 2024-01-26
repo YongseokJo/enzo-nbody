@@ -7,7 +7,7 @@ double dt_block;
 int dt_block_level;
 
 double getNewTimeStep(double f[3][4], double df[3][4]);
-double getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep);
+void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep);
 
 /*
  *  Purporse: Initialize timsteps 
@@ -59,10 +59,11 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 		}
 	}
 
-	fprintf(stdout,"nbody+: dtIrr = %e, dtReg= %e, TimeStepIrr=%e, TimeStepReg=%e",
+	fprintf(stdout, "nbody+: dtIrr = %e, dtReg= %e, TimeStepIrr=%e, TimeStepReg=%e\n",
 			dtIrr, dtReg, particle[0]->TimeStepIrr, particle[0]->TimeStepReg);
-	fprintf(stdout,"nbody+:dt_block = %e, dt_block_level= %d, EnzoTimeStep=%e", 
+	fprintf(stdout, "nbody+:dt_block = %e, dt_block_level= %d, EnzoTimeStep=%e\n",
 			dt_block, dt_level_min, EnzoTimeStep);
+	return true;
 }
 
 

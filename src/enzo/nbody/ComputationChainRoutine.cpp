@@ -4,36 +4,44 @@
 #include "global.h"
 #define no_debug
 
-void Merge(int* index, double *timesteps, int left, int mid, int right);
-void MergeSort(int *index, double *timesteps, int left, int right);
+void Merge(std::vector<int> index, std::vector<double> timesteps, int left, int mid, int right);
+void MergeSort(std::vector<int> index, std::vector<double> timesteps, int left, int right);
 
 
 // Function to perform argsort on a vector
-void SortComputationChain(std::vector<*Particle> &ComputationChain) {
+bool SortComputationChain(std::vector<Particle*> ComputationChainTmp) {
 
-    std::vector<int> index;
-    std::vector<double> time;
+	std::vector<int> index{};
+	std::vector<double> time{};
 	double NextIrrTime = 0.0;
 
 	int i=0;
-	for (Particle *ptcl : ComputationChain)
+	for (Particle *ptcl : ComputationChainTmp)
 	{
 		NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
-		if (NextIrrTime > NextRegTime)
+		if (ptcl->NumberOfAC == 0|| NextIrrTime > NextRegTime)
 			continue;
 		index.push_back(++i);
 		time.push_back(NextIrrTime);
 	}
 
-	// Sort the index array based on the values in the original vector
-	std::sort(index.begin(), index.end(), [&time](int i1, int i2) {
-        return v[i1] < v[i2];
-    });
+	if (index.size() == 0) {
+		return false;
+	}
 
+	// Sort the index array based on the values in the original vector
+	std::sort(index.begin(), index.end(), [&time](int i1, int i2) {return time[i1] < time[i2];});
+
+	ComputationChain.clear();
+	for (int ind: index) {
+		ComputationChain.push_back(ComputationChainTmp[ind]);
+	}
+
+	return true;
 }
 
 
-bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<*Particle> &ComputationChain) {
+bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Particle*> &ComputationChainTmp) {
 	// This stores the first particle of each level in the particle chain
 
 	double NextIrrTime = 0.0;
@@ -42,14 +50,15 @@ bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<*Parti
 
 	for (int i=0; i<NNB; i++) {
 		NextIrrTime = particle[i]->CurrentTimeIrr+particle[i]->TimeStepIrr;
-		if (NextIrrTime > NextRegTime)
+		if (particle[i]->NumberOfAC == 0|| NextIrrTime > NextRegTime)
 			continue;
 		timesteps.push_back(NextIrrTime);
 		index.push_back(i);
 	}
 
-	if (index.size() == 0)
+	if (index.size() == 0) {
 		return false;
+	}
 
 #ifdef debug
 	std::cout << "Index" << '\n';
@@ -66,12 +75,12 @@ bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<*Parti
 #endif
 
 
-	MergeSort(index, timesteps, 0, index.size()-1);
+  MergeSort(index, timesteps, 0, index.size()-1);
 
-	ComputationChain.push_back(particle[index[0]]);
+	ComputationChainTmp.push_back(particle[index[0]]);
 	for (int i=0; i<index.size()-1; i++) {
 		if (timesteps[i] != timesteps[i+1])
-			ComputationChain.push_back(particle[index[i+1]]);
+			ComputationChainTmp.push_back(particle[index[i+1]]);
 	}
 
 
@@ -110,7 +119,8 @@ bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<*Parti
 	return true;
 }
 
-void Merge(int* index, double *timesteps, int left, int mid, int right) {
+
+void Merge(std::vector<int> index, std::vector<double> timesteps, int left, int mid, int right) {
 	int n1 = mid - left + 1;
 	int n2 = right - mid;
 
@@ -160,7 +170,7 @@ void Merge(int* index, double *timesteps, int left, int mid, int right) {
 	}
 }
 
-void MergeSort(int *index, double *timesteps, int left, int right) {
+void MergeSort(std::vector<int> index, std::vector<double> timesteps, int left, int right) {
 	if (left < right) {
 		int mid = left + (right - left) / 2;
 

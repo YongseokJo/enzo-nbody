@@ -46,28 +46,28 @@ void InitializeNbodyArrays(bool NbodyFirst) {
 
 	if (NbodyParticleMass != NULL)
 		delete [] NbodyParticleMass;
-	NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+	NbodyParticleMass = new float[NumberOfNbodyParticles];
 
 	if (NbodyParticleID != NULL)
 		delete [] NbodyParticleID;
-	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+	NbodyParticleID = new int[NumberOfNbodyParticles];
 
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
 		if (NbodyParticlePosition[dim] != NULL) delete [] NbodyParticlePosition[dim];
-		NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles];
 
 		if (NbodyParticleVelocity[dim] != NULL)
 			delete [] NbodyParticleVelocity[dim];
-		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles];
 	}
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
 		if (NbodyParticleAccelerationNoStar[dim] != NULL)
 			delete [] NbodyParticleAccelerationNoStar[dim];
-		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles];
 
 	}
 }
@@ -77,25 +77,25 @@ void InitializeNbodyArrays(void) {
 
 	if (NbodyParticleMass != NULL)
 		delete [] NbodyParticleMass;
-	NbodyParticleMass = new float[NumberOfNbodyParticles]{0};
+	NbodyParticleMass = new float[NumberOfNbodyParticles];
 
 	if (NbodyParticleID != NULL)
 		delete [] NbodyParticleID;
-	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+	NbodyParticleID = new int[NumberOfNbodyParticles];
 
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
 		if (NbodyParticleVelocity[dim] != NULL)
 			delete [] NbodyParticleVelocity[dim];
-		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles];
 	}
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) { 
 
 		if (NbodyParticleAccelerationNoStar[dim] != NULL)
 			delete [] NbodyParticleAccelerationNoStar[dim];
-		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticleAccelerationNoStar[dim] = new float[NumberOfNbodyParticles];
 
 	}
 }
@@ -105,17 +105,17 @@ void InitializeNbodyArrays(int) {
 
 	if (NbodyParticleID != NULL)
 		delete [] NbodyParticleID;
-	NbodyParticleID = new int[NumberOfNbodyParticles]{0};
+	NbodyParticleID = new int[NumberOfNbodyParticles];
 
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
 
 		if (NbodyParticlePosition[dim] != NULL) delete [] NbodyParticlePosition[dim];
-		NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticlePosition[dim] = new float[NumberOfNbodyParticles];
 
 		if (NbodyParticleVelocity[dim] != NULL)
 			delete [] NbodyParticleVelocity[dim];
-		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles]{0};
+		NbodyParticleVelocity[dim] = new float[NumberOfNbodyParticles];
 
 	}
 }

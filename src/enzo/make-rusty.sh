@@ -11,7 +11,7 @@ cd ../../
 cd src/enzo/
 
 #module add openmpi4
-module add modules/2.1.1-20230405
+#module add modules/2.1.1-20230405
 #module add gcc/10.4.0
 module add intel-oneapi-compilers
 module add intel-oneapi-mpi

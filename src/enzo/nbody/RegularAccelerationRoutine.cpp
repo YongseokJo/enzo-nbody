@@ -8,16 +8,47 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
     std::cout << "Calculating regular force ...\n" << std::flush;
     
     // Calulating regular acceleration of the particles
-    for (Particle *ptcl : particle)
+    for (Particle *ptcl : particle) {
         if (ptcl->isRegular)
         {
             fprintf(stdout, "Particle ID=%d, Time=%.4e, dtIrr=%.4e, dtReg=%.4e\n", ptcl->getPID(), ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->TimeStepReg);
             std::cerr << std::flush;
             // This only computes accelerations without updating particles.
-            ptcl->calculateRegForce(particle);
+            ptcl->calculateRegAccelerationSecondOrder(particle);
         }
+		}
+
+    for (Particle *ptcl : particle) {
+        if (ptcl->isRegular)
+        {
+            ptcl->calculateRegAccelerationFourthOrder(particle);
+				}
+		}
+
+		// Update particles
+		for (Particle *ptcl : particle) {
+			// update the regular time step
+			if (ptcl->isRegular) {
+				if (ptcl->NumberOfAC == 0)
+				{
+					ptcl->updateParticle(ptcl->CurrentTimeReg + ptcl->TimeStepReg, ptcl->a_tot);
+					ptcl->CurrentTimeReg += ptcl->TimeStepReg;
+				}
+				else
+				{ // Not sure about it
+					ptcl->CurrentTimeReg = ptcl->CurrentTimeIrr;
+				}
+				ptcl->calculateTimeStepReg(ptcl->a_reg, ptcl->a_reg);
+				std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep << std::endl;
+				std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep*time_unit << "yr" << std::endl;
+			}
+			ptcl->isRegular = 0;
+		}
+
     // update the next regular time step
     UpdateNextRegTime(particle);
+
+		return true;
 }
 
 
@@ -25,20 +56,20 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 void UpdateNextRegTime(std::vector<Particle*> &particle) {
 
 	int isRegular = 0;
-	double time_tmp, time = 1e10;
+	double time_tmp, time = 1e20;
 
-    for (Particle *ptcl : particle)
-    {
-        // Next regular time step
-        time_tmp = ptcl->CurrentTimeReg + ptcl->TimeStepReg;
+	for (Particle *ptcl : particle)
+	{
+		// Next regular time step
+		time_tmp = ptcl->CurrentTimeReg + ptcl->TimeStepReg;
 
-        // Find the minum regular time step
-        if (time > time_tmp)
-            time = time_tmp;
-    }
+		// Find the minum regular time step
+		if (time > time_tmp)
+			time = time_tmp;
+	}
 	NextRegTime = time;
 
-    // Set isRegular of the particles that will be updated next to 1
+	// Set isRegular of the particles that will be updated next to 1
 	std::cerr << "Regular: ";
 	for (Particle* ptcl: particle) {
 		time_tmp = ptcl->CurrentTimeReg + ptcl->TimeStepReg;

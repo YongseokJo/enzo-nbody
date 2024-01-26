@@ -4,7 +4,7 @@
 
 
 double getNewTimeStep(double f[3][4], double df[3][4]);
-double getBlockTimeStep(double dt, int& TimeLevel, double &TimeStep);
+void getBlockTimeStep(double dt, int& TimeLevel, double &TimeStep);
 
 // Update TimeStepIrr
 void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
@@ -55,7 +55,7 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 
 // Update TimeStepReg // need to review
 void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
-	fprintf(stdout, "Number of AC=%d\n", NumberOfAC);
+	//fprintf(stdout, "Number of AC=%d\n", NumberOfAC);
 	//std::cout << NumberOfAC << std::flush;
 	double TimeStepRegTmp;
 	int TimeLevelTmp;

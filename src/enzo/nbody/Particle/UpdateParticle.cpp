@@ -26,7 +26,7 @@ void Particle::predictParticleSecondOrder(double next_time) {
 	else
 		dt = (next_time - CurrentTimeIrr)*EnzoTimeStep;
 
-	if ( (dt == 0) ) {
+	if (dt == 0) {
 		for (int dim=0; dim<Dim; dim++) {
 			PredPosition[dim] = Position[dim];
 			PredVelocity[dim] = Velocity[dim];

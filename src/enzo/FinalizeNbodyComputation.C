@@ -52,7 +52,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 		FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles, &NewLocalNumberOfNbodyParticles);
 
-		if (NumberOfNbodyParticles == 0)
+		if (NumberOfNbodyParticles == 0 && NumberOfNewNbodyParticles == 0)
 			return SUCCESS;
 
 		float *NbodyParticlePositionTemp[MAX_DIMENSION];
@@ -124,6 +124,8 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/******** Recv Arrays to Fortran Nbody6++    *****/
 			/*-----------------------------------------------*/
 			fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
+
+			fprintf(stdout, "ENZO: Waiting for NBODY+ to receive data \n");
 			InitializeNbodyArrays(1);
 			CommunicationInterBarrier();
 			fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
@@ -132,12 +134,14 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				ierr = MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm, &status);
 			}
 			fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
-			if (NumberOfNewNbodyParticles > 0) 
+			if (NumberOfNewNbodyParticles > 0) {
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					ierr = MPI_Recv(NewNbodyParticlePosition[dim], NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm, &status);
 					ierr = MPI_Recv(NewNbodyParticleVelocity[dim], NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 600, inter_comm, &status);
 				}
+			}
 			CommunicationInterBarrier();
+			fprintf(stdout, "ENZO: Data received.\n");
 
 			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
 			fprintf(stderr,"enzo: X=%e, V=%e\n ",NbodyParticlePosition[0][0], NbodyParticleVelocity[0][0]);

@@ -102,7 +102,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 																		 *EnzoAcceleration;
 	this->BackgroundAcceleration[2]  = BackgroundAcceleration[2][i]\
 																		 *EnzoAcceleration;
-	this->ParticleType = ParticleType;
+	this->ParticleType       = ParticleType;
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;

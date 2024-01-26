@@ -1,13 +1,13 @@
 #include "../global.h"
 
 
-void Particle::updateEvolveParticle(std::vector<Particle*> &list, double MinRegTime) {
+void Particle::updateEvolveParticle(std::vector<Particle*> &list) {
 
 	double next_time;
 
 	next_time = CurrentTimeIrr + TimeStepIrr;
 
-	if (MinRegTime >= next_time 
+	if (NextRegTime >= next_time 
 			&& (this->checkNeighborForEvolution())) {
 		return;
 	} else {

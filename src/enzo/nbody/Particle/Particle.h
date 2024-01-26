@@ -6,7 +6,7 @@
  */
 
 
-
+#include <vector>
 #include <iostream>
 #include "../defs.h"
 //#include "../global.h"
@@ -101,14 +101,15 @@ class Particle
 		void initializeTimeStep();
 		int getPID() {return PID;};
 		void calculateIrrForce();
-		void calculateRegForce(std::vector<Particle*> &particle, double MinRegTime);
+		void calculateRegAccelerationSecondOrder(std::vector<Particle*> &particle);
+		void calculateRegAccelerationFourthOrder(std::vector<Particle*> &particle);
 		void predictParticleSecondOrder(double next_time);
 		void correctParticleFourthOrder(double next_time, double a[3][4]);
 		void normalizeParticle();
 		void calculateTimeStepIrr(double f[3][4], double df[3][4]);
 		void calculateTimeStepReg(double f[3][4], double df[3][4]);
 		bool checkNeighborForEvolution();
-		void updateEvolveParticle(std::vector<Particle*> &particle, double MinRegTime);
+		void updateEvolveParticle(std::vector<Particle*> &particle);
 		void updateParticle(double next_time, double a[3][4]);
 };
 

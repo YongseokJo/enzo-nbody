@@ -1,12 +1,21 @@
-#include "../global.h"
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include "../global.h"
 
 
 void direct_sum(double *x, double *v, double r2, double vx,
-	 	        double mass, double (&a)[2][3], double (&adot)[2][3], int p);
+	 	        double mass, double (&a)[2][3], double (&adot)[2][3], int p) {
+	double m_r3;
 
+	r2 += EPS2;  // add softening length
+	m_r3 = mass/r2/sqrt(r2);
+
+	for (int dim=0; dim<Dim; dim++){
+		a[p][dim]    += m_r3*x[dim];
+		adot[p][dim] += m_r3*(v[dim] - 3*x[dim]*vx/r2);
+	}
+}
 
 /*
  *  Purporse: Calculate the and update the irregular acceleration of particles
@@ -35,8 +44,8 @@ void Particle::calculateIrrForce() {
 
 
 	dt      = TimeStepIrr*EnzoTimeStep; // interval of time step
-	tirr[0] = CurrentTimeIrr*EnzoTimeStep; // current time of particle
-	tirr[1] = (CurrentTimeIrr + TimeStepIrr)*EnzoTimeStep; // the time to be advanced to
+	tirr[0] = CurrentTimeIrr; // current time of particle
+	tirr[1] = CurrentTimeIrr + TimeStepIrr; // the time to be advanced to
 
 	// initialize irregular force terms for ith particle just in case
 	for (int p=0; p<2; p++) {

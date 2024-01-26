@@ -3,6 +3,8 @@
 
 
 void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle*> &list);
+bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Particle*> &ComputationChain);
+bool SortComputationChain(std::vector<Particle*> ComputationChain);
 
 // 1. sort particles according to next irregular time
 // 2. the sorted list should be update regularly
@@ -10,7 +12,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 {
 
     std::cout << "Creating a computation chain ...\n";
-    if (CreateComputationChain(particle) == false) {
+    if (CreateComputationChain(particle, ComputationChain) == false) {
         std::cout << "No irregular particle to update ...\n";
         return true;
     }
@@ -21,27 +23,28 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
     for (Particle *ptcl : ComputationChain) 
     {
         fprintf(stdout, "PID=%d, NextRegTime= %e, NextIrrTime = %e\n",
-                ptcl->getPID(), MinRegTime, ptcl->CurrentTimeIrr + ptcl->TimeStepIrr);
+                ptcl->getPID(), NextRegTime, ptcl->CurrentTimeIrr + ptcl->TimeStepIrr);
         fprintf(stdout, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
                 ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->CurrentTimeReg, ptcl->TimeStepReg);
 
         ptcl->calculateIrrForce(); // this includes particle position and time evolution.
         SortComputationChain(ComputationChain);
-    }
+	}
+	return true;
 }
 
 
 
 
 void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle*> &list) {
-	std::cout << "nbody+: Updating EvolveParticle..." << std::endl;
+	std::cout << "NBODY+: Updating EvolveParticle..." << std::endl;
 	double time, next_time;
 	list.clear();
 	for (Particle* ptcl: particle) {
 		time      = ptcl->CurrentTimeIrr;
 		next_time = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
 
-		if ((MinRegTime >= next_time) // Regular timestep
+		if ((NextRegTime >= next_time) // Regular timestep
 				&& ptcl->checkNeighborForEvolution()) { // neighbor
 			ptcl->isEvolve = 1;
 			list.push_back(ptcl);
@@ -51,7 +54,7 @@ void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle
 		if (time > global_time)
 			global_time = time;
 	}
-	std::cout << "nbody+: EvolveParticle: ";
+	std::cout << "NBODY+: EvolveParticle: ";
 	std::cout << list.size();
 	std::cout << '\n' << std::flush;
 }
