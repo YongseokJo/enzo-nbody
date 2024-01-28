@@ -77,6 +77,7 @@ int InitializeTimeStep(Particle* particle, int size) {
 		ptcl = &particle[i];
 		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
+
 		if (ptcl->NumberOfAC != 0) {
 			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
@@ -94,9 +95,10 @@ int InitializeTimeStep(Particle* particle, int size) {
 			dt_block       = ptcl->TimeStepIrr;
 			dt_block_level = ptcl->TimeLevelIrr;
 		}
-	}
+	} // endfor size
 
 	for (int i=0; i<size; i++){
+		ptcl = &particle[i];
 		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
 		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
 
@@ -110,5 +112,9 @@ int InitializeTimeStep(Particle* particle, int size) {
 			ptcl->TimeStepIrr  = std::max(dt_block*dt_min, ptcl->TimeStepIrr);
 			ptcl->TimeLevelIrr = std::max(dt_block_level+dt_level_min, ptcl->TimeLevelIrr);
 		}
-	}
+	} //endfor size
+	return 1;
 }
+
+
+

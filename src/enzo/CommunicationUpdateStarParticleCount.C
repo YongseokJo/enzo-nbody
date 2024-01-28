@@ -27,6 +27,7 @@
 #endif /* USE_MPI */
 
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include "performance.h"
 #include "ErrorExceptions.h"
@@ -95,8 +96,10 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 		buffer[index] = PartialParticleCount[grid];
 		buffer[index+1] = PartialStarParticleCount[grid];
 	}
+	std::cout << "USPC2-1" << std::endl;  // by YS
 	MPI_Allreduce(buffer, rbuffer, 2*GridCount,
 			DataTypeInt, MPI_SUM, enzo_comm);
+	std::cout << "USPC2-2" << std::endl;  // by YS
 	for (grid = 0, index = 0; grid < NumberOfGrids; index += 2, grid++) {
 		TotalParticleCount[grid] = rbuffer[index];
 		TotalStarParticleCount[grid] = rbuffer[index+1];
