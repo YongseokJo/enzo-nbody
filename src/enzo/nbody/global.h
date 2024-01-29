@@ -13,6 +13,7 @@ extern const int dt_level_min;
 extern double dt_block;  // this stores the minimum time step
 extern int dt_block_level;
 extern std::vector<Particle*> ComputationChain;
+extern Particle* FirstComputation;
 
 
 //extern bool debug;

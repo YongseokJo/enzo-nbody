@@ -16,11 +16,15 @@ void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep);
  *
  */
 int InitializeTimeStep(std::vector<Particle*> &particle) {
+
 	std::cout << "Initializing timesteps ..." << std::endl;
+
 	double timestep_min=1e30;
 	double dtIrr, dtReg;
+
 	for (Particle* ptcl: particle) {
 		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
+		std::cout << "dtReg=" << dtReg << std::endl;
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
 		if (ptcl->NumberOfAC != 0) {
 			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);

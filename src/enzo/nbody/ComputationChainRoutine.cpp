@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "global.h"
-#define no_debug
+#define debug
 
 void Merge(std::vector<int> index, std::vector<double> timesteps, int left, int mid, int right);
 void MergeSort(std::vector<int> index, std::vector<double> timesteps, int left, int right);
@@ -19,10 +19,12 @@ bool SortComputationChain(std::vector<Particle*> ComputationChainTmp) {
 	for (Particle *ptcl : ComputationChainTmp)
 	{
 		NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
-		if (ptcl->NumberOfAC == 0|| NextIrrTime > NextRegTime)
-			continue;
-		index.push_back(++i);
-		time.push_back(NextIrrTime);
+		std::cout << NextIrrTime << std::endl;
+		if ((ptcl->NumberOfAC != 0) && (NextIrrTime <= NextRegTime)) {
+			index.push_back(i);
+			time.push_back(NextIrrTime);
+		}
+		i++;
 	}
 
 	if (index.size() == 0) {
@@ -40,7 +42,124 @@ bool SortComputationChain(std::vector<Particle*> ComputationChainTmp) {
 	return true;
 }
 
+// Function to perform argsort on a vector
+bool SortComputationChain(Particle* ptcl) {
 
+	Particle *NextParticle, *PreviousParticle;
+	double NextIrrTime = 0.0, NextParticleNextIrrTime=0.0;
+
+
+	NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
+
+	if ((ptcl->NumberOfAC == 0) || (NextIrrTime > NextRegTime)) {
+		return false;
+	}
+
+	PreviousParticle = ptcl;
+	NextParticle     = ptcl->NextParticleForComputation;
+	while (NextParticle != nullptr) {
+		NextParticleNextIrrTime = NextParticle->CurrentTimeIrr + NextParticle->TimeStepIrr;
+		if (NextIrrTime < NextParticleNextIrrTime) {
+			PreviousParticle->NextParticleForComputation = ptcl;
+			ptcl->NextParticleForComputation = NextParticle;
+			return true;
+		}
+		PreviousParticle = NextParticle;
+		NextParticle     = NextParticle->NextParticleForComputation;
+	}
+
+
+	NextParticle = ptcl->NextParticleForComputation;
+	while (NextParticle != nullptr) {
+		NextParticleNextIrrTime = NextParticle->CurrentTimeIrr + NextParticle->TimeStepIrr;
+		std::cout << NextParticleNextIrrTime << ' ';
+		NextParticle = NextParticle->NextParticleForComputation;
+	}
+	while (NextParticle != nullptr) {
+		std::cout << NextParticle->PID << ' ';
+		NextParticle = NextParticle->NextParticleForComputation;
+	}
+	std::cout << std::endl;
+
+	return true;
+}
+
+
+bool CreateComputationChain(std::vector<Particle*> &particle) {
+
+	std::vector<int> index{};
+	std::vector<double> time{};
+	double NextIrrTime = 0.0;
+
+	int i=0;
+	//std::cout << "NextIrrTime:\n" << std::endl;
+	for (Particle *ptcl : particle)
+	{
+		NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
+		//std::cout << NextIrrTime << std::endl;
+		if ((ptcl->NumberOfAC != 0) && (NextIrrTime <= NextRegTime)) {
+			index.push_back(i);
+			time.push_back(NextIrrTime);
+		}
+		i++;
+	}
+	//std::cout << std::endl;
+
+	if (index.size() == 0) {
+		return false;
+	}
+
+	std::cout << "PID" << '\n';
+	for (int ind: index) {
+		//std::cout << ind << ' ';
+		std::cout << particle[ind]->PID << ' ';
+	}
+	std::cout << '\n';
+	std::cout << "Timesteps" << '\n';
+	for (int ind; ind < index.size(); ind++) {
+		std::cout << time[ind] << ' ';
+	}
+	std::cout << '\n';
+
+	// Sort the index array based on the values in the original vector
+	std::sort(index.begin(), index.end(), [&time](int i1, int i2) {return time[i1] < time[i2];});
+
+	std::cout << "PID" << '\n';
+	for (int ind: index) {
+		//std::cout << ind << ' ';
+		std::cout << particle[ind]->PID << ' ';
+	}
+	/*
+	std::cout << "Index" << '\n';
+	for (int ind: index) {
+		std::cout << ind << ' ';
+	}*/
+	std::cout << '\n';
+	std::cout << "Timesteps" << '\n';
+	for (int ind; ind < index.size(); ind++) {
+		std::cout << time[ind] << ' ';
+	}
+	std::cout << '\n';
+
+	Particle* NextParticle = nullptr;
+	for (int i=index.size()-1; i>=0; i--) {
+		particle[index[i]]->NextParticleForComputation = NextParticle;
+		NextParticle = particle[index[i]];
+	}
+	FirstComputation = NextParticle;
+
+	ComputationChain.clear();
+	for (int ind: index) {
+		ComputationChain.push_back(particle[ind]);
+	}
+
+	index.clear();
+	time.clear();
+
+	return true;
+}
+
+/*
 bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Particle*> &ComputationChainTmp) {
 	// This stores the first particle of each level in the particle chain
 
@@ -92,12 +211,6 @@ bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Partic
 	}
 	std::cout << '\n';
 
-	std::cout << "LevelList" << '\n';
-	for (int element : LevelList) {
-		    std::cout << element << " ";
-	}
-	std::cout << '\n';
-
 	std::cout << "Timesteps" << '\n';
 	for (int i=0; i<NNB; i++) {
 		std::cout << timesteps[i] << ' ';
@@ -107,17 +220,16 @@ bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Partic
 #endif
 
 
-	/*
 	for (Particle* elem: particle) {
 		for (int i=0; i<NNB-1; i++) {
 			if (elem->getPID() == index[i])
 				elem->NextParticle = particle[index[i+1]];
 		}
 	}
-	*/
 
 	return true;
 }
+*/
 
 
 void Merge(std::vector<int> index, std::vector<double> timesteps, int left, int mid, int right) {

@@ -5,14 +5,13 @@ void UpdateNextRegTime(std::vector<Particle*> &particle);
 
 bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 {
-    std::cout << "Calculating regular force ...\n" << std::flush;
+    std::cout << "Calculating regular force ...\n" << std::endl;
     
     // Calulating regular acceleration of the particles
     for (Particle *ptcl : particle) {
         if (ptcl->isRegular)
         {
             fprintf(stdout, "Particle ID=%d, Time=%.4e, dtIrr=%.4e, dtReg=%.4e\n", ptcl->getPID(), ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->TimeStepReg);
-            std::cerr << std::flush;
             // This only computes accelerations without updating particles.
             ptcl->calculateRegAccelerationSecondOrder(particle);
         }
@@ -29,7 +28,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 		for (Particle *ptcl : particle) {
 			// update the regular time step
 			if (ptcl->isRegular) {
-				if (ptcl->NumberOfAC == 0)
+				if ((ptcl->NumberOfAC == 0) && (NextRegTime == ptcl->CurrentTimeReg + ptcl->TimeStepReg))
 				{
 					ptcl->updateParticle(ptcl->CurrentTimeReg + ptcl->TimeStepReg, ptcl->a_tot);
 					ptcl->CurrentTimeReg += ptcl->TimeStepReg;
@@ -38,16 +37,18 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 				{ // Not sure about it
 					ptcl->CurrentTimeReg = ptcl->CurrentTimeIrr;
 				}
+
 				ptcl->calculateTimeStepReg(ptcl->a_reg, ptcl->a_reg);
-				std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep << std::endl;
-				std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep*time_unit << "yr" << std::endl;
+				ptcl->calculateTimeStepIrr(ptcl->a_tot, ptcl->a_irr);
+				//std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep << std::endl;
+				//std::cout << "NBODY+: time step = " <<  ptcl->TimeStepReg*EnzoTimeStep*time_unit << "yr" << std::endl;
+				ptcl->isRegular = false;
 			}
-			ptcl->isRegular = 0;
 		}
 
     // update the next regular time step
     UpdateNextRegTime(particle);
-
+    std::cout << "Finishing regular force ...\n" << std::flush;
 		return true;
 }
 
@@ -67,6 +68,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle) {
 		if (time > time_tmp)
 			time = time_tmp;
 	}
+
 	NextRegTime = time;
 
 	// Set isRegular of the particles that will be updated next to 1
@@ -75,7 +77,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle) {
 		time_tmp = ptcl->CurrentTimeReg + ptcl->TimeStepReg;
 		if (NextRegTime == time_tmp) {
 			std::cerr << ptcl->getPID() << ' ';
-			ptcl->isRegular = 1;
+			ptcl->isRegular = true;
 		}
 	}
 	std::cerr << '\n' << std::flush;

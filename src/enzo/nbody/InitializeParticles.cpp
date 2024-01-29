@@ -37,7 +37,7 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 
 	std::cout << "Timestep initializing..." << std::endl;
 	InitializeTimeStep(particle);
-	std::cout << "Timestep finished." << std::flush;
+	std::cout << "Timestep finished." << std::endl;
 	for (Particle* elem:particle) {
 		for (int dim=0; dim<Dim; dim++) {
 			elem->PredPosition[dim] =  elem->Position[dim];
@@ -71,7 +71,7 @@ void InitializeParticle(Particle* newParticle, std::vector<Particle*> &particle)
 
 	std::cout << "Timestep initializing..." << std::endl;
 	InitializeTimeStep(newParticle, newNNB);
-	std::cout << "Timestep finished." << std::flush;
+	std::cout << "Timestep finished." << std::endl;
 
 	std::cout << "Initialization of New Particles finished." << std::endl;
 }
@@ -98,27 +98,31 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 	double dx;
 	double r2;
 
-	std::cout << "Finding neighbors ..." << std::endl;
-
 	//ptcl1->predictParticleSecondOrder(newTime);
 	// search for neighbors for ptcl
 	for (Particle *ptcl2:particle) {
+
+		if  (ptcl1 == ptcl2) {
+			continue;
+		}
 
 		r2 = 0.0;
 
 		//ptcl2->predictParticleSecondOrder(newTime);
 		for (int dim=0; dim<Dim; dim++) {
-			dx = ptcl2->PredPosition[dim] - ptcl1->PredPosition[dim];
+			dx = ptcl2->Position[dim] - ptcl1->Position[dim];
 			r2 += dx*dx;
 		}
 
-		if (sqrt(r2) < ptcl1->RadiusOfAC && ptcl1 != ptcl2) {
+		if (sqrt(r2) < ptcl1->RadiusOfAC) {
 			ptcl1->ACList.push_back(ptcl2);
 			ptcl1->NumberOfAC++;
 		}
-	}
+	} // endfor 
+	
+	std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
+	return ;
 
-	std::cout << "Finding neighbors finished" << std::endl;
 }
 
 
@@ -153,9 +157,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		adot[dim] = 0.;
 	}
 
-	std::cout << "nbody+: Entering CalculateInitialAcceleration  ..." << std::endl;
-
-	j=0;
+	//std::cout << "nbody+: Entering CalculateInitialAcceleration  ..." << std::endl;
 
 	//ptcl1->predictParticleSecondOrder(newTime);
 	for (Particle *ptcl2:particle) {
@@ -170,8 +172,6 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		// updated the predicted positions and velocities just in case
 		// if current time = the time we need, then PredPosition and PredVelocity is same as Position and Velocity
 		//ptcl2->predictParticleSecondOrder(newTime);
-
-
 		for (int dim=0; dim<Dim; dim++) {
 			x[dim] = ptcl2->Position[dim] - ptcl1->Position[dim];
 			v[dim] = ptcl2->Velocity[dim] - ptcl1->Velocity[dim];
@@ -185,7 +185,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 
 		for (int dim=0; dim<Dim; dim++) {
 			// Calculate 0th and 1st derivatives of acceleration
-			if ((ptcl1->NumberOfAC==0)||(ptcl2 != ptcl1->ACList[j])) {
+			if ((ptcl1->NumberOfAC==0) || (ptcl2 != ptcl1->ACList[j])) {
 				ptcl1->a_reg[dim][0] += m_r3*x[dim];
 				ptcl1->a_reg[dim][1] += m_r3*(v[dim] - 3*x[dim]*vx/r2);
 			}
@@ -193,7 +193,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 				ptcl1->a_irr[dim][0] += m_r3*x[dim];
 				ptcl1->a_irr[dim][1] += m_r3*(v[dim] - 3*x[dim]*vx/r2);
 			}
-		}
+		} // endfor ptcl
 
 		// Calculate 2nd and 3rd derivatives of acceleration
 		if (restart) {
@@ -214,7 +214,7 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 			a2dot = (v[dim] - 6*B*vx_r2                 - 3*v2_r2__ax_r2__v2x2_r4*x[dim])*m_r3;
 			a3dot = (a[dim] - 9*B*v2_r2__ax_r2__v2x2_r4 - A*x[dim]                      )*m_r3\
 							 - 9*vx_r2*a2dot;
-			if ((ptcl1->NumberOfAC==0)||(ptcl2 != ptcl1->ACList[j])) {
+			if ((ptcl1->NumberOfAC==0) || (ptcl2 != ptcl1->ACList[j])) {
 				ptcl1->a_reg[dim][2] += a2dot;
 				ptcl1->a_reg[dim][3] += a3dot;
 			}
@@ -232,7 +232,9 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 		// add the regular and irregualar forces and change the neighbor list of the other particle
 
 
-		if ( (ptcl1->ParticleType == 193) && (ptcl2->ParticleType == 65)) {
+		// needed to update
+		if ( (ptcl1->ParticleType == NewParticle+NormalStar+SingleParticle)
+			 	&& (ptcl2->ParticleType == SingleParticle+NormalStar)) {
 			if (sqrt(r2)<ptcl2->RadiusOfAC) {
 				for (int dim=0; dim<Dim; dim++) {
 					ptcl2->a_irr[dim][0] += -m_r3*x[dim];
@@ -254,14 +256,28 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 
 	} // endfor ptcl2
 
-	std::cout << "\nNBODY+: total acceleartion\n" << std::flush;
+
 	for (int dim=0; dim<Dim; dim++)	 {
 		for (int order=0; order<HERMITE_ORDER; order++) {
-			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order];
-			std::cout << ptcl1->a_tot[dim][order]*position_unit/time_unit/time_unit << " ";
+			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order]; 
 		}
-		std::cout << "\n" << std::endl;
+	}
+
+	/*
+	std::cout << "NBODY+: total acceleartion\n" << std::flush;
+	for (int dim=0; dim<Dim; dim++)	 {
+		for (int order=0; order<HERMITE_ORDER; order++) {
+			std::cout << ptcl1->a_reg[dim][order]*position_unit/time_unit/time_unit << " ";
+		}
 	} // endfor dim
+	std::cout << std::endl;
+	for (int dim=0; dim<Dim; dim++)	 {
+		for (int order=0; order<HERMITE_ORDER; order++) {
+			std::cout << ptcl1->a_irr[dim][order]*position_unit/time_unit/time_unit << " ";
+		}
+	} // endfor dim
+	std::cout << '\n' << std::endl;
+	*/
 }
 
 

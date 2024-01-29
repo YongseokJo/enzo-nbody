@@ -2,59 +2,53 @@
 #include "global.h"
 
 
-void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle*> &list);
-bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Particle*> &ComputationChain);
+bool CreateComputationChain(std::vector<Particle*> &particle);
 bool SortComputationChain(std::vector<Particle*> ComputationChain);
+bool SortComputationChain(Particle* ptcl);
 
+Particle *FirstComputation;
 // 1. sort particles according to next irregular time
 // 2. the sorted list should be update regularly
 bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 {
 
+		Particle *ParticleForComputation;
     std::cout << "Creating a computation chain ...\n";
-    if (CreateComputationChain(particle, ComputationChain) == false) {
+    if (CreateComputationChain(particle) == false) {
         std::cout << "No irregular particle to update ...\n";
         return true;
     }
 
+    std::cout << "Calculating irregular force ...\n" << std::endl;
 
-    std::cout << "Calculating irregular force ...\n"
-              << std::flush;
-    for (Particle *ptcl : ComputationChain) 
-    {
-        fprintf(stdout, "PID=%d, NextRegTime= %e, NextIrrTime = %e\n",
-                ptcl->getPID(), NextRegTime, ptcl->CurrentTimeIrr + ptcl->TimeStepIrr);
-        fprintf(stdout, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
-                ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->CurrentTimeReg, ptcl->TimeStepReg);
+		// Caculating irregular acceleration
+		ParticleForComputation = FirstComputation;
+		while (ParticleForComputation != nullptr) {
+			fprintf(stdout, "PID=%d, NextRegTime= %e, NextIrrTime = %e\n",
+					ParticleForComputation->getPID(), NextRegTime, ParticleForComputation->CurrentTimeIrr + ParticleForComputation->TimeStepIrr);
+			fprintf(stdout, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
+					ParticleForComputation->CurrentTimeIrr, ParticleForComputation->TimeStepIrr, ParticleForComputation->CurrentTimeReg, ParticleForComputation->TimeStepReg);
 
-        ptcl->calculateIrrForce(); // this includes particle position and time evolution.
-        SortComputationChain(ComputationChain);
-	}
-	return true;
-}
-
-
-
-
-void UpdateEvolveParticle(std::vector<Particle*> &particle, std::vector<Particle*> &list) {
-	std::cout << "NBODY+: Updating EvolveParticle..." << std::endl;
-	double time, next_time;
-	list.clear();
-	for (Particle* ptcl: particle) {
-		time      = ptcl->CurrentTimeIrr;
-		next_time = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
-
-		if ((NextRegTime >= next_time) // Regular timestep
-				&& ptcl->checkNeighborForEvolution()) { // neighbor
-			ptcl->isEvolve = 1;
-			list.push_back(ptcl);
+			ParticleForComputation->calculateIrrForce(); // this includes particle position and time evolution.
+			SortComputationChain(ParticleForComputation);
+			ParticleForComputation = ParticleForComputation->NextParticleForComputation;
 		}
+		/*
+		for (Particle *ptcl : ComputationChain)
+		{
+			fprintf(stdout, "PID=%d, NextRegTime= %e, NextIrrTime = %e\n",
+					ptcl->getPID(), NextRegTime, ptcl->CurrentTimeIrr + ptcl->TimeStepIrr);
+			fprintf(stdout, "CurrentTimeIrr = %e, TimeStepIrr = %e, CurrentTimeReg=%e, TimeStepReg=%e\n",
+					ptcl->CurrentTimeIrr, ptcl->TimeStepIrr, ptcl->CurrentTimeReg, ptcl->TimeStepReg);
 
-		//set global time as the time of a particle that has most advanced
-		if (time > global_time)
-			global_time = time;
-	}
-	std::cout << "NBODY+: EvolveParticle: ";
-	std::cout << list.size();
-	std::cout << '\n' << std::flush;
+			ptcl->calculateIrrForce(); // this includes particle position and time evolution.
+			SortComputationChain(ComputationChain);
+		}
+		*/
+
+    std::cout << "Finishing irregular force ...\n" << std::endl;
+		return true;
 }
+
+
+

@@ -60,8 +60,6 @@ void Particle::calculateRegAccelerationSecondOrder(std::vector<Particle*> &parti
 	NumberOfAC = 0;
 
 	// scan over all single particles to find the regular force components
-	std::cout <<  "Looping single particles for force...\n" << std::flush;
-
 		for (Particle* ptcl: particle) {
 			if (ptcl == this)
 				continue;
@@ -81,11 +79,11 @@ void Particle::calculateRegAccelerationSecondOrder(std::vector<Particle*> &parti
 			}
 			r  = sqrt(r2);
 
-			if (NNB >100 && (r < this->RadiusOfAC || r < ptcl->RadiusOfAC)) {
+			if ((NNB > 100) && ((r < this->RadiusOfAC) || (r < ptcl->RadiusOfAC))) {
 					NumberOfAC++;
 					this->ACList.push_back(ptcl);
-				// irregular acceleration
-				direct_sum(x ,v, r2, vx, ptcl->Mass, a0_irr, a0dot_irr);
+					// irregular acceleration
+					direct_sum(x ,v, r2, vx, ptcl->Mass, a0_irr, a0dot_irr);
 			}
 			else {
 				// regular acceleration
@@ -130,7 +128,7 @@ void Particle::calculateRegAccelerationFourthOrder(std::vector<Particle*> &parti
 	dt      = TimeStepReg*EnzoTimeStep;
 
 	// scan over all single particles to find the regular force components
-	std::cout <<  "Looping single particles for force...\n" << std::flush;
+	//std::cout <<  "Looping single particles for force...\n" << std::flush;
 	for (Particle* ptcl: particle) {
 		if (ptcl == this)
 			continue;
@@ -153,7 +151,7 @@ void Particle::calculateRegAccelerationFourthOrder(std::vector<Particle*> &parti
 		direct_sum(x ,v, r2, vx, ptcl->Mass, a0_reg, a0dot_reg);
 	} // endfor ptcl
 
-	// scan over all single particles to find the regular force components
+	// scan over neighors for irregular forces
 	for (Particle* ptcl: ACList) {
 
 		r2 = 0;
@@ -189,9 +187,7 @@ void Particle::calculateRegAccelerationFourthOrder(std::vector<Particle*> &parti
 
 		a_reg[dim][2] = a2;
 		a_reg[dim][3] = a3;
-	}
 
-	for (int dim=0; dim<Dim; dim++) {
 		da_dt2  = (   a_irr[dim][0] - a0_irr[dim]   ) / dt2;
 		adot_dt = (   a_irr[dim][1] + a0dot_irr[dim]) / dt;
 
@@ -207,13 +203,15 @@ void Particle::calculateRegAccelerationFourthOrder(std::vector<Particle*> &parti
 
 
 
+	/*
 	double ATOT=0;
 	for (int dim=0; dim<Dim; dim++)	 {
 		ATOT += a_tot[dim][0]*a_tot[dim][0];
 	}
 	ATOT = std::sqrt(ATOT)*position_unit/time_unit/time_unit;
-	std::cout << ATOT << std::endl;
-	fprintf(stdout, "NBODY+: a_tot = %e\n", ATOT);
+	*/
+	//std::cout << ATOT << std::endl;
+	//fprintf(stdout, "NBODY+: a_tot = %e\n", ATOT);
 }
 
 

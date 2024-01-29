@@ -42,11 +42,12 @@ class Particle
 		double a_irr[Dim][HERMITE_ORDER];
 		double BackgroundAcceleration[Dim];
 		Particle* NextParticleInEnzo;
+		Particle* NextParticleForComputation;
 		std::vector<Particle*> ACList;     // list of AC neighbor 
 		int NumberOfAC; // number of neighbors
 		double RadiusOfAC;
 		int isEvolve;
-		int isRegular;
+		bool isRegular;
 
 		// Constructor
 		Particle(void) {
@@ -64,7 +65,7 @@ class Particle
 			TimeLevelIrr   = 9999;
 			TimeLevelReg   = 9999;
 			isEvolve       = 0;
-			isRegular      = 0;
+			isRegular      = false;
 			for (int i=0; i<Dim; i++) {
 				Velocity[i]     = 0;
 				Position[i]     = 0;
@@ -77,6 +78,7 @@ class Particle
 				}
 			}
 			NextParticleInEnzo = nullptr;
+			NextParticleForComputation = nullptr;
 		}
 
 		void updateParticle(double mass, double *vel, double pos[], int particletype) {

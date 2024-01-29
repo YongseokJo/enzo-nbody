@@ -81,7 +81,6 @@ void Particle::correctParticleFourthOrder(double next_time, double a[3][4]) {
 
 
 void Particle::updateParticle(double next_time, double a[3][4]) {
-	std::cout << "Updaintg particles ..." << std::endl;
 	predictParticleSecondOrder(next_time);
 	correctParticleFourthOrder(next_time, a);
 }
