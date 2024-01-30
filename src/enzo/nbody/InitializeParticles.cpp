@@ -120,7 +120,7 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 		}
 	} // endfor 
 	
-	std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
+	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
 	return ;
 
 }
