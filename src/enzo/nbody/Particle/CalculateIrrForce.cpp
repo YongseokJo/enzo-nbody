@@ -5,15 +5,15 @@
 
 
 void direct_sum(double *x, double *v, double r2, double vx,
-	 	        double mass, double (&a)[2][3], double (&adot)[2][3], int p) {
-	double m_r3;
+	 	        double mass, double mdot, double (&a)[2][3], double (&adot)[2][3], int p) {
+	double _r3;
 
 	r2 += EPS2;  // add softening length
-	m_r3 = mass/r2/sqrt(r2);
+	_r3 = 1/r2/sqrt(r2);
 
 	for (int dim=0; dim<Dim; dim++){
-		a[p][dim]    += m_r3*x[dim];
-		adot[p][dim] += m_r3*(v[dim] - 3*x[dim]*vx/r2);
+		a[p][dim]    += mass*_r3*x[dim];
+		adot[p][dim] += mass*_r3*(v[dim] - 3*x[dim]*vx/r2)+mdot*x[dim]*_r3;
 	}
 }
 
@@ -36,7 +36,7 @@ void Particle::calculateIrrForce() {
 		return;
 	}
 
-	double dt;
+	double dt, mdot, epsilon=1e-6;
 	double tirr[2]; // 0 for current and 1 for advanced times
 
 	double x[Dim], v[Dim]; // 0 for current and 1 for predicted positions and velocities
@@ -77,8 +77,13 @@ void Particle::calculateIrrForce() {
 				r2 += x[dim]*x[dim];
 				vx += v[dim]*x[dim];
 			}
+
+
+			mdot = ptcl->evolveStarMass(tirr[0],
+					tirr[0]+TimeStepIrr*1.01)/TimeStepIrr*1e-2; // derivative can be improved
+																													 //
 			// add the contribution of jth particle to acceleration of current and predicted times
-			direct_sum(x ,v, r2, vx, ptcl->Mass, a0_irr, a0dot_irr, p);
+			direct_sum(x ,v, r2, vx, ptcl->Mass, mdot, a0_irr, a0dot_irr, p);
 			if (p == 0) {
 				for (int dim=0; dim<Dim; dim++) {
 					a_tot[dim][0] = a_reg[dim][0] + a0_irr[0][dim];

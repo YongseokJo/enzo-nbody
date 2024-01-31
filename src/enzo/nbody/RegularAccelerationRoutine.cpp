@@ -6,7 +6,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle);
 bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 {
     std::cout << "Calculating regular force ...\n" << std::endl;
-    
+
     // Calulating regular acceleration of the particles
     for (Particle *ptcl : particle) {
         if (ptcl->isRegular)
@@ -32,6 +32,8 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 				{
 					ptcl->updateParticle(ptcl->CurrentTimeReg + ptcl->TimeStepReg, ptcl->a_tot);
 					ptcl->CurrentTimeReg += ptcl->TimeStepReg;
+					ptcl->CurrentTimeIrr  = ptcl->CurrentTimeReg;
+					global_time = NextRegTime;
 				}
 				else
 				{ // Not sure about it
@@ -69,7 +71,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle) {
 			time = time_tmp;
 	}
 
-	NextRegTime = time;
+	NextRegTime = std::min(time,1.0);
 
 	// Set isRegular of the particles that will be updated next to 1
 	std::cerr << "Regular: ";

@@ -739,6 +739,15 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			int *Type = new int[nParticles];
 			FLOAT *Position[MAX_DIMENSION];
 			float *Velocity[MAX_DIMENSION];
+			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+						TemperatureUnits=1;
+			double MassUnits=1;
+
+			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
+						&TimeUnits, &VelocityUnits, &MassUnits, 0) == FAIL) {
+				ENZO_FAIL("Error in GetUnits.");
+			}
+
 			for (int i = 0; i < thisgrid->GridRank; i++)
 			{
 				Position[i] = new FLOAT[nParticles];
@@ -749,9 +758,17 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			for (int i = 0; i < NumberOfParticleAttributes; i++)
 			{
 				Attribute[i] = new float[nParticles];
-				for (int j = 0; j < nParticles; j++)
+				for (int j = 0; j < nParticles; j++) {
 					Attribute[i][j] = FLOAT_UNDEFINED;
+				}
 			}
+#ifdef NBODY
+			// just for tests
+			for (int j = 0; j < nParticles; j++) {
+				Attribute[0][j] = 0;
+				Attribute[1][j] = StarMakerMinimumDynamicalTime*3.15e7/TimeUnits;
+			}
+#endif
 
 			FLOAT dx = thisgrid->CellWidth[0][0];
 

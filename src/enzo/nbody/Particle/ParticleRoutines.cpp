@@ -48,7 +48,8 @@ void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Pa
 	this->isRegular      = true;
 }
 
-void Particle::setParticleInfo(double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
+void Particle::setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
+	this->Mass                       = Mass[i]*EnzoMass;
 	this->BackgroundAcceleration[0]  = BackgroundAcceleration[0][i]\
 																		 *EnzoAcceleration;
 	this->BackgroundAcceleration[1]  = BackgroundAcceleration[1][i]\
@@ -62,10 +63,13 @@ void Particle::setParticleInfo(double *BackgroundAcceleration[Dim], Particle* Ne
 }
 
 
-void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
-		double *Velocity[Dim], double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
+void Particle::setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
+	 	double *Position[Dim], double *Velocity[Dim], double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
 	this->PID                        = PID[i];
 	this->Mass                       = Mass[i]*EnzoMass;
+	this->InitialMass                = this->Mass;
+	this->CreationTime               = CreationTime[i]*EnzoTime;
+	this->DynamicalTime              = DynamicalTime[i]*EnzoTime;
 	this->Position[0]                = Position[0][i]*EnzoLength;
 	this->Position[1]                = Position[1][i]*EnzoLength;
 	this->Position[2]                = Position[2][i]*EnzoLength;
@@ -86,10 +90,11 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
 }
 
 
-void Particle::setParticleInfo(int *PID, double *Mass, double *Position[Dim],
+void Particle::setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime, double *Position[Dim],
 		double *Velocity[Dim], double *BackgroundAcceleration[Dim], int ParticleType, Particle* NextParticleInEnzo, int i) {
 	this->PID          = PID[i];
 	this->Mass         = Mass[i]*EnzoMass;
+	this->InitialMass  = this->Mass;
 	this->Position[0]  = Position[0][i]*EnzoLength;
 	this->Position[1]  = Position[1][i]*EnzoLength;
 	this->Position[2]  = Position[2][i]*EnzoLength;

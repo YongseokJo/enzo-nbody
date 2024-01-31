@@ -40,3 +40,11 @@ extern double outputTimeStep;
 extern MPI_Comm inter_comm;
 extern MPI_Comm nbody_comm;
 
+
+// ENZO variables
+extern int StarParticleFeedback;
+extern int HydroMethod;
+extern double StarMassEjectionFraction;
+extern double EnzoCurrentTime;
+
+

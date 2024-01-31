@@ -122,7 +122,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			/*-----------------------------------------------*/
-			/******** Recv Arrays to Fortran Nbody6++    *****/
+			/******** Recv Arrays to Fortran Nbody+    *****/
 			/*-----------------------------------------------*/
 			fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
 

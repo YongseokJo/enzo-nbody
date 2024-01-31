@@ -1279,5 +1279,6 @@ OBJS_NBODY= \
 						nbody/Particle/InitializeTimeStep.o\
 						nbody/Particle/CheckNeighborForEvolution.o\
 						nbody/Particle/UpdateEvolveParticle.o\
+						nbody/Particle/EvolveStar.o\
 
 

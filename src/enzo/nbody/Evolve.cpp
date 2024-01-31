@@ -24,7 +24,7 @@ void Evolve(std::vector<Particle*> &particle) {
 	int outNum = 0;
 	int freq   = 0;
 
-	if (NNB == 0) { 
+	if (NNB == 0) {
 		std::cout << "No particle to be calculated ..." << std::endl;
 		goto Communication;
 	}
@@ -38,12 +38,17 @@ void Evolve(std::vector<Particle*> &particle) {
 			// It's time to compute regular force.
 			RegularAccelerationRoutine(particle); // do not update particles unless NNB=0
 			IrregularAccelerationRoutine(particle);
-			global_time = NextRegTime;
+			std::cout << "CurrentTimeReg=" << particle[0]->CurrentTimeReg << std::endl;
+			std::cout << "CurrentTimeIrr=" << particle[0]->CurrentTimeIrr << std::endl;
+			std::cout << "TimeStepReg   =" << particle[0]->TimeStepReg << std::endl;
+			std::cout << "NextRegTime   =" << NextRegTime << std::endl;
 		}
 
 	Communication:
 		do
 		{
+			std::cout << "global time=" << global_time << std::endl;
+			std::cout << "CurrentTimeReg=" << particle[0]->CurrentTimeReg << std::endl;
 			SendToEzno(particle);
 			ReceiveFromEzno(particle);
 		} while (NNB == 0);

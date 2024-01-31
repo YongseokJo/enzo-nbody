@@ -14,12 +14,11 @@ double getNewTimeStep(double f[3][4], double df[3][4]) {
 	F2dot2 = df[0][2]*df[0][2] + df[1][2]*df[1][2] + df[2][2]*df[2][2];
 	F3dot2 = df[0][3]*df[0][3] + df[1][3]*df[1][3] + df[2][3]*df[2][3];
 
-	
 	//fprintf(stdout, "NBODY+: f dots: %e, %e, %e, %e\n", F2, Fdot2, F2dot2, F3dot2);
 	TimeStep = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
 	TimeStep = std::sqrt(eta*TimeStep);
 	//std::cout<< TimeStep << " ";
-	//exit(EXIT_FAILURE); 
+	//exit(EXIT_FAILURE);
 	return TimeStep;
 }
 

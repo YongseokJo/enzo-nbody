@@ -1812,7 +1812,8 @@ class grid
 
 
 		int CopyNbodyParticlesFirst(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[]) {
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[],
+				float *NbodyParticleCreationTimeTmp, float *NbodyParticleDynamicalTimeTmp) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
@@ -1821,13 +1822,16 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
-					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
-					//fprintf(stderr, "In Grid, PID: %d \n", ParticleNumber[i]);
+					NbodyParticleMassTemp[*count]         = ParticleMass[i]*dv;
+					NbodyParticleIDTemp[*count]           = ParticleNumber[i];
+					NbodyParticleCreationTimeTmp[*count]  = ParticleAttribute[0][i];
+					NbodyParticleDynamicalTimeTmp[*count] = ParticleAttribute[1][i];
 
+					//fprintf(stderr, "In Grid, PID: %d \n", ParticleNumber[i]);
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
+
 					}
 					// if you want potential then go with MAX_DIMENSION+1 by YS
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
@@ -1842,9 +1846,10 @@ class grid
 
 
 
-		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float *NbodyParticleAccelerationNoStarTemp[],
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], float *NbodyParticleAccelerationNoStarTemp[],
 				int* count_new, int NewNbodyParticleIDTemp[], float NewNbodyParticleMassTemp[],
-				float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[], float *NewNbodyParticleAccelerationNoStarTemp[]
+				float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[], float *NewNbodyParticleAccelerationNoStarTemp[],
+				float *NewNbodyParticleCreationTimeTmp, float *NewNbodyParticleDynamicalTimeTmp
 				) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
@@ -1855,13 +1860,15 @@ class grid
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
 					fprintf(stderr, "Mass Of NewNbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
-					NewNbodyParticleMassTemp[*count_new] = ParticleMass[i]*dv;
-					NewNbodyParticleIDTemp[*count_new]   = ParticleNumber[i];
+					NewNbodyParticleMassTemp[*count_new]         = ParticleMass[i]*dv;
+					NewNbodyParticleIDTemp[*count_new]           = ParticleNumber[i];
+					NewNbodyParticleCreationTimeTmp[*count_new]  = ParticleAttribute[0][i];
+					NewNbodyParticleDynamicalTimeTmp[*count_new] = ParticleAttribute[1][i];
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-							NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i]-0.5;
-							NewNbodyParticleVelocityTemp[dim][*count_new] = ParticleVelocity[dim][i];
-						}
+						//if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+						NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i]-0.5;
+						NewNbodyParticleVelocityTemp[dim][*count_new] = ParticleVelocity[dim][i];
+						//}
 						NewNbodyParticleAccelerationNoStarTemp[dim][*count_new] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count_new)++;
@@ -1870,6 +1877,7 @@ class grid
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 					fprintf(stderr, "Mass Of NbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim

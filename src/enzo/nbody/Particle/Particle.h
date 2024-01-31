@@ -24,6 +24,9 @@ class Particle
 		int PID;
 		int ParticleType;
 		double Mass;
+		double InitialMass;
+		double CreationTime;
+		double DynamicalTime;
 		double Velocity[Dim];
 		double Position[Dim];
 		double PredTime;
@@ -48,24 +51,27 @@ class Particle
 		double RadiusOfAC;
 		int isEvolve;
 		bool isRegular;
+		bool isStarEvolution;
 
 		// Constructor
 		Particle(void) {
 			//std::cout << "Constructor called" << std::endl;
-			Mass           = 0;
-			NumberOfAC     = 0; // number of neighbors
-			RadiusOfAC     = InitialRadiusOfAC;
-			ParticleType   = -9999;
-			CurrentTimeIrr = 0.; // consistent with actual current time
-			CurrentTimeReg = 0.;
-			PredTimeIrr    = 0;
-			PredTimeReg    = 0;
-			TimeStepIrr    = 0;
-			TimeStepReg    = 0;
-			TimeLevelIrr   = 9999;
-			TimeLevelReg   = 9999;
-			isEvolve       = 0;
-			isRegular      = false;
+			Mass            = 0;
+			InitialMass     = 0;
+			NumberOfAC      = 0; // number of neighbors
+			RadiusOfAC      = InitialRadiusOfAC;
+			ParticleType    = -9999;
+			CurrentTimeIrr  = 0.; // consistent with actual current time
+			CurrentTimeReg  = 0.;
+			PredTimeIrr     = 0;
+			PredTimeReg     = 0;
+			TimeStepIrr     = 0;
+			TimeStepReg     = 0;
+			TimeLevelIrr    = 9999;
+			TimeLevelReg    = 9999;
+			isEvolve        = 0;
+			isRegular       = false;
+			isStarEvolution = true;
 			for (int i=0; i<Dim; i++) {
 				Velocity[i]     = 0;
 				Position[i]     = 0;
@@ -94,12 +100,12 @@ class Particle
 		double getDistanceTo(Particle *particle);
 		void setParticleInfo(double *data, int PID);
 		void setParticleInfo(double *data, int PID, Particle* NextParticleInEnzo);
-		void setParticleInfo(int *PID, double *Mass, double *Position[Dim], double *Velocity[Dim],
+		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime, double *Position[Dim], double *Velocity[Dim],
 			 	double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
-		void setParticleInfo(int *PID, double *Mass, double *Position[Dim], double *Velocity[Dim],
+		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime, double *Position[Dim], double *Velocity[Dim],
 			 	double *BackgroundAcceleration[Dim],  int ParticleType, Particle* NextParticleInEnzo, int i);
 		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
-		void setParticleInfo(double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
+		void setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
 		void initializeTimeStep();
 		int getPID() {return PID;};
 		void calculateIrrForce();
@@ -113,6 +119,7 @@ class Particle
 		bool checkNeighborForEvolution();
 		void updateEvolveParticle(std::vector<Particle*> &particle);
 		void updateParticle(double next_time, double a[3][4]);
+		double evolveStarMass(double t1, double t2);
 };
 
 

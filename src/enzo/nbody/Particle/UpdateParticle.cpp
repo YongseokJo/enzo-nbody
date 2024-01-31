@@ -61,7 +61,7 @@ void Particle::correctParticleFourthOrder(double next_time, double a[3][4]) {
 	double dt;
 	double dt3,dt4,dt5;
 
-	if (NumberOfAC == 0) 
+	if (NumberOfAC == 0)
 		dt = (next_time - CurrentTimeReg)*EnzoTimeStep;
 	else
 		dt = (next_time - CurrentTimeIrr)*EnzoTimeStep;
@@ -83,6 +83,7 @@ void Particle::correctParticleFourthOrder(double next_time, double a[3][4]) {
 void Particle::updateParticle(double next_time, double a[3][4]) {
 	predictParticleSecondOrder(next_time);
 	correctParticleFourthOrder(next_time, a);
+	Mass += evolveStarMass(CurrentTimeIrr, next_time);
 }
 
 

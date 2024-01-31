@@ -1896,7 +1896,6 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 
 
   if (STARFEED_METHOD(INSTANT_STAR)) {
-
     // check whether the particles are correctly located in grids 
     // Ji-hoon Kim in Nov.2009
 
@@ -1922,27 +1921,28 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 
       float mbhradius = MBHFeedbackThermalRadius * pc_cm / LengthUnits; 
  
-      FORTRAN_NAME(star_feedback7)(
-       GridDimension, GridDimension+1, GridDimension+2,
-          BaryonField[DensNum], dmfield,
-          BaryonField[TENum], BaryonField[GENum], BaryonField[Vel1Num],
-          BaryonField[Vel2Num], BaryonField[Vel3Num], MetalPointer,
-       &DualEnergyFormalism, &MetallicityField, &HydroMethod,
-       &dtFixed, BaryonField[NumberOfBaryonFields], &CellWidthTemp,
-          &Time, &zred,
-       &DensityUnits, &LengthUnits, &VelocityUnits, &TimeUnits,
-          &StarEnergyToThermalFeedback, &StarMassEjectionFraction,
-          &StarMetalYield,
-       &NumberOfParticles,
-       CellLeftEdge[0], CellLeftEdge[1], CellLeftEdge[2], &GhostZones, &level,
-       ParticlePosition[0], ParticlePosition[1],
-          ParticlePosition[2],
-       ParticleVelocity[0], ParticleVelocity[1],
-          ParticleVelocity[2], 
-       ParticleMass, ParticleAttribute[1], ParticleAttribute[0],
-          ParticleAttribute[2], ParticleType, &RadiationData.IntegratedStarFormation, 
-       &MBHParticleType, &mbhradius);
- 
+			FORTRAN_NAME(star_feedback7)(
+					GridDimension, GridDimension+1, GridDimension+2,
+					BaryonField[DensNum], dmfield,
+					BaryonField[TENum], BaryonField[GENum], BaryonField[Vel1Num],
+					BaryonField[Vel2Num], BaryonField[Vel3Num], MetalPointer,
+					&DualEnergyFormalism, &MetallicityField, &HydroMethod,
+					&dtFixed, BaryonField[NumberOfBaryonFields], &CellWidthTemp,
+					&Time, &zred,
+					&DensityUnits, &LengthUnits, &VelocityUnits, &TimeUnits,
+					&StarEnergyToThermalFeedback, &StarMassEjectionFraction,
+					&StarMetalYield,
+					&NumberOfParticles,
+					CellLeftEdge[0], CellLeftEdge[1], CellLeftEdge[2], &GhostZones, &level,
+					ParticlePosition[0], ParticlePosition[1],
+					ParticlePosition[2],
+					ParticleVelocity[0], ParticleVelocity[1],
+					ParticleVelocity[2], 
+					ParticleMass, ParticleAttribute[1], ParticleAttribute[0],
+					ParticleAttribute[2], ParticleType, &RadiationData.IntegratedStarFormation, 
+					&MBHParticleType, &mbhradius);
+
+
   } 
 
 
