@@ -1262,17 +1262,20 @@ OBJS_NBODY= \
 						PrepareNbodyComputation.o\
 						FinalizeNbodyComputation.o\
 						nbody/nbody.o\
-					  nbody/Evolve.o\
+						nbody/Evolve.o\
+						nbody/cuda/CalculateRegularAcceleration.o\
+						nbody/cuda/CalculateAccelerationForAll.o\
+						nbody/cuda/cuda_my_acceleration.o\
 						nbody/InitializeTimeStep.o\
-					  nbody/ReadWrite.o\
-					  nbody/ComputationChainRoutine.o\
-					  nbody/RegularAccelerationRoutine.o\
-					  nbody/IrregularAccelerationRoutine.o\
-						nbody/CommunicatinoToHydro.o \
+						nbody/ReadWrite.o\
+						nbody/ComputationChainRoutine.o\
+						nbody/RegularAccelerationRoutine.o\
+						nbody/IrregularAccelerationRoutine.o\
+						nbody/CommunicationToHydro.o \
 						nbody/InitializeParticles.o\
 						nbody/TimeStepRoutines.o\
 						nbody/Particle/ParticleRoutines.o\
-					  nbody/Particle/CalculateIrrForce.o\
+						nbody/Particle/CalculateIrrForce.o\
 						nbody/Particle/CalculateRegForce.o\
 						nbody/Particle/UpdateParticle.o\
 						nbody/Particle/CalculateTimeStep.o\
@@ -1280,5 +1283,5 @@ OBJS_NBODY= \
 						nbody/Particle/CheckNeighborForEvolution.o\
 						nbody/Particle/UpdateEvolveParticle.o\
 						nbody/Particle/EvolveStar.o\
-
+#						nbody/cuda/cuda_routines.o\
 

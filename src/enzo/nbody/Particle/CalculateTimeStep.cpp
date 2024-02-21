@@ -96,9 +96,15 @@ void Particle::calculateTimeStepReg(double f[3][4], double df[3][4]) {
 	TimeStepReg  = std::min(1.,TimeStepReg);
 	TimeLevelReg = std::min(0,TimeLevelReg);
 
-	while (TimeStepIrr >= TimeStepReg) {
-		TimeStepIrr *= 0.5;
-		TimeLevelIrr--;
+	if (CurrentTimeReg+TimeStepReg > 1 && CurrentTimeReg != 1.0) {
+		TimeStepReg = 1 - CurrentTimeReg;
+	}
+
+	if (TimeStepIrr > TimeStepReg) {
+		//TimeStepIrr *= 0.5;
+		//TimeLevelIrr--;
+		TimeStepIrr = TimeStepReg;
+		TimeLevelIrr = TimeLevelReg;
 	}
 
 	if (this->NumberOfAC == 0) {

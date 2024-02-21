@@ -34,8 +34,8 @@ void Particle::predictParticleSecondOrder(double next_time) {
 		return;
 	}
 
-	if (PredTime == next_time)
-		return;
+	//if (PredTime == next_time)
+		//return;
 
 	// only predict the positions if necessary
 	for (int dim=0; dim<Dim; dim++) {
@@ -43,7 +43,7 @@ void Particle::predictParticleSecondOrder(double next_time) {
 		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
 	}
 	// updated the predicted time
-	PredTime = next_time;
+	//PredTime = next_time;
 	return;
 }
 

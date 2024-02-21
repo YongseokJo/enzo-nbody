@@ -38,11 +38,14 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 	std::cout << "Timestep initializing..." << std::endl;
 	InitializeTimeStep(particle);
 	std::cout << "Timestep finished." << std::endl;
+	int i = 0;
+	RegIndexList.clear();
 	for (Particle* elem:particle) {
 		for (int dim=0; dim<Dim; dim++) {
 			elem->PredPosition[dim] =  elem->Position[dim];
 			elem->PredVelocity[dim] =  elem->Velocity[dim];
 		}
+		RegIndexList.push_back(i++);
 	}
 	std::cout << "Initialization finished." << std::endl;
 }

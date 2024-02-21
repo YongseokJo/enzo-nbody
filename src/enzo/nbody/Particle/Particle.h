@@ -5,12 +5,10 @@
  *
  */
 
-
 #include <vector>
 #include <iostream>
 #include "../defs.h"
 //#include "../global.h"
-
 
 class Particle
 {
@@ -100,12 +98,16 @@ class Particle
 		double getDistanceTo(Particle *particle);
 		void setParticleInfo(double *data, int PID);
 		void setParticleInfo(double *data, int PID, Particle* NextParticleInEnzo);
-		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime, double *Position[Dim], double *Velocity[Dim],
+		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
+			 	double *Position[Dim], double *Velocity[Dim],
 			 	double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
-		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime, double *Position[Dim], double *Velocity[Dim],
+		void setParticleInfo(int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
+			 	double *Position[Dim], double *Velocity[Dim],
 			 	double *BackgroundAcceleration[Dim],  int ParticleType, Particle* NextParticleInEnzo, int i);
-		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
-		void setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
+		void setParticleInfo(int *PID, double *BackgroundAcceleration[Dim],
+			 	Particle* NextParticleInEnzo, int i);
+		void setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim],
+			 	Particle* NextParticleInEnzo, int i);
 		void initializeTimeStep();
 		int getPID() {return PID;};
 		void calculateIrrForce();

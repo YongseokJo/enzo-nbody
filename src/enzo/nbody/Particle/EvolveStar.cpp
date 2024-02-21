@@ -9,7 +9,7 @@ double star_feedback7(double t1, double t2, Particle *self);
 double Particle::evolveStarMass(double t1, double t2) {
 
 	if ((isStarEvolution == false) || (t2 == 0)) {
-		return Mass;
+		return 0;
 	}
 	double dm;
 

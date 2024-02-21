@@ -369,7 +369,7 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -Xcompiler -rdynamic -lineinfo -G \
 	    $(INCLUDES) $*.cu >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
 	     echo; \
@@ -380,7 +380,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC) -c -G -Xcompiler -rdynamic -lineinfo -o $@ $(DEFINES) $(CUDACOMPFLAGS)\
 	    $(INCLUDES) $*.cu >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
@@ -481,6 +481,7 @@ clean:
           auto_show*.C hydro_rk/*.o *.oo hydro_rk/*.oo \
 					nbody/*.o \
 					nbody/Particle/*.o \
+					nbody/cuda/*.o \
           uuid/*.oo DEPEND TAGS \
           libconfig/*.o \
           python_bridge/problemtype_handler.C \

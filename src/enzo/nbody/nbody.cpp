@@ -11,7 +11,8 @@ using namespace std;
 
 //Global Variables
 int NNB, newNNB; double global_time; //bool debug;
-std::vector<int> LevelList;
+int NumNeighborMax = 100;
+std::vector<int> RegIndexList; 
 //MPI_Comm  comm, inter_comm, nbody_comm;
 double EnzoTimeStep;
 const double dt_min = 0.03125;
