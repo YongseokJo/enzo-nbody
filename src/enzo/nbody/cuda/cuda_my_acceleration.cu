@@ -401,6 +401,7 @@ void _InitializeDevice(int irank){
 		return;
 	}
 
+	is_open = true;
 	// CUDA is now initialized and ready to be used
 	std::cout << "CUDA initialized successfully!" << std::endl;
 
