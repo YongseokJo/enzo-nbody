@@ -19,6 +19,6 @@ void auto_show_flags(FILE *fp) {
    fprintf (fp,"F90FLAGS =  -O3 -g\n");
    fprintf (fp,"LDFLAGS  =  -O3 -g\n");
    fprintf (fp,"\n");
-   fprintf (fp,"LIBS     = -L/mnt/sw/nix/store/bjxnws41q81ccp0lybgzacy5wdv2n82g-hdf5-1.8.22/lib -lhdf5 -lz  -lgfortran   -L/mnt/sw/nix/store/5gzzqpkmbz1rjmlwxa3f9mvmzalkzqlk-intel-oneapi-mpi-2021.9.0/lib -lmpi        -L/mnt/sw/nix/store/y8bggjg9wx71bpyhldmyq1cwvym9xa97-cuda-12.1.1/lib64 -lcudart -L/mnt/home/yjo10/packages/grackle/build/lib -lgrackle\n");
+   fprintf (fp,"LIBS     = -L/mnt/sw/nix/store/bjxnws41q81ccp0lybgzacy5wdv2n82g-hdf5-1.8.22/lib -lhdf5 -lz  -lgfortran   -L/mnt/sw/nix/store/5gzzqpkmbz1rjmlwxa3f9mvmzalkzqlk-intel-oneapi-mpi-2021.9.0/lib -lmpi        -L/mnt/sw/nix/store/zi2wc26znf75csf5hhz77p0d2bbz53ih-cuda-11.8.0/lib64 -lcudart -L/mnt/home/yjo10/packages/grackle/build/lib -lgrackle\n");
    fprintf (fp,"\n");
 }

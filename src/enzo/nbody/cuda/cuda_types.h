@@ -66,9 +66,9 @@ struct TargetParticle{
 	float3 pos;
 	float  mdot;
 	float3 vel;
-	float  radius; // for AC neighbor
+	float  r2; // for AC neighbor
 
-	void setParticle(double _mdot, double x[3], double v[3], double _radius){
+	void setParticle(double _mdot, double x[3], double v[3], double _r2){
 		mdot   = _mdot;
 		pos.x  = x[0];
 		pos.y  = x[1];
@@ -76,7 +76,7 @@ struct TargetParticle{
 		vel.x  = v[0];
 		vel.y  = v[1];
 		vel.z  = v[2];
-		radius = _radius;
+		r2 = _r2;
 
 		NAN_CHECK(x[0]);
 		NAN_CHECK(x[1]);
@@ -85,29 +85,10 @@ struct TargetParticle{
 		NAN_CHECK(v[0]);
 		NAN_CHECK(v[1]);
 		NAN_CHECK(v[2]);
-		NAN_CHECK(_radius);
+		NAN_CHECK(_r2);
   }
 };
 
-void setTargetParticle(TargetParticle &tg, double mdot, double x[3], double v[3], double radius){
-	tg.mdot  = mdot;
-	tg.pos.x = x[0];
-	tg.pos.y = x[1];
-	tg.pos.z = x[2];
-	tg.vel.x = v[0];
-	tg.vel.y = v[1];
-	tg.vel.z = v[2];
-	tg.radius  = radius;
-
-	NAN_CHECK(x[0]);
-	NAN_CHECK(x[1]);
-	NAN_CHECK(x[2]);
-	NAN_CHECK(mdot);
-	NAN_CHECK(v[0]);
-	NAN_CHECK(v[1]);
-	NAN_CHECK(v[2]);
-	NAN_CHECK(radius);
-}
 
 
 struct BackgroundParticle{
@@ -159,25 +140,6 @@ struct BackgroundParticle{
   //__device__ BackgroundParticle() {}
 };
 
-void setBackgroundParticle(BackgroundParticle &bg, double m, double x[3], double v[3], double _mdot){
-	bg.mass  = m;
-	bg.pos.x = x[0];
-	bg.pos.y = x[1];
-	bg.pos.z = x[2];
-	bg.vel.x = v[0];
-	bg.vel.y = v[1];
-	bg.vel.z = v[2];
-	bg.mdot  = _mdot;
-
-	NAN_CHECK(x[0]);
-	NAN_CHECK(x[1]);
-	NAN_CHECK(x[2]);
-	NAN_CHECK(m);
-	NAN_CHECK(v[0]);
-	NAN_CHECK(v[1]);
-	NAN_CHECK(v[2]);
-	NAN_CHECK(_mdot);
-}
 
 
 struct Result{
@@ -192,13 +154,12 @@ struct Result{
 		//nnb = 0;
 	}
 
-	/*
-	__device__  void clear(){
+	__device__  void clear() {
 		acc.x  = acc.y  = acc.z  = 0.f;
 		adot.x = adot.y = adot.z = 0.f;
-		//nnb = 0;
 	}
 
+	/*
 	__device__ void operator+=(const Result &rhs){
 		acc.x  += rhs.acc.x;
 		acc.y  += rhs.acc.y;
@@ -212,11 +173,24 @@ struct Result{
 
 struct  Neighbor{
 	int NumNeighbor;
-	//int NeighborList[2][100]; // this needs to be modified.
+	int NeighborList[100]; // this needs to be modified.
 
+
+	__device__ void clear() {
+		NumNeighbor = 0;
+#pragma unroll
+		for (int i=0; i<100; i++) {
+			NeighborList[i] = 0; 
+		}
+	}
+	/*
   Neighbor(){
 		NumNeighbor = 0;
+		for (int i=0; i<100; i++) {
+			NeighborList[i] = -1;
+		}
   }
+	*/
 };
 
 

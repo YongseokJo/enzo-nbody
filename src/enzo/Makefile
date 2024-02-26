@@ -380,13 +380,15 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(NVCC) -c -G -Xcompiler -rdynamic -lineinfo -o $@ $(DEFINES) $(CUDACOMPFLAGS)\
+	  $(NVCC) -c -G -Xcompiler -rdynamic -lineinfo -o $@ $(DEFINES) $(CUDACOMPFLAGS)  \
 	    $(INCLUDES) $*.cu >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
 	  fi ; \
 	fi)
+
+#-G -Xcompiler -rdynamic -lineinfo   $(CUDACOMPFLAGS)
 
 #-----------------------------------------------------------------------
 # Generate all make-generated source files

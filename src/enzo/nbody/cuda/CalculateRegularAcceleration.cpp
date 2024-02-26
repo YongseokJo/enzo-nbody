@@ -22,7 +22,8 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	// variables for opening GPU
 	// const int buffer = 10;
 	// int numGpuOpen = NNB+buffer;
-	const int NumPtclPerEachCalMax = 1024; // this also caps the number of particles computed each iteration
+	//const int NumPtclPerEachCalMax = 2048; // this also caps the number of particles computed each iteration
+	const int NumPtclPerEachCalMax = 2048; // this also caps the number of particles computed each iteration
 	const int mpi_rank  = 0; // not effective for now
 	int NumPtclPerEachCal; // this size should coincide with number of threads 
 	int NeighborIndex; // this size should coincide with number of threads 
@@ -40,7 +41,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	double(*AccReceive)[Dim];
 	double(*AccDotReceive)[Dim];
 
-	double* RadiusOfACSend;
+	double* RadiusOfAC2Send;
 	double* TimeStepRegSend;
 
 	double(*AccRegReceive[2])[Dim];
@@ -76,7 +77,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	AccReceive      = new double[ListSize][Dim];
 	AccDotReceive   = new double[ListSize][Dim];
 
-	RadiusOfACSend      = new double[ListSize];
+	RadiusOfAC2Send      = new double[ListSize];
 	TimeStepRegSend = new double[ListSize];
 	//PotSend         = new double[ListSize];
 
@@ -104,7 +105,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 
 
 	// first let's open the GPU
-	OpenDevice(&mpi_rank);
+	//OpenDevice(&mpi_rank);
 
 	std::cout <<  "Starting Calculation On Device ..." << std::endl;
 	for (int p=0; p<2; p++) {
@@ -118,7 +119,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		for (int i=0; i<ListSize; i++) {
 			MassSend[i]   = particle[IndexList[i]]->Mass;
 			MdotSend[i]   = 0.; // I will do it later
-			RadiusOfACSend[i] = particle[IndexList[i]]->RadiusOfAC*particle[IndexList[i]]->RadiusOfAC;
+			RadiusOfAC2Send[i] = particle[IndexList[i]]->RadiusOfAC*particle[IndexList[i]]->RadiusOfAC;
 
 			for (int dim=0; dim<Dim; dim++) {
 				PositionSend[i][dim] = particle[IndexList[i]]->PredPosition[dim];
@@ -132,15 +133,18 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 			NumPtclPerEachCal = std::min(NumPtclPerEachCalMax, ListSize-offset);
 
 			CalculateAccelerationOnDevice(&NumPtclPerEachCal, &offset, PositionSend, VelocitySend,
-					AccRegReceive[p], AccRegDotReceive[p], MdotSend, RadiusOfACSend, NumNeighborReceive[p], ACListReceive[p]);
+					AccRegReceive[p], AccRegDotReceive[p], MdotSend, RadiusOfAC2Send, NumNeighborReceive[p], ACListReceive[p]);
 
 			// Calculate the irregular acceleration components based on neighbors of current regular time.
 			for (int i2=offset; i2<(offset+NumPtclPerEachCal); i2++) {
 				ptcl = particle[IndexList[i2]];  // regular particle in particle list
 
-				std::cout <<  "# Neighbor=" << NumNeighborReceive[0][i2] << std::endl;
-				for (int j1=1;  j1<(NumNeighborReceive[0][i2]+1); j1++) {
+				std::cout <<  "MyIndex=" << IndexList[i2];
+				std::cout <<  "(" << NumNeighborReceive[0][i2] << ")" << std::endl;
+				std::cout <<  "NeighborIndex = ";
+				for (int j1=0;  j1<NumNeighborReceive[0][i2]; j1++) {
 					NeighborIndex = ACListReceive[0][i2][j1];  // gained neighbor particle (in next time list)
+					std::cout <<  NeighborIndex << "  ";
 					CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp);
 
 					for (int dim=0; dim<Dim; dim++) {
@@ -150,6 +154,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 						AccRegDotReceive[p][i2][dim] -= adot_tmp[dim];
 					} // endfor dim
 				} // endfor j1, over neighbor at current time
+				std::cout << std::endl;
 
 				if (p == 0) {
 					for (int dim=0; dim<Dim; dim++) {
@@ -164,10 +169,13 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 			} // endfor i2, over regular particles
 		} // endfor i, over gpu computations
 	} // endfor p,
+
+	/*
 	std::cout <<  "1. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
 		<< ',' << particle[0]->a_tot[2][0] << std::endl;
 	std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
 		<< ',' << particle[1]->a_tot[2][0] << std::endl;
+		*/
 
 	std::cout <<  "Calculation On Device Done ..." << std::endl;
 
@@ -204,12 +212,21 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 			ptcl->a_tot[dim][2] = ptcl->a_reg[dim][2] + ptcl->a_irr[dim][2];
 			ptcl->a_tot[dim][3] = ptcl->a_reg[dim][3] + ptcl->a_irr[dim][3];
 		}
+
+		ptcl->ACList.clear();
+		ptcl->NumberOfAC = NumNeighborReceive[0][i];
+		for (int i=0; i<ptcl->NumberOfAC;i++) {
+			ptcl->ACList.push_back(particle[i]);
+		}
 	} // correction and calculation of higher orders finished
 
+
+	/*
 	std::cout <<  "3. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
 		<< ',' << particle[0]->a_tot[2][0] << std::endl;
 	std::cout <<  "4. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
 		<< ',' << particle[1]->a_tot[2][0] << std::endl;
+		*/
 
 
 
@@ -218,7 +235,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	delete[] MdotSend;
 	delete[] PositionSend;
 	delete[] VelocitySend;
-	delete[] RadiusOfACSend;
+	delete[] RadiusOfAC2Send;
 	delete[] TimeStepRegSend;
 	//delete[] PotSend;
 
@@ -254,6 +271,14 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 	double dxdv;
 	double m_r3;
 
+	if (ptcl1 == ptcl2) {
+		for (int dim=0; dim<Dim; dim++){
+			a[dim]    = 0;
+			adot[dim] = 0;
+		}
+		return;
+	}
+
 	dr2  = 0.0;
 	dxdv = 0.0;
 
@@ -263,7 +288,7 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 		dr2    += dx[dim]*dx[dim];
 		dxdv   += dx[dim]*dv[dim];
 	}
-
+	dr2 += EPS2;
 	m_r3 = ptcl2->Mass/dr2/sqrt(dr2);
 
 	for (int dim=0; dim<Dim; dim++){

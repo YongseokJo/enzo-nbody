@@ -8,7 +8,10 @@ void direct_sum(double *x, double *v, double r2, double vx,
 	 	        double mass, double mdot, double (&a)[2][3], double (&adot)[2][3], int p) {
 	double _r3;
 
-	r2 += EPS2;  // add softening length
+	if (r2 < EPS2)
+		r2 += EPS2;  // add softening length
+
+
 	_r3 = 1/r2/sqrt(r2);
 
 	for (int dim=0; dim<Dim; dim++){

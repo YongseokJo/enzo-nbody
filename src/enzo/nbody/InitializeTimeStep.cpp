@@ -58,6 +58,8 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	for (Particle* ptcl: particle) {
 		if (ptcl->TimeLevelIrr < dt_block_level + dt_level_min ) {
 			std::cerr << "Timestep is too small" << std::endl;
+			std::cout << "In Initialization, timestep is too small." \
+				<< " TimeStepIrr=" << ptcl->TimeStepIrr	<< std::endl;
 			ptcl->TimeStepIrr  = std::max(dt_block*dt_min, ptcl->TimeStepIrr);
 			ptcl->TimeLevelIrr = std::max(dt_block_level+dt_level_min, ptcl->TimeLevelIrr);
 		}
@@ -113,6 +115,8 @@ int InitializeTimeStep(Particle* particle, int size) {
 
 		if (ptcl->TimeLevelIrr < dt_block_level + dt_level_min ) {
 			std::cerr << "Timestep is too small" << std::endl;
+			std::cout << "In Initialization, timestep is too small." \
+				<< " TimeStepIrr=" << ptcl->TimeStepIrr	<< std::endl;
 			ptcl->TimeStepIrr  = std::max(dt_block*dt_min, ptcl->TimeStepIrr);
 			ptcl->TimeLevelIrr = std::max(dt_block_level+dt_level_min, ptcl->TimeLevelIrr);
 		}

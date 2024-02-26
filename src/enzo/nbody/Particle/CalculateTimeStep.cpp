@@ -48,6 +48,8 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 
 	if (TimeLevelIrr < dt_block_level+dt_level_min) {
 		std::cerr << "Timestep is too small" << std::endl;
+		std::cout << "In CalTimeStep, timestep is too small."\
+		 	<< " TimeStepIrr=" << TimeStepIrr	<< std::endl;
 		TimeStepIrr  = std::max(dt_block*dt_min,             TimeStepIrr);
 		TimeLevelIrr = std::max(dt_block_level+dt_level_min, TimeLevelIrr);
 	}

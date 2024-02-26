@@ -53,7 +53,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 
 
 	// first let's open the GPU
-	OpenDevice(&mpi_rank);
+	//OpenDevice(&mpi_rank);
 
 
 	// need to make array to send to GPU
