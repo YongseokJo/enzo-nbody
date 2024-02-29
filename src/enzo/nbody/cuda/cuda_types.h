@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <assert.h>
-#include <cutil.h>
 #include <cuda_runtime.h>
 
 //#define MaxNeighbor 100
@@ -17,16 +16,18 @@ void my_allocate(T **host, T **device, const int size) {
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaMalloc failed: %s\n", cudaGetErrorString(cudaStatus));
 	}
-	*host = (T*)calloc(size, sizeof(T));
+	//*host = (T*)calloc(size, sizeof(T));
 	//*host = (T*)malloc(size*sizeof(T));
+	/*
 	if (host == NULL) {
 		fprintf(stderr, "Memory allocation failed\n");
 	}
+	*/
 	//host = new T[size]();
-	//cudaStatus = cudaMallocHost(&host, size*sizeof(T));
-	//if (cudaStatus != cudaSuccess) {
-		//fprintf(stderr, "cudaMallocHost failed: %s\n", cudaGetErrorString(cudaStatus));
-	//}
+	cudaStatus = cudaMallocHost(host, size*sizeof(T));
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMallocHost failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
 }
 
 template <typename T>
@@ -36,7 +37,11 @@ void my_free(T *host, T *device) {
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
 	}
-	free(host);
+	cudaStatus = cudaFreeHost(host);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+	//free(host);
 }
 
 template <typename T>

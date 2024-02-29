@@ -23,7 +23,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	// const int buffer = 10;
 	// int numGpuOpen = NNB+buffer;
 	//const int NumPtclPerEachCalMax = 2048; // this also caps the number of particles computed each iteration
-	const int NumPtclPerEachCalMax = 2048; // this also caps the number of particles computed each iteration
+	const int NumPtclPerEachCalMax = 512; // this also caps the number of particles computed each iteration
 	const int mpi_rank  = 0; // not effective for now
 	int NumPtclPerEachCal; // this size should coincide with number of threads 
 	int NeighborIndex; // this size should coincide with number of threads 
@@ -248,7 +248,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		delete[] ACListReceive[p];
 	}
 
-	CloseDevice();
+	//CloseDevice();
 } // calculate 0th, 1st derivative of force + neighbors on GPU ends
 
 

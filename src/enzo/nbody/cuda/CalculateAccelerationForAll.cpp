@@ -165,7 +165,8 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	delete[] AccDotSend;
 
 	// close GPU
-	CloseDevice();
+	//
+	//CloseDevice();
 
 } // calculate 0th, 1st derivative of force + neighbors on GPU ends
 
