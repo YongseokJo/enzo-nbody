@@ -9,7 +9,7 @@ void direct_sum(double *x, double *v, double r2, double vx,
 	double _r3;
 
 	if (r2 < EPS2)
-		r2 += EPS2;  // add softening length
+		r2 = EPS2;  // add softening length
 
 
 	_r3 = 1/r2/sqrt(r2);
@@ -134,8 +134,16 @@ void Particle::calculateIrrForce() {
 			std::cout << a_tot[dim][order]*position_unit/time_unit/time_unit << " ";
 		}
 		std::cout << "\n" << std::endl;
-	} // endfor dim
-	*/
+		} // endfor dim
+		*/
+	
+	std::cout << "\nIrregular Calculation\n" << std::flush;
+	std::cout <<  "3. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
+		<< ',' << a_irr[2][0] << std::endl;
+	std::cout <<  "4. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
+		<< ',' << a_irr[2][0] << std::endl;
+	std::cout <<  "5. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
+		<< ',' << a_irr[2][0] << std::endl;
 
 	// update the current irregular time and irregular time steps
 	//this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);

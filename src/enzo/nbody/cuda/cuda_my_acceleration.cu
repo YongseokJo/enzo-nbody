@@ -120,15 +120,16 @@ void GetAcceleration(
 		printf("CUDA error: %s\n", cudaGetErrorString(error));
 		// Handle error
 	}
-	for (int i = 0; i < NumTarget; i += BLOCK) {
-		block = std::min(BLOCK, NumTarget-i);
+	for (int tg_offset = 0; tg_offset < NumTarget; tg_offset += BLOCK) {
+		printf("CUDA: i=%d, block=%d\n",tg_offset, block);
+		block = std::min(BLOCK, NumTarget-tg_offset);
 		block_size.x = block;
 		CalculateAcceleration <<< block_size, thread_size >>>
-			(NNB, NumTarget, i, d_target, d_background, d_result, d_neighbor);
+			(NNB, NumTarget, tg_offset, d_target, d_background, d_result, d_neighbor);
+		cudaDeviceSynchronize();
 			//(NNB, NumTarget, i, d_target, d_background, d_result, d_neighbor);
 			//(NNB, NumTarget, i, d_target, background, d_result, d_neighbor_num, d_neighbor_list);
 	} // endfor i, target particles
-	cudaDeviceSynchronize();
 	printf("CUDA: calculation done\n");
 	error = cudaGetLastError();
 	if (error != cudaSuccess) {
@@ -225,8 +226,8 @@ __global__ void CalculateAcceleration(
 	__shared__ Result res[THREAD];
 	//res[threadIdx.x] = result[tg_index];
 	res[threadIdx.x].clear();
-	//Neighbor nb;
-	//nb.clear();
+	Neighbor nb;
+	nb.clear();
 	//result[tg_index].clear();
 
 	// looping over N*BlockDim.x+threadId.x;
@@ -238,12 +239,17 @@ __global__ void CalculateAcceleration(
 			if (bg_index < NNB) {
 				//printf("CUDA: 2. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
 
-				kernel(target[tg_index], background[bg_index], res[threadIdx.x], neighbor[tg_index*blockDim.x+threadIdx.x],
-						bg_index, tg_index);
-						//nb, bg_index, tg_index);
-
+				kernel(target[tg_index], background[bg_index], res[threadIdx.x],// neighbor[tg_index*blockDim.x+threadIdx.x],
+						nb, bg_index, tg_index);
+						//bg_index, tg_index);
+				neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = nb.NumNeighbor;
+				for (int i=0; i<nb.NumNeighbor; i++) {
+					neighbor[tg_index*blockDim.x+threadIdx.x].NeighborList[i] = nb.NeighborList[i];
+				}
 				//neighbor_num[tg_index*blockDim.x+threadIdx.x].NumNeighbor++;
-				//printf("CUDA: 3. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
+				//printf("CUDA: 3. (%d,%d), res=%e\n", threadIdx.x, blockIdx.x, res[threadIdx.x].acc.x);
+						//tg_index, bg_index, res[threadIdx.x].acc.x);
+
 			}
 			else
 			{
@@ -259,24 +265,36 @@ __global__ void CalculateAcceleration(
 		for (int i=0; i<nb.NumNeighbor; i++) {
 			neighbor[tg_index*blockDim.x+threadIdx.x].NeighborList[i] = nb.NeighborList[i];
 		}
-	}*/
+	}
+	*/
 
 	//printf("CUDA: 4. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
 
-	if (threadIdx.x != 0 && threadIdx.x < NNB) _addition(res[0], res[threadIdx.x]);
-	__syncthreads();
-	//printf("CUDA: 5. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
+	/*
+	for (int d=blockDim.x/2; d>0; d=d/2) {
+		__syncthreads();
+		if (tid<d) temp[tid] += temp[tid+d];
+	}
+	*/
 
-	if (threadIdx.x == 0 && blockIdx.x < NumTarget) _copy(result[tg_index], res[0]);
-	__syncthreads();
+	// Reduction in shared memory
+	for (int stride = 1; stride < blockDim.x; stride *= 2) {
+		int index = 2 * stride * threadIdx.x;
+		if (index < blockDim.x && bg_index < NNB) {
+			_addition(res[index], res[index+stride]);
+		}
+		__syncthreads();
+	}
+
+	//printf("CUDA: 5. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
+	if (threadIdx.x == 0 && tg_index < NumTarget) _addition(result[tg_index], res[0]);
 
 	//printf("CUDA: 6. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-	/*
-	if (threadIdx.x == 0 && blockIdx.x < NumTarget) {
+	if (threadIdx.x == 0 && tg_index < NumTarget) {
 		printf("CUDA: (%d,%d), result=(%.3e,%.3e,%.3e), res=(%.3e,%.3e,%.3e)\n",
 			 	threadIdx.x, blockIdx.x, result[tg_index].acc.x, result[tg_index].acc.y, result[tg_index].acc.z,
 			 	res[0].acc.x, res[0].acc.y, res[0].acc.z);
-	}*/
+	}
 
 }
 
@@ -303,8 +321,8 @@ __device__ void kernel(
 
 	// neighbor
 	if(dr2 < i.r2) {
-		//neighbor.NeighborList[neighbor.NumNeighbor++] = bg_index;
-		neighbor.NeighborList[0] = bg_index;
+		neighbor.NeighborList[neighbor.NumNeighbor++] = bg_index;
+		//neighbor.NeighborList[0] = bg_index;
 		//neighbor.NumNeighbor += 1;
 		//[tg_index*blockDim.x+threadIdx.x]
 		//*(neighbor_num+tg_index*blockDim.x+threadIdx.x) += 1;

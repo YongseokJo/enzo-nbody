@@ -77,7 +77,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	AccReceive      = new double[ListSize][Dim];
 	AccDotReceive   = new double[ListSize][Dim];
 
-	RadiusOfAC2Send      = new double[ListSize];
+	RadiusOfAC2Send = new double[ListSize];
 	TimeStepRegSend = new double[ListSize];
 	//PotSend         = new double[ListSize];
 
@@ -170,12 +170,13 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		} // endfor i, over gpu computations
 	} // endfor p,
 
-	/*
-	std::cout <<  "1. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
+	std::cout <<  "1. a_tot= "<< particle[0]->a_tot[0][0] << ", a_irr= "<< particle[0]->a_irr[0][0] << std::endl; //<< ',' << particle[0]->a_tot[1][0]\
 		<< ',' << particle[0]->a_tot[2][0] << std::endl;
-	std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
+
+	std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0] << ", a_irr= "<< particle[1]->a_irr[0][0] <<std::endl; 
+	std::cout <<  "3. a_tot= "<< particle[2]->a_tot[0][0] << ", a_irr= "<< particle[2]->a_irr[0][0] <<std::endl; 
+	//std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
 		<< ',' << particle[1]->a_tot[2][0] << std::endl;
-		*/
 
 	std::cout <<  "Calculation On Device Done ..." << std::endl;
 
@@ -215,20 +216,33 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 
 		ptcl->ACList.clear();
 		ptcl->NumberOfAC = NumNeighborReceive[0][i];
-		for (int i=0; i<ptcl->NumberOfAC;i++) {
-			ptcl->ACList.push_back(particle[i]);
+		for (int j=0; j<ptcl->NumberOfAC;j++) {
+			NeighborIndex = ACListReceive[0][i][j];  // gained neighbor particle (in next time list)
+			ptcl->ACList.push_back(particle[NeighborIndex]);
 		}
 	} // correction and calculation of higher orders finished
 
 
-	/*
 	std::cout <<  "3. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
 		<< ',' << particle[0]->a_tot[2][0] << std::endl;
 	std::cout <<  "4. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
 		<< ',' << particle[1]->a_tot[2][0] << std::endl;
-		*/
+	std::cout <<  "5. a_tot= "<< particle[2]->a_tot[0][0]<< ',' << particle[2]->a_tot[1][0]\
+		<< ',' << particle[2]->a_tot[2][0] << std::endl;
 
+	std::cout <<  "3. a_irr= "<< particle[0]->a_irr[0][0]<< ',' << particle[0]->a_irr[1][0]\
+		<< ',' << particle[0]->a_irr[2][0] << std::endl;
+	std::cout <<  "4. a_irr= "<< particle[1]->a_irr[0][0]<< ',' << particle[1]->a_irr[1][0]\
+		<< ',' << particle[1]->a_irr[2][0] << std::endl;
+	std::cout <<  "5. a_irr= "<< particle[2]->a_irr[0][0]<< ',' << particle[2]->a_irr[1][0]\
+		<< ',' << particle[2]->a_irr[2][0] << std::endl;
 
+	std::cout <<  "3. a_reg= "<< particle[0]->a_reg[0][0]<< ',' << particle[0]->a_reg[1][0]\
+		<< ',' << particle[0]->a_reg[2][0] << std::endl;
+	std::cout <<  "4. a_reg= "<< particle[1]->a_reg[0][0]<< ',' << particle[1]->a_reg[1][0]\
+		<< ',' << particle[1]->a_reg[2][0] << std::endl;
+	std::cout <<  "5. a_reg= "<< particle[2]->a_reg[0][0]<< ',' << particle[2]->a_reg[1][0]\
+		<< ',' << particle[2]->a_reg[2][0] << std::endl;
 
 	// free all temporary variables
 	delete[] MassSend;
@@ -283,12 +297,16 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 	dxdv = 0.0;
 
 	for (int dim=0; dim<Dim; dim++) {
-		dx[dim] = ptcl2->PredPosition - ptcl1->PredPosition;
-		dv[dim] = ptcl2->PredVelocity - ptcl1->PredVelocity;
+		dx[dim] = ptcl2->PredPosition[dim] - ptcl1->PredPosition[dim];
+		dv[dim] = ptcl2->PredVelocity[dim] - ptcl1->PredVelocity[dim];
 		dr2    += dx[dim]*dx[dim];
 		dxdv   += dx[dim]*dv[dim];
 	}
-	dr2 += EPS2;
+
+	if (dr2 < EPS2) {
+		dr2 = EPS2;
+	}
+
 	m_r3 = ptcl2->Mass/dr2/sqrt(dr2);
 
 	for (int dim=0; dim<Dim; dim++){
