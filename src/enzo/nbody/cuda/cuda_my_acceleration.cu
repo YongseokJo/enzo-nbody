@@ -27,6 +27,7 @@ static int devid, numGPU;
 static bool is_open = false;
 static bool devinit = false;
 const int memory_size = 512;
+static bool first = false;
 //BackgroundParticle *h_background, *d_background;
 BackgroundParticle *h_background; //, *background;
 BackgroundParticle *d_background;
@@ -367,10 +368,13 @@ void _ReceiveFromHost(
 
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
 	//cudaMemcpyToSymbol(d_background, &d_background_tmp, new_size(NNB)*sizeof(BackgroundParticle));
-	my_allocate(&h_background, &d_background, new_size(NNB));
-	my_allocate(&h_result,     &d_result, memory_size);
-	my_allocate(&h_target,     &d_target, memory_size);
-	my_allocate(&h_neighbor,   &d_neighbor, memory_size*THREAD);
+	if (first) {
+		my_allocate(&h_background, &d_background, new_size(NNB));
+		my_allocate(&h_result,     &d_result, memory_size);
+		my_allocate(&h_target,     &d_target, memory_size);
+		my_allocate(&h_neighbor,   &d_neighbor, memory_size*THREAD);
+		first = false;
+	}
 
 	fprintf(stdout, "CUDA: receive starts\n");
 	printf("CUDA: new size of NNB=%d\n",new_size(NNB));
