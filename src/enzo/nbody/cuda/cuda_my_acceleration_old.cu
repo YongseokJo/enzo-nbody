@@ -26,13 +26,10 @@ static int nbodymax;
 static int devid, numGPU;
 static bool is_open = false;
 static bool devinit = false;
-const int memory_size = 512;
 //BackgroundParticle *h_background, *d_background;
-BackgroundParticle *h_background; //, *background;
-BackgroundParticle *d_background;
-Result *h_result, *d_result;
-TargetParticle *h_target, *d_target;
-Neighbor *h_neighbor, *d_neighbor;
+BackgroundParticle *h_background = nullptr; //, *background;
+BackgroundParticle *d_background = nullptr;
+
 
 
 /*************************************************************************
@@ -79,14 +76,18 @@ void GetAcceleration(
 
 	cudaError_t cudaStatus;
 	cudaError_t error;
-	//Result *h_result, *d_result;
-	//TargetParticle *h_target, *d_target;
-	//Neighbor *h_neighbor, *d_neighbor;
+	Result *h_result, *d_result;
+	TargetParticle *h_target, *d_target;
+	Neighbor *h_neighbor, *d_neighbor;
+	const int memory_size = 512;
 	int NumTarget_local = 0;
 
 
 	//printf("CUDA: GetAcceleration starts, thread=%d\n", thread);
 
+	my_allocate(&h_result, &d_result, memory_size);
+	my_allocate(&h_target, &d_target, memory_size);
+	my_allocate(&h_neighbor, &d_neighbor, memory_size*THREAD);
 	printf("CUDA: allocation done\n");
 
 	//time_grav -= get_wtime();
@@ -176,7 +177,20 @@ void GetAcceleration(
 		}
 	} // endfor offset
 
+	printf("CUDA: ?!! ...\n");
+	my_free(h_result    , d_result);
+	fprintf(stderr, "result ...\n");
+	my_free(h_target    , d_target);
+	fprintf(stderr, "target ...\n");
+	my_free(h_neighbor  , d_neighbor);
+	fprintf(stderr, "neighbor ...\n");
+	my_free(h_background, d_background);
 
+	error = cudaGetLastError();
+	if (error != cudaSuccess) {
+		printf("CUDA error: %s\n", cudaGetErrorString(error));
+		// Handle error
+	}
 	/*
 	cudaStatus = cudaFree(background);
 	if (cudaStatus != cudaSuccess) {
@@ -368,9 +382,6 @@ void _ReceiveFromHost(
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
 	//cudaMemcpyToSymbol(d_background, &d_background_tmp, new_size(NNB)*sizeof(BackgroundParticle));
 	my_allocate(&h_background, &d_background, new_size(NNB));
-	my_allocate(&h_result,     &d_result, memory_size);
-	my_allocate(&h_target,     &d_target, memory_size);
-	my_allocate(&h_neighbor,   &d_neighbor, memory_size*THREAD);
 
 	fprintf(stdout, "CUDA: receive starts\n");
 	printf("CUDA: new size of NNB=%d\n",new_size(NNB));
@@ -507,23 +518,6 @@ void _CloseDevice() {
 	}
 	is_open = false;
 
-
-	cudaError_t error;
-
-	printf("CUDA: ?!! ...\n");
-	my_free(h_result    , d_result);
-	fprintf(stderr, "result ...\n");
-	my_free(h_target    , d_target);
-	fprintf(stderr, "target ...\n");
-	my_free(h_neighbor  , d_neighbor);
-	fprintf(stderr, "neighbor ...\n");
-	my_free(h_background, d_background);
-
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
 
 #ifdef PROFILE
 	fprintf(stderr, "Closed NBODY6/GPU library\n");
