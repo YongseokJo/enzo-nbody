@@ -185,17 +185,16 @@ struct  Neighbor{
 		NumNeighbor = 0;
 #pragma unroll
 		for (int i=0; i<100; i++) {
-			NeighborList[i] = 0; 
+			NeighborList[i] = 0;
 		}
 	}
-	/*
-  Neighbor(){
+	void clear_h() {
 		NumNeighbor = 0;
+#pragma unroll
 		for (int i=0; i<100; i++) {
-			NeighborList[i] = -1;
+			NeighborList[i] = 0;
 		}
-  }
-	*/
+	}
 };
 
 

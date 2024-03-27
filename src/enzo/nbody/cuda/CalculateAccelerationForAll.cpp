@@ -101,7 +101,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	for (int i=0; i<NNB; i+=numGpuSend) {
 		numGpuCal = std::min(1024,(NNB-i));
 
-		CalculateAccelerationOnDevice(&NNB, &i, PositionSend, VelocitySend,
+		CalculateAccelerationOnDevice(&NNB, PositionSend, VelocitySend,
 					AccSend, AccDotSend, MdotSend, r2OfACSend, NumNeighborReceive, ACListReceive);
 
 		// copy the values of regular forces and neighbors obtained in GPU to particles

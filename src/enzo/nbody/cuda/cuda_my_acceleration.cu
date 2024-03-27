@@ -13,7 +13,7 @@
 
 #define THREAD 1024 // 2048 for A100
 #define BLOCK 32    // 32 for A100 
-#define ESP2 1e-5
+#define ESP2 1e-2
 #define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
 
 
@@ -27,8 +27,8 @@ static int devid, numGPU;
 static bool is_open = false;
 static bool devinit = false;
 //BackgroundParticle *h_background, *d_background;
-BackgroundParticle *h_background; //, *background;
-BackgroundParticle *d_background;
+BackgroundParticle *h_background = nullptr; //, *background;
+BackgroundParticle *d_background = nullptr;
 
 
 
@@ -59,7 +59,6 @@ __device__ void _copy(Result &result, const Result res);
 
 void GetAcceleration(
 		int NumTarget,
-		int offset,
 		double x[][3],
 		double v[][3],
 		double acc[][3],
@@ -79,106 +78,104 @@ void GetAcceleration(
 	cudaError_t error;
 	Result *h_result, *d_result;
 	TargetParticle *h_target, *d_target;
-	//int *h_neighbor_list, *d_neighbor_list;
-	//Neighbor *h_neighbor_num, *d_neighbor_num;
 	Neighbor *h_neighbor, *d_neighbor;
-	//int thread = (NNB > THREAD) ? THREAD : NNB;
+	const int memory_size = 512;
+	int NumTarget_local = 0;
+
 
 	//printf("CUDA: GetAcceleration starts, thread=%d\n", thread);
 
-	my_allocate(&h_result, &d_result, new_size(NumTarget));
-	my_allocate(&h_target, &d_target, new_size(NumTarget));
-	my_allocate(&h_neighbor, &d_neighbor, new_size(NumTarget*THREAD));
+	my_allocate(&h_result, &d_result, memory_size);
+	my_allocate(&h_target, &d_target, memory_size);
+	my_allocate(&h_neighbor, &d_neighbor, memory_size*THREAD);
 	printf("CUDA: allocation done\n");
-	//printf("CUDA: h_neighbor.NumNeighbor=%d, List %d \n", h_neighbor[0].NumNeighbor, h_neighbor[0].NeighborList[0]);
-	//my_allocate(&h_neighbor_num, &d_neighbor_num, NumTarget*THREAD);
-	//my_allocate(&h_neighbor_list, &d_neighbor_list, NumTarget*THREAD*NumNeighborMax);
 
 	//time_grav -= get_wtime();
-	for(int i=0; i<NumTarget; i++) {
-		//printf("CUDA: here6-1\n");
-		//printf("CUDA: x=%.3e, y=%.3e, r=%.3e\n", x[offset+i][0], x[offset+i][1], r2[offset+i]);
-		//setTargetParticle(h_target[i], mdot[offset+i], x[offset+i], v[offset+i], radius[offset+i]);
-		//h_result[i].clear_h();
-		h_target[i].setParticle(mdot[offset+i], x[offset+i], v[offset+i], r2[offset+i]);
-		//printf("CUDA: res acc x=%.3e, y=%.3e\n", h_result[i].acc.x, h_result[i].acc.y);
-	}
-
-	toDevice(h_result, d_result, new_size(NumTarget));
-	toDevice(h_target, d_target, new_size(NumTarget));
-	toDevice(h_neighbor, d_neighbor, new_size(NumTarget*THREAD));
-	printf("CUDA: transfer done\n");
-	//toDevice(h_neighbor_num, d_neighbor_num, NumTarget*THREAD);
-	//toDevice(h_neighbor_list, d_neighbor_list, NumTarget*THREAD*NumNeighborMax);
-
-
-	dim3 thread_size(THREAD, 1, 1);
-	dim3 block_size(1,1,1);
-	int block;
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
-	for (int tg_offset = 0; tg_offset < NumTarget; tg_offset += BLOCK) {
-		printf("CUDA: i=%d, block=%d\n",tg_offset, block);
-		block = std::min(BLOCK, NumTarget-tg_offset);
-		block_size.x = block;
-		CalculateAcceleration <<< block_size, thread_size >>>
-			(NNB, NumTarget, tg_offset, d_target, d_background, d_result, d_neighbor);
-		cudaDeviceSynchronize();
-			//(NNB, NumTarget, i, d_target, d_background, d_result, d_neighbor);
-			//(NNB, NumTarget, i, d_target, background, d_result, d_neighbor_num, d_neighbor_list);
-	} // endfor i, target particles
-	printf("CUDA: calculation done\n");
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
-	toHost(h_result  , d_result  , new_size(NumTarget));
-	toHost(h_target  , d_target  , new_size(NumTarget));
-	toHost(h_neighbor, d_neighbor, new_size(NumTarget*THREAD));
-	printf("CUDA: transfer to host done\n");
-	//toHost(h_neighbor_num , d_neighbor_num , NumTarget*THREAD);
-	//toHost(h_neighbor_list, d_neighbor_list, NumTarget*THREAD*NumNeighborMax);
-
-	//double wt = get_wtime();
-	//time_grav += wt;
-	//time_nb -= wt;
-	//wt = get_wtime();
-	//time_nb += get_wtime();
-	//time_out -= get_wtime();
-
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
-
-	int _offset;
-	for (int i=0;i<NumTarget;i++) {
-		_offset = 0;
-		for (int j=0;j<THREAD;j++) {
-			for (int k=0;k<h_neighbor[i*THREAD+j].NumNeighbor;k++) {
-				NeighborList[offset+i][k+_offset] = h_neighbor[i*THREAD+j].NeighborList[k];
-			}
-			_offset += h_neighbor[i*THREAD+j].NumNeighbor;
+	for (int offset=0; offset<NumTarget; offset+=memory_size) {
+		NumTarget_local = std::min(memory_size,NumTarget-offset);
+		for(int i=0; i<NumTarget_local; i++) {
+			//printf("CUDA: here6-1\n");
+			//printf("CUDA: x=%.3e, y=%.3e, r=%.3e\n", x[offset+i][0], x[offset+i][1], r2[offset+i]);
+			//setTargetParticle(h_target[i], mdot[offset+i], x[offset+i], v[offset+i], radius[offset+i]);
+			h_result[i].clear_h();
+			h_neighbor[i].clear_h();
+			h_target[i].setParticle(mdot[offset+i], x[offset+i], v[offset+i], r2[offset+i]);
+			//printf("CUDA: res acc x=%.3e, y=%.3e\n", h_result[i].acc.x, h_result[i].acc.y);
 		}
-		NumNeighbor[offset+i] = _offset;
-	}
 
-	printf("CUDA: ?! ...\n");
-	// out data
-	for (int i=0; i<NumTarget; i++) {
-		acc[offset+i][0]  = h_result[i].acc.x;
-		acc[offset+i][1]  = h_result[i].acc.y;
-		acc[offset+i][2]  = h_result[i].acc.z;
-		adot[offset+i][0] = h_result[i].adot.x;
-		adot[offset+i][1] = h_result[i].adot.y;
-		adot[offset+i][2] = h_result[i].adot.z;
-		//time_out += get_wtime();
-	}
+		toDevice(h_result, d_result, memory_size);
+		toDevice(h_target, d_target, memory_size);
+		toDevice(h_neighbor, d_neighbor, memory_size*THREAD);
+		printf("CUDA: transfer done\n");
+
+
+		dim3 thread_size(THREAD, 1, 1);
+		dim3 block_size(1,1,1);
+		int block=0;
+		error = cudaGetLastError();
+		if (error != cudaSuccess) {
+			printf("CUDA error: %s\n", cudaGetErrorString(error));
+			// Handle error
+		}
+
+		for (int tg_offset = 0; tg_offset < NumTarget_local; tg_offset += BLOCK) {
+			block = std::min(BLOCK, NumTarget_local-tg_offset);
+			block_size.x = block;
+			printf("CUDA: i=%d, block=%d\n",tg_offset, block);
+			CalculateAcceleration <<< block_size, thread_size >>>
+				(NNB, NumTarget_local, tg_offset, d_target, d_background, d_result, d_neighbor);
+		} // endfor i, target particles
+		cudaDeviceSynchronize();
+
+		printf("CUDA: calculation done\n");
+		error = cudaGetLastError();
+		if (error != cudaSuccess) {
+			printf("CUDA error: %s\n", cudaGetErrorString(error));
+			// Handle error
+		}
+
+		toHost(h_result  , d_result  , memory_size);
+		toHost(h_target  , d_target  , memory_size);
+		toHost(h_neighbor, d_neighbor, memory_size*THREAD);
+		printf("CUDA: transfer to host done\n");
+
+		//double wt = get_wtime();
+		//time_grav += wt;
+		//time_nb -= wt;
+		//wt = get_wtime();
+		//time_nb += get_wtime();
+		//time_out -= get_wtime();
+
+		error = cudaGetLastError();
+		if (error != cudaSuccess) {
+			printf("CUDA error: %s\n", cudaGetErrorString(error));
+			// Handle error
+		}
+
+		int _offset;
+		for (int i=0;i<NumTarget_local;i++) {
+			_offset = 0;
+			for (int j=0;j<THREAD;j++) {
+				for (int k=0;k<h_neighbor[i*THREAD+j].NumNeighbor;k++) {
+					NeighborList[offset+i][k+_offset] = h_neighbor[i*THREAD+j].NeighborList[k];
+				}
+				_offset += h_neighbor[i*THREAD+j].NumNeighbor;
+			}
+			NumNeighbor[offset+i] = _offset;
+		}
+
+		printf("CUDA: ?! ...\n");
+		// out data
+		for (int i=0; i<NumTarget_local; i++) {
+			acc[offset+i][0]  = h_result[i].acc.x;
+			acc[offset+i][1]  = h_result[i].acc.y;
+			acc[offset+i][2]  = h_result[i].acc.z;
+			adot[offset+i][0] = h_result[i].adot.x;
+			adot[offset+i][1] = h_result[i].adot.y;
+			adot[offset+i][2] = h_result[i].adot.z;
+			//time_out += get_wtime();
+		}
+	} // endfor offset
 
 	printf("CUDA: ?!! ...\n");
 	my_free(h_result    , d_result);
@@ -187,13 +184,8 @@ void GetAcceleration(
 	fprintf(stderr, "target ...\n");
 	my_free(h_neighbor  , d_neighbor);
 	fprintf(stderr, "neighbor ...\n");
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
 	my_free(h_background, d_background);
-	fprintf(stderr, "background ...\n");
+
 	error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		printf("CUDA error: %s\n", cudaGetErrorString(error));
@@ -258,25 +250,7 @@ __global__ void CalculateAcceleration(
 		} //endfor j, backgroun particles
 	}
 
-	//if (tg_index*blockDim.x+threadIdx.x < NumTarget*THREAD) {
-	/*
-	if (tg_index*blockDim.x+threadIdx.x < NumTarget*THREAD) {
-		neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = nb.NumNeighbor;
-		for (int i=0; i<nb.NumNeighbor; i++) {
-			neighbor[tg_index*blockDim.x+threadIdx.x].NeighborList[i] = nb.NeighborList[i];
-		}
-	}
-	*/
-
 	//printf("CUDA: 4. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-
-	/*
-	for (int d=blockDim.x/2; d>0; d=d/2) {
-		__syncthreads();
-		if (tid<d) temp[tid] += temp[tid+d];
-	}
-	*/
-
 	// Reduction in shared memory
 	for (int stride = 1; stride < blockDim.x; stride *= 2) {
 		int index = 2 * stride * threadIdx.x;
@@ -290,10 +264,11 @@ __global__ void CalculateAcceleration(
 	if (threadIdx.x == 0 && tg_index < NumTarget) _addition(result[tg_index], res[0]);
 
 	//printf("CUDA: 6. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
+	// res=(%.3e,%.3e,%.3e)\n",
 	if (threadIdx.x == 0 && tg_index < NumTarget) {
-		printf("CUDA: (%d,%d), result=(%.3e,%.3e,%.3e), res=(%.3e,%.3e,%.3e)\n",
-			 	threadIdx.x, blockIdx.x, result[tg_index].acc.x, result[tg_index].acc.y, result[tg_index].acc.z,
-			 	res[0].acc.x, res[0].acc.y, res[0].acc.z);
+		printf("CUDA: (%d,%d), result=(%.3e,%.3e,%.3e)\n",  
+			 	threadIdx.x, tg_index, result[tg_index].acc.x, result[tg_index].acc.y, result[tg_index].acc.z);
+			 	//res[0].acc.x, res[0].acc.y, res[0].acc.z);
 	}
 
 }
@@ -401,7 +376,7 @@ void _ReceiveFromHost(
 	isend++;
 	assert(NNB <= nbodymax);
 	cudaError_t cudaStatus;
-	BackgroundParticle *d_background_tmp;
+
 
 
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
@@ -610,7 +585,7 @@ extern "C" {
 	void ProfileDevice(int *irank){
 		_ProfileDevice(*irank);
 	}
-	void CalculateAccelerationOnDevice(int *NumTarget, int *offset, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList) {
-		GetAcceleration(*NumTarget, *offset, x, v, acc, adot, mdot, radius, NumNeighbor, NeighborList);
+	void CalculateAccelerationOnDevice(int *NumTarget, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList) {
+		GetAcceleration(*NumTarget, x, v, acc, adot, mdot, radius, NumNeighbor, NeighborList);
 	}
 }

@@ -58,7 +58,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	double treg[2];  // 0 is current time and 1 is next time
 
 	// temporary variables saving the calculated acceleration values
-	double a_tmp[Dim]{0}, adot_tmp[Dim]{0};
+	double a_tmp[Dim], adot_tmp[Dim];
 
 	// variables for calculating the higher order acceleration derivatives
 	double a2, a3, da_dt2, adot_dt, dt, dt2, dt3, dt4;
@@ -82,10 +82,10 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	//PotSend         = new double[ListSize];
 
 	for (int p=0; p<2; p++) {
-		AccRegReceive[p]    = new double[ListSize][Dim]{0};
-		AccRegDotReceive[p] = new double[ListSize][Dim]{0};
-		AccIrr[p]           = new double[ListSize][Dim]{0};
-		AccIrrDot[p]        = new double[ListSize][Dim]{0};
+		AccRegReceive[p]    = new double[ListSize][Dim];
+		AccRegDotReceive[p] = new double[ListSize][Dim];
+		AccIrr[p]           = new double[ListSize][Dim];
+		AccIrrDot[p]        = new double[ListSize][Dim]; // {0}
 
 		NumNeighborReceive[p] = new int[ListSize];
 		ACListReceive[p]      = new int*[ListSize];
@@ -128,46 +128,42 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 			//TimeStepRegSend[i] = particle[IndexList[i]]->TimeStepReg;
 		}
 
-		// calculate the force by sending the particles to GPU in multiples of 1024
-		for (int offset=0; offset<ListSize; offset+=NumPtclPerEachCalMax) {
-			NumPtclPerEachCal = std::min(NumPtclPerEachCalMax, ListSize-offset);
+		// calculate the force by sending the particles to GPU
+		CalculateAccelerationOnDevice(&ListSize, PositionSend, VelocitySend, AccRegReceive[p], AccRegDotReceive[p],
+			 	MdotSend, RadiusOfAC2Send, NumNeighborReceive[p], ACListReceive[p]);
 
-			CalculateAccelerationOnDevice(&NumPtclPerEachCal, &offset, PositionSend, VelocitySend,
-					AccRegReceive[p], AccRegDotReceive[p], MdotSend, RadiusOfAC2Send, NumNeighborReceive[p], ACListReceive[p]);
+		// Calculate the irregular acceleration components based on neighbors of current regular time.
+		for (int i2=0; i2<ListSize; i2++) {
+			ptcl = particle[IndexList[i2]];  // regular particle in particle list
 
-			// Calculate the irregular acceleration components based on neighbors of current regular time.
-			for (int i2=offset; i2<(offset+NumPtclPerEachCal); i2++) {
-				ptcl = particle[IndexList[i2]];  // regular particle in particle list
+			std::cout <<  "MyIndex=" << IndexList[i2];
+			std::cout <<  "(" << NumNeighborReceive[0][i2] << ")" << std::endl;
+			std::cout <<  "NeighborIndex = ";
+			for (int j1=0;  j1<NumNeighborReceive[0][i2]; j1++) {
+				NeighborIndex = ACListReceive[0][i2][j1];  // gained neighbor particle (in next time list)
+				std::cout <<  NeighborIndex << "  ";
+				CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp);
 
-				std::cout <<  "MyIndex=" << IndexList[i2];
-				std::cout <<  "(" << NumNeighborReceive[0][i2] << ")" << std::endl;
-				std::cout <<  "NeighborIndex = ";
-				for (int j1=0;  j1<NumNeighborReceive[0][i2]; j1++) {
-					NeighborIndex = ACListReceive[0][i2][j1];  // gained neighbor particle (in next time list)
-					std::cout <<  NeighborIndex << "  ";
-					CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp);
+				for (int dim=0; dim<Dim; dim++) {
+					AccIrr[p][i2][dim]           += a_tmp[dim];
+					AccIrrDot[p][i2][dim]        += adot_tmp[dim];
+					AccRegReceive[p][i2][dim]    -= a_tmp[dim];
+					AccRegDotReceive[p][i2][dim] -= adot_tmp[dim];
+				} // endfor dim
+			} // endfor j1, over neighbor at current time
+			std::cout << std::endl;
 
-					for (int dim=0; dim<Dim; dim++) {
-						AccIrr[p][i2][dim]           += a_tmp[dim];
-						AccIrrDot[p][i2][dim]        += adot_tmp[dim];
-						AccRegReceive[p][i2][dim]    -= a_tmp[dim];
-						AccRegDotReceive[p][i2][dim] -= adot_tmp[dim];
-					} // endfor dim
-				} // endfor j1, over neighbor at current time
-				std::cout << std::endl;
-
-				if (p == 0) {
-					for (int dim=0; dim<Dim; dim++) {
-						ptcl->a_reg[dim][0] = AccRegReceive[0][i2][dim];
-						ptcl->a_reg[dim][1] = AccRegDotReceive[0][i2][dim];
-						ptcl->a_irr[dim][0] = AccIrr[0][i2][dim];
-						ptcl->a_irr[dim][1] = AccIrrDot[0][i2][dim];
-						ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0];
-						ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
-					}
-				} // current time update ptcl acc
-			} // endfor i2, over regular particles
-		} // endfor i, over gpu computations
+			if (p == 0) {
+				for (int dim=0; dim<Dim; dim++) {
+					ptcl->a_reg[dim][0] = AccRegReceive[0][i2][dim];
+					ptcl->a_reg[dim][1] = AccRegDotReceive[0][i2][dim];
+					ptcl->a_irr[dim][0] = AccIrr[0][i2][dim];
+					ptcl->a_irr[dim][1] = AccIrrDot[0][i2][dim];
+					ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0];
+					ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
+				}
+			} // current time update ptcl acc
+		} // endfor i2, over regular particles
 	} // endfor p,
 
 	std::cout <<  "1. a_tot= "<< particle[0]->a_tot[0][0] << ", a_irr= "<< particle[0]->a_irr[0][0] << std::endl; //<< ',' << particle[0]->a_tot[1][0]\

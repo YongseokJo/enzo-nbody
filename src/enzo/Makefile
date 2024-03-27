@@ -369,18 +369,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NVCC) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC)  -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
 	     echo; \
-             echo "$(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -I./nbody/include -I./nbody  $(INCLUDES) $*.cu"; \
+             echo "$(CUDACOMPILER) -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -I./nbody/include -I./nbody  $(INCLUDES) $*.cu"; \
              echo; \
-             $(CUDACOMPILER)  -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu;\
+             $(CUDACOMPILER) -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NVCC) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC) -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
