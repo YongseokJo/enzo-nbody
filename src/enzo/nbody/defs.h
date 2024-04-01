@@ -34,7 +34,7 @@
 // Physics related parameters
 #define eta 0.01 // by YS Jo subject to modifty
 #define EPS2 1e-2 //0.001
-#define InitialRadiusOfAC 0.4 //0.4 // 0.04 pc
+#define InitialRadiusOfAC 0.01 //0.4 // 0.04 pc
 
 // Physical constants
 #define G_cgs 6.67430e-8

@@ -22,7 +22,8 @@ cd src/enzo/
 
 module add modules/2.0-20220630 
 module add gcc/7.5.0
-module add openmpi/1.10.7
+#module add openmpi/1.10.7
+module add openmpi/cuda-4.0.7
 module add cuda/11.4.4
 module add hdf5/1.8.22
 #module add ucx

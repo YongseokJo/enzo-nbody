@@ -91,8 +91,13 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		ACListReceive[p]      = new int*[ListSize];
 		for (int i=0; i<ListSize; i++) {
 			ACListReceive[p][i] = new int[NumNeighborMax];
+			for (int dim=0; dim<Dim; dim++) {
+				AccIrr[p][i][dim]    = 0;
+				AccIrrDot[p][i][dim] = 0;
+			}
 		}
 	}
+
 
 	// perform the loop twice in order to obtain
 	// both the current and predicted acceleration
@@ -143,12 +148,13 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 				NeighborIndex = ACListReceive[0][i2][j1];  // gained neighbor particle (in next time list)
 				std::cout <<  NeighborIndex << "  ";
 				CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp);
-
 				for (int dim=0; dim<Dim; dim++) {
 					AccIrr[p][i2][dim]           += a_tmp[dim];
 					AccIrrDot[p][i2][dim]        += adot_tmp[dim];
 					AccRegReceive[p][i2][dim]    -= a_tmp[dim];
 					AccRegDotReceive[p][i2][dim] -= adot_tmp[dim];
+					a_tmp[dim]                    = 0;
+					adot_tmp[dim]                 = 0;
 				} // endfor dim
 			} // endfor j1, over neighbor at current time
 			std::cout << std::endl;
@@ -163,14 +169,15 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 					ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
 				}
 			} // current time update ptcl acc
+			std::cout <<  "1. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] << std::endl; //<< ',' << particle[0]->a_tot[1][0]\
+			<< ',' << particle[0]->a_tot[2][0] << std::endl;
+
+			std::cout <<  "2. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] <<std::endl; 
+			std::cout <<  "3. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] <<std::endl; 
 		} // endfor i2, over regular particles
 	} // endfor p,
 
-	std::cout <<  "1. a_tot= "<< particle[0]->a_tot[0][0] << ", a_irr= "<< particle[0]->a_irr[0][0] << std::endl; //<< ',' << particle[0]->a_tot[1][0]\
-		<< ',' << particle[0]->a_tot[2][0] << std::endl;
 
-	std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0] << ", a_irr= "<< particle[1]->a_irr[0][0] <<std::endl; 
-	std::cout <<  "3. a_tot= "<< particle[2]->a_tot[0][0] << ", a_irr= "<< particle[2]->a_irr[0][0] <<std::endl; 
 	//std::cout <<  "2. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
 		<< ',' << particle[1]->a_tot[2][0] << std::endl;
 
@@ -257,7 +264,6 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		delete[] AccIrrDot[p];
 		delete[] ACListReceive[p];
 	}
-
 	//CloseDevice();
 } // calculate 0th, 1st derivative of force + neighbors on GPU ends
 

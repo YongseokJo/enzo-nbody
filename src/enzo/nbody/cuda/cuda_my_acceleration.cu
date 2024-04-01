@@ -27,7 +27,7 @@ static int devid, numGPU;
 static bool is_open = false;
 static bool devinit = false;
 const int memory_size = 512;
-static bool first = false;
+static bool first = true;
 //BackgroundParticle *h_background, *d_background;
 BackgroundParticle *h_background; //, *background;
 BackgroundParticle *d_background;
@@ -156,7 +156,7 @@ void GetAcceleration(
 		for (int i=0;i<NumTarget_local;i++) {
 			_offset = 0;
 			for (int j=0;j<THREAD;j++) {
-				for (int k=0;k<h_neighbor[i*THREAD+j].NumNeighbor;k++) {
+				for (int k=0;(k<h_neighbor[i*THREAD+j].NumNeighbor) && (k+_offset < 100);k++) {
 					NeighborList[offset+i][k+_offset] = h_neighbor[i*THREAD+j].NeighborList[k];
 				}
 				_offset += h_neighbor[i*THREAD+j].NumNeighbor;
@@ -173,11 +173,15 @@ void GetAcceleration(
 			adot[offset+i][0] = h_result[i].adot.x;
 			adot[offset+i][1] = h_result[i].adot.y;
 			adot[offset+i][2] = h_result[i].adot.z;
+			fprintf(stderr, "acc=(%.3e,%.3e,%.3e), h_result=(%.3e,%.3e,%.3e)\n", 
+					acc[offset+i][0], acc[offset+i][1], acc[offset+i][2],
+					h_result[i].acc.x, h_result[i].acc.y, h_result[i].acc.z);
+					
 			//time_out += get_wtime();
 		}
 	} // endfor offset
 
-
+	
 	/*
 	cudaStatus = cudaFree(background);
 	if (cudaStatus != cudaSuccess) {
@@ -221,10 +225,11 @@ __global__ void CalculateAcceleration(
 				kernel(target[tg_index], background[bg_index], res[threadIdx.x],// neighbor[tg_index*blockDim.x+threadIdx.x],
 						nb, bg_index, tg_index);
 						//bg_index, tg_index);
-				neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = nb.NumNeighbor;
-				for (int i=0; i<nb.NumNeighbor; i++) {
+				neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = min(nb.NumNeighbor,100);
+				for (int i=0;  i < min(nb.NumNeighbor,100); i++) {
 					neighbor[tg_index*blockDim.x+threadIdx.x].NeighborList[i] = nb.NeighborList[i];
 				}
+
 				//neighbor_num[tg_index*blockDim.x+threadIdx.x].NumNeighbor++;
 				//printf("CUDA: 3. (%d,%d), res=%e\n", threadIdx.x, blockIdx.x, res[threadIdx.x].acc.x);
 						//tg_index, bg_index, res[threadIdx.x].acc.x);
@@ -431,11 +436,13 @@ void _InitializeDevice(int irank){
 	cudaSetDevice(device);
 
 	// Initialize CUDA context
+	/*
 	cudaError_t cudaStatus = cudaFree(0);
 	if (cudaStatus != cudaSuccess) {
 		std::cerr << "CUDA initialization failed: " << cudaGetErrorString(cudaStatus) << std::endl;
 		return;
 	}
+	*/
 
 	is_open = true;
 	// CUDA is now initialized and ready to be used
