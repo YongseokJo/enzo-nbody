@@ -10,6 +10,7 @@ int SendToEzno(std::vector<Particle*> &particle);
 bool CreateComputationChain(std::vector<Particle*> &particle);
 bool RegularAccelerationRoutine(std::vector<Particle*> &particle);
 bool IrregularAccelerationRoutine(std::vector<Particle*> &particle);
+void UpdateNextRegTime(std::vector<Particle*> &particle);
 
 bool IsOutput         = false;
 double outputTime     = 0.;
@@ -48,12 +49,12 @@ void Evolve(std::vector<Particle*> &particle) {
 		do
 		{
 			std::cout << "global time=" << global_time << std::endl;
-			std::cout << "CurrentTimeReg=" << particle[0]->CurrentTimeReg << std::endl;
 			SendToEzno(particle);
 			ReceiveFromEzno(particle);
 		} while (NNB == 0);
 		global_time = 0.;
 		NextRegTime = 0.;
+		UpdateNextRegTime(particle);
 	}
 }
 

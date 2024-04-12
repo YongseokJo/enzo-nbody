@@ -234,14 +234,15 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 					 	1, 500, inter_comm);
 			}
 		}
-		MPI_Send(&TimeStep,                 1, MPI_DOUBLE, 1,  600, inter_comm);
-		MPI_Send(&TimeUnits,                1, MPI_DOUBLE, 1,  700, inter_comm);
-		MPI_Send(&LengthUnits,              1, MPI_DOUBLE, 1,  800, inter_comm);
-		MPI_Send(&MassUnits,                1, MPI_DOUBLE, 1,  900, inter_comm);
-		MPI_Send(&VelocityUnits,            1, MPI_DOUBLE, 1, 1000, inter_comm);
-		MPI_Send(&StarParticleFeedback    , 1, MPI_INT   , 1, 1100, inter_comm);
-		MPI_Send(&StarMassEjectionFraction, 1, MPI_DOUBLE, 1, 1200, inter_comm);
-		MPI_Send(&Time									  , 1, MPI_DOUBLE, 1, 1300, inter_comm);
+		MPI_Send(&TimeStep,                    1, MPI_DOUBLE, 1,  600, inter_comm);
+		MPI_Send(&TimeUnits,                   1, MPI_DOUBLE, 1,  700, inter_comm);
+		MPI_Send(&LengthUnits,                 1, MPI_DOUBLE, 1,  800, inter_comm);
+		MPI_Send(&MassUnits,                   1, MPI_DOUBLE, 1,  900, inter_comm);
+		MPI_Send(&VelocityUnits,               1, MPI_DOUBLE, 1, 1000, inter_comm);
+		MPI_Send(&StarParticleFeedback       , 1, MPI_INT   , 1, 1100, inter_comm);
+		MPI_Send(&StarMassEjectionFraction   , 1, MPI_DOUBLE, 1, 1200, inter_comm);
+		MPI_Send(&Time									     , 1, MPI_DOUBLE, 1, 1300, inter_comm);
+		MPI_Send(&NbodyClusterPosition[3][0] , 1, MPI_DOUBLE, 1, 1400, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
 		CommunicationInterBarrier();
 

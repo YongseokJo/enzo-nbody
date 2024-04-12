@@ -541,6 +541,7 @@ typedef long long int   HDF5_hid_t;
 #ifdef NBODY
 #define PARTICLE_TYPE_NBODY         12  //by YS 
 #define PARTICLE_TYPE_NBODY_NEW     13  //by YS 
+#define PARTICLE_TYPE_NBODY_REMOVE  14  //by YS 
 #endif
 
 #define CHILDRENPERPARENT           12

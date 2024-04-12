@@ -41,6 +41,8 @@ class Particle
 		double a_tot[Dim][HERMITE_ORDER];
 		double a_reg[Dim][HERMITE_ORDER];
 		double a_irr[Dim][HERMITE_ORDER];
+		double a_reg_pred[Dim][2]; // a and adot
+		double a_irr_pred[Dim][2]; // a and adot
 		double BackgroundAcceleration[Dim];
 		Particle* NextParticleInEnzo;
 		Particle* NextParticleForComputation;

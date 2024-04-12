@@ -120,6 +120,9 @@ void Particle::calculateIrrForce() {
 		a_irr[dim][2] = a2;
 		a_irr[dim][3] = a3;
 
+		a_irr_pred[dim][0] = a0_irr[1][dim];
+		a_irr_pred[dim][1] = a0dot_irr[1][dim];
+
 		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0];
 		a_tot[dim][1] = a_reg[dim][1] + a_irr[dim][1];
 		a_tot[dim][2] = a_reg[dim][2] + a_irr[dim][2];
@@ -136,7 +139,7 @@ void Particle::calculateIrrForce() {
 		std::cout << "\n" << std::endl;
 		} // endfor dim
 		*/
-	
+	/*
 	std::cout << "\nIrregular Calculation\n" << std::flush;
 	std::cout <<  "3. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
 		<< ',' << a_irr[2][0] << std::endl;
@@ -144,6 +147,7 @@ void Particle::calculateIrrForce() {
 		<< ',' << a_irr[2][0] << std::endl;
 	std::cout <<  "5. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
 		<< ',' << a_irr[2][0] << std::endl;
+		*/
 
 	// update the current irregular time and irregular time steps
 	//this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);

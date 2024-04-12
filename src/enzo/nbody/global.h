@@ -27,6 +27,9 @@ extern Particle* FirstEnzoParticle;
 extern double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 extern double EnzoTime;
 extern double EnzoTimeStep;
+extern double ClusetrRadius2;
+extern double BackgroundCOM[Dim];
+extern double newBackgroundCOM[Dim];
 
 
 // i/o

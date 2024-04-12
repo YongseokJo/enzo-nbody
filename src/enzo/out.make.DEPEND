@@ -2306,6 +2306,18 @@ makedepend: warning:  ProblemType_AgoraRestart.C, line 16: cannot find include f
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
 	not in ./iostream
 	not in /usr/include/iostream
+makedepend: warning:  ProblemType_AgoraRestart.C, line 17: cannot find include file "fstream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/fstream
+	not in /include/fstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/fstream
+	not in ./fstream
+	not in /usr/include/fstream
+makedepend: warning:  ProblemType_AgoraRestart.C, line 18: cannot find include file "sstream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/sstream
+	not in /include/sstream
+	not in /mnt/home/yjo10/packages/grackle/build/include/sstream
+	not in ./sstream
+	not in /usr/include/sstream
 makedepend: warning:  ProblemType.C, line 13: cannot find include file "string"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/string
 	not in /include/string
@@ -3384,48 +3396,6 @@ Already have
 	fortran_types.def
 makedepend: warning:  cannot open "*/*.f"
 makedepend: warning:  cannot open "*/*.F"
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp, line 1: cannot find include file "mpi.h"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
-	not in /include/mpi.h
-	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
-	not in ./mpi.h
-	not in /usr/include/mpi.h
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp, line 2: cannot find include file "iostream"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
-	not in /include/iostream
-	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
-	not in ./iostream
-	not in /usr/include/iostream
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp (reading nbody/global.h, line 1): cannot find include file "vector"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
-	not in /include/vector
-	not in /mnt/home/yjo10/packages/grackle/build/include/vector
-	not in ./vector
-	not in /usr/include/vector
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp (reading nbody/global.h, line 2): cannot find include file "mpi.h"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
-	not in /include/mpi.h
-	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
-	not in ./mpi.h
-	not in /usr/include/mpi.h
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp (reading nbody/global.h, line 3): cannot find include file "iostream"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
-	not in /include/iostream
-	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
-	not in ./iostream
-	not in /usr/include/iostream
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp (reading nbody/Particle/Particle.h, line 8): cannot find include file "vector"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
-	not in /include/vector
-	not in /mnt/home/yjo10/packages/grackle/build/include/vector
-	not in ./vector
-	not in /usr/include/vector
-makedepend: warning:  nbody/CommunicatinoToHydro.cpp (reading nbody/Particle/Particle.h, line 9): cannot find include file "iostream"
-	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
-	not in /include/iostream
-	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
-	not in ./iostream
-	not in /usr/include/iostream
 makedepend: warning:  nbody/CommunicationToHydro.cpp, line 1: cannot find include file "mpi.h"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
 	not in /include/mpi.h
@@ -3433,6 +3403,36 @@ makedepend: warning:  nbody/CommunicationToHydro.cpp, line 1: cannot find includ
 	not in ./mpi.h
 	not in /usr/include/mpi.h
 makedepend: warning:  nbody/CommunicationToHydro.cpp, line 2: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
+	not in /include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/global.h, line 1): cannot find include file "vector"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
+	not in /include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/global.h, line 2): cannot find include file "mpi.h"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
+	not in /include/mpi.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
+	not in ./mpi.h
+	not in /usr/include/mpi.h
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/global.h, line 3): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
+	not in /include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/Particle/Particle.h, line 8): cannot find include file "vector"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
+	not in /include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/Particle/Particle.h, line 9): cannot find include file "iostream"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
 	not in /include/iostream
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
@@ -3621,6 +3621,18 @@ makedepend: warning:  nbody/ReadWrite.cpp, line 6: cannot find include file "iom
 	not in ./iomanip
 	not in /usr/include/iomanip
 makedepend: warning:  nbody/RegularAccelerationRoutine.cpp, line 1: cannot find include file "iostream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
+	not in /include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/RemoveParticles.cpp, line 1: cannot find include file "mpi.h"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
+	not in /include/mpi.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
+	not in ./mpi.h
+	not in /usr/include/mpi.h
+makedepend: warning:  nbody/RemoveParticles.cpp, line 2: cannot find include file "iostream"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
 	not in /include/iostream
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
@@ -4824,6 +4836,126 @@ makedepend: warning:  Grid.h, line 14: cannot find include file "vector"
 	not in /mnt/home/yjo10/packages/grackle/build/include/vector
 	not in ./vector
 	not in /usr/include/vector
+makedepend: warning:  ImplicitProblemABC.h includes preincludes.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes macros_and_parameters.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes typedefs.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes global_data.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes Fluxes.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes GridList.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes ExternalBoundary.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes Grid.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes Hierarchy.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
+makedepend: warning:  ImplicitProblemABC.h includes TopGridData.h more than once!
+Already have
+	preincludes.h
+	macros_and_parameters.h
+	typedefs.h
+	global_data.h
+	Fluxes.h
+	GridList.h
+	ExternalBoundary.h
+	Grid.h
+	Hierarchy.h
+	TopGridData.h
 makedepend: warning:  lcaperf.h, line 26: cannot find include file "map"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/map
 	not in /include/map

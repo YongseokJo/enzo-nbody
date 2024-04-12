@@ -117,6 +117,7 @@ int OutputParitcles(LevelHierarchyEntry *LevelArray[],int level);
 #ifdef NBODY
 int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
 int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[],int level);
+void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int level);
 #endif
 
 #define EXTRA_OUTPUT_MACRO(A,B) ExtraOutput(A,LevelArray,MetaData,level,Exterior IMPLICIT_MACRO,B);
@@ -497,6 +498,12 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 				/* Prepare the density field (including particle density). */
 
 				When = 0.5;
+
+
+#ifdef NBODY
+				IdentifyNbodyParticlesEvolveLevel(LevelArray, level);
+#endif
+
 
 #ifdef FAST_SIB
 				fprintf(stdout,"Prepare Density Field Starts.\n");  // by YS

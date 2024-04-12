@@ -235,7 +235,6 @@ void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[], int *Loc
 #else
 	NumberOfNbodyParticles = *LocalNumberOfNbodyParticles;
 #endif
-
 }
 
 
@@ -293,6 +292,21 @@ int FindStartIndex(int* LocalNumberOfNbodyParticles) {
 	return start_index; //return start index of Nbody arrays for each processor
 }
 
+
+void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int level) {
+
+	bool IsNbodyParticlesIdentification = true;
+
+	if (!IsNbodyParticlesIdentification)
+		return;
+
+
+  LevelHierarchyEntry *Temp;
+
+	for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
+		Temp->GridData->IdentifyNbodyParticles();
+	}
+}
 
 
 

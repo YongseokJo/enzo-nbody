@@ -289,7 +289,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 			for (i = 0; i < NumberOfParticles; i++) {
 				if ((ParticleType[i] == PARTICLE_TYPE_NBODY) ||
-						(ParticleType[i] == PARTICLE_TYPE_NBODY_NEW)) 
+						(ParticleType[i] == PARTICLE_TYPE_NBODY_NEW))
 					ParticleMassTemp[i] = 0;
 				else
 					ParticleMassTemp[i] = ParticleMass[i]*MassFactorTemp;

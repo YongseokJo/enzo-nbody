@@ -1901,6 +1901,10 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 				for (int j=0; j<NumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NbodyParticleIDTemp[j]) {
+						if (ParticlePosition[0][i] > 210 ) {
+							ParticlePosition[0][i] -= 222;
+							ParticleType[i] = PARTICLE_TYPE_STAR;
+						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
 							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j]+0.5;
 							ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][j];
@@ -1911,16 +1915,55 @@ class grid
 				} // ENDFOR nbody particles
 				for (int j=0; j<NewNumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NewNbodyParticleIDTemp[j]) {
+						ParticleType[i] = PARTICLE_TYPE_NBODY;
+						if (ParticlePosition[0][i] > 210 ) {
+							ParticlePosition[0][i] -= 222;
+							ParticleType[i] = PARTICLE_TYPE_STAR;
+						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
 							ParticlePosition[dim][i] = NewNbodyParticlePositionTemp[dim][j]+0.5;
 							ParticleVelocity[dim][i] = NewNbodyParticleVelocityTemp[dim][j];
 						} // ENDFOR dim
-						ParticleType[i] = PARTICLE_TYPE_NBODY;
 						(*count)++;
 						break;
 					} // ENDIF partID matched
 				} // ENDFOR new nbody particles
 			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+
+		int IdentifyNbodyParticles() {
+
+			const float thres_r2 = NbodyClusterPosition[3][0];
+			float r2;
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
+			for (int i=0; i < NumberOfParticles; i++) {
+				r2 = 0;
+				r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0][0])
+					*(ParticlePosition[0][i] - NbodyClusterPosition[0][0]);
+				r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1][0])
+					*(ParticlePosition[1][i] - NbodyClusterPosition[1][0]);
+				r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2][0])
+					*(ParticlePosition[2][i] - NbodyClusterPosition[2][0]);
+
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY)
+					continue;
+				/*
+					if ( r2 > thres_r2 )
+						ParticleType[i] = PARTICLE_TYPE_STAR;
+				*/
+				else {
+					if ( r2 < thres_r2 )
+						if (NbodyFirst)
+							ParticleType[i] = PARTICLE_TYPE_NBODY;
+						else
+							ParticleType[i] = PARTICLE_TYPE_NBODY_NEW;
+				}
+			}
 			return SUCCESS;
 		}
 #endif

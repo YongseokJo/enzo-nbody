@@ -13,7 +13,7 @@
 
 #define THREAD 1024 // 2048 for A100
 #define BLOCK 32    // 32 for A100 
-#define ESP2 1e-2
+#define ESP2 1e-3
 #define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
 
 
@@ -173,9 +173,11 @@ void GetAcceleration(
 			adot[offset+i][0] = h_result[i].adot.x;
 			adot[offset+i][1] = h_result[i].adot.y;
 			adot[offset+i][2] = h_result[i].adot.z;
+			/*
 			fprintf(stderr, "acc=(%.3e,%.3e,%.3e), h_result=(%.3e,%.3e,%.3e)\n", 
 					acc[offset+i][0], acc[offset+i][1], acc[offset+i][2],
 					h_result[i].acc.x, h_result[i].acc.y, h_result[i].acc.z);
+					*/
 					
 			//time_out += get_wtime();
 		}

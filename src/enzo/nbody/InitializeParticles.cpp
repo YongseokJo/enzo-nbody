@@ -121,8 +121,8 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 			ptcl1->ACList.push_back(ptcl2);
 			ptcl1->NumberOfAC++;
 		}
-	} // endfor 
-	
+	} // endfor
+		//
 	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
 	return ;
 
@@ -256,7 +256,6 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 				}
 			}
 		}
-
 	} // endfor ptcl2
 
 

@@ -101,10 +101,13 @@ void Particle::calculateRegAccelerationSecondOrder(std::vector<Particle*> &parti
 	} // endfor ptcl
 
 	for (int dim=0; dim<Dim; dim++) {
-		a_reg[dim][0] = a0_reg[dim];
+		a_reg[dim][0] = a0_reg[dim] + BackgroundAcceleration[dim];
 		a_reg[dim][1] = a0dot_reg[dim];
 		a_irr[dim][0] = a0_irr[dim];
 		a_irr[dim][1] = a0dot_irr[dim];
+
+
+
 		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0];
 		a_tot[dim][1] = a_reg[dim][1] + a_irr[dim][1];
 	}
@@ -191,6 +194,12 @@ void Particle::calculateRegAccelerationFourthOrder(std::vector<Particle*> &parti
 	dt4 = dt*dt3;
 	// calculated the final corrected forces
 	for (int dim=0; dim<Dim; dim++) {
+
+		a_reg_pred[dim][0] = a0_reg[dim] + BackgroundAcceleration[dim];
+		a_reg_pred[dim][1] = a0dot_reg[dim];
+		a_irr_pred[dim][0] = a0_irr[dim];
+		a_irr_pred[dim][1] = a0dot_irr[dim];
+
 		da_dt2  = (   a_reg[dim][0] - a0_reg[dim]   ) / dt2;
 		adot_dt = (   a_reg[dim][1] + a0dot_reg[dim]) / dt;
 

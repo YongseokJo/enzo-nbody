@@ -151,7 +151,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 				for (int dim=0; dim<Dim; dim++) {
 					AccIrr[p][i2][dim]           += a_tmp[dim];
 					AccIrrDot[p][i2][dim]        += adot_tmp[dim];
-					AccRegReceive[p][i2][dim]    -= a_tmp[dim];
+					AccRegReceive[p][i2][dim]    -= a_tmp[dim] + ptcl->BackgroundAcceleration[dim];
 					AccRegDotReceive[p][i2][dim] -= adot_tmp[dim];
 					a_tmp[dim]                    = 0;
 					adot_tmp[dim]                 = 0;
@@ -169,11 +169,21 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 					ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
 				}
 			} // current time update ptcl acc
+			if (p == 1) {
+				for (int dim=0; dim<Dim; dim++) {
+					ptcl->a_reg_pred[dim][0] = AccRegReceive[1][i2][dim];
+					ptcl->a_reg_pred[dim][1] = AccRegDotReceive[1][i2][dim];
+					ptcl->a_irr_pred[dim][0] = AccIrr[1][i2][dim];
+					ptcl->a_irr_pred[dim][1] = AccIrrDot[1][i2][dim];
+				}
+			}
+			/*
 			std::cout <<  "1. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] << std::endl; //<< ',' << particle[0]->a_tot[1][0]\
 			<< ',' << particle[0]->a_tot[2][0] << std::endl;
 
 			std::cout <<  "2. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] <<std::endl; 
 			std::cout <<  "3. a_tot= "<< particle[IndexList[i2]]->a_tot[0][0] << ", a_irr= "<< particle[IndexList[i2]]->a_irr[0][0] <<std::endl; 
+			*/
 		} // endfor i2, over regular particles
 	} // endfor p,
 
@@ -226,6 +236,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 	} // correction and calculation of higher orders finished
 
 
+	/*
 	std::cout <<  "3. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
 		<< ',' << particle[0]->a_tot[2][0] << std::endl;
 	std::cout <<  "4. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
@@ -246,6 +257,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		<< ',' << particle[1]->a_reg[2][0] << std::endl;
 	std::cout <<  "5. a_reg= "<< particle[2]->a_reg[0][0]<< ',' << particle[2]->a_reg[1][0]\
 		<< ',' << particle[2]->a_reg[2][0] << std::endl;
+		*/
 
 	// free all temporary variables
 	delete[] MassSend;

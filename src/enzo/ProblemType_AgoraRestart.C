@@ -14,6 +14,8 @@
 #ifdef NEW_PROBLEM_TYPES
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "preincludes.h"
 #include "ErrorExceptions.h"
 #include "macros_and_parameters.h"
@@ -725,7 +727,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			nHalo = nlines("halo.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Halo Particles %"ISYM"\n", nHalo);
 #ifdef NBODY
-			nNbody = nlines("nbody.dat");
+			nNbody = nlines("nbody.dat")-1;
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Nbody Particles %"ISYM"\n", nNbody);
 			nParticles = nBulge + nDisk + nHalo + nNbody;
 #else
@@ -784,9 +786,16 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 					Number, Type, Position, Velocity, Mass,
 					"halo.dat", PARTICLE_TYPE_DARK_MATTER, count, dx);
 #ifdef NBODY
-			this->ReadParticlesFromFile(
-					Number, Type, Position, Velocity, Mass,
+			NbodyClusterPosition[0] = new float[1];
+			NbodyClusterPosition[1] = new float[1];
+			NbodyClusterPosition[2] = new float[1];
+			NbodyClusterPosition[3] = new float[1];
+
+			this->ReadNbodyParticles(
+					Number, Type, Position, Velocity, Mass, nNbody,
 					"nbody.dat", PARTICLE_TYPE_NBODY, count, dx);
+			fprintf(stdout, "NbodyCluster = (%.3e,%.3e,%.3e), r2 = %.3e \n", 
+					NbodyClusterPosition[0][0], NbodyClusterPosition[1][0], NbodyClusterPosition[2][0], NbodyClusterPosition[3][0]);
 #endif
 
 			thisgrid->SetNumberOfParticles(count);
@@ -942,6 +951,73 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			return c;
 		} // ReadParticlesFromFile
 
+
+		int ReadNbodyParticles( PINT *Number, int *Type, FLOAT *Position[],
+				float *Velocity[], float* Mass, int count, const char* fname,
+				Eint32 particle_type, int &c, FLOAT dx) {
+
+			std::ifstream file(fname);
+
+			if (!file.is_open()) {
+				std::cerr << "Error opening " << fname << "!" << std::endl;
+				return 1;
+			}
+
+			std::string line;
+			int line_number = 0;
+			FLOAT x, y, z;
+			float vx, vy, vz;
+			double mass;
+
+			float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+						TemperatureUnits=1;
+			double MassUnits=1;
+
+			if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
+						&TimeUnits, &VelocityUnits, &MassUnits, 0) == FAIL) {
+				ENZO_FAIL("Error in GetUnits.");
+			}
+
+			while (std::getline(file, line) && line_number < count) {
+				std::istringstream iss(line); // Create a string stream from the line
+
+				// Read the type ('position' or 'velocity') and the x, y, z components
+				iss >> x >> y >> z >> vx >> vy >> vz >> mass;
+
+				Position[0][c] = x * kpc_cm / LengthUnits + this->CenterPosition[0];
+				Position[1][c] = y * kpc_cm / LengthUnits + this->CenterPosition[1];
+				Position[2][c] = z * kpc_cm / LengthUnits + this->CenterPosition[2];
+
+				Velocity[0][c] = vx * km_cm / VelocityUnits;
+				Velocity[1][c] = vy * km_cm / VelocityUnits;
+				Velocity[2][c] = vz * km_cm / VelocityUnits;
+
+				// Particle masses are actually densities.
+				Mass[c] = mass * 1e9 * SolarMass / MassUnits / dx / dx / dx;
+				Type[c] = particle_type;
+				Number[c] = c++;
+			}
+
+			file.clear();
+			file.seekg(0, std::ios::beg);
+
+			while (std::getline(file, line)) {
+				std::istringstream iss(line); // Create a string stream from the line
+
+				float r;
+				// Read the type ('position' or 'velocity') and the x, y, z components
+				iss >> x >> y >> z >> r; // >> vx >> vy >> vz >> mass;
+
+				NbodyClusterPosition[0][0] = x * kpc_cm / LengthUnits + this->CenterPosition[0];
+				NbodyClusterPosition[1][0] = y * kpc_cm / LengthUnits + this->CenterPosition[1];
+				NbodyClusterPosition[2][0] = z * kpc_cm / LengthUnits + this->CenterPosition[2];
+				NbodyClusterPosition[3][0] = (r * kpc_cm / LengthUnits)*(r * kpc_cm / LengthUnits);
+			}
+
+			file.close();
+
+			return 0;
+		}
 }; // class declaration
 
 
