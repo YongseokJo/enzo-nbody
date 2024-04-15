@@ -6,9 +6,13 @@
 Particle* FirstParticleInEnzo = nullptr;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 double EnzoCurrentTime, ClusterRadius2;
+double BackgroundCOM[Dim];
+double newBackgroundCOM[Dim];
+double EPS2, eta, InitialRadiusOfAC;
 
 void InitializeParticle(Particle* newParticle, std::vector<Particle*> &particle);
 int CommunicationInterBarrier();
+
 
 
 
@@ -18,7 +22,6 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	double *Mass, *Position[Dim], *Velocity[Dim], *BackgroundAcceleration[Dim];
 	double *CreationTime, *DynamicalTime;
 	double TimeStep, TimeUnits, LengthUnits, VelocityUnits, MassUnits;
-
 
 	MPI_Request request;
 	MPI_Status status;
@@ -59,7 +62,10 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&StarParticleFeedback    , 1, MPI_INT   , 0, 1100, inter_comm, &status);
 	MPI_Recv(&StarMassEjectionFraction, 1, MPI_DOUBLE, 0, 1200, inter_comm, &status);
 	MPI_Recv(&EnzoCurrentTime         , 1, MPI_DOUBLE, 0, 1300, inter_comm, &status);
-	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1400, inter_comm, &status);
+	MPI_Recv(&EPS2                    , 1, MPI_DOUBLE, 0, 1400, inter_comm, &status);
+	MPI_Recv(&eta                     , 1, MPI_DOUBLE, 0, 1500, inter_comm, &status);
+	MPI_Recv(&InitialRadiusOfAC       , 1, MPI_DOUBLE, 0, 1600, inter_comm, &status);
+	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1700, inter_comm, &status);
 	//MPI_Recv(&HydroMethod         , 1, MPI_INT   , 0, 1200, inter_comm, &status);
 	CommunicationInterBarrier();
 	std::cout << "Data received!\n" << std::endl;
@@ -72,17 +78,36 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	EnzoTime         = TimeUnits/yr/time_unit;
 	EnzoAcceleration = LengthUnits/TimeUnits/TimeUnits/pc*yr*yr/position_unit*time_unit*time_unit;
 
-	EnzoTimeStep     = TimeStep*EnzoTime;
-	EnzoCurrentTime  = EnzoCurrentTime*EnzoTime;
-	ClusterRadius2  *= EnzoLength*EnzoLength;
+	// Unit conversion
+	EnzoTimeStep       = TimeStep*EnzoTime;
+	EnzoCurrentTime   *= EnzoTime;
+	EPS2              *= EnzoLength*EnzoLength;
+	InitialRadiusOfAC *= EnzoLength;
 
 	std::cout << "enzo Time:" << TimeStep << std::endl;
 	std::cout << "nbody Time:" << EnzoTimeStep << std::endl;
+	std::cout << "EPS2              = " << EPS2 << std::endl;
+	std::cout << "InitialRadiusOfAC = " << InitialRadiusOfAC << std::endl;
+	std::cout << "eta               = " << eta << std::endl;
+	std::cout << "ClusterRadius2    = " << ClusterRadius2 << std::endl;
 
 	Particle* ptclPtr;
 	Particle* ptcl = new Particle[NNB];
 	if (NNB != 0) {
+
+
+		// set COM for background acc
 		for (int i=0; i<NNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				BackgroundCOM[dim] += BackgroundAcceleration[dim][i]/NNB;
+			}
+		}
+
+		for (int i=0; i<NNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				BackgroundAcceleration[dim][i] -= BackgroundCOM[dim];
+			}
+
 			if (i == NNB-1)
 				ptclPtr = nullptr;
 			else
@@ -208,8 +233,17 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
 	if (NNB != 0) {
 		std::cout << "NBODY+: 2"  << std::endl;
+		for (int i=0; i<NNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				BackgroundCOM[dim] += BackgroundAcceleration[dim][i]/NNB;
+			}
+		}
+
 		// loop for PID, going backwards to update the NextParticle
 		for (int i=NNB-1; i>=0; i--) {
+			for (int dim=0; dim<Dim; dim++) {
+				BackgroundAcceleration[dim][i] -= BackgroundCOM[dim];
+			}
 			for (int j=0; j<NNB; j++) {
 				// PID of the received particle matches the PID of the existing particle
 				if (PID[i] == particle[j]->PID) {
@@ -235,8 +269,18 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		Particle* ptclPtr;
 		Particle *newPtcl = new Particle[newNNB]; // we shouldn't delete it, maybe make it to vector
 
+		for (int i=0; i<NNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				newBackgroundCOM[dim] += newBackgroundAcceleration[dim][i]/NNB;
+			}
+		}
+
 		// Update New Particles
 		for (int i=0; i<newNNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				newBackgroundAcceleration[dim][i] -= newBackgroundCOM[dim];
+			}
+
 			if (i<(newNNB-1)) {
 				ptclPtr = &newPtcl[(i+1)];
 			} else {
@@ -333,15 +377,22 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	int index;
 	std::vector<Particle*> EscapeList;
 
+
+	std::cout << "NBODY+: Escape Radius=" << ClusterRadius2 << std::endl;
+
 	if (NNB - newNNB > 0) {
 		for (int i=0; i<NNB-newNNB; i++) {
 			r2 = 0;
 			for (int dim=0; dim<Dim; dim++) {
-				Position[dim][i] = ptcl->Position[dim]/EnzoLength;
-				Velocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;
+				Position[dim][i]  = ptcl->Position[dim];
+				Position[dim][i] += BackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
+				Position[dim][i]  = Position[dim][i]/EnzoLength;
+				Velocity[dim][i]  = ptcl->Velocity[dim];
+				Velocity[dim][i] += BackgroundCOM[dim]*EnzoTimeStep;
+				Velocity[dim][i]  = Velocity[dim][i]/EnzoVelocity;
 				r2              += Position[dim][i]*Position[dim][i];
 			}
-			if (r2 > ClusterRadius2) { // in Enzo Unit
+			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
 				Position[0][i] += 222;
 				EscapeList.push_back(ptcl);
 				EscapeParticleNum++;
@@ -360,11 +411,15 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		for (int i=0; i<newNNB; i++) {
 			r2 = 0;
 			for (int dim=0; dim<Dim; dim++) {
-				newPosition[dim][i] = ptcl->Position[dim]/EnzoLength;
-				newVelocity[dim][i] = ptcl->Velocity[dim]/EnzoVelocity;
-				r2                 += newPosition[dim][i]*newPosition[dim][i];
+				newPosition[dim][i]  = ptcl->Position[dim];
+				newPosition[dim][i] += newBackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
+				newPosition[dim][i]  = newPosition[dim][i]/EnzoLength;
+				newVelocity[dim][i]  = ptcl->Velocity[dim];
+				newVelocity[dim][i] += newBackgroundCOM[dim]*EnzoTimeStep;
+				newVelocity[dim][i]  = newVelocity[dim][i]/EnzoVelocity;
+				r2                  += newPosition[dim][i]*newPosition[dim][i];
 			}
-			if (r2 > ClusterRadius2) {
+			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) {
 				newPosition[0][i] += 222;
 				EscapeList.push_back(ptcl);
 				EscapeParticleNum++;
@@ -388,6 +443,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			MPI_Send(Velocity[dim], NNB - newNNB, MPI_DOUBLE, 0, 400, inter_comm);
 		}
 	}
+	std::cout << "NBODY+: Escape particles=" << EscapeParticleNum << std::endl;
 
 	//fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
 	if (newNNB > 0) {

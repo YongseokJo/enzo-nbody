@@ -814,6 +814,16 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
   DivBDampingLength          = 1.;
   UseCUDA		     = 0;
   UseNBODY		     = 0;
+#ifdef NBODY
+	NbodyFirst       = TRUE;
+	isNbodyParticleIdentification = FALSE;
+	for (int i=0; i<MAX_DIMENSION+1; i++)
+		NbodyClusterPosition[i] = 0.;
+	NbodySmoothingLength  = 0.;
+	NbodyTimeStepConstant = 0.;
+	NbodyNeighborRadius   =0.;
+#endif
+
   UseFloor		     = 0;
   UseViscosity		     = 0;
   ViscosityCoefficient       = 0.;

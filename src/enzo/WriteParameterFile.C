@@ -1159,9 +1159,17 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 #ifdef ECUDA
   fprintf(fptr, "UseCUDA = %"ISYM"\n", UseCUDA);
 #endif
-#ifdef NBODY
-  fprintf(fptr, "UseNBODY = %"ISYM"\n", UseNBODY);
-#endif
+  fprintf(fptr, "\nUseNBODY                      = %"ISYM"\n", UseNBODY);
+	fprintf(fptr, "UseNbodyClusterIdentification = %d\n", isNbodyParticleIdentification);
+	fprintf(fptr, "NbodyClusterPosition          = %lf %lf %lf\n", 
+			NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
+	fprintf(fptr, "NbodyClusterRadius            = %lf\n", 
+			NbodyClusterPosition[3]);
+	fprintf(fptr, "NbodySmoothingLength          = %f\n", NbodySmoothingLength);
+	fprintf(fptr, "NbodyTimeStepConstant         = %f\n", NbodyTimeStepConstant);
+	fprintf(fptr, "NbodyNeighborRadius           = %f\n", NbodyNeighborRadius);
+	fprintf(fptr, "\n");
+	//fprintf(fptr, "UseNbodyClusterIdentificationOnTheFly = %d", isNbodyParticleIdentification);
 
   /* Poisson Solver */
 

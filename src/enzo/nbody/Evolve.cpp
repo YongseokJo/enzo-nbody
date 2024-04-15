@@ -25,7 +25,7 @@ void Evolve(std::vector<Particle*> &particle) {
 	int outNum = 0;
 	int freq   = 0;
 
-	if (NNB == 0) {
+	if (NNB < 2) {
 		std::cout << "No particle to be calculated ..." << std::endl;
 		goto Communication;
 	}
@@ -48,10 +48,25 @@ void Evolve(std::vector<Particle*> &particle) {
 	Communication:
 		do
 		{
+			// in case of nnb=1, only analytic solution be needed.
+			if (NNB == 1) {
+				if (newNNB == 1) {
+					for (int dim=0; dim<Dim; dim++) {
+						particle[0]->Position[dim] += newBackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
+						particle[0]->Velocity[dim] += newBackgroundCOM[dim]*EnzoTimeStep;
+					}
+				} else {
+					for (int dim=0; dim<Dim; dim++) {
+						particle[0]->Position[dim] += BackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
+						particle[0]->Velocity[dim] += BackgroundCOM[dim]*EnzoTimeStep;
+					}
+				}
+			}
+
 			std::cout << "global time=" << global_time << std::endl;
 			SendToEzno(particle);
 			ReceiveFromEzno(particle);
-		} while (NNB == 0);
+		} while (NNB < 2);
 		global_time = 0.;
 		NextRegTime = 0.;
 		UpdateNextRegTime(particle);

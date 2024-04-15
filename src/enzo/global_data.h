@@ -60,8 +60,12 @@ EXTERN float *NbodyParticleVelocity[MAX_DIMENSION];
 EXTERN float *NbodyParticleAcceleration[MAX_DIMENSION][HERMITE_ORDER];
 EXTERN float *NbodyParticleAccelerationOld[MAX_DIMENSION][HERMITE_ORDER];
 EXTERN float *NbodyParticleAccelerationNoStar[MAX_DIMENSION];
-EXTERN float *NbodyClusterPosition[MAX_DIMENSION+1];
-EXTERN bool NbodyFirst;
+EXTERN float NbodyClusterPosition[MAX_DIMENSION+1];
+EXTERN int NbodyFirst;
+EXTERN int isNbodyParticleIdentification;
+EXTERN float NbodySmoothingLength;
+EXTERN float NbodyTimeStepConstant;
+EXTERN float NbodyNeighborRadius;
 
 /* by YS, MPI COMMs*/
 extern MPI_Comm enzo_comm;

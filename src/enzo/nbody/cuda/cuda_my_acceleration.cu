@@ -13,10 +13,12 @@
 
 #define THREAD 1024 // 2048 for A100
 #define BLOCK 32    // 32 for A100 
-#define ESP2 1e-3
+//#define ESP2 1e-3
 #define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
 
 
+__constant__ float EPS2_d; 
+extern double EPS2;
 static int NNB;
 static int NumNeighborMax;
 static double time_send, time_grav, time_out, time_nb;
@@ -78,6 +80,7 @@ void GetAcceleration(
 	assert((NumTarget > 0) && (NumTarget <= NNB));
 	//printf("CUDA: Calculation Acceleration starting ...\n");
 
+	const float EPS2_d = EPS2;
 	cudaError_t cudaStatus;
 	cudaError_t error;
 	//Result *h_result, *d_result;
@@ -298,8 +301,8 @@ __device__ void kernel(
 		//*(neighbor_list+tg_index*blockDim.x*100+threadIdx.x*100+neighbor_num) = bg_index;
 	}
 
-	if (dr2 < ESP2) {
-		dr2 =  ESP2;
+	if (dr2 < EPS2_d) {
+		dr2 =  EPS2_d;
 	}
 
 	float drdv      = dx*dvx + dy*dvy + dz*dvz;

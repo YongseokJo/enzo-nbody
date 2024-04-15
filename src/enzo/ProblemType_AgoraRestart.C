@@ -727,7 +727,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			nHalo = nlines("halo.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Halo Particles %"ISYM"\n", nHalo);
 #ifdef NBODY
-			nNbody = nlines("nbody.dat")-1;
+			//nNbody = nlines("nbody.dat")-1;
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Nbody Particles %"ISYM"\n", nNbody);
 			nParticles = nBulge + nDisk + nHalo + nNbody;
 #else
@@ -785,11 +785,11 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			this->ReadParticlesFromFile(
 					Number, Type, Position, Velocity, Mass,
 					"halo.dat", PARTICLE_TYPE_DARK_MATTER, count, dx);
-#ifdef NBODY
-			NbodyClusterPosition[0] = new float[1];
-			NbodyClusterPosition[1] = new float[1];
-			NbodyClusterPosition[2] = new float[1];
-			NbodyClusterPosition[3] = new float[1];
+			this->ReadParticlesFromFile(
+					Number, Type, Position, Velocity, Mass,
+					"nbody.dat", PARTICLE_TYPE_NBODY, count, dx);
+
+#ifdef NBODY_old
 
 			this->ReadNbodyParticles(
 					Number, Type, Position, Velocity, Mass, nNbody,
@@ -797,6 +797,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			fprintf(stdout, "NbodyCluster = (%.3e,%.3e,%.3e), r2 = %.3e \n", 
 					NbodyClusterPosition[0][0], NbodyClusterPosition[1][0], NbodyClusterPosition[2][0], NbodyClusterPosition[3][0]);
 #endif
+
 
 			thisgrid->SetNumberOfParticles(count);
 			thisgrid->SetParticlePointers(Mass, Number, Type, Position,
@@ -1008,11 +1009,22 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				// Read the type ('position' or 'velocity') and the x, y, z components
 				iss >> x >> y >> z >> r; // >> vx >> vy >> vz >> mass;
 
-				NbodyClusterPosition[0][0] = x * kpc_cm / LengthUnits + this->CenterPosition[0];
-				NbodyClusterPosition[1][0] = y * kpc_cm / LengthUnits + this->CenterPosition[1];
-				NbodyClusterPosition[2][0] = z * kpc_cm / LengthUnits + this->CenterPosition[2];
-				NbodyClusterPosition[3][0] = (r * kpc_cm / LengthUnits)*(r * kpc_cm / LengthUnits);
+				NbodyClusterPosition[0] = x * kpc_cm / LengthUnits + this->CenterPosition[0];
+				NbodyClusterPosition[1] = y * kpc_cm / LengthUnits + this->CenterPosition[1];
+				NbodyClusterPosition[2] = z * kpc_cm / LengthUnits + this->CenterPosition[2];
+				if (r < 0) { 
+					NbodyClusterPosition[3] = r;
+				}
+				else{
+					NbodyClusterPosition[3] = (r * kpc_cm / LengthUnits)*(r * kpc_cm / LengthUnits);
+				}
 			}
+
+			if (NbodyClusterPosition[3] < 0)
+				isNbodyParticleIdentification = false;
+			else
+				isNbodyParticleIdentification = true;
+
 
 			file.close();
 

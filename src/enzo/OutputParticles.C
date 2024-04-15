@@ -186,7 +186,7 @@ int OutputParitcles(LevelHierarchyEntry *LevelArray[], int level)
 			} // endelse: other processor
 #endif
 
-			NbodyFirst=FALSE;
+			//NbodyFirst=FALSE;
 			fprintf(stderr,"Proc %d: All Good 0, NbodyFirst=%d\n", MyProcessorNumber,NbodyFirst);
 			fprintf(stderr,"Done?3\n");
 			/* Destruct Arrays*/

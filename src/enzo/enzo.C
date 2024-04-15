@@ -281,6 +281,15 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 #ifdef USE_MPI	
 #ifdef NBODY
 	//by YS, start nbody6!
+	/*
+	NbodyClusterPosition[0] = new float[1];
+	NbodyClusterPosition[1] = new float[1];
+	NbodyClusterPosition[2] = new float[1];
+	NbodyClusterPosition[3] = new float[1];
+	NbodyClusterPosition[3][0] = -1;
+	isNbodyParticleIdentification = false;
+	*/
+
 	if (nbody_comm != MPI_COMM_NULL) {
 		if (inter_comm != MPI_COMM_NULL) {
 			fprintf(stderr, "inter_comm is not NULL!\n");
@@ -420,9 +429,6 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
   char *ParameterFile          = NULL;
   char *myname                 = argv[0];
 
-#ifdef  NBODY
-	NbodyFirst = TRUE;
-#endif
 
   int RegionStart[MAX_DIMENSION],
       RegionEnd[MAX_DIMENSION],
@@ -768,18 +774,18 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
  
   if (!restart) {
 
-    if (InitializeNew(ParameterFile, TopGrid, MetaData, Exterior, &Initialdt) == FAIL) {
-      if (MyProcessorNumber == ROOT_PROCESSOR)
-	fprintf(stderr, "Error in Parameter File %s.\n", ParameterFile);
-      my_exit(EXIT_FAILURE);
-    }
-    else {
-      if (MyProcessorNumber == ROOT_PROCESSOR)
-	fprintf(stderr, "Successfully read in parameter file %s.\n", ParameterFile);
-      //      Exterior.Prepare(TopGrid.GridData);
-      AddLevel(LevelArray, &TopGrid, 0);    // recursively add levels
-    }
- 
+		if (InitializeNew(ParameterFile, TopGrid, MetaData, Exterior, &Initialdt) == FAIL) {
+			if (MyProcessorNumber == ROOT_PROCESSOR)
+				fprintf(stderr, "Error in Parameter File %s.\n", ParameterFile);
+			my_exit(EXIT_FAILURE);
+		}
+		else {
+			if (MyProcessorNumber == ROOT_PROCESSOR)
+				fprintf(stderr, "Successfully read in parameter file %s.\n", ParameterFile);
+			//      Exterior.Prepare(TopGrid.GridData);
+			AddLevel(LevelArray, &TopGrid, 0);    // recursively add levels
+		}
+
 
 #ifdef USE_MPI
     CommunicationBarrier();
@@ -788,7 +794,6 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
       fprintf(stderr, "INITIALIZATION TIME = %16.8e\n", (t_init1-t_init0));
     CommunicationBarrier();
 #endif /* USE_MPI */
-
   }
 
 #ifdef ECUDA

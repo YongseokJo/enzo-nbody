@@ -295,9 +295,7 @@ int FindStartIndex(int* LocalNumberOfNbodyParticles) {
 
 void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int level) {
 
-	bool IsNbodyParticlesIdentification = true;
-
-	if (!IsNbodyParticlesIdentification)
+	if (!isNbodyParticleIdentification)
 		return;
 
 
@@ -310,7 +308,7 @@ void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int le
 
 
 
-#ifdef nouse
+#ifdef no_use
 void scan(int *in, int *inout, int *len, MPI_Datatype *dptr)
 {
 	fprintf(stderr,"in=%d, inout=%d, len=%d", in[0], inout[0], *len);

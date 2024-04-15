@@ -242,7 +242,10 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&StarParticleFeedback       , 1, MPI_INT   , 1, 1100, inter_comm);
 		MPI_Send(&StarMassEjectionFraction   , 1, MPI_DOUBLE, 1, 1200, inter_comm);
 		MPI_Send(&Time									     , 1, MPI_DOUBLE, 1, 1300, inter_comm);
-		MPI_Send(&NbodyClusterPosition[3][0] , 1, MPI_DOUBLE, 1, 1400, inter_comm);
+		MPI_Send(&NbodySmoothingLength       , 1, MPI_DOUBLE, 1, 1400, inter_comm);
+		MPI_Send(&NbodyTimeStepConstant	     , 1, MPI_DOUBLE, 1, 1500, inter_comm);
+		MPI_Send(&NbodyNeighborRadius		     , 1, MPI_DOUBLE, 1, 1600, inter_comm);
+		MPI_Send(&NbodyClusterPosition[3]    , 1, MPI_DOUBLE, 1, 1700, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
 		CommunicationInterBarrier();
 

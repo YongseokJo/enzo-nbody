@@ -297,6 +297,7 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
  
   // set the default MetaData values
  
+
   SetDefaultGlobalValues(MetaData);
  
   // Read the MetaData/global values from the Parameter file

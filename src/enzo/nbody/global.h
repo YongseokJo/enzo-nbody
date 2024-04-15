@@ -31,7 +31,9 @@ extern double ClusetrRadius2;
 extern double BackgroundCOM[Dim];
 extern double newBackgroundCOM[Dim];
 
-
+extern double eta;
+extern double EPS2;
+extern double InitialRadiusOfAC;
 // i/o
 extern bool IsOutput;
 extern double outputTime;
