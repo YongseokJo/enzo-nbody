@@ -28,8 +28,9 @@ extern double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAccel
 extern double EnzoTime;
 extern double EnzoTimeStep;
 extern double ClusetrRadius2;
-extern double BackgroundCOM[Dim];
-extern double newBackgroundCOM[Dim];
+extern double ClusterAcceleration[Dim];
+extern double ClusterPosition[Dim];
+extern double ClusterVelocity[Dim];
 
 extern double eta;
 extern double EPS2;

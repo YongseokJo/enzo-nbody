@@ -546,8 +546,15 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);
 		MPI_Send(&NumberOfNewNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 		if (NumberOfNewNbodyParticles != 0) {
-			for (int i = 0; i < NumberOfNewNbodyParticles; i++)
-				fprintf(stderr, "Mass Of NewNbodyParticles=%e\n", NewNbodyParticleMass[i]);
+			for (int i = 0; i < NumberOfNewNbodyParticles; i++) {
+				fprintf(stderr, "Mass Of NewNbodyParticles=%.3e\n", NewNbodyParticleMass[i]);
+				fprintf(stderr, "Vel  Of NewNbodyParticles=(%.3e, %.3e, %.3e)\n", 
+						NewNbodyParticleVelocity[0][i], NewNbodyParticleVelocity[1][i], NewNbodyParticleVelocity[2][i]);
+				fprintf(stderr, "Pos  Of NewNbodyParticles=(%.3e, %.3e, %.3e)\n",
+						NewNbodyParticlePosition[0][i], NewNbodyParticlePosition[1][i], NewNbodyParticlePosition[2][i]);
+				fprintf(stderr, "Acc  Of NewNbodyParticles=(%.3e, %.3e, %.3e)\n",
+						NewNbodyParticleAccelerationNoStar[0][i], NewNbodyParticleAccelerationNoStar[1][i], NewNbodyParticleAccelerationNoStar[2][i]);
+			}
 			MPI_Send(NewNbodyParticleID           , NumberOfNewNbodyParticles, MPI_INT   , 1, 200, inter_comm);
 			MPI_Send(NewNbodyParticleMass         , NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 201, inter_comm);
 			MPI_Send(NewNbodyParticleCreationTime , NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 202, inter_comm);

@@ -6,11 +6,12 @@
 Particle* FirstParticleInEnzo = nullptr;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 double EnzoCurrentTime, ClusterRadius2;
-double BackgroundCOM[Dim];
-double newBackgroundCOM[Dim];
+double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
 double EPS2, eta, InitialRadiusOfAC;
 
 void InitializeParticle(Particle* newParticle, std::vector<Particle*> &particle);
+void GetCenterOfMass(double *mass, double *x[Dim], double *v[Dim], double x_com[], double v_com[], int N);
+void GetNewCenterOfMass(std::vector<Particle*> &particle, double *mass2, double *x2[Dim], double *v2[Dim], int n2, double x_X[], double v_X[]);
 int CommunicationInterBarrier();
 
 
@@ -93,19 +94,28 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 	Particle* ptclPtr;
 	Particle* ptcl = new Particle[NNB];
+
 	if (NNB != 0) {
 
-
 		// set COM for background acc
+		
+		GetCenterOfMass(Mass, Position, Velocity, ClusterPosition, ClusterVelocity, NNB);
+
+		ClusterAcceleration[0] = 0.;
+		ClusterAcceleration[1] = 0.;
+		ClusterAcceleration[2] = 0.;
+
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				BackgroundCOM[dim] += BackgroundAcceleration[dim][i]/NNB;
+				ClusterAcceleration[dim] += BackgroundAcceleration[dim][i]/NNB;
 			}
 		}
 
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				BackgroundAcceleration[dim][i] -= BackgroundCOM[dim];
+				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+				Position[dim][i]               -= ClusterPosition[dim];
+				Velocity[dim][i]               -= ClusterVelocity[dim];
 			}
 
 			if (i == NNB-1)
@@ -156,6 +166,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	MPI_Request request;
 	MPI_Status status;
 	std::cout << "NBODY+: Waiting for Enzo to receive data..." << std::endl;
+
 
 	fprintf(stdout, "NBODY+: Waiting for Enzo to receive data...\n");
 	CommunicationInterBarrier();
@@ -229,20 +240,41 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	NextPtr = nullptr;
 	LastPtr = nullptr;
 
-	std::cout << "NBODY+: 1" << std::endl;
+	// COM conversion
+	// later on we might need to take mass weight into account 
+	// 1. F=ma; 2. F -> F_com; 3. F_com -> a_com
+	ClusterAcceleration[0] = 0.0;
+	ClusterAcceleration[1] = 0.0;
+	ClusterAcceleration[2] = 0.0;
 
+	int N = NNB+newNNB;
 	if (NNB != 0) {
-		std::cout << "NBODY+: 2"  << std::endl;
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				BackgroundCOM[dim] += BackgroundAcceleration[dim][i]/NNB;
+				ClusterAcceleration[dim] += BackgroundAcceleration[dim][i]/N;
 			}
 		}
+	}
+	if (newNNB != 0) {
+		// we need to make adjustment to COM
+		GetNewCenterOfMass(particle, newMass, newPosition, newVelocity, newNNB, 
+				ClusterPosition, ClusterVelocity);
 
+		for (int i=0; i<NNB; i++) {
+			for (int dim=0; dim<Dim; dim++) {
+				ClusterAcceleration[dim] += newBackgroundAcceleration[dim][i]/N;
+			}
+		}
+	}
+
+
+
+
+	if (NNB != 0) {
 		// loop for PID, going backwards to update the NextParticle
 		for (int i=NNB-1; i>=0; i--) {
 			for (int dim=0; dim<Dim; dim++) {
-				BackgroundAcceleration[dim][i] -= BackgroundCOM[dim];
+				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
 			}
 			for (int j=0; j<NNB; j++) {
 				// PID of the received particle matches the PID of the existing particle
@@ -266,19 +298,25 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	FirstParticleInEnzo->PID << "in ReceiveFromEzno" << std::endl;
 
 	if (newNNB > 0) {
+		for (int i = 0; i < newNNB; i++) {
+			fprintf(stderr, "NBODY: Mass Of NewNbodyParticles=%.3e\n", newMass[i]);
+			fprintf(stderr, "NBODY: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+					newVelocity[0][i], newVelocity[1][i], newVelocity[2][i]);
+			fprintf(stderr, "NBODY: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+					newPosition[0][i], newPosition[1][i], newPosition[2][i]);
+			fprintf(stderr, "NBODY: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+					newBackgroundAcceleration[0][i], newBackgroundAcceleration[1][i], newBackgroundAcceleration[2][i]);
+		}
+
 		Particle* ptclPtr;
 		Particle *newPtcl = new Particle[newNNB]; // we shouldn't delete it, maybe make it to vector
-
-		for (int i=0; i<NNB; i++) {
-			for (int dim=0; dim<Dim; dim++) {
-				newBackgroundCOM[dim] += newBackgroundAcceleration[dim][i]/NNB;
-			}
-		}
 
 		// Update New Particles
 		for (int i=0; i<newNNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				newBackgroundAcceleration[dim][i] -= newBackgroundCOM[dim];
+				newBackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+				newPosition[dim][i]               -= ClusterPosition[dim];
+				newVelocity[dim][i]               -= ClusterVelocity[dim];
 			}
 
 			if (i<(newNNB-1)) {
@@ -292,7 +330,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 			particle.push_back(&newPtcl[i]);
 		}
 
-		if (FirstParticleInEnzo == nullptr) {
+		if (FirstParticleInEnzo == nullptr || NNB == 0) {
 			FirstParticleInEnzo = particle[0];
 		}
 		if (LastPtr != nullptr) {
@@ -310,6 +348,16 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
 		// This includes modification of regular force and irregular force
 		InitializeParticle(newPtcl, particle);
+	}
+
+	for (Particle* ptcl:particle) {
+		fprintf(stderr, "NBODY2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+		fprintf(stderr, "NBODY2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+		fprintf(stderr, "NBODY2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(stderr, "NBODY2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
 	}
 
 	if (NNB != 0) {
@@ -346,7 +394,6 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	MPI_Request request;
 	MPI_Status status;
 
-	double TimeStep;
 	double *Position[Dim], *Velocity[Dim], *newPosition[Dim], *newVelocity[Dim];
 
 	Particle *ptcl;
@@ -375,6 +422,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	int EscapeParticleNum = 0;
 	double r2;
 	int index;
+	double TimeStep=EnzoTimeStep/EnzoTime;
 	std::vector<Particle*> EscapeList;
 
 
@@ -384,13 +432,15 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		for (int i=0; i<NNB-newNNB; i++) {
 			r2 = 0;
 			for (int dim=0; dim<Dim; dim++) {
-				Position[dim][i]  = ptcl->Position[dim];
-				Position[dim][i] += BackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
-				Position[dim][i]  = Position[dim][i]/EnzoLength;
-				Velocity[dim][i]  = ptcl->Velocity[dim];
-				Velocity[dim][i] += BackgroundCOM[dim]*EnzoTimeStep;
-				Velocity[dim][i]  = Velocity[dim][i]/EnzoVelocity;
-				r2              += Position[dim][i]*Position[dim][i];
+				Position[dim][i]  = ptcl->Position[dim]/EnzoLength;
+				r2               += Position[dim][i]*Position[dim][i];
+
+				Position[dim][i] += ClusterPosition[dim] + ClusterVelocity[dim]*TimeStep;
+				Position[dim][i] += ClusterAcceleration[dim]*TimeStep*TimeStep/2;
+
+				Velocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
+				Velocity[dim][i] += ClusterVelocity[dim];
+				Velocity[dim][i] += ClusterAcceleration[dim]*TimeStep;
 			}
 			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
 				Position[0][i] += 222;
@@ -411,13 +461,15 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		for (int i=0; i<newNNB; i++) {
 			r2 = 0;
 			for (int dim=0; dim<Dim; dim++) {
-				newPosition[dim][i]  = ptcl->Position[dim];
-				newPosition[dim][i] += newBackgroundCOM[dim]*EnzoTimeStep*EnzoTimeStep/2;
-				newPosition[dim][i]  = newPosition[dim][i]/EnzoLength;
-				newVelocity[dim][i]  = ptcl->Velocity[dim];
-				newVelocity[dim][i] += newBackgroundCOM[dim]*EnzoTimeStep;
-				newVelocity[dim][i]  = newVelocity[dim][i]/EnzoVelocity;
+				newPosition[dim][i]  = ptcl->Position[dim]/EnzoLength;
 				r2                  += newPosition[dim][i]*newPosition[dim][i];
+
+				newPosition[dim][i] += ClusterPosition[dim] + ClusterVelocity[dim]*TimeStep;
+				newPosition[dim][i] += ClusterAcceleration[dim]*TimeStep*TimeStep/2;
+
+				newVelocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
+				newVelocity[dim][i] += ClusterVelocity[dim];
+				newVelocity[dim][i] += ClusterAcceleration[dim]*TimeStep;
 			}
 			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) {
 				newPosition[0][i] += 222;
@@ -456,6 +508,15 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	std::cout << "NBODY+: Data sent!" << std::endl;
 	fprintf(stdout, "NBODY+: Data sent!\n");
 
+	for (Particle* ptcl:particle) {
+		fprintf(stderr, "NBODY3: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+		fprintf(stderr, "NBODY3: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+		fprintf(stderr, "NBODY3: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(stderr, "NBODY3: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
+	}
 
 	for (Particle* elem2:EscapeList) {
 		int i=0;
@@ -464,9 +525,28 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				particle.erase(particle.begin() + i);
 				break;
 			}
+			i++;
 		}
 	}
+	for (Particle* ptcl:EscapeList) {
+		fprintf(stderr, "NBODY3-1: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+		fprintf(stderr, "NBODY3-1: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+		fprintf(stderr, "NBODY3-1: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(stderr, "NBODY3-1: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
+	}
 
+	for (Particle* ptcl:particle) {
+		fprintf(stderr, "NBODY3-2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+		fprintf(stderr, "NBODY3-2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+		fprintf(stderr, "NBODY3-2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(stderr, "NBODY3-2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
+	}
 
 	// Initialization
 	int i=0;
@@ -501,6 +581,49 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	return true;
 }
 
+/* Adjust COM according to new particles
+X = (a1+b1+c1)/M
+Y = (a2+b2)/N
+Z = (a1+b1+c1+a2+b2)/(M+N) = (X*M+Y*N)/(M+N) -> New COM
+Z-X = N*(Y-X)/(M+N) -> This should be applied to particles
+*/
+// this should be improved by using iterative loop
+void GetNewCenterOfMass(std::vector<Particle*> &particle, double *mass2, double *x2[Dim], double *v2[Dim], int n2, double x_X[], double v_X[]) {
+	 	
+	double M=0., N=0.;
+	double x_Y[Dim], v_Y[Dim], x_Z[Dim], v_Z[Dim];
+	
+	for (Particle* ptcl:particle)
+		M += ptcl->Mass/EnzoMass;
 
+
+	for (int i=0; i<n2; i++) {
+		for (int dim=0; dim<Dim; dim++) {
+			x_Y[dim] += mass2[i]*x2[dim][i];
+			v_Y[dim] += mass2[i]*v2[dim][i];
+		}
+		N += mass2[i];
+	}
+	for (int dim=0; dim<Dim; dim++) {
+		x_Y[dim] = x_Y[dim]/N;
+		v_Y[dim] = v_Y[dim]/N;
+		x_Z[dim] = (x_X[dim]*M+x_Y[dim]*N)/(M+N);
+		v_Z[dim] = (v_X[dim]*M+v_Y[dim]*N)/(M+N);
+	}
+
+
+	// Adjustment to particles
+	for (Particle* ptcl:particle) {
+		for (int dim=0; dim<Dim;dim++) {
+			ptcl->Position[dim] - (x_Z[dim] - x_X[dim]) * EnzoLength;
+			ptcl->Velocity[dim] - (v_Z[dim] - v_X[dim]) * EnzoVelocity;
+		}
+	}
+
+	for (int dim=0; dim<Dim; dim++) {
+		x_X[dim] = x_Z[dim];
+		v_X[dim] = v_Z[dim];
+	}
+}
 
 

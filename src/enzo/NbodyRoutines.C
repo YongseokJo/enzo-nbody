@@ -306,6 +306,27 @@ void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int le
 	}
 }
 
+void GetCenterOfMass(double *mass, double *x[MAX_DIMENSION], double *v[MAX_DIMENSION], double x_com[], double v_com[], int N) {
+	double total_mass=0.;
+	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+		x_com[dim] = 0.;
+		v_com[dim] = 0.;
+	}
+
+	for (int i=0; i<N; i++) {
+		for (int dim=0; dim<MAX_DIMENSION; dim++) {
+			x_com[dim] += mass[i]*x[dim][i];
+			v_com[dim] += mass[i]*v[dim][i];
+		}
+		total_mass += mass[i];
+	}
+
+	for (int dim=0; dim<MAX_DIMENSION; dim++) {
+		x_com[dim] /= x_com[dim]/total_mass;
+		v_com[dim] /= v_com[dim]/total_mass;
+	}
+}
+
 
 
 #ifdef no_use
