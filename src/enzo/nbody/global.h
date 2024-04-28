@@ -3,6 +3,12 @@
 #include <iostream>
 #include "Particle/Particle.h"
 
+#ifdef time_trace
+#include "TimeTrace.h"
+extern TimeTracer _time;
+#endif
+
+
 extern std::vector<int> LevelList;
 extern int NNB;
 extern int newNNB;

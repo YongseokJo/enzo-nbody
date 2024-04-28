@@ -375,7 +375,7 @@ void SendAllParticlesToGPU(std::vector <Particle*> &particle) {
 }
 
 
-void SendAllParticlesToGPU(double Time, std::vector <Particle*> &particle) {
+void SendAllParticlesToGPU(double current_time, double next_time, std::vector <Particle*> &particle) {
 
 	// variables for saving variables to send to GPU
 	double * Mass;
@@ -393,10 +393,8 @@ void SendAllParticlesToGPU(double Time, std::vector <Particle*> &particle) {
 	for (int i=0; i<NNB; i++) {
 		Mass[i] = particle[i]->Mass;
 		Mdot[i] = 0; //particle[i]->Mass;
-		particle[i]->predictParticleSecondOrder(Time);
+		particle[i]->predictParticleSecondOrder(current_time, next_time, particle[i]->a_reg);
 
-		//std::cout <<  "PredPosition = ("  << particle[i]->PredPosition[0] << ',' <<  particle[i]->PredPosition[1] \ 
-		//	<< ',' <<  particle[i]->PredPosition[2] << ')' << std::endl;
 		for (int dim=0; dim<Dim; dim++) {
 			Position[i][dim] = particle[i]->PredPosition[dim];
 			Velocity[i][dim] = particle[i]->PredVelocity[dim];

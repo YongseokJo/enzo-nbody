@@ -322,8 +322,8 @@ void GetCenterOfMass(double *mass, double *x[MAX_DIMENSION], double *v[MAX_DIMEN
 	}
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
-		x_com[dim] /= x_com[dim]/total_mass;
-		v_com[dim] /= v_com[dim]/total_mass;
+		x_com[dim] /= total_mass;
+		v_com[dim] /= total_mass;
 	}
 }
 

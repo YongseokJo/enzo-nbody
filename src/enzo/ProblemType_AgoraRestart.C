@@ -727,7 +727,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			nHalo = nlines("halo.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Halo Particles %"ISYM"\n", nHalo);
 #ifdef NBODY
-			//nNbody = nlines("nbody.dat")-1;
+			nNbody = nlines("nbody.dat");
 			if(debug) fprintf(stderr, "InitializeParticles: Number of Nbody Particles %"ISYM"\n", nNbody);
 			nParticles = nBulge + nDisk + nHalo + nNbody;
 #else

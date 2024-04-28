@@ -6,7 +6,7 @@
 double dt_block;
 int dt_block_level;
 
-double getNewTimeStep(double f[3][4], double df[3][4]);
+double getNewTimeStep(double f[3][4], double df[3][4], double dt);
 void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep);
 
 /*
@@ -23,11 +23,12 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	double dtIrr, dtReg;
 
 	for (Particle* ptcl: particle) {
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
+		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg, ptcl->TimeStepReg);
 		//std::cout << "dtReg=" << dtReg << std::endl;
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
+
 		if (ptcl->NumberOfAC != 0) {
-			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr, ptcl->TimeStepIrr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		}
 		else {
@@ -43,12 +44,15 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 
 	}
 
+	// Irregular Time Step Correction
 	for (Particle* ptcl: particle) {
-		while (ptcl->TimeStepIrr > ptcl->TimeStepReg) {
-			ptcl->TimeStepIrr *= 0.5; 
-			ptcl->TimeLevelIrr--; 
+		if (ptcl->NumberOfAC != 0) {
+			while (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
+				ptcl->TimeStepIrr *= 0.5; 
+				ptcl->TimeLevelIrr--; 
+			}
 		}
-		if (ptcl->TimeStepIrr < timestep_min) {
+		if (ptcl->TimeStepIrr < timestep_min) { 
 			dt_block       = ptcl->TimeStepIrr;
 			dt_block_level = ptcl->TimeLevelIrr;
 		}
@@ -80,11 +84,11 @@ int InitializeTimeStep(Particle* particle, int size) {
 
 	for (int i=0; i<size; i++){
 		ptcl = &particle[i];
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
+		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg, ptcl->TimeStepReg);
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
 
 		if (ptcl->NumberOfAC != 0) {
-			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr, ptcl->TimeStepIrr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		}
 		else {
@@ -96,7 +100,7 @@ int InitializeTimeStep(Particle* particle, int size) {
 		ptcl->CurrentTimeReg = 0;
 
 
-		if (ptcl->TimeStepIrr < timestep_min) {
+		if (ptcl->TimeStepIrr < timestep_min) { 
 			dt_block       = ptcl->TimeStepIrr;
 			dt_block_level = ptcl->TimeLevelIrr;
 		}
@@ -107,9 +111,11 @@ int InitializeTimeStep(Particle* particle, int size) {
 		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
 		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
 
-		while (ptcl->TimeStepIrr > ptcl->TimeStepReg) {
-			ptcl->TimeStepIrr *= 0.5;
-			ptcl->TimeLevelIrr--;
+		if (ptcl->NumberOfAC != 0) {
+			while (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
+				ptcl->TimeStepIrr *= 0.5; 
+				ptcl->TimeLevelIrr--; 
+			}
 		}
 
 		if (ptcl->TimeLevelIrr < dt_block_level + dt_level_min ) {

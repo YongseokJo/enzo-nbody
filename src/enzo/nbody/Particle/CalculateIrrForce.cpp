@@ -8,9 +8,11 @@ void direct_sum(double *x, double *v, double r2, double vx,
 	 	        double mass, double mdot, double (&a)[2][3], double (&adot)[2][3], int p) {
 	double _r3;
 
+	/*
 	if (r2 < EPS2)
-		r2 = EPS2;  // add softening length
+		r2 += EPS2;  // add softening length
 
+		*/
 
 	_r3 = 1/r2/sqrt(r2);
 
@@ -69,8 +71,8 @@ void Particle::calculateIrrForce() {
 			r2 = 0.0;
 			vx = 0.0;
 
-			ptcl->predictParticleSecondOrder(tirr[p]);
-			this->predictParticleSecondOrder(tirr[p]);
+			ptcl->predictParticleSecondOrder(ptcl->CurrentTimeIrr, tirr[p], ptcl->a_irr);
+			this->predictParticleSecondOrder(ptcl->CurrentTimeIrr, tirr[p], ptcl->a_irr);
 			for (int dim=0; dim<Dim; dim++) {
 				// calculate position and velocity differences for current time
 				x[dim] = ptcl->PredPosition[dim] - this->PredPosition[dim];
@@ -120,9 +122,6 @@ void Particle::calculateIrrForce() {
 		a_irr[dim][2] = a2;
 		a_irr[dim][3] = a3;
 
-		a_irr_pred[dim][0] = a0_irr[1][dim];
-		a_irr_pred[dim][1] = a0dot_irr[1][dim];
-
 		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0];
 		a_tot[dim][1] = a_reg[dim][1] + a_irr[dim][1];
 		a_tot[dim][2] = a_reg[dim][2] + a_irr[dim][2];
@@ -139,6 +138,7 @@ void Particle::calculateIrrForce() {
 		std::cout << "\n" << std::endl;
 		} // endfor dim
 		*/
+
 	/*
 	std::cout << "\nIrregular Calculation\n" << std::flush;
 	std::cout <<  "3. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
@@ -151,7 +151,9 @@ void Particle::calculateIrrForce() {
 
 	// update the current irregular time and irregular time steps
 	//this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);
-	this->updateParticle(CurrentTimeIrr+TimeStepIrr, a_tot);
+	this->updateParticle(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr, a_irr);
+	//this->updateParticle(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr, a_tot);
+	//this->correctParticleFourthOrder(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr, a_irr);
 	CurrentTimeIrr += TimeStepIrr;
 	this->calculateTimeStepIrr(a_tot, a_irr); // calculate irregular time step based on total force
 }

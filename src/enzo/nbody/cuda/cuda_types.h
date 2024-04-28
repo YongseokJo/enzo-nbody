@@ -44,6 +44,29 @@ void my_free(T *host, T *device) {
 	//free(host);
 }
 
+
+
+template <typename T>
+void my_allocate_d(T **device, const int size) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMalloc(device, size*sizeof(T));
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMalloc failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+template <typename T>
+void my_free_d(T *device) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaFree(device);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+
+
+
 template <typename T>
 void toDevice(T *host, T *device, const int size) {
 	cudaError_t cudaStatus;
@@ -197,6 +220,29 @@ struct  Neighbor{
 	}
 };
 
+
+/*
+struct  Neighbor_d{
+	int NumNeighbor;
+	int NeighborList[100]; // this needs to be modified.
+
+
+	__device__ void clear() {
+		NumNeighbor = 0;
+#pragma unroll
+		for (int i=0; i<100; i++) {
+			NeighborList[i] = 0;
+		}
+	}
+	void clear_h() {
+		NumNeighbor = 0;
+#pragma unroll
+		for (int i=0; i<100; i++) {
+			NeighborList[i] = 0;
+		}
+	}
+};
+*/
 
 /*
 struct  Neighbor{
