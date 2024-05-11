@@ -11,16 +11,16 @@
  *  Purporse: Predict particle positions and velocities up to second order 
  *            using a_0 and d(a_0)/dt; refer to Nbody6++ manual Eq. 8.3 and 8.4
  *
+ *  Date    : 2024.04.29  by Seoyoung Kim
  *  Date    : 2024.01.09  by Seoyoung Kim
  *  Modified: 2024.01.10  by Yongseok Jo
  *
  */
-void Particle::predictParticleSecondOrder(double current_time, double next_time, double a[3][4]) {
+void Particle::predictParticleSecondOrder(double time) {
 
 	// Doubling check
 	// temporary variables for calculation
-	//
-	if (current_time == next_time) {
+	if (this->CurrentTimeIrr == time) {
 		for (int dim=0; dim<Dim; dim++) {
 			PredPosition[dim] = Position[dim];
 			PredVelocity[dim] = Velocity[dim];
@@ -29,18 +29,15 @@ void Particle::predictParticleSecondOrder(double current_time, double next_time,
 	}
 
 	double dt;
-	dt = (next_time - current_time)*EnzoTimeStep;
-
-	//if (PredTime == next_time)
-		//return;
+	dt = (time - this->CurrentTimeIrr)*EnzoTimeStep;
 
 	// only predict the positions if necessary
+	// how about using polynomial correction here?
 	for (int dim=0; dim<Dim; dim++) {
-		PredPosition[dim] = ((a[dim][1]*dt/6 + a[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
-		PredVelocity[dim] =  (a[dim][1]*dt/2 + a[dim][0])*dt   + Velocity[dim];
+		PredPosition[dim] = ((a_tot[dim][1]*dt/6 + a_tot[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
+		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
 	}
-	// updated the predicted time
-	//PredTime = next_time;
+
 	return;
 }
 
@@ -83,6 +80,15 @@ void Particle::correctParticleFourthOrder(double current_time, double next_time,
 }
 
 
+
+void Particle::updateParticle() {
+	for (int dim=0; dim<Dim; dim++) {
+		Position[dim] = NewPosition[dim];
+		Velocity[dim] = NewVelocity[dim];
+	}
+}
+
+/*
 void Particle::updateParticle(double current_time, double next_time, double a[3][4]) {
 
 	if (current_time == next_time) {
@@ -95,7 +101,7 @@ void Particle::updateParticle(double current_time, double next_time, double a[3]
 	predictParticleSecondOrder(current_time, next_time, a);
 	correctParticleFourthOrder(current_time, next_time, a);
 	Mass += evolveStarMass(current_time, next_time); // CurrentTimeIrr
-}
+}*/
 
 
 

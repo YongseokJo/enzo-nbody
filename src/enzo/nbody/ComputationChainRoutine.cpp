@@ -19,14 +19,14 @@ bool SortComputationChain(std::vector<Particle*> ComputationChainTmp) {
 	for (Particle *ptcl : ComputationChainTmp)
 	{
 		NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
-		std::cout << NextIrrTime << " ";
+		//std::cout << NextIrrTime << " ";
 		if ((ptcl->NumberOfAC != 0) && (NextIrrTime <= NextRegTime)) {
 			index.push_back(i);
 			time.push_back(NextIrrTime);
 		}
 		i++;
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	if (index.size() == 0) {
 		return false;
@@ -56,9 +56,15 @@ Particle *SortComputationChain(Particle* ptcl) {
 
 	NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
 
+	// this paticle's reached NextRegTime.
 	if ((ptcl->NumberOfAC == 0) || (NextIrrTime > NextRegTime)) {
 		//return false;
 		return NextComputation;
+	}
+
+	// if there's only one particle left
+	if (NextComputation == nullptr && NextIrrTime <= NextRegTime) {
+		return ptcl;
 	}
 
 	PreviousParticle = ptcl;
@@ -68,8 +74,8 @@ Particle *SortComputationChain(Particle* ptcl) {
 		if (NextIrrTime <= NextParticleNextIrrTime) {
 			// This part should be improved.
 			if (PreviousParticle == ptcl) {
-				ptcl->NextParticleForComputation = NextParticle->NextParticleForComputation;
-				NextParticle->NextParticleForComputation = ptcl;
+				ptcl->NextParticleForComputation = NextParticle;
+				NextComputation = ptcl;
 			} 
 			else 
 			{
@@ -82,15 +88,23 @@ Particle *SortComputationChain(Particle* ptcl) {
 		NextParticle     = NextParticle->NextParticleForComputation;
 	}
 
+	if ((NextParticle == nullptr) && NextIrrTime <= NextRegTime) {
+		PreviousParticle->NextParticleForComputation = ptcl; 
+		ptcl->NextParticleForComputation = nullptr;
+	}
+		
 
-	NextParticle = NextComputation;
-	std::cout << "Time:";
+
+
+	NextParticle = NextComputation; 
+	//std::cout << "Time:";
 	while (NextParticle != nullptr) {
 		NextParticleNextIrrTime = NextParticle->CurrentTimeIrr + NextParticle->TimeStepIrr;
-		std::cout << NextParticleNextIrrTime << '(' << NextParticle->PID << ')' << ' ';
+		//std::cout << NextParticleNextIrrTime << '(' << NextParticle->PID << ')' << ' ';
 		NextParticle = NextParticle->NextParticleForComputation;
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
+
 
 	return NextComputation;
 }
@@ -107,6 +121,7 @@ bool CreateComputationChain(std::vector<Particle*> &particle) {
 	//std::cout << "NextIrrTime:\n" << std::endl;
 	for (Particle *ptcl : particle)
 	{
+		// advance irregular time without irregular routine
 		NextIrrTime = ptcl->CurrentTimeIrr + ptcl->TimeStepIrr;
 		//std::cout << NextIrrTime << " ";
 		if ((ptcl->NumberOfAC != 0) && (NextIrrTime <= NextRegTime)) {
@@ -125,6 +140,7 @@ bool CreateComputationChain(std::vector<Particle*> &particle) {
 		return false;
 	}
 
+	/*
 	std::cout << "PID" << '\n';
 	for (int ind: sorted_index) {
 		//std::cout << ind << ' ';
@@ -142,10 +158,12 @@ bool CreateComputationChain(std::vector<Particle*> &particle) {
 		std::cout << NextIrrTime << ' ';
 	}
 	std::cout << '\n';
+	*/
 
 	// Sort the index array based on the values in the original vector
 	std::sort(sorted_index.begin(), sorted_index.end(), [&time](int i1, int i2) {return time[i1] < time[i2];});
 
+	/*
 	std::cout << "ordered PID" << '\n';
 	for (int ind: sorted_index) {
 		//std::cout << ind << ' ';
@@ -158,25 +176,28 @@ bool CreateComputationChain(std::vector<Particle*> &particle) {
 	}
 	std::cout << '\n';
 	std::cout << "ordered Timesteps" << '\n';
+	*/
+	/*
 	for (int ind: sorted_index) {
 		NextIrrTime = particle[index[ind]]->CurrentTimeIrr + particle[index[ind]]->TimeStepIrr;
 		std::cout << NextIrrTime << ' ';
 	}
-	std::cout << '\n';
+	*/
+	//std::cout << '\n';
 
 
-	std::cout << "Ordered NextIrrTime: " << std::flush;
+	//std::cout << "Ordered NextIrrTime: " << std::flush;
 	Particle* NextParticle = nullptr;
 	int ind;
 	for (int i=index.size()-1; i>=0; i--) {
 		ind = index[sorted_index[i]];
 		NextIrrTime = particle[ind]->CurrentTimeIrr + particle[ind]->TimeStepIrr;
-		std::cout << NextIrrTime << "(" << particle[ind]->PID << ")" <<  " ";
+		//std::cout << NextIrrTime << "(" << particle[ind]->PID << ")" <<  " ";
 		particle[ind]->NextParticleForComputation = NextParticle;
 		NextParticle = particle[ind];
 	}
 	FirstComputation = NextParticle;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	/*
 		 ComputationChain.clear();

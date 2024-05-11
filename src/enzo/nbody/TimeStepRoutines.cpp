@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-double getNewTimeStep(double f[3][4], double df[3][4], double dt) {
+double getNewTimeStep(double f[3][4], double df[3][4]) {
 
 	double F2, Fdot2, F2dot2, F3dot2, TimeStep, DivergentPrevent;
 
@@ -33,8 +33,8 @@ double getNewTimeStep(double f[3][4], double df[3][4], double dt) {
 	}
 	*/
 
-  //TimeStep  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
-  TimeStep  = F2/Fdot2;
+  TimeStep  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
+  //TimeStep  = F2/Fdot2;
 	//TimeStep  = std::sqrt(DivergentPrevent*eta*TimeStep);
 	TimeStep  = std::sqrt(eta*TimeStep);
 	//std::cout<< TimeStep << " ";
@@ -44,6 +44,7 @@ double getNewTimeStep(double f[3][4], double df[3][4], double dt) {
 
 void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep) {
 	TimeLevel = static_cast<int>(floor(log(dt/EnzoTimeStep)/log(2.0)));
+	//TimeLevel = static_cast<int>(ceil(log(dt/EnzoTimeStep)/log(2.0)));
 	//std::cout << "NBODY+: TimeLevel = " << TimeLevel << std::endl;
 	TimeStep = static_cast<double>(pow(2, TimeLevel));
 	//std::cout << "NBODY+: TimeStep = " << TimeStep << std::endl;

@@ -49,6 +49,7 @@ class TimeTracer {
 		TimeEntity irr;
 		TimeEntity irr_chain;
 		TimeEntity irr_force;
+		TimeEntity irr_sort;
 
 	void output() {
 
@@ -117,11 +118,13 @@ class TimeTracer {
 		outputFile << std::left\
 			<< std::setw(width) << "Particle Chain" \
 			<< std::setw(width) << "Force Calculation" \
+			<< std::setw(width) << "Particle Sort" \
 		 	<< '\n';
 
 		outputFile  << std::left
 			<< std::setw(width) << irr_chain.duration.count() \
 			<< std::setw(width) << irr_force.duration.count() \
+			<< std::setw(width) << irr_sort.duration.count() \
 			<< '\n';
 
 		outputFile << "----------------------------------------------------\n" ;

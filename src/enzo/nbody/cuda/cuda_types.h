@@ -95,8 +95,9 @@ struct TargetParticle{
 	float  mdot;
 	float3 vel;
 	float  r2; // for AC neighbor
+	float  dt;
 
-	void setParticle(double _mdot, double x[3], double v[3], double _r2){
+	void setParticle(double _mdot, double x[3], double v[3], double _r2, double _dt){
 		mdot   = _mdot;
 		pos.x  = x[0];
 		pos.y  = x[1];
@@ -105,6 +106,7 @@ struct TargetParticle{
 		vel.y  = v[1];
 		vel.z  = v[2];
 		r2 = _r2;
+		dt = _dt;
 
 		NAN_CHECK(x[0]);
 		NAN_CHECK(x[1]);
@@ -114,6 +116,7 @@ struct TargetParticle{
 		NAN_CHECK(v[1]);
 		NAN_CHECK(v[2]);
 		NAN_CHECK(_r2);
+		NAN_CHECK(_dt);
   }
 };
 

@@ -109,12 +109,12 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			int errclass,resultlen;
 			char err_buffer[MPI_MAX_ERROR_STRING];
 
-			if (NumberOfNbodyParticles != 0)  {
+			if (NumberOfNbodyParticles != 0) {
 				MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 				MPI_Gather(&start_index, 1, IntDataType, start_index_all, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 			}
 
-			if (NumberOfNewNbodyParticles != 0)  {
+			if (NumberOfNewNbodyParticles != 0) {
 				MPI_Gather(&NewLocalNumberOfNbodyParticles, 1, IntDataType, NewLocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 				MPI_Gather(&start_index_new, 1, IntDataType, start_index_all_new, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
 			}
@@ -125,6 +125,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/******** Recv Arrays to Fortran Nbody+    *****/
 			/*-----------------------------------------------*/
 			fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
+
 
 			fprintf(stdout, "ENZO: Waiting for NBODY+ to receive data \n");
 			InitializeNbodyArrays(1);

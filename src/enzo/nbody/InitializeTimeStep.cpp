@@ -6,7 +6,7 @@
 double dt_block;
 int dt_block_level;
 
-double getNewTimeStep(double f[3][4], double df[3][4], double dt);
+double getNewTimeStep(double f[3][4], double df[3][4]);
 void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep);
 
 /*
@@ -23,12 +23,12 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	double dtIrr, dtReg;
 
 	for (Particle* ptcl: particle) {
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg, ptcl->TimeStepReg);
+		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
 		//std::cout << "dtReg=" << dtReg << std::endl;
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
 
 		if (ptcl->NumberOfAC != 0) {
-			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr, ptcl->TimeStepIrr);
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		}
 		else {
@@ -42,7 +42,13 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 		ptcl->CurrentTimeIrr = 0;
 		ptcl->CurrentTimeReg = 0;
 
+#define no_IRR_TEST
+#ifdef IRR_TEST
+		ptcl->TimeStepReg = 1;
+#endif
 	}
+
+
 
 	// Irregular Time Step Correction
 	for (Particle* ptcl: particle) {
@@ -84,11 +90,11 @@ int InitializeTimeStep(Particle* particle, int size) {
 
 	for (int i=0; i<size; i++){
 		ptcl = &particle[i];
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg, ptcl->TimeStepReg);
+		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
 		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeStepReg);
 
 		if (ptcl->NumberOfAC != 0) {
-			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr, ptcl->TimeStepIrr);
+			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeStepIrr);
 		}
 		else {

@@ -5,6 +5,8 @@
 #include "defs.h"
 
 
+#define FixNumNeighbor 30
+
 void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle);
 void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &particle);
 void direct_sum(double *x, double *v, double r2, double vx,
@@ -30,7 +32,12 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 	std::cout << "Initialization starts." << std::endl;
 
 	// loop over particles to initialize their values
+	int j = 0;
+
+	std::cout << "Initialization starts2" << std::endl;
 	for (Particle* ptcl:particle) {
+		std::cout <<  j++ << ": ";
+		std::cout <<  std::flush;
 		FindNeighbor(ptcl, particle);
 		CalculateInitialAcceleration(ptcl, particle);
 	}
@@ -96,16 +103,20 @@ void InitializeParticle(Particle* newParticle, std::vector<Particle*> &particle)
 void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 
 	// No need to find neighbors if the total number of particles is less than 100
-	if (NNB<=100) return;
+	//if (NNB<=100) return;
 
 	double dx;
 	double r2;
+	double r_max=0;
+	double r_nb[FixNumNeighbor];
+	int nb_index[FixNumNeighbor], index_max, i=0;
 
 	//ptcl1->predictParticleSecondOrder(newTime);
 	// search for neighbors for ptcl
 	for (Particle *ptcl2:particle) {
 
 		if  (ptcl1 == ptcl2) {
+			i++;
 			continue;
 		}
 
@@ -117,11 +128,40 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 			r2 += dx*dx;
 		}
 
-		if (sqrt(r2) < ptcl1->RadiusOfAC) {
-			ptcl1->ACList.push_back(ptcl2);
-			ptcl1->NumberOfAC++;
+		if (ptcl1->NumberOfAC < FixNumNeighbor) {
+			if (r2 > r_max) {
+				r_max     = r2;
+				index_max = i;
+			}
+			nb_index[ptcl1->NumberOfAC] = i;
+			r_nb[ptcl1->NumberOfAC++]   = r2;
 		}
+		else {
+			if ( r2 < r_max) {
+				r_max = r2;
+				r_nb[index_max]     = r2;
+				nb_index[index_max] = i;
+				// update new r_max
+				r_max = r2;
+				for (int k=0; k<FixNumNeighbor; k++) {
+					if (r_nb[k] > r_max) {
+						r_max     = r_nb[k];
+						index_max = k;
+					}
+				}
+			}
+		}
+		i++;
 	} // endfor
+	
+	for (int j:nb_index) {
+		ptcl1->ACList.push_back(particle[j]);
+		std::cout << j << ", ";
+	}
+
+	std::cout << std::endl;
+	std::cout << std::flush;
+	//
 		//
 	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
 	return ;
@@ -183,7 +223,8 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 			v2    += v[dim]*v[dim];
 		}
 
-		r2  += EPS2;
+		if (r2 < EPS2)
+			r2  = EPS2;
 		m_r3 = ptcl2->Mass/r2/sqrt(r2); 
 
 		for (int dim=0; dim<Dim; dim++) {
@@ -198,13 +239,12 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 			}
 		} // endfor ptcl
 
+		/*
 		// Calculate 2nd and 3rd derivatives of acceleration
 		if (restart) {
 			;
-			/*
-				 for (int dim=0; dim<Dim; dim++) {
-					 }*/
 		}
+	*/
 
 		vx_r2   = vx/r2;
 		v2x2_r4 = vx_r2*vx_r2;
@@ -249,13 +289,14 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 				ptcl2->NumberOfAC++;
 			} else {
 				for (int dim=0; dim<Dim; dim++) {
-					ptcl2->a_reg[dim][0] += -m_r3*x[dim];
-					ptcl2->a_reg[dim][1] += -m_r3*(v[dim] - 3*x[dim]*vx/r2);
-					ptcl2->a_reg[dim][2] += -a2dot;
+					ptcl2->a_reg[dim][0] += - m_r3*x[dim];
+					ptcl2->a_reg[dim][1] += - m_r3*(v[dim] - 3*x[dim]*vx/r2);
+					ptcl2->a_reg[dim][2] += - a2dot;
 					ptcl2->a_reg[dim][3] += -a3dot;
 				}
 			}
 		}
+
 	} // endfor ptcl2
 
 
@@ -266,19 +307,25 @@ void CalculateInitialAcceleration(Particle* ptcl1, std::vector<Particle*> &parti
 	}
 
 	/*
-	std::cout << "NBODY+: total acceleartion\n" << std::flush;
-	for (int dim=0; dim<Dim; dim++)	 {
-		for (int order=0; order<HERMITE_ORDER; order++) {
-			std::cout << ptcl1->a_reg[dim][order]*position_unit/time_unit/time_unit << " ";
+	std::cout << "NBODY+: total acceleartion = " << std::flush;
+	for (int order=0; order<HERMITE_ORDER; order++) {
+		std::cout << "a" << order << "(";
+		for (int dim=0; dim<Dim; dim++)	 {
+			std::cout << std::scientific << std::setprecision(2) << ptcl1->a_reg[dim][order] << ", ";
 		}
+		std::cout << "), ";
 	} // endfor dim
 	std::cout << std::endl;
-	for (int dim=0; dim<Dim; dim++)	 {
-		for (int order=0; order<HERMITE_ORDER; order++) {
-			std::cout << ptcl1->a_irr[dim][order]*position_unit/time_unit/time_unit << " ";
+	std::cout << "NumberOfAC=" << ptcl1->NumberOfAC << std::endl;
+
+	for (int order=0; order<HERMITE_ORDER; order++) {
+		std::cout << "a_reg" << order << "(";
+		for (int dim=0; dim<Dim; dim++)	 {
+			std::cout << std::scientific << std::setprecision(2) << ptcl1->a_reg[dim][order] << ", "; //*position_unit/time_unit/time_unit  
 		}
+		std::cout << "), ";
 	} // endfor dim
-	std::cout << '\n' << std::endl;
+	std::cout << std::endl;
 	*/
 }
 

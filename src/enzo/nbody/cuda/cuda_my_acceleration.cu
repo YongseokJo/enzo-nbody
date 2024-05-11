@@ -14,10 +14,14 @@
 //#define THREAD 1024 // 2048 for A100
 //#define BLOCK 32    // 32 for A100 
 
-#define THREAD 128 // 2048 for A100
-#define BLOCK 128    // 32 for A100 
+//#define THREAD 128 // 2048 for A100
+#define THREAD 1 // 2048 for A100
+#define BLOCK 2048    // 32 for A100 
 
-#define ESP2 1e-6
+#define FixNumNeighbor 30
+
+__constant__ float EPS2_d; 
+extern double EPS2;
 #define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
 
 
@@ -60,7 +64,10 @@ __device__ void kernel(
 		Result &res,
 		Neighbor &neighbor,
 		int &bg_index,
-		const int &tg_index
+		const int &tg_index,
+		float &r_max,
+		float *r_nb,
+		int &index_max
 		);
 
 __global__ void OrganizeNeighbor(const Neighbor do_neighbor[], Neighbor d_neighbor[],
@@ -79,7 +86,8 @@ void GetAcceleration(
 		double mdot[],
 		double r2[],
 		int NumNeighbor[],
-		int **NeighborList
+		int **NeighborList,
+		double dt
 		) {
 	icall++;
 	assert(is_open);
@@ -89,13 +97,14 @@ void GetAcceleration(
 	cudaError_t error;
 	int NumTarget_local = 0;
 
+	const float EPS2_d = EPS2;
 
 
 	for(int i=0; i<NumTarget; i++) {
 		//printf("CUDA: x=%.3e, y=%.3e, r=%.3e\n", x[offset+i][0], x[offset+i][1], r2[offset+i]);
 		h_result[i].clear_h();
 		h_neighbor[i].clear_h();
-		h_target[i].setParticle(mdot[i], x[i], v[i], r2[i]);
+		h_target[i].setParticle(mdot[i], x[i], v[i], r2[i], dt);
 		//printf("CUDA: res acc x=%.3e, y=%.3e\n", h_result[i].acc.x, h_result[i].acc.y);
 	}
 
@@ -167,6 +176,10 @@ __global__ void CalculateAcceleration(
 	if (tg_index >= NumTarget)
 		return;
 
+
+	float r_max = 0;
+	float r_nb[FixNumNeighbor];
+	int index_max;
 	int bg_index;
 	__shared__ Result res[THREAD];
 	res[threadIdx.x].clear();
@@ -183,7 +196,8 @@ __global__ void CalculateAcceleration(
 
 		if (bg_index < NNB) {
 			//printf("CUDA: 2. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-			kernel(target[tg_index], background[bg_index], res[threadIdx.x], nb, bg_index, tg_index);
+			kernel(target[tg_index], background[bg_index], res[threadIdx.x], nb, bg_index, tg_index,
+					r_max, r_nb, index_max);
 
 			neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = nb.NumNeighbor;
 			for (int i=0; i<nb.NumNeighbor; i++) 
@@ -232,7 +246,11 @@ __device__ void kernel(
 		Result &res,
 		Neighbor &neighbor,
 		int &bg_index,
-		const int &tg_index) {
+		const int &tg_index,
+		float &r_max,
+		float *r_nb,
+		int &index_max
+		) {
 
 	float dx  = j.pos.x - i.pos.x;
 	float dy  = j.pos.y - i.pos.y;
@@ -242,25 +260,45 @@ __device__ void kernel(
 	float dvz = j.vel.z - i.vel.z;
 
 	float dr2 = dx*dx + dy*dy + dz*dz;
+	float dxp = dx + i.dt * dvx;
+	float dyp = dy + i.dt * dvy;
+	float dzp = dz + i.dt * dvz;
+	float dr2p = dxp*dxp + dyp*dyp + dzp*dzp;
 
-	if (dr2 == 0) return;
+	if (dr2 == 0) {
+	 	return;
+	}
 
 	// neighbor
-	if(dr2 < i.r2) {
-		if (neighbor.NumNeighbor < 100)
-			neighbor.NeighborList[neighbor.NumNeighbor++] = bg_index;
-		//neighbor.NeighborList[0] = bg_index;
-		//neighbor.NumNeighbor += 1;
-		//[tg_index*blockDim.x+threadIdx.x]
-		//*(neighbor_num+tg_index*blockDim.x+threadIdx.x) += 1;
-		//*(neighbor_list+tg_index*blockDim.x*100+threadIdx.x*100+neighbor_num) = bg_index;
+	//if(min(dr2, dr2p) < j.mass * i.r2) {
+	if (neighbor.NumNeighbor < FixNumNeighbor) {
+		if (dr2 > r_max) {
+			r_max     = dr2;
+			index_max = neighbor.NumNeighbor;
+		}
+		neighbor.NeighborList[neighbor.NumNeighbor] = bg_index;
+		r_nb[neighbor.NumNeighbor++]                = dr2;
 	}
+	else {
+		if (dr2 < r_max) {
+			r_max                            = dr2;
+			r_nb[index_max]                  = dr2;
+			neighbor.NeighborList[index_max] = bg_index;
+			// update new r_max
+			r_max = dr2;
+			for (int k=0; k<FixNumNeighbor; k++) {
+				if (r_nb[k] > r_max) {
+					r_max     = r_nb[k];
+					index_max = k;
+				}
+			}
+		}
+	}
+	//}
 
-	/*
-	if (dr2 < ESP2) {
-		dr2 +=  ESP2;
+	if (dr2 < EPS2_d) {
+		dr2 =  EPS2_d;
 	}
-	*/
 
 	float drdv      = dx*dvx + dy*dvy + dz*dvz;
 	float drdv3_dr2 = 3*drdv/dr2;
@@ -584,7 +622,7 @@ extern "C" {
 	void ProfileDevice(int *irank){
 		_ProfileDevice(*irank);
 	}
-	void CalculateAccelerationOnDevice(int *NumTarget, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList) {
-		GetAcceleration(*NumTarget, x, v, acc, adot, mdot, radius, NumNeighbor, NeighborList);
+	void CalculateAccelerationOnDevice(int *NumTarget, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList, double dt) {
+		GetAcceleration(*NumTarget, x, v, acc, adot, mdot, radius, NumNeighbor, NeighborList, dt);
 	}
 }

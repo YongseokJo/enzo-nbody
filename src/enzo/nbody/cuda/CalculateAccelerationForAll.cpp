@@ -49,6 +49,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	bool neighborOK;
 	int ACnumi2;
 	int ACjid;
+	double dt = particle[0]->TimeStepReg*EnzoTimeStep;
 
 
 
@@ -102,7 +103,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 		numGpuCal = std::min(1024,(NNB-i));
 
 		CalculateAccelerationOnDevice(&NNB, PositionSend, VelocitySend,
-					AccSend, AccDotSend, MdotSend, r2OfACSend, NumNeighborReceive, ACListReceive);
+					AccSend, AccDotSend, MdotSend, r2OfACSend, NumNeighborReceive, ACListReceive, dt);
 
 		// copy the values of regular forces and neighbors obtained in GPU to particles
 		// and also calculate the irregular forces in the process
@@ -375,7 +376,7 @@ void SendAllParticlesToGPU(std::vector <Particle*> &particle) {
 }
 
 
-void SendAllParticlesToGPU(double current_time, double next_time, std::vector <Particle*> &particle) {
+void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 
 	// variables for saving variables to send to GPU
 	double * Mass;
@@ -393,7 +394,7 @@ void SendAllParticlesToGPU(double current_time, double next_time, std::vector <P
 	for (int i=0; i<NNB; i++) {
 		Mass[i] = particle[i]->Mass;
 		Mdot[i] = 0; //particle[i]->Mass;
-		particle[i]->predictParticleSecondOrder(current_time, next_time, particle[i]->a_reg);
+		particle[i]->predictParticleSecondOrder(time);
 
 		for (int dim=0; dim<Dim; dim++) {
 			Position[i][dim] = particle[i]->PredPosition[dim];

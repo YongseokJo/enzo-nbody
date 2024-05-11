@@ -62,7 +62,7 @@ class Particle
 			Mass            = 0;
 			InitialMass     = 0;
 			NumberOfAC      = 0; // number of neighbors
-			RadiusOfAC      = 0;
+			RadiusOfAC      = InitialRadiusOfAC;
 			ParticleType    = -9999;
 			CurrentTimeIrr  = 0.; // consistent with actual current time
 			CurrentTimeReg  = 0.;

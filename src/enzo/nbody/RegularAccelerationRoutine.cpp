@@ -13,11 +13,13 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 #ifdef GPU
 	if (RegIndexList.size() > 0) {
 		for (int i: RegIndexList) {
-			fprintf(stdout, "PID=%d, Time = %.2e Myr, NextRegTime=%.2e Myr, dtIrr = %.4e Myr, dtReg = %.4e Myr,\n a_tot = (%.2e,%.2e,%.2e), a_reg = (%.2e,%.2e,%.2e), a_irr = (%.2e,%.2e,%.2e), n_n=%d\n"\
+			fprintf(stdout, "PID=%d, CurrentTimeIrr = %.2e Myr, CurrentTimeReg= %.2e Myr, NextRegTime=%.2e Myr,\n"\
+					"dtIrr = %.4e Myr, dtReg = %.4e Myr,\n a_tot = (%.2e,%.2e,%.2e), a_reg = (%.2e,%.2e,%.2e), a_irr = (%.2e,%.2e,%.2e), n_n=%d\n"\
 					"a1_reg = (%.2e,%.2e,%.2e), a2_reg = (%.2e,%.2e,%.2e), a3_reg = (%.2e,%.2e,%.2e)\n"\
 					"a1_irr = (%.2e,%.2e,%.2e), a2_irr = (%.2e,%.2e,%.2e), a3_irr = (%.2e,%.2e,%.2e)\n", 
 					particle[i]->PID,
 					particle[i]->CurrentTimeIrr*EnzoTimeStep*1e10/1e6,
+					particle[i]->CurrentTimeReg*EnzoTimeStep*1e10/1e6,
 					NextRegTime*EnzoTimeStep*1e10/1e6,
 					particle[i]->TimeStepIrr*EnzoTimeStep*1e10/1e6,
 					particle[i]->TimeStepReg*EnzoTimeStep*1e10/1e6,
@@ -51,6 +53,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 					particle[i]->a_irr[2][3]
 					);
 		}
+		fflush(stdout);
 		CalculateRegAccelerationOnGPU(RegIndexList, particle);
 	}
 #else

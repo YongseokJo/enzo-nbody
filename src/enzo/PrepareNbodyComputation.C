@@ -212,6 +212,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		fprintf(stdout, "First TimeStep: %e, %f\n", TimeStep, TimeUnits);
 
 
+
 		/*----------------------------------------------------------*/
 		/******** Send Arrays to Fortran Nbody6++  First Time  *****/
 		/*--------------------------------------------------------*/
