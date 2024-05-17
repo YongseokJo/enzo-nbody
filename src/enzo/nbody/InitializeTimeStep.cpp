@@ -102,6 +102,9 @@ int InitializeTimeStep(Particle* particle, int size) {
 			ptcl->TimeStepIrr  = ptcl->TimeStepReg;
 		}
 
+		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
+		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
+
 		ptcl->CurrentTimeIrr = 0;
 		ptcl->CurrentTimeReg = 0;
 
@@ -114,13 +117,11 @@ int InitializeTimeStep(Particle* particle, int size) {
 
 	for (int i=0; i<size; i++){
 		ptcl = &particle[i];
-		ptcl->TimeStepReg = std::min(1.,ptcl->TimeStepReg);
-		ptcl->TimeLevelReg = std::min(0,ptcl->TimeLevelReg);
 
 		if (ptcl->NumberOfAC != 0) {
-			while (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
-				ptcl->TimeStepIrr *= 0.5; 
-				ptcl->TimeLevelIrr--; 
+			if (ptcl->TimeStepIrr >= ptcl->TimeStepReg) {
+				ptcl->TimeStepIrr = 0.5*ptcl->TimeStepReg; 
+				ptcl->TimeLevelIrr = ptcl->TimeLevelReg-1; 
 			}
 		}
 
