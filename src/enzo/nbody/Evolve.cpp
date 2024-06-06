@@ -15,7 +15,6 @@ void UpdateNextRegTime(std::vector<Particle*> &particle);
 bool IsOutput         = false;
 double outputTime     = 0.;
 double outputTimeStep = 0.;
-double NextRegTime    = 0.;
 std::vector<Particle*> ComputationChain{};
 
 
@@ -39,10 +38,10 @@ void Evolve(std::vector<Particle*> &particle) {
 			// It's time to compute regular force.
 			RegularAccelerationRoutine(particle); // do not update particles unless NNB=0
 			IrregularAccelerationRoutine(particle);
-			std::cout << "CurrentTimeReg=" << particle[0]->CurrentTimeReg << std::endl;
-			std::cout << "CurrentTimeIrr=" << particle[0]->CurrentTimeIrr << std::endl;
-			std::cout << "TimeStepReg   =" << particle[0]->TimeStepReg << std::endl;
-			std::cout << "NextRegTime   =" << NextRegTime << std::endl;
+			std::cout << "CurrentTimeReg  =" << particle[0]->CurrentTimeReg << std::endl;
+			std::cout << "CurrentTimeIrr  =" << particle[0]->CurrentTimeIrr << std::endl;
+			std::cout << "TimeStepReg     =" << particle[0]->TimeStepReg << std::endl;
+			std::cout << "NextRegTimeBlock=" << NextRegTimeBlock*time_step << std::endl;
 		}
 
 	Communication:
@@ -53,8 +52,10 @@ void Evolve(std::vector<Particle*> &particle) {
 			SendToEzno(particle);
 			ReceiveFromEzno(particle);
 		} while (NNB < 2);
-		global_time = 0.;
-		NextRegTime = 0.;
+
+		global_time      = 0.;
+		NextRegTimeBlock = 0.;
+		/*
 		{
 			RegIndexList.clear();
 			int i = 0;
@@ -63,6 +64,7 @@ void Evolve(std::vector<Particle*> &particle) {
 				i++;
 			}
 		}
+		*/
 		//UpdateNextRegTime(particle);
 	}
 }

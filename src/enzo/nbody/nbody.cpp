@@ -14,10 +14,11 @@ using namespace std;
 int NNB, newNNB; double global_time; //bool debug;
 int NumNeighborMax = 100;
 std::vector<int> RegIndexList; 
+ULL NextRegTimeBlock=0.;
 //MPI_Comm  comm, inter_comm, nbody_comm;
 double EnzoTimeStep;
-const double dt_min = 0.03125;
-const int dt_level_min = -5;
+const double dt_min = 0.25;
+const int dt_level_min = -2;
 
 int nbody(int MyProcessorNumber) {
 	std::vector<Particle*> particle{};

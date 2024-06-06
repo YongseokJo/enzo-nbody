@@ -2,6 +2,7 @@
 #include <mpi.h>
 #include <iostream>
 #include "Particle/Particle.h"
+#include "defs.h"
 
 #ifdef time_trace
 #include "TimeTrace.h"
@@ -9,19 +10,26 @@ extern TimeTracer _time;
 #endif
 
 
-extern std::vector<int> LevelList;
+// General
 extern int NNB;
 extern int newNNB;
-extern double global_time;
-extern double NextRegTime;
-extern const double dt_min;
-extern const int dt_level_min;
-extern double dt_block;  // this stores the minimum time step
-extern int dt_block_level;
-extern std::vector<Particle*> ComputationChain;
-extern std::vector<int> RegIndexList; // how about changing this to particle list
-extern Particle* FirstComputation;
 extern int NumNeighborMax;
+
+
+
+//Time
+extern double global_time;
+extern ULL NextRegTimeBlock;
+extern int time_block;
+extern double time_step;
+extern ULL block_max;
+
+//Compuatation Chain
+extern std::vector<Particle*> ComputationChain;
+extern Particle* FirstComputation;
+extern std::vector<Particle*> ComputationList;
+extern std::vector<int> RegIndexList; // how about changing this to particle list 6/4/2024
+
 
 //extern bool debug;
 extern char* fname;
@@ -41,6 +49,7 @@ extern double ClusterVelocity[Dim];
 extern double eta;
 extern double EPS2;
 extern double InitialRadiusOfAC;
+
 // i/o
 extern bool IsOutput;
 extern double outputTime;

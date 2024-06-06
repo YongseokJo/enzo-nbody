@@ -1,8 +1,6 @@
-
-
 #define HERMITE_ORDER 4
 #define Dim 3
-#define UpdateFrequency 10
+#define NNB_MAX 1000000
 
 
 
@@ -24,6 +22,10 @@
 #define FicticiousParticle 256
 
 
+// Numerical 
+#define MIN_LEVEL_BUFFER 5
+#define FixNumNeighbor 0
+
 #define DONE    1
 #define FAIL   -1
 
@@ -31,12 +33,6 @@
 // numerical values
 #define mytolerance 5.4210109e-20
 
-// Physics related parameters
-/*
-#define eta 0.001 // by YS Jo subject to modifty
-#define EPS2 1e-2 //0.001
-#define InitialRadiusOfAC 0.04 //0.4 // 0.04 pc
-*/
 
 // Physical constants
 #define G_cgs 6.67430e-8
@@ -55,3 +51,7 @@
 #define velocity_unit 4e-10 // in 4e-10 pc/yr
 //#define mass_unit 256e-20  // 256e-20 Msun in the unit that G = 1.
 #define mass_unit 0.0001424198  // Msun in the unit that G = 1.
+
+typedef unsigned long long ULL;
+
+#define no_time_trace

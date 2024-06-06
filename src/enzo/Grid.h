@@ -1901,7 +1901,9 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 				for (int j=0; j<NumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NbodyParticleIDTemp[j]) {
+						//fprintf(stdout,"Escaped PID=%d, x=%lf\n", ParticleNumber[i], NbodyParticlePositionTemp[0][j]);
 						if (NbodyParticlePositionTemp[0][j] > 210 ) {
+							fprintf(stdout,"Escaped PID=%d in deletion\n", ParticleNumber[i]);
 							NbodyParticlePositionTemp[0][j] -= 222;
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						} // particle removal
@@ -1916,8 +1918,8 @@ class grid
 				for (int j=0; j<NewNumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NewNbodyParticleIDTemp[j]) {
 						ParticleType[i] = PARTICLE_TYPE_NBODY;
-						if (NewNbodyParticlePositionTemp[0][j] > 210 ) {
-							NewNbodyParticlePositionTemp[0][j] -= 222;
+						if (NewNbodyParticlePositionTemp[0][j] > 1e8 ) {
+							NewNbodyParticlePositionTemp[0][j] -= 1e10;
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {

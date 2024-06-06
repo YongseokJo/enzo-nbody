@@ -4,114 +4,104 @@
 
 
 double getNewTimeStep(double f[3][4], double df[3][4]);
-void getBlockTimeStep(double dt, int& TimeLevel, double &TimeStep);
+void getBlockTimeStep(double dt, int& TimeLevel, ULL &TimeBlock, double &TimeStep);
 
 // Update TimeStepIrr
 void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
-	double TimeStepIrrTmp;
+	double TimeStepTmp;
 	int TimeLevelTmp;
+	ULL TimeBlockTmp;
 
 	if (this->NumberOfAC == 0)
 		return;
 
-	getBlockTimeStep(getNewTimeStep(a_tot, a_irr), TimeLevelTmp, TimeStepIrrTmp);
+	getBlockTimeStep(getNewTimeStep(a_tot, a_irr), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
 
-	while ((CurrentTimeIrr+TimeStepIrrTmp > CurrentTimeReg+TimeStepReg) || (TimeStepIrrTmp >= TimeStepReg)) {
-		TimeStepIrrTmp *= 0.5;
+
+	//std::cout << "TimeStepIrrTmp=" << TimeStepIrrTmp << std::endl;
+	while ((CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg) || (TimeLevelTmp >= TimeLevelReg)) {
 		TimeLevelTmp--;
+		TimeBlockTmp *= 0.5;
 	}
 
-	if (TimeStepIrrTmp > 2*TimeStepIrr) {
-		if (fmod(CurrentTimeIrr, 2*TimeStepIrr)==0) {
-			TimeStepIrrTmp = 2*TimeStepIrr;
+	if (TimeLevelTmp > TimeLevelIrr+1) {
+		if (fmod(CurrentBlockIrr, 2*TimeBlockIrr)==0) {
 			TimeLevelTmp++;
 		}
 		else {
-			TimeStepIrrTmp = TimeStepIrr;
 			TimeLevelTmp   = TimeLevelIrr;
 		}
 	}
-	else if (TimeStepIrrTmp < TimeStepIrr) {
-		if (TimeStepIrrTmp < 0.5*TimeStepIrr) {
-			TimeStepIrrTmp = TimeStepIrr/4;
+	else if (TimeLevelTmp < TimeLevelIrr) {
+		if (TimeLevelTmp < TimeLevelIrr-1) {
 			TimeLevelTmp -= 2;
 		}
 		else {
-			TimeStepIrrTmp = TimeStepIrr/2;
 			TimeLevelTmp--;
 		}
 	} else {
-		TimeStepIrrTmp = TimeStepIrr;
 		TimeLevelTmp = TimeLevelIrr;
 	}
 
-	TimeStepIrr = TimeStepIrrTmp;
 	TimeLevelIrr = TimeLevelTmp;
 
-	if (TimeLevelIrr < dt_block_level+dt_level_min) {
+	if (TimeLevelIrr < time_block) {
 		//std::cerr << "Timestep is too small" << std::endl;
-		//std::cout << "In CalTimeStep, timestep is too small."\
-		 	<< " TimeStepIrr=" << TimeStepIrr	<< std::endl;
-		TimeStepIrr  = std::max(dt_block*dt_min,             TimeStepIrr);
-		TimeLevelIrr = std::max(dt_block_level+dt_level_min, TimeLevelIrr);
+		TimeLevelIrr = std::max(time_block, TimeLevelIrr);
 	}
-	TimeStepIrr  = std::max(dt_min/2,             TimeStepIrr);
-	TimeLevelIrr = std::max(dt_level_min-1, TimeLevelIrr);
+
+	TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
+	TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
+	//std::cout << "TimeStepIrr=" << TimeStepIrr << std::endl;
 }
+
+
 
 // Update TimeStepReg // need to review
 void Particle::calculateTimeStepReg() {
 	//fprintf(stdout, "Number of AC=%d\n", NumberOfAC);
 	//std::cout << NumberOfAC << std::flush;
-	double TimeStepRegTmp, TimeStepRegTmp0;
-	int TimeLevelTmp;
+	double TimeStepTmp;
+	ULL TimeBlockTmp;
+	int TimeLevelTmp, TimeLevelTmp0;
 
-#ifdef time_trace
-		_time.reg_dt1.markStart();
-#endif
-	getBlockTimeStep(getNewTimeStep(a_reg, a_reg), TimeLevelTmp, TimeStepRegTmp);
+	getBlockTimeStep(getNewTimeStep(a_reg, a_reg), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
 
-	fprintf(stderr, "in CalReg, raw time step=%.2eMyr, ", TimeStepRegTmp*EnzoTimeStep*1e10/1e6);
-#ifdef time_trace
-		_time.reg_dt1.markEnd();
-		_time.reg_dt1.getDuration();
+	//fprintf(stderr, "in CalReg, raw time step=%.2eMyr, ", TimeStepRegTmp*EnzoTimeStep*1e10/1e6);
 
-		_time.reg_dt2.markStart();
-#endif
 
 	//std::cout << "NBODY+: TimeStepRegTmp = " << TimeStepRegTmp << std::endl;
 
-	if (TimeStepRegTmp > 2*TimeStepReg) {
-		if (fmod(CurrentTimeReg, 2*TimeStepReg)==0 \
+	TimeLevelTmp0 = TimeLevelTmp;
+
+	if (TimeLevelTmp > TimeLevelReg+1) {
+		if (fmod(CurrentBlockReg, 2*TimeBlockReg)==0 \
 				&& CurrentTimeReg != 0) {
-			TimeStepRegTmp = 2*TimeStepReg;
-			TimeLevelTmp   = TimeLevelReg + 1;
-			while ((TimeStepRegTmp0 > TimeStepRegTmp) \
-					&& (fmod(CurrentTimeReg, 2*TimeStepRegTmp) == 0)) {
-				TimeStepRegTmp = 2*TimeStepRegTmp;
+			TimeLevelTmp   = TimeLevelReg+1;
+			TimeBlockTmp   = TimeBlockReg*2;
+
+			while ((TimeLevelTmp0 > TimeLevelTmp) \
+					&& (fmod(CurrentBlockReg, 2*TimeBlockTmp) == 0)) {
+				TimeBlockTmp = 2*TimeBlockTmp;
 				TimeLevelTmp   = TimeLevelTmp + 1;
 			}
 		}
 		else {
-			TimeStepRegTmp = TimeStepReg;
 			TimeLevelTmp   = TimeLevelReg;
 		}
 	}
-	else if (TimeStepRegTmp < TimeStepReg) {
-		TimeStepRegTmp = TimeStepReg/2;
+	else if (TimeLevelTmp < TimeLevelReg) {
 		TimeLevelTmp--;
-		if (TimeStepRegTmp > TimeStepRegTmp0 ) {
-			TimeStepRegTmp = TimeStepReg/4;
-			TimeLevelTmp -= 2;
-		}
+		if (TimeLevelTmp > TimeLevelTmp0)
+			TimeLevelTmp--;
 	}
 	else {
-		TimeStepRegTmp  = TimeStepReg;
 		TimeLevelTmp = TimeLevelReg;
 	}
 
 
 	// update needed. regcor_gpu.for:725 (Makino, ApJ, 369)
+	/*
 	if (TimeStepRegTmp > 0.1 && TimeStepRegTmp > TimeStepReg) {
 		double v2 = 0., a2=0., dt;
 		for (int dim=0; dim<Dim; dim++) {
@@ -123,41 +113,28 @@ void Particle::calculateTimeStepReg() {
 			TimeStepRegTmp = TimeStepReg;
 		}	
 	}
+	*/
 
-#ifdef time_trace
-		_time.reg_dt2.markEnd();
-		_time.reg_dt2.getDuration();
+	//fprintf(stderr, " final time step=%.2eMyr\n", TimeStepRegTmp*EnzoTimeStep*1e10/1e6);
 
-		_time.reg_dt3.markStart();
-#endif
-
-	fprintf(stderr, " final time step=%.2eMyr\n", TimeStepRegTmp*EnzoTimeStep*1e10/1e6);
-
-	TimeStepReg  = std::min(1.,TimeStepRegTmp);
-	TimeLevelReg = std::min(0,TimeLevelTmp);
-
-	if (CurrentTimeReg+TimeStepReg > 1 && CurrentTimeReg != 1.0) {
-		TimeStepReg = 1 - CurrentTimeReg;
-	}
-
+	TimeLevelReg = std::max(time_block,TimeLevelTmp);
+	//TimeLevelReg = std::max(time_block, TimeLevelReg);
 
 	if (this->NumberOfAC == 0) {
-		TimeStepIrr  = TimeStepReg;
 		TimeLevelIrr = TimeLevelReg;
 	}
 
-	TimeStepReg  = std::max(dt_min,       TimeStepReg);
-	TimeLevelReg = std::max(dt_level_min, TimeLevelReg);
-
-	while (TimeStepReg < TimeStepIrr) {
-		TimeStepIrr /= 2;
-		TimeLevelIrr -= 1;
+	while (TimeLevelReg < TimeLevelIrr) {
+		TimeLevelIrr--;
 	}
 
-#ifdef time_trace
-		_time.reg_dt3.markEnd();
-		_time.reg_dt3.getDuration();
-#endif
+	TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
+	TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
+
+	if (CurrentTimeReg+TimeStepReg > 1 && CurrentTimeReg != 1.0) {
+		TimeStepReg = 1 - CurrentTimeReg;
+		TimeBlockReg = block_max-CurrentBlockReg;
+	}
 
 	//std::cout << "NBODY+: TimeStepReg = " << TimeStepReg << std::endl;
 }

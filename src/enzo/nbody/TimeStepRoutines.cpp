@@ -42,12 +42,19 @@ double getNewTimeStep(double f[3][4], double df[3][4]) {
 	return TimeStep;
 }
 
-void getBlockTimeStep(double dt, int &TimeLevel, double &TimeStep) {
+void getBlockTimeStep(double dt, int &TimeLevel, ULL &TimeBlock, double &TimeStep) {
 	TimeLevel = static_cast<int>(floor(log(dt/EnzoTimeStep)/log(2.0)));
 	//TimeLevel = static_cast<int>(ceil(log(dt/EnzoTimeStep)/log(2.0)));
 	//std::cout << "NBODY+: TimeLevel = " << TimeLevel << std::endl;
-	TimeStep = static_cast<double>(pow(2, TimeLevel));
 	//std::cout << "NBODY+: TimeStep = " << TimeStep << std::endl;
+	
+	if (TimeLevel < time_block) {
+		//std::cerr << "TimeLevel is less than time block!!" << std::endl;
+		TimeLevel = time_block;
+	}
+
+	TimeStep = static_cast<double>(pow(2, TimeLevel));
+	TimeBlock = static_cast<ULL>(pow(2, TimeLevel-time_block));
 }
 
 

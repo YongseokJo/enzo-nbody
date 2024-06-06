@@ -5,9 +5,9 @@ void Particle::updateEvolveParticle(std::vector<Particle*> &list) {
 
 	double next_time;
 
-	next_time = CurrentTimeIrr + TimeStepIrr;
+	next_time = CurrentBlockIrr + TimeBlockIrr;
 
-	if (NextRegTime >= next_time 
+	if (NextRegTimeBlock >= next_time 
 			&& (this->checkNeighborForEvolution())) {
 		return;
 	} else {
@@ -22,7 +22,3 @@ void Particle::updateEvolveParticle(std::vector<Particle*> &list) {
 		}
 	}
 }
-
-
-
-

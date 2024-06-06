@@ -18,7 +18,7 @@
 #define THREAD 1 // 2048 for A100
 #define BLOCK 2048    // 32 for A100 
 
-#define FixNumNeighbor 30
+#define FixNumNeighbor 0
 
 __constant__ float EPS2_d; 
 extern double EPS2;
@@ -91,6 +91,7 @@ void GetAcceleration(
 		) {
 	icall++;
 	assert(is_open);
+	fprintf(stderr, "NumTarget = %d\n", NumTarget);
 	assert((NumTarget > 0) && (NumTarget <= NNB));
 
 	cudaError_t cudaStatus;
@@ -178,7 +179,8 @@ __global__ void CalculateAcceleration(
 
 
 	float r_max = 0;
-	float r_nb[FixNumNeighbor];
+	//float r_nb[FixNumNeighbor];
+	float r_nb[FixNumNeighbor+1];
 	int index_max;
 	int bg_index;
 	__shared__ Result res[THREAD];

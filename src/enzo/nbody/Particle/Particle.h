@@ -34,8 +34,12 @@ class Particle
 		double PredTimeReg;
 		double CurrentTimeIrr;
 		double CurrentTimeReg;
+		ULL CurrentBlockIrr;
+		ULL CurrentBlockReg;
 		double TimeStepIrr;
 		double TimeStepReg;
+		ULL TimeBlockIrr;
+		ULL TimeBlockReg;
 		int TimeLevelIrr;
 		int TimeLevelReg;
 		double PredPosition[Dim];
@@ -43,9 +47,6 @@ class Particle
 		double a_tot[Dim][HERMITE_ORDER];
 		double a_reg[Dim][HERMITE_ORDER];
 		double a_irr[Dim][HERMITE_ORDER];
-		//double ap_tot[Dim][2];
-		//double ap_reg[Dim][2];
-		//double ap_irr[Dim][2];
 		double BackgroundAcceleration[Dim];
 		Particle* NextParticleInEnzo;
 		Particle* NextParticleForComputation;
@@ -55,26 +56,42 @@ class Particle
 		int isEvolve;
 		bool isRegular;
 		bool isStarEvolution;
+		bool isActive;
+		int PositionInList;
 
 		// Constructor
-		Particle(void) {
-			//std::cout << "Constructor called" << std::endl;
-			Mass            = 0;
+		Particle(int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
+			 	double *Position[Dim], double *Velocity[Dim],
+			 	double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i);
+		Particle(
+int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
+			 	double *Position[Dim], double *Velocity[Dim],
+			 	double *BackgroundAcceleration[Dim],  int ParticleType, Particle* NextParticleInEnzo, int i);
+
+
+		void __initialize__(void) {
+					Mass            = 0;
 			InitialMass     = 0;
 			NumberOfAC      = 0; // number of neighbors
 			RadiusOfAC      = 0;
 			ParticleType    = -9999;
 			CurrentTimeIrr  = 0.; // consistent with actual current time
 			CurrentTimeReg  = 0.;
+			CurrentBlockIrr = 0; // consistent with actual current time
+			CurrentBlockReg = 0;
 			PredTimeIrr     = 0;
 			PredTimeReg     = 0;
 			TimeStepIrr     = 0;
 			TimeStepReg     = 0;
-			TimeLevelIrr    = 9999;
-			TimeLevelReg    = 9999;
+			TimeLevelIrr    = 0;
+			TimeLevelReg    = 0;
+			TimeBlockIrr    = 0;
+			TimeBlockReg    = 0;
 			isEvolve        = 0;
 			isRegular       = false;
 			isStarEvolution = true;
+			isActive        = true;
+		  PositionInList  = -1;
 			for (int i=0; i<Dim; i++) {
 				Velocity[i]     = 0;
 				Position[i]     = 0;
@@ -121,6 +138,7 @@ class Particle
 		void calculateRegAccelerationFourthOrder(std::vector<Particle*> &particle);
 
 		void predictParticleSecondOrder(double time);
+		void predictParticleSecondOrderIrr(double time);
 		void correctParticleFourthOrder(double current_time, double next_time, double a[3][4]);
 
 		void normalizeParticle();
@@ -131,6 +149,9 @@ class Particle
 		//void updateParticle(double current_time, double next_time, double a[3][4]);
 		void updateParticle();
 		double evolveStarMass(double t1, double t2);
+
+		//destructor
+    ~Particle() = default;
 };
 
 

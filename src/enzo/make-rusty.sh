@@ -35,7 +35,8 @@ make machine-rusty
 make precision-64 integers-32 particle-id-32 max-baryons-30 lcaperf-no max-tasks-per-node-36 grackle-yes new-problem-types-yes photon-no nbody-yes opt-aggressive cuda-no
 make show-config
 make show-flags
-make -j3
+##make -j3
+make -j16
 #cp enzo.exe enzo_spare.exe
 #cp enzo.exe enzo_spare_v100.exe
 #cp enzo.exe enzo_test_openmpi_escape.exe

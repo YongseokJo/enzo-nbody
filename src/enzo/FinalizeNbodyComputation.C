@@ -128,6 +128,8 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			fprintf(stdout, "ENZO: Waiting for NBODY+ to receive data \n");
+			fprintf(stderr, "ENZO: NNB    = %d \n", NumberOfNbodyParticles);
+			fprintf(stderr, "ENZO: newNNB = %d \n", NumberOfNewNbodyParticles);
 			InitializeNbodyArrays(1);
 			CommunicationInterBarrier();
 			fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
