@@ -177,7 +177,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 		for (int dim=0; dim<Dim; dim++) {
 
 
-			da_dt2  = (ptcl->a_reg[dim][0] - AccRegReceive[i][dim] + a_tmp[dim]   ) / dt2;
+			da_dt2  = (ptcl->a_reg[dim][0] - AccRegReceive[i][dim] - ptcl->BackgroundAcceleration[dim] + a_tmp[dim]   ) / dt2;
 			adot_dt = (ptcl->a_reg[dim][1] + AccRegDotReceive[i][dim] - adot_tmp[dim]) / dt;
 
 			a2 =  -6*da_dt2 - 2*adot_dt - 2*ptcl->a_reg[dim][1]/dt;
@@ -218,7 +218,7 @@ void CalculateRegAccelerationOnGPU(std::vector<int> IndexList, std::vector<Parti
 
 		// update force
 		for (int dim=0; dim<Dim; dim++) {
-			ptcl->a_reg[dim][0] = AccRegReceive[i][dim];
+			ptcl->a_reg[dim][0] = AccRegReceive[i][dim] + ptcl->BackgroundAcceleration[dim];
 			ptcl->a_reg[dim][1] = AccRegDotReceive[i][dim];
 			ptcl->a_irr[dim][0] = AccIrr[i][dim];
 			ptcl->a_irr[dim][1] = AccIrrDot[i][dim];

@@ -248,8 +248,9 @@ void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle) 
 			j++;
 		} // endfor dim
 	} // endfor ptcl2
-		//
+	
 	for (int dim=0; dim<Dim; dim++)	 {
+		ptcl1->a_reg[dim][0] +=  ptcl1->BackgroundAcceleration[dim];
 		for (int order=0; order<2; order++) {
 			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order]; 
 		}
