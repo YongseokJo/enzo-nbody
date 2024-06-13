@@ -22,7 +22,7 @@
 
 __constant__ float EPS2_d; 
 extern double EPS2;
-#define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
+#define new_size(A) ((A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024)
 
 
 static int NNB;

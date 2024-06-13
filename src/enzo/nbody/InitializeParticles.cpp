@@ -137,7 +137,6 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 		if (ptcl1->NumberOfAC < FixNumNeighbor) {
 			if (r2 > r_max) {
 				r_max     = r2;
-				//index_max = i;
 				index_max = ptcl1->NumberOfAC;
 			}
 			nb_index[ptcl1->NumberOfAC] = i;

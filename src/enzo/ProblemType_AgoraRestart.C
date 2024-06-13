@@ -767,7 +767,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 #ifdef NBODY
 			// just for tests
 			for (int j = 0; j < nParticles; j++) {
-				Attribute[0][j] = 0;
+				Attribute[0][j] = -99999;
 				Attribute[1][j] = StarMakerMinimumDynamicalTime*3.15e7/TimeUnits;
 			}
 #endif

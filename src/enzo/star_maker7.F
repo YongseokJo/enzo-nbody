@@ -437,9 +437,10 @@ c
 c     Loop over particles
 c
 c      write(6,*) 'star_feedback7: start'
+c    by YS I added type 12 which is nbody particles
       do n=1, npart
          if ((tcp(n).ge.0).and.(mp(n).gt.0).and.
-     &       ((type(n).eq.2).or.(type(n).eq.12))) then
+     &       ((type(n).eq.2).or.(type(n).eq.12))) then 
 c
 c
 c        The star particle creation algorithm partnered with this 
