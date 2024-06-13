@@ -86,7 +86,7 @@ void InitializeParticle(std::vector<Particle*> &particle, int offset) {
 	}
 
 	std::cout << "Timestep initializing..." << std::endl;
-	InitializeTimeStep(particle, newNNB);
+	InitializeTimeStep(particle, offset);
 	std::cout << "Timestep finished." << std::endl;
 
 	std::cout << "Initialization of New Particles finished." << std::endl;
