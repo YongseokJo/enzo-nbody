@@ -346,18 +346,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle  -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp \
 	    >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
              echo "$(NCXX) -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody $(INCLUDES) $*.cpp"; \
              echo; \
-             $(NCXX)-o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody $(INCLUDES) $*.cpp;\
+             $(NCXX)-o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp \
 	    >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
@@ -483,6 +483,7 @@ clean:
           auto_show*.C hydro_rk/*.o *.oo hydro_rk/*.oo \
 					nbody/*.o \
 					nbody/Particle/*.o \
+					nbody/Binary/*.o \
 					nbody/cuda/*.o \
           uuid/*.oo DEPEND TAGS \
           libconfig/*.o \

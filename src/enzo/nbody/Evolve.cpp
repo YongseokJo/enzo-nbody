@@ -12,20 +12,29 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle);
 bool IrregularAccelerationRoutine(std::vector<Particle*> &particle);
 void UpdateNextRegTime(std::vector<Particle*> &particle);
 
-bool IsOutput         = false;
-double outputTime     = 0.;
-double outputTimeStep = 0.;
+
+
+bool IsOutput           = false;
+double binary_time      = 0;
+double binary_time_prev = 0;
+ULL binary_block        = 0;
+double outputTime       = 0;
+double outputTimeStep   = 0.;
+int outNum              = 0;
+double global_time_irr  = 0;
 std::vector<Particle*> ComputationChain{};
+#ifdef time_trace
+TimeTracer _time;
+#endif
+
 
 
 void Evolve(std::vector<Particle*> &particle) {
 
-	std::cout << "Evolve starting ..." << std::endl;
-	int outNum = 0;
-	int freq   = 0;
+	fprintf(nbpout, "Evolve Starts ...\n");
 
 	if (NNB < 2) {
-		std::cout << "No particle to be calculated ..." << std::endl;
+		fprintf(nbpout, "No particle to be calculated ...\n");
 		goto Communication;
 	}
 
@@ -33,39 +42,37 @@ void Evolve(std::vector<Particle*> &particle) {
 
 	while (true)
 	{
+		writeParticle(particle, EnzoCurrentTime, outNum++);
 		while (global_time < 1)
 		{
 			// It's time to compute regular force.
-			RegularAccelerationRoutine(particle); // do not update particles unless NNB=0
 			IrregularAccelerationRoutine(particle);
+			RegularAccelerationRoutine(particle); // do not update particles unless NNB=0
+			/*
 			std::cout << "CurrentTimeReg  =" << particle[0]->CurrentTimeReg << std::endl;
 			std::cout << "CurrentTimeIrr  =" << particle[0]->CurrentTimeIrr << std::endl;
 			std::cout << "TimeStepReg     =" << particle[0]->TimeStepReg << std::endl;
 			std::cout << "NextRegTimeBlock=" << NextRegTimeBlock*time_step << std::endl;
+			*/
+
 		}
 
 	Communication:
 		do
 		{
 			// in case of nnb=1, only analytic solution be needed.
-			std::cout << "global time=" << global_time << std::endl;
+			fprintf(nbpout, "global time=%lf\n", global_time);
 			SendToEzno(particle);
 			ReceiveFromEzno(particle);
+			UpdateNextRegTime(particle);
+			fprintf(nbpout, "RegularList size=%d\n", RegularList.size());
+			fflush(nbpout);
 		} while (NNB < 2);
 
+
 		global_time      = 0.;
-		NextRegTimeBlock = 0.;
-		/*
-		{
-			RegIndexList.clear();
-			int i = 0;
-			for (Particle* ptcl: particle) {
-				RegIndexList.push_back(i);
-				i++;
-			}
-		}
-		*/
-		//UpdateNextRegTime(particle);
+		global_time_irr  = 0.;
+		//NextRegTimeBlock = 0.;
 	}
 }
 

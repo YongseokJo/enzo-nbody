@@ -8,7 +8,6 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 
 int RemoveParticles(std::vector<Particle*> &particle, std::vector<Particle*> &EscapeList) {
 
-
 	/*
 	// Force correction might not needed but neighborhood correction may needed?
 	for (Particle* ptcl1:particle) {
@@ -20,7 +19,6 @@ int RemoveParticles(std::vector<Particle*> &particle, std::vector<Particle*> &Es
 	*/
 
 	// Neighborhood correction
-
 	for (Particle* elem2:EscapeList) {
 		int i=0;
 		for (Particle* elem1:particle) {

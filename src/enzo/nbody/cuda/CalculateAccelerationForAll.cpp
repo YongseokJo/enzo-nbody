@@ -10,10 +10,11 @@
  *  -> calculates based on their current positions
  *
  *  Date    : 2024.01.17  by Seoyoung Kim
+ *  Date    : 2024.06.28  by Yongseok Jo
  *
  */
 
-void SendAllParticlesToGPU(std::vector <Particle*> &particle);
+//void SendAllParticlesToGPU(std::vector <Particle*> &particle);
 
 void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 
@@ -73,7 +74,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	NumNeighborReceive = new int[NNB];
 	ACListReceive      = new int*[NNB];
 	for (int i=0; i<NNB; i++) {
-		ACListReceive[i] = new int[NumNeighborMax];
+		ACListReceive[i] = new int[FixNumNeighbor];
 	}
 
 
@@ -95,7 +96,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	}
 
 	// send the arrays to GPU
-	SendToDevice(&NNB, MassSend, PositionSend, VelocitySend, MdotSend, &NumNeighborMax);
+	SendToDevice(&NNB, MassSend, PositionSend, VelocitySend, MdotSend, &FixNumNeighbor);
 
 
 	// calculate the force by sending the particles to GPU in multiples of 1024
@@ -231,7 +232,7 @@ void CalculateListAccelerationOnGPU(std::vector<int> &IndexList, std::vector<Par
 
 	AClistGpu = new int*[ListSize];
 	for (int i=0; i<(NNB); i++) {
-		AClistGpu[i] = new int[NumNeighborMax];
+		AClistGpu[i] = new int[FixNumNeighbor];
 	}
 
 
@@ -252,7 +253,7 @@ void CalculateListAccelerationOnGPU(std::vector<int> &IndexList, std::vector<Par
 	}
 
 	// send the arrays to GPU
-	SendAllParticlesToGPU(particle);
+	//SendAllParticlesToGPU(particle);
 
 	// calculate the force by sending the particles to GPU in multiples of 1024
 	for (int i=0; i<ListSize; i+=numGpuSend) {
@@ -340,41 +341,6 @@ void CalculateListAccelerationOnGPU(std::vector<int> &IndexList, std::vector<Par
  *
  */
 
-void SendAllParticlesToGPU(std::vector <Particle*> &particle) {
-
-	// variables for saving variables to send to GPU
-	double * Mass;
-	double * Mdot;
-	double(*Position)[Dim];
-	double(*Velocity)[Dim];
-
-	// allocate memory to the temporary variables
-	Mass     = new double[NNB];
-	Mdot     = new double[NNB];
-	Position = new double[NNB][Dim];
-	Velocity = new double[NNB][Dim];
-
-	// copy the data of particles to the arrays to be sent
-	for (int i=0; i<NNB; i++) {
-		Mass[i] = particle[i]->Mass;
-		Mdot[i] = 0; //particle[i]->Mass;
-
-		for (int dim=0; dim<Dim; dim++) {
-			Position[i][dim] = particle[i]->PredPosition[dim];
-			Velocity[i][dim] = particle[i]->PredVelocity[dim];
-		}
-	}
-
-	// send the arrays to GPU
-	SendToDevice(&NNB, Mass, Position, Velocity, Mdot, &NumNeighborMax);
-
-	// free the temporary variables
-	delete[] Mass;
-	delete[] Mdot;
-	delete[] Position;
-	delete[] Velocity;
-}
-
 
 void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 
@@ -394,7 +360,10 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	for (int i=0; i<NNB; i++) {
 		Mass[i] = particle[i]->Mass;
 		Mdot[i] = 0; //particle[i]->Mass;
-		particle[i]->predictParticleSecondOrder(time);
+		if (particle[i]->NumberOfAC == 0)	
+			particle[i]->predictParticleSecondOrder(time);
+		else
+			particle[i]->predictParticleSecondOrderIrr(time);
 
 		for (int dim=0; dim<Dim; dim++) {
 			Position[i][dim] = particle[i]->PredPosition[dim];
@@ -403,7 +372,7 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	}
 
 	// send the arrays to GPU
-	SendToDevice(&NNB, Mass, Position, Velocity, Mdot, &NumNeighborMax);
+	SendToDevice(&NNB, Mass, Position, Velocity, Mdot, &FixNumNeighbor);
 
 	// free the temporary variables
 	delete[] Mass;

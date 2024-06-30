@@ -95,8 +95,9 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 }
 
 
+
 int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
-	std::cout << "Initializing timesteps ..." << std::endl;
+	fprintf(nbpout, "Initializing timesteps ...\n");
 	double dtIrr, dtReg;
 	Particle *ptcl;
 
@@ -137,6 +138,5 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 	} //endfor size
 	return true;
 }
-
 
 

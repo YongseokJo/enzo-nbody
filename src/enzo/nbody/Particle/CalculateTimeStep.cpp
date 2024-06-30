@@ -3,56 +3,109 @@
 #include "../global.h"
 
 
-double getNewTimeStep(double f[3][4], double df[3][4]);
+double getNewTimeStepReg(double v[3], double f[3][4]);
+double getNewTimeStepIrr(double f[3][4], double df[3][4]);
 void getBlockTimeStep(double dt, int& TimeLevel, ULL &TimeBlock, double &TimeStep);
 
 // Update TimeStepIrr
 void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	double TimeStepTmp;
-	int TimeLevelTmp;
+	int TimeLevelTmp, TimeLevelTmp0;
 	ULL TimeBlockTmp;
 
 	if (this->NumberOfAC == 0)
 		return;
 
-	getBlockTimeStep(getNewTimeStep(a_tot, a_irr), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
+	getBlockTimeStep(getNewTimeStepIrr(a_tot, a_irr), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
+	TimeLevelTmp0 = TimeLevelTmp;
 
-
-	//std::cout << "TimeStepIrrTmp=" << TimeStepIrrTmp << std::endl;
-	while ((CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg) || (TimeLevelTmp >= TimeLevelReg)) {
-		TimeLevelTmp--;
-		TimeBlockTmp *= 0.5;
+	/*
+	if (PID == 965) {
+		fprintf(stderr, "stepirr=%.3e, levelirr=%d, blockirr=%llu\n", TimeStepTmp, TimeLevelTmp, TimeBlockTmp);
+		fprintf(stderr, "currentblokirr=%llu, nexttimereg=%llu \n", CurrentBlockIrr, NextRegTimeBlock);
+		fprintf(stderr, "currentblockreg=%llu, levelreg=%d, blockreg=%llu\n", CurrentBlockReg, TimeLevelReg, TimeBlockReg);
 	}
+	*/
 
-	if (TimeLevelTmp > TimeLevelIrr+1) {
+	/*
+	if (NextRegTimeBlock < TimeBlockReg && isRegular) {
+		fprintf(stderr, "PID=%d, NextRegTimeBlock=%llu, TimeBlockReg=%llu\n", PID, NextRegTimeBlock, TimeBlockReg);
+	}
+	*/
+
+	/*
+	if (PID == 430) {
+		std::cerr << "Before TimeLevelIrr=" << TimeLevelIrr << ", TimeLevelReg="<< TimeLevelReg << std::endl;
+		std::cerr << "       TimeLevelTmp=" << TimeLevelTmp << std::endl;
+	}
+	*/
+
+	if (TimeLevelTmp > TimeLevelIrr) {
 		if (fmod(CurrentBlockIrr, 2*TimeBlockIrr)==0) {
-			TimeLevelTmp++;
+			TimeLevelTmp = TimeLevelIrr+1;
+			TimeBlockTmp = 2*TimeBlockIrr;
 		}
 		else {
-			TimeLevelTmp   = TimeLevelIrr;
+			TimeLevelTmp = TimeLevelIrr;
+			TimeBlockTmp = TimeBlockIrr;
 		}
 	}
 	else if (TimeLevelTmp < TimeLevelIrr) {
 		if (TimeLevelTmp < TimeLevelIrr-1) {
-			TimeLevelTmp -= 2;
+			TimeLevelTmp = TimeLevelIrr - 2;
+			TimeBlockTmp = TimeBlockIrr/4;
 		}
 		else {
-			TimeLevelTmp--;
+			TimeLevelTmp = TimeLevelIrr - 1;
+			TimeBlockTmp = TimeBlockIrr/2;
 		}
 	} else {
 		TimeLevelTmp = TimeLevelIrr;
+		TimeBlockTmp = TimeBlockIrr;
+	}
+
+	/*
+	if (PID == 430) {
+		std::cerr << "Middle TimeLevelTmp=" << TimeLevelTmp << std::endl;
+		std::cerr << std::endl;
+	}
+	*/
+
+	//std::cout << "TimeStepIrrTmp=" << TimeStepIrrTmp << std::endl;
+	while (((CurrentBlockIrr < CurrentBlockReg+TimeBlockReg) && (CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg)) || (TimeLevelTmp >= TimeLevelReg)) {
+		/*
+		fprintf(stderr,"CurrentBlockIrr = %llu\n",
+				CurrentBlockIrr);
+		fprintf(stderr,"CurrentBlockReg = %llu\n",
+				CurrentBlockReg);
+		fprintf(stderr,"TimeBlockReg    = %llu\n",
+				TimeBlockReg);
+		fprintf(stderr,"TimeBlockIrr    = %llu\n",
+				TimeBlockIrr);
+				*/
+		if (TimeLevelTmp > TimeLevelReg)
+			fprintf(stderr, "PID=%d, Irr=%d, Reg=%d\n", PID, TimeLevelTmp0, TimeLevelReg);
+
+		TimeLevelTmp--;
+		TimeBlockTmp *= 0.5;
 	}
 
 	TimeLevelIrr = TimeLevelTmp;
 
 	if (TimeLevelIrr < time_block) {
-		//std::cerr << "Timestep is too small" << std::endl;
+		//std::cerr << "TimeLevelIrr is too small" << std::endl;
 		TimeLevelIrr = std::max(time_block, TimeLevelIrr);
 	}
 
 	TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
 	TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
-	//std::cout << "TimeStepIrr=" << TimeStepIrr << std::endl;
+
+	/*
+	if (PID == 430) {
+		std::cerr << "After TimeLevelIrr=" << TimeLevelIrr << std::endl;
+		std::cerr << std::endl;
+	}
+	*/
 }
 
 
@@ -65,7 +118,7 @@ void Particle::calculateTimeStepReg() {
 	ULL TimeBlockTmp;
 	int TimeLevelTmp, TimeLevelTmp0;
 
-	getBlockTimeStep(getNewTimeStep(a_reg, a_reg), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
+	getBlockTimeStep(getNewTimeStepReg(Velocity, a_reg), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
 
 	//fprintf(stderr, "in CalReg, raw time step=%.2eMyr, ", TimeStepRegTmp*EnzoTimeStep*1e10/1e6);
 
@@ -74,7 +127,7 @@ void Particle::calculateTimeStepReg() {
 
 	TimeLevelTmp0 = TimeLevelTmp;
 
-	if (TimeLevelTmp > TimeLevelReg+1) {
+	if (TimeLevelTmp >= TimeLevelReg+1) {
 		if (fmod(CurrentBlockReg, 2*TimeBlockReg)==0 \
 				&& CurrentTimeReg != 0) {
 			TimeLevelTmp   = TimeLevelReg+1;
@@ -91,8 +144,8 @@ void Particle::calculateTimeStepReg() {
 		}
 	}
 	else if (TimeLevelTmp < TimeLevelReg) {
-		TimeLevelTmp--;
-		if (TimeLevelTmp > TimeLevelTmp0)
+		TimeLevelTmp = TimeLevelReg - 1;
+		if (TimeLevelTmp0 < TimeLevelTmp)
 			TimeLevelTmp--;
 	}
 	else {
@@ -124,12 +177,8 @@ void Particle::calculateTimeStepReg() {
 		TimeLevelIrr = TimeLevelReg;
 	}
 
-	while (TimeLevelReg < TimeLevelIrr) {
-		TimeLevelIrr--;
-	}
-
-	TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
-	TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
+	TimeStepReg = static_cast<double>(pow(2, TimeLevelReg));
+	TimeBlockReg = static_cast<ULL>(pow(2, TimeLevelReg-time_block));
 
 	if (CurrentTimeReg+TimeStepReg > 1 && CurrentTimeReg != 1.0) {
 		TimeStepReg = 1 - CurrentTimeReg;

@@ -107,6 +107,9 @@ void Particle::correctParticleFourthOrder(double current_time, double next_time,
 }
 
 
+void Particle::polynomialPrediction(double current_time) {
+
+}
 
 void Particle::updateParticle() {
 	for (int dim=0; dim<Dim; dim++) {
@@ -114,23 +117,5 @@ void Particle::updateParticle() {
 		Velocity[dim] = NewVelocity[dim];
 	}
 }
-
-/*
-void Particle::updateParticle(double current_time, double next_time, double a[3][4]) {
-
-	if (current_time == next_time) {
-		for (int dim=0; dim<Dim; dim++) {
-			PredPosition[dim] = Position[dim];
-			PredVelocity[dim] = Velocity[dim];
-		}
-		return;
-	}
-	predictParticleSecondOrder(current_time, next_time, a);
-	correctParticleFourthOrder(current_time, next_time, a);
-	Mass += evolveStarMass(current_time, next_time); // CurrentTimeIrr
-}*/
-
-
-
 
 

@@ -3,8 +3,9 @@
 #include <iostream>
 #include <assert.h>
 #include <cuda_runtime.h>
+#include "../defs.h"
 
-//#define MaxNeighbor 100
+
 #define NAN_CHECK(val) assert((val) == (val));
 //#define CUDA_SAFE_CALL checkCudaErrors
 
@@ -204,7 +205,7 @@ struct Result{
 
 struct  Neighbor{
 	int NumNeighbor;
-	int NeighborList[100]; // this needs to be modified.
+	int NeighborList[MaxNumNeighbor]; // this needs to be modified.
 
 
 	__device__ void clear() {

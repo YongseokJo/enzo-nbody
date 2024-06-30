@@ -66,6 +66,7 @@ EXTERN int isNbodyParticleIdentification;
 EXTERN float NbodySmoothingLength;
 EXTERN float NbodyTimeStepConstant;
 EXTERN float NbodyNeighborRadius;
+EXTERN int NbodyFixNumNeighbor;
 
 /* by YS, MPI COMMs*/
 extern MPI_Comm enzo_comm;

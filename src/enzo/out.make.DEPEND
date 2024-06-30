@@ -2673,6 +2673,12 @@ makedepend: warning:  WriteAllDataCubes.C, line 13: cannot find include file "mp
 	not in /mnt/home/yjo10/packages/grackle/build/include/mpi.h
 	not in ./mpi.h
 	not in /usr/include/mpi.h
+makedepend: warning:  WriteParameterFile.C, line 30: cannot find include file "cmath"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/cmath
+	not in /include/cmath
+	not in /mnt/home/yjo10/packages/grackle/build/include/cmath
+	not in ./cmath
+	not in /usr/include/cmath
 makedepend: warning:  WriteStreamData.C, line 15: cannot find include file "mpi.h"
 	not in mpi.h
 	not in mpi.h
@@ -3450,6 +3456,36 @@ makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/Particle/Par
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
 	not in ./iostream
 	not in /usr/include/iostream
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/Binary/Binary.h, line 1): cannot find include file "vector"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
+	not in /include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/Binary/Binary.h, line 2): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
+	not in /include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading /usr/include/stdio.h, line 33): cannot find include file "stddef.h"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/stddef.h
+	not in /include/stddef.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stddef.h
+	not in ./stddef.h
+	not in /usr/include/stddef.h
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading /usr/include/stdio.h, line 36): cannot find include file "stdarg.h"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/stdarg.h
+	not in /include/stdarg.h
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdarg.h
+	not in ./stdarg.h
+	not in /usr/include/stdarg.h
+makedepend: warning:  nbody/CommunicationToHydro.cpp (reading nbody/global.h, line 8): cannot find include file "stdexcept"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/stdexcept
+	not in /include/stdexcept
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdexcept
+	not in ./stdexcept
+	not in /usr/include/stdexcept
 makedepend: warning:  nbody/ComputationChainRoutine.cpp, line 1: cannot find include file "algorithm"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/algorithm
 	not in /include/algorithm
@@ -3546,6 +3582,12 @@ makedepend: warning:  nbody/IrregularAccelerationRoutine.cpp, line 1: cannot fin
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
 	not in ./iostream
 	not in /usr/include/iostream
+makedepend: warning:  nbody/IrregularAccelerationRoutine.cpp, line 3: cannot find include file "cassert"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/cassert
+	not in /include/cassert
+	not in /mnt/home/yjo10/packages/grackle/build/include/cassert
+	not in ./cassert
+	not in /usr/include/cassert
 makedepend: warning:  nbody/nbody.cpp, line 1: cannot find include file "mpi.h"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/mpi.h
 	not in /include/mpi.h
@@ -4550,6 +4592,24 @@ makedepend: warning:  nbody/global.h (reading nbody/Particle/Particle.h, line 9)
 	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
 	not in ./iostream
 	not in /usr/include/iostream
+makedepend: warning:  nbody/global.h (reading nbody/Binary/Binary.h, line 1): cannot find include file "vector"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
+	not in /include/vector
+	not in /mnt/home/yjo10/packages/grackle/build/include/vector
+	not in ./vector
+	not in /usr/include/vector
+makedepend: warning:  nbody/global.h (reading nbody/Binary/Binary.h, line 2): cannot find include file "iostream"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/iostream
+	not in /include/iostream
+	not in /mnt/home/yjo10/packages/grackle/build/include/iostream
+	not in ./iostream
+	not in /usr/include/iostream
+makedepend: warning:  nbody/global.h, line 8: cannot find include file "stdexcept"
+	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/stdexcept
+	not in /include/stdexcept
+	not in /mnt/home/yjo10/packages/grackle/build/include/stdexcept
+	not in ./stdexcept
+	not in /usr/include/stdexcept
 makedepend: warning:  nbody_old/global.h, line 1: cannot find include file "vector"
 	not in /mnt/sw/nix/store/5lm2q7hm14wv3dnc09144zi5bh7v7p42-hdf5-1.8.22/include/vector
 	not in /include/vector

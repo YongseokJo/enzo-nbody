@@ -247,6 +247,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&NbodyTimeStepConstant	     , 1, MPI_DOUBLE, 1, 1500, inter_comm);
 		MPI_Send(&NbodyNeighborRadius		     , 1, MPI_DOUBLE, 1, 1600, inter_comm);
 		MPI_Send(&NbodyClusterPosition[3]    , 1, MPI_DOUBLE, 1, 1700, inter_comm);
+		MPI_Send(&NbodyFixNumNeighbor        , 1, MPI_INT   , 1, 1800, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
 		CommunicationInterBarrier();
 

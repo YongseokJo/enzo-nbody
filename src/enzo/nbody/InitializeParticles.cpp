@@ -8,6 +8,7 @@
 
 
 void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle);
+void FindNewNeighbor(Particle* ptcl1, std::vector<Particle*> &particle);
 void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle);
 void CalculateAcceleration23(Particle* ptcl1, std::vector<Particle*> &particle);
 void CalculateAcceleration23_new(Particle* ptcl1, std::vector<Particle*> &particle);
@@ -15,25 +16,28 @@ void direct_sum(double *x, double *v, double r2, double vx,
 		double mass, double a[3], double adot[3]);
 int InitializeTimeStep(std::vector<Particle*> &particle, int size);
 int InitializeTimeStep(std::vector<Particle*> &particle);
+void UpdateNextRegTime(std::vector<Particle*> &particle);
 
 /*
  *  Purporse: Initialize particles
  *
  *  Date    : 2024.01.02  by Seoyoung Kim
  *  Modified: 2024.01.10  by Yongseok Jo
+ *  Modified: 2024.06.28  by Yongseok Jo
  *
  */
 
 void InitializeParticle(std::vector<Particle*> &particle) {
 
 	if (NNB == 0) {
-		std::cout << "Initialization skips." << std::endl;
+		fprintf(nbpout, "Initialization skips.\n");
 		return;
 	}
-	std::cout << "Initialization starts." << std::endl;
+	fprintf(nbpout, "Initialization starts.\n");
 
 	// loop over particles to initialize their values
 	int j = 0;
+
 	for (Particle* ptcl:particle) {
 		//std::cout <<  j << ": ";
 		//std::cout << std::flush;
@@ -45,19 +49,23 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 		std::cout << std::flush;
 	}
 
-	std::cout << "Timestep initializing..." << std::endl;
+	fprintf(nbpout, "Timestep initializing.\n");
 	InitializeTimeStep(particle);
-	std::cout << "Timestep finished." << std::endl;
-	int i = 0;
-	RegIndexList.clear();
-	for (Particle* elem:particle) {
+	fprintf(nbpout, "Timestep finished.\n");
+
+	UpdateNextRegTime(particle);
+
+	/*
+	RegularList.clear();
+	for (Particle* ptcl:particle) {
 		for (int dim=0; dim<Dim; dim++) {
-			elem->PredPosition[dim] =  elem->Position[dim];
-			elem->PredVelocity[dim] =  elem->Velocity[dim];
+			ptcl->PredPosition[dim] =  ptcl->Position[dim];
+			ptcl->PredVelocity[dim] =  ptcl->Velocity[dim];
 		}
-		RegIndexList.push_back(i++);
+		RegularList.push_back(ptcl);
 	}
-	std::cout << "Initialization finished." << std::endl;
+	*/
+	fprintf(nbpout, "Initialization finished.\n");
 }
 
 
@@ -65,17 +73,19 @@ void InitializeParticle(std::vector<Particle*> &particle) {
  *  Purporse: Initialize of new particles
  *
  *  Date    : 2024.01.16  by Seoyoung Kim
+ *  Modified: 2024.06.28  by Yongseok Jo
  *
  */
-void InitializeParticle(std::vector<Particle*> &particle, int offset) {
+void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 
 	std::cout << "Initialization of " << newNNB << " New Particles starts." << std::endl;
 
 	// loop over particles to initialize acceleration
 	for (int i=0; i<newNNB; i++) {
-		FindNeighbor(particle[offset+i], particle);
+		FindNewNeighbor(particle[offset+i], particle);
 		CalculateAcceleration01(particle[offset+i], particle);
 	}
+
 	for (int i=0; i<newNNB; i++) {
 		CalculateAcceleration23(particle[offset+i], particle);
 
@@ -99,10 +109,9 @@ void InitializeParticle(std::vector<Particle*> &particle, int offset) {
  *
  *  Date    : 2024.01.02  by Seoyoung Kim
  *  Modified: 2024.01.16  by Seoyoung Kim
+ *  Modified: 2024.06.28  by Yongseok Jo
  *
  */
-
-
 // recieve the time we want to calculate the neighbor information, 
 // (which would be EnzoTimeMark in the case of New Particles)
 // the particle we want to find the neighbors of and the full particle list
@@ -115,9 +124,9 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 	double r2;
 	double r_max=0;
 	double r_nb[FixNumNeighbor];
-	int nb_index[FixNumNeighbor], index_max, i=0;
+	int index_max, i=0; // nb_index[FixNumNeighbor], 
+	std::vector<int> nb_index(FixNumNeighbor); 
 
-	//ptcl1->predictParticleSecondOrder(newTime);
 	// search for neighbors for ptcl
 	for (Particle *ptcl2:particle) {
 
@@ -127,8 +136,6 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 		}
 
 		r2 = 0.0;
-
-		//ptcl2->predictParticleSecondOrder(newTime);
 		for (int dim=0; dim<Dim; dim++) {
 			dx = ptcl2->Position[dim] - ptcl1->Position[dim];
 			r2 += dx*dx;
@@ -140,11 +147,11 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 				index_max = ptcl1->NumberOfAC;
 			}
 			nb_index[ptcl1->NumberOfAC] = i;
-			r_nb[ptcl1->NumberOfAC++]   = r2;
+			r_nb[ptcl1->NumberOfAC]   = r2;
+			ptcl1->NumberOfAC++;
 		}
 		else {
 			if ( r2 < r_max) {
-				r_max = r2;
 				r_nb[index_max]     = r2;
 				nb_index[index_max] = i;
 				// update new r_max
@@ -161,21 +168,99 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 	} // endfor
 
 
+	std::sort(nb_index.begin(), nb_index.end());
 	for (int j:nb_index) {
 		ptcl1->ACList.push_back(particle[j]);
 		//std::cout << j << ", ";
 	}
-	//std::cout << std::endl;
 
-	std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
-	//
-		//
+
+	fprintf(stdout, "Neighbors of %d : \n", ptcl1->PID);
+	for (Particle* ptcl:ptcl1->ACList) {
+		std::cout << ptcl->PID << ", ";
+	}
+	std::cout << std::endl;
+
+	//std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
 	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
 	return ;
-
 }
 
 
+void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
+
+	// No need to find neighbors if the total number of particles is less than 100
+	//if (NNB<=100) return;
+	
+	double r0, r1;
+	double r_max;
+	int index, max_index;
+
+	FindNeighbor(newPtcl, particle);
+
+	for (Particle* ptcl: newPtcl->ACList) {
+		index = 0;
+		r_max = 0;
+		max_index = -1;
+
+		r0 = dist2(ptcl->Position, newPtcl->Position);
+
+		for (Particle* neighbor:ptcl->ACList) {
+			r1 = dist2(ptcl->Position, neighbor->Position);
+
+			if (r1 > r_max) {
+				r_max = r1;
+				max_index = index;
+			}
+
+			index++;
+		}
+
+		if (r0 < r_max) {
+			if (max_index == -1 || r_max == 0) {
+				fprintf(stderr, "Max Index = %d, r_max = %e\n", max_index, r_max);
+				throw std::runtime_error("Fatal Error in FindNewNeighbor.cpp\n");	
+			}
+			ptcl->ACList.erase(ptcl->ACList.begin() + max_index);
+			ptcl->ACList.push_back(newPtcl);
+		}
+	}
+
+	return ;
+}
+
+
+void ReInitializeKSParticle(Particle* KSParticle, std::vector<Particle*> &particle) {
+
+	std::cout << "Re-Initialization of KS Pair Particle starts.\n" << std::endl;
+
+	std::cout << "Finding Neighbors... \n" << std::endl;	
+	KSParticle->ACList.clear();
+	FindNeighbor(KSParticle, particle);
+
+	std::cout << "Calculating Acceleration... \n" << std::endl;	
+
+	CalculateAcceleration01(KSParticle, particle);
+	CalculateAcceleration23(KSParticle, particle);
+
+	std::cout << "copying the position and velocities to predictions... \n" << std::endl;	
+
+	for (int dim=0; dim<Dim; dim++) {
+		KSParticle->PredPosition[dim] =  KSParticle->Position[dim];
+		KSParticle->PredVelocity[dim] =  KSParticle->Velocity[dim];
+		KSParticle->NewPosition[dim]  =  KSParticle->Position[dim];
+		KSParticle->NewVelocity[dim]  =  KSParticle->Velocity[dim];
+	}
+
+	std::cout << "Timestep calculation...\n" << std::endl;
+
+
+	// advance here because cm particle didn't advance and was removed.
+	// ComputationList.push_back(KSParticle);
+
+	std::cout << "Timestep finished.\n" << std::endl;
+	std::cout << "Initialization of KS Pair Particle finished.\n" << std::endl;
+}
 
 
 /*
@@ -249,9 +334,8 @@ void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle) 
 	} // endfor ptcl2
 	
 	for (int dim=0; dim<Dim; dim++)	 {
-		ptcl1->a_reg[dim][0] +=  ptcl1->BackgroundAcceleration[dim];
 		for (int order=0; order<2; order++) {
-			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order]; 
+			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order] + ptcl1->BackgroundAcceleration[dim]; 
 		}
 	}
 	return;

@@ -1276,6 +1276,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		ret += sscanf(line, "NbodySmoothingLength = %"FSYM, &NbodySmoothingLength);
 		ret += sscanf(line, "NbodyTimeStepConstant = %"FSYM, &NbodyTimeStepConstant);
 		ret += sscanf(line, "NbodyNeighborRadius = %"FSYM, &NbodyNeighborRadius);
+		ret += sscanf(line, "NbodyFixNumNeighbor = %"ISYM, &NbodyFixNumNeighbor);
     //ret += sscanf(line, "UseNbodyClusterIdentificationOnTheFly = %d", &isNbodyParticleIdentification);
 		//
     ret += sscanf(line, "ClusterSMBHFeedback = %"ISYM, &ClusterSMBHFeedback);
@@ -2181,7 +2182,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 			NbodyClusterPosition[3] = (NbodyClusterPosition[3] * kpc_cm / LengthUnits)*(NbodyClusterPosition[3] * kpc_cm / LengthUnits);
 		}
 
-		NbodySmoothingLength = (NbodySmoothingLength * kpc_cm / LengthUnits)*(NbodySmoothingLength * kpc_cm / LengthUnits);
+		NbodySmoothingLength = NbodySmoothingLength * kpc_cm / LengthUnits;
 		NbodyNeighborRadius *= kpc_cm / LengthUnits;
 
 		fprintf(stdout, "NbodySmoothingLength  = %e\n", NbodySmoothingLength);

@@ -2,16 +2,15 @@
 #include <iostream>
 #include <cmath>
 #include "../global.h"
+#include <cassert>
 
 
 void direct_sum(double *x, double *v, double r2, double vx,
 	 	        double mass, double mdot, double a[3], double adot[3]) {
 	double _r3;
 
-	/*
 	if (r2 < EPS2)
 		r2 = EPS2;  // add softening length
-	*/	
 
 	_r3 = 1/r2/sqrt(r2);
 
@@ -59,10 +58,14 @@ void Particle::calculateIrrForce() {
 	}
 
 
+
 	/*******************************************************
 	 * Irregular Acceleartion Calculation
 	 ********************************************************/
 	this->predictParticleSecondOrderIrr(new_time);
+
+	
+
 	for (Particle* ptcl: ACList) {
 		// reset temporary variables at the start of a new calculation
 		r2 = 0.0;
@@ -78,14 +81,22 @@ void Particle::calculateIrrForce() {
 			r2 += x[dim]*x[dim];
 			vx += v[dim]*x[dim];
 		}
+		if (r2 == 0)  {
+			fprintf(stderr, "r2 is zero (%d and %d)",PID, ptcl->PID);
+			//fflush(stderr);
+			continue;
+		}
 
 		mdot = ptcl->evolveStarMass(CurrentTimeIrr,
 				CurrentTimeIrr+TimeStepIrr*1.01)/TimeStepIrr*1e-2; // derivative can be improved
 																													 //
 																													 // add the contribution of jth particle to acceleration of current and predicted times
 
+		/*
 		if (r2 < EPS2)
 			r2 = EPS2;  // add softening length
+		*/
+
 
 		m_r3 = ptcl->Mass/r2/sqrt(r2);
 
@@ -113,7 +124,7 @@ void Particle::calculateIrrForce() {
 
 
 		// do the higher order correcteion
-		da_dt2  = (a_irr[dim][0] - a_tmp[dim] - a_reg[dim][1]*dt_ex) / dt2;
+		da_dt2  = (a_irr[dim][0] - a_tmp[dim]) / dt2; //  - a_reg[dim][1]*dt_ex
 		adot_dt = (a_irr[dim][1] + adot_tmp[dim]) / dt;
 		a2 =  -6*da_dt2  - 2*adot_dt - 2*a_irr[dim][1]/dt;
 		a3 =  (12*da_dt2 + 6*adot_dt)/dt;
@@ -125,6 +136,8 @@ void Particle::calculateIrrForce() {
 		NewPosition[dim] = PredPosition[dim] + a2*dt4/24 + a3*dt5/120;
 		NewVelocity[dim] = PredVelocity[dim] + a2*dt3/6  + a3*dt4/24;
 
+		//NewPosition[dim] = PredPosition[dim];// + a2*dt4/24 + a3*dt5/120;
+		//NewVelocity[dim] = PredVelocity[dim];// + a2*dt3/6  + a3*dt4/24;
 
 		// note that these higher order terms and lowers have different neighbors
 		a_irr[dim][0] = a_tmp[dim];
@@ -134,61 +147,13 @@ void Particle::calculateIrrForce() {
 	}
 
 
-
 	for (int dim=0; dim<Dim; dim++) {
-		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0] + a_reg[dim][1]*dt_ex;
+		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0] + a_reg[dim][1]*dt_ex +BackgroundAcceleration[dim]; // affect the next
 		a_tot[dim][1] = a_reg[dim][1] + a_irr[dim][1];
 		a_tot[dim][2] = a_reg[dim][2] + a_irr[dim][2];
 		a_tot[dim][3] = a_reg[dim][3] + a_irr[dim][3];
 	}
 
-	/*
-	std::cout << "\ntotal acceleartion\n" << std::flush;
-	for (int order=0; order<HERMITE_ORDER; order++) {
-		for (int dim=0; dim<Dim; dim++)	 {
-			std::cout << a_tot[dim][order] << " ";
-		}
-		std::cout << std::endl;
-	} // endfor dim
-		//
-	std::cout << "\nreg acceleartion\n" << std::flush;
-	for (int order=0; order<HERMITE_ORDER; order++) {
-		for (int dim=0; dim<Dim; dim++)	 {
-			std::cout << a_reg[dim][order] << " ";
-		}
-		std::cout << std::endl;
-	} // endfor dim
-	std::cout << std::endl;
-
-	std::cout << "\nirr acceleartion\n" << std::flush;
-	for (int order=0; order<HERMITE_ORDER; order++) {
-		for (int dim=0; dim<Dim; dim++)	 {
-			std::cout << a_irr[dim][order] << " ";
-		}
-		std::cout << std::endl;
-	} // endfor dim
-	std::cout << std::endl;
-
-	*/
-	// *position_unit/time_unit/time_unit
-
-		 //std::cout << "\nIrregular Calculation\n" << std::flush;
-		 //std::cout <<  "3. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
-		 //<< ',' << a_irr[2][0] << std::endl;
-		 //std::cout <<  "4. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
-		 << ',' << a_irr[2][0] << std::endl;
-		 //std::cout <<  "5. a_irr= "<< a_irr[0][0]<< ',' << a_irr[1][0]\
-		 << ',' << a_irr[2][0] << std::endl;
-
-	// update the current irregular time and irregular time steps
-	//this->updateParticle((CurrentTimeIrr+TimeStepIrr)*EnzoTimeStep, a_irr);
-	//this->updateParticle(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr, a_tot);
-	//this->correctParticleFourthOrder(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr, a_irr);
-
-
-	//this->updateParticle();
-	//CurrentTimeIrr += TimeStepIrr; // in sorting
-	//this->calculateTimeStepIrr(a_tot, a_irr); // calculate irregular time step based on total force
 }
 
 

@@ -127,16 +127,17 @@ int grid::UpdateParticleVelocity(float TimeStep)
 
 			}
 		}
-		else
+		else {
 
 			/* Otherwise, just add the acceleration. */
 
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
-				if ( ParticleType[i] != PARTICLE_TYPE_NBODY ) 
-					ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY  && ParticleType[i] != PARTICLE_TYPE_NBODY_NEW ) 
 #endif
+					ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
 			}
+		}
 
 	}
 

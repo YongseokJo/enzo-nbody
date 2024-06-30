@@ -10,17 +10,17 @@ double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration
 double EnzoCurrentTime, ClusterRadius2;
 double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
 double EPS2, eta, InitialRadiusOfAC;
+int FixNumNeighbor;
 
-void InitializeParticle(std::vector<Particle*> &particle, int offset);
+void InitializeNewParticle(std::vector<Particle*> &particle, int offset);
 void GetCenterOfMass(double *mass, double *x[Dim], double *v[Dim], double x_com[], double v_com[], int N);
 void GetNewCenterOfMass(std::vector<Particle*> &particle, double *mass2, double *x2[Dim], double *v2[Dim], int n2, double x_X[], double v_X[]);
+void UpdateNextRegTime(std::vector<Particle*> &particle);
 int CommunicationInterBarrier();
 
 
 using namespace std;
-
 const int width = 18;
-
 
 int InitialCommunication(std::vector<Particle*> &particle) {
 
@@ -32,12 +32,12 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Request request;
 	MPI_Status status;
 
-	std::cout << "NBODY+: Waiting for Enzo to receive data...\n" << std::flush;
+	fprintf(nbpout, "NBODY+: First Waiting for Enzo to receive data...\n");
 
 	CommunicationInterBarrier();
-	std::cout << "NBODY+: Receiving data from Enzo...\n" << std::flush;
+	fprintf(nbpout, "NBODY+: Frist Receiving data from Enzo...\n");
 	MPI_Recv(&NNB, 1, MPI_INT, 0, 100, inter_comm, &status);
-	std::cout << "NBODY+: NNB="<< NNB << std::endl;
+	fprintf(nbpout, "NBODY+: NNB=%d\n", NNB);
 	if (NNB != 0) {
 		PID           = new int[NNB];
 		Mass          = new double[NNB];
@@ -72,9 +72,10 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&eta                     , 1, MPI_DOUBLE, 0, 1500, inter_comm, &status);
 	MPI_Recv(&InitialRadiusOfAC       , 1, MPI_DOUBLE, 0, 1600, inter_comm, &status);
 	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1700, inter_comm, &status);
+	MPI_Recv(&FixNumNeighbor          , 1, MPI_INT   , 0, 1800, inter_comm, &status);
 	//MPI_Recv(&HydroMethod         , 1, MPI_INT   , 0, 1200, inter_comm, &status);
 	CommunicationInterBarrier();
-	std::cout << "Data received!\n" << std::endl;
+	fprintf(nbpout, "Data received!\n");
 
 
 	// Enzo to Nbody unit convertors
@@ -88,18 +89,24 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	// Unit conversion
 	EnzoTimeStep       = TimeStep*EnzoTime;
 	EnzoCurrentTime   *= EnzoTime;
-	EPS2              *= EnzoLength*EnzoLength;
+	if (EPS2 < 0)
+		EPS2 = -1;
+	else {
+		EPS2 *= EnzoLength;
+		EPS2 *= EPS2;
+	}
+
 	InitialRadiusOfAC *= EnzoLength;
 
-	std::cout << "enzo Time:" << TimeStep << std::endl;
-	std::cout << "nbody Time:" << EnzoTimeStep << std::endl;
-	std::cout << "EPS2              = " << EPS2 << std::endl;
-	std::cout << "InitialRadiusOfAC = " << InitialRadiusOfAC << std::endl;
-	std::cout << "eta               = " << eta << std::endl;
-	std::cout << "ClusterRadius2    = " << ClusterRadius2 << std::endl;
-	std::cout << "StarMassEjectionFraction:" << StarMassEjectionFraction << std::endl;
-	std::cout << "StarParticleFeedback:" << StarParticleFeedback << std::endl;
-	std::cout << "NBODY+       : "  << NNB << " particles loaded!" << std::endl;
+	fprintf(nbpout, "Enzo Time                = %lf\n", TimeStep);
+	fprintf(nbpout, "Nbody Time               = %lf\n", EnzoTimeStep);
+	fprintf(nbpout, "EPS2                     = %lf\n", EPS2);
+	fprintf(nbpout, "InitialRadiusOfAC        = %lf\n", InitialRadiusOfAC);
+	fprintf(nbpout, "eta                      = %lf\n", eta);
+	fprintf(nbpout, "ClusterRadius2           = %lf\n", ClusterRadius2);
+	fprintf(nbpout, "StarMassEjectionFraction = %lf\n", StarMassEjectionFraction);
+	fprintf(nbpout, "StarParticleFeedback     = %lf\n", StarParticleFeedback);
+	fprintf(nbpout, "FixNumNeighbor           = %d\n", FixNumNeighbor);
 
 
 	if (NNB != 0) {
@@ -118,8 +125,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 		}
 		
 		for (int dim=0; dim<Dim; dim++) 
-				ClusterAcceleration[dim] /= total_mass;
-
+			ClusterAcceleration[dim] /= total_mass;
 
 		Particle* ptclPtr;
 
@@ -131,17 +137,20 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 			}
 
 			particle.push_back(new Particle(PID, Mass, CreationTime, DynamicalTime, Position, Velocity,
-					BackgroundAcceleration, ptclPtr, i));
+						BackgroundAcceleration, ptclPtr, i));
 		}
 
+		fprintf(stderr, "Initial PID order= ");
 		for (int i=0; i<NNB; i++) {
 			if (i == NNB-1)
 				ptclPtr = nullptr;
 			else
 				ptclPtr = particle[i+1];
 			particle[i]->NextParticleInEnzo = ptclPtr;
+			fprintf(stderr, "%d, ", particle[i]->PID);
 		}
 		FirstParticleInEnzo = particle[0];
+		fprintf(stderr, "\n");
 
 		/*
 		std::cout << "enzo Pos     :" << Position[0][0] << ", " << Position[0][1] << std::endl;
@@ -165,6 +174,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 			delete[] BackgroundAcceleration[dim];
 		}
 	}
+	fprintf(nbpout, "NBODY+: %d particles loaded!\n", NNB);
 	return true;
 }
 
@@ -179,12 +189,12 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
 	MPI_Request request;
 	MPI_Status status;
-	std::cout << "NBODY+: Waiting for Enzo to receive data..." << std::endl;
+	fprintf(nbpout, "NBODY+: Waiting for Enzo to receive data...\n");
 
 
 	fprintf(stdout, "NBODY+: Waiting for Enzo to receive data...\n");
 	CommunicationInterBarrier();
-	std::cout << "NBODY+: Receiving data from Enzo..." << std::endl;
+	fprintf(nbpout, "NBODY+: Receiving data from Enzo...\n");
 
 	// Existing Particle Information
 	if (NNB != 0)	{
@@ -340,6 +350,14 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	} //endif nnb
 
 
+	fprintf(stderr, "Receiving PID order= ");
+	NextPtr = FirstParticleInEnzo;
+	for (int i=0; i<NNB; i++) {
+		fprintf(stderr, "%d, ", NextPtr->PID);
+		NextPtr = NextPtr->NextParticleInEnzo;
+	}
+	fprintf(stderr, "\n");
+
 
 	//std::cout << "NBODY+: FirstParticleInEnzo PID= " << \
 	FirstParticleInEnzo->PID << "in ReceiveFromEzno" << std::endl;
@@ -404,7 +422,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		std::cout << "NBODY+    : "  << newNNB << " new particles loaded!" << std::endl;
 
 		// This includes modification of regular force and irregular force
-		InitializeParticle(particle, NNB);
+		InitializeNewParticle(particle, NNB);
 	}
 
 	/*
@@ -421,14 +439,13 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
 	// Initialization
 	int i=0;
-	RegIndexList.clear();
+	//RegularList.clear();
 	for (Particle* elem:particle) {
 		for (int dim=0; dim<Dim; dim++) {
 			elem->PredPosition[dim] =  elem->Position[dim];
 			elem->PredVelocity[dim] =  elem->Velocity[dim];
 		}
-		elem->isRegular = true;
-		RegIndexList.push_back(i++);
+		//RegularList.push_back(elem);
 		elem->CurrentTimeIrr  = 0.;
 		elem->CurrentBlockIrr = 0.;
 		elem->CurrentTimeReg  = 0.;
@@ -455,15 +472,20 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		}
 	}
 	NNB += newNNB;
-	std::cout << "NBODY+    : newly updated NNB = "  << NNB << std::endl;
-	std::cout << "NBODY+    : Particle size = "      << particle.size() << std::endl;
-	std::cout << "NBODY+    : RegIndexList size = "  << RegIndexList.size() << std::endl;
+
+
+	fprintf(nbpout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
+	fprintf(nbpout, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
+	fprintf(nbpout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
+	fprintf(nbpout, "NBODY+    : Particle size     = %d\n", particle.size());
+	fprintf(nbpout, "NBODY+    : RegularList size = %d\n", RegularList.size());
+
 
 	fprintf(stdout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
 	fprintf(stdout, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
 	fprintf(stdout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
 	fprintf(stdout, "NBODY+    : Particle size     = %d\n", particle.size());
-	fprintf(stdout, "NBODY+    : RegIndexList size = %d\n", RegIndexList.size());
+	fprintf(stdout, "NBODY+    : RegularList size = %d\n", RegularList.size());
 	return true;
 }
 
@@ -522,7 +544,9 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		std::cout << "NBODY+: Warning! FirstParticleInEnzo is Null!" << std::endl;
 	}
 	if (NNB - newNNB > 0) {
+		fprintf(stderr, "Sending PID order= ");
 		for (int i=0; i<NNB-newNNB; i++) {
+			fprintf(stderr, "%d, ",ptcl->PID);
 			r2 = 0;
 			for (int dim=0; dim<Dim; dim++) {
 				Position[dim][i]  = ptcl->Position[dim]/EnzoLength;
@@ -536,7 +560,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
 				Position[0][i] += 1e10;
 				EscapeList.push_back(ptcl);
-				ptcl->isActive = false;
+				ptcl->isErase = true;
 				EscapeParticleNum++;
 			}
 			//fprintf(stdout, "NBODY+: pid= %d, x=%e\n",ptcl->PID,Position[0][i]);
@@ -547,6 +571,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				std::cout << "NBODY+: Warning! FirstParticleInEnzo is Null! No!" << std::endl;
 			}
 		}
+		fprintf(stderr, "\n");
 	}
 
 	if (newNNB > 0) {
@@ -564,7 +589,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) {
 				newPosition[0][i] += 1e10;
 				EscapeList.push_back(ptcl);
-				ptcl->isActive = false;
+				ptcl->isErase = true;
 				EscapeParticleNum++;
 			}
 			ptcl = ptcl->NextParticleInEnzo;
@@ -635,7 +660,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	particle.erase(
 			std::remove_if(particle.begin(), particle.end(),
 				[](Particle* p) {
-				bool to_remove = !p->isActive;
+				bool to_remove = p->isErase;
 				if (to_remove) delete p;
 				return to_remove;
 				}),
