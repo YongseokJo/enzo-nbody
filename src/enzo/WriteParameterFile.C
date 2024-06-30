@@ -1169,7 +1169,7 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 	fprintf(fptr, "NbodyTimeStepConstant         = %f\n", NbodyTimeStepConstant);
 	fprintf(fptr, "NbodyNeighborRadius           = %f\n", NbodyNeighborRadius / kpc_cm * LengthUnits); //wispedia
 	fprintf(fptr, "NbodyFixNumNeighbor           = %d\n", NbodyFixNumNeighbor); 
-	fprintf(fptr, "UseNbodyClusterIdentificationOnTheFly = %d", isNbodyParticleIdentification);
+	fprintf(fptr, "UseNbodyClusterIdentificationOnTheFly = %d\n", isNbodyParticleIdentification);
 
   /* Poisson Solver */
 

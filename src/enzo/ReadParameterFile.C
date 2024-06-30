@@ -2177,7 +2177,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		}
 
 		if (!isNbodyParticleIdentification) {
-			NbodyClusterPosition[3] = -1;
+			NbodyClusterPosition[3] = 0;
 		} else {
 			NbodyClusterPosition[3] = (NbodyClusterPosition[3] * kpc_cm / LengthUnits)*(NbodyClusterPosition[3] * kpc_cm / LengthUnits);
 		}
