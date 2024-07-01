@@ -248,6 +248,9 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&NbodyNeighborRadius		     , 1, MPI_DOUBLE, 1, 1600, inter_comm);
 		MPI_Send(&NbodyClusterPosition[3]    , 1, MPI_DOUBLE, 1, 1700, inter_comm);
 		MPI_Send(&NbodyFixNumNeighbor        , 1, MPI_INT   , 1, 1800, inter_comm);
+		MPI_Send(&NbodyBinaryRegularization  , 1, MPI_INT   , 1, 1900, inter_comm);
+		MPI_Send(&NbodyBinaryDistance        , 1, MPI_DOUBLE, 1, 2000, inter_comm);
+		MPI_Send(&NbodyBinaryTimeStep        , 1, MPI_DOUBLE, 1, 2100, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
 		CommunicationInterBarrier();
 

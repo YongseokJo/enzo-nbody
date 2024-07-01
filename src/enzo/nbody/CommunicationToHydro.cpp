@@ -11,6 +11,9 @@ double EnzoCurrentTime, ClusterRadius2;
 double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
 double EPS2, eta, InitialRadiusOfAC;
 int FixNumNeighbor;
+int BinaryRegularization;
+double KSTime;
+double KSDistance;
 
 void InitializeNewParticle(std::vector<Particle*> &particle, int offset);
 void GetCenterOfMass(double *mass, double *x[Dim], double *v[Dim], double x_com[], double v_com[], int N);
@@ -73,6 +76,9 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&InitialRadiusOfAC       , 1, MPI_DOUBLE, 0, 1600, inter_comm, &status);
 	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1700, inter_comm, &status);
 	MPI_Recv(&FixNumNeighbor          , 1, MPI_INT   , 0, 1800, inter_comm, &status);
+	MPI_Recv(&BinaryRegularization    , 1, MPI_INT   , 0, 1900, inter_comm, &status);
+	MPI_Recv(&KSDistance              , 1, MPI_DOUBLE, 0, 2000, inter_comm, &status);
+	MPI_Recv(&KSTime                  , 1, MPI_DOUBLE, 0, 2100, inter_comm, &status);
 	//MPI_Recv(&HydroMethod         , 1, MPI_INT   , 0, 1200, inter_comm, &status);
 	CommunicationInterBarrier();
 	fprintf(nbpout, "Data received!\n");
@@ -107,6 +113,9 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "StarMassEjectionFraction = %lf\n", StarMassEjectionFraction);
 	fprintf(nbpout, "StarParticleFeedback     = %lf\n", StarParticleFeedback);
 	fprintf(nbpout, "FixNumNeighbor           = %d\n", FixNumNeighbor);
+	fprintf(nbpout, "BinaryRegularization     = %d\n", BinaryRegularization);
+	fprintf(nbpout, "KSTime                   = %lf\n", KSTime);
+	fprintf(nbpout, "KSDistance               = %lf\n", KSDistance);
 
 
 	if (NNB != 0) {

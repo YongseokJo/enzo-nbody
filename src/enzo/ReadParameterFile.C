@@ -1277,6 +1277,9 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		ret += sscanf(line, "NbodyTimeStepConstant = %"FSYM, &NbodyTimeStepConstant);
 		ret += sscanf(line, "NbodyNeighborRadius = %"FSYM, &NbodyNeighborRadius);
 		ret += sscanf(line, "NbodyFixNumNeighbor = %"ISYM, &NbodyFixNumNeighbor);
+		ret += sscanf(line, "NbodyBinaryRegularization = %"ISYM, &NbodyBinaryRegularization);
+		ret += sscanf(line, "NbodyBinaryDistance       = %"FSYM, &NbodyBinaryDistance);
+		ret += sscanf(line, "NbodyBinaryTimeStep       = %"FSYM, &NbodyBinaryTimeStep);
     //ret += sscanf(line, "UseNbodyClusterIdentificationOnTheFly = %d", &isNbodyParticleIdentification);
 		//
     ret += sscanf(line, "ClusterSMBHFeedback = %"ISYM, &ClusterSMBHFeedback);
@@ -2176,10 +2179,10 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 			ENZO_FAIL("Error in GetUnits.");
 		}
 
-		if (!isNbodyParticleIdentification) {
-			NbodyClusterPosition[3] = 0;
-		} else {
+		if (isNbodyParticleIdentification) {
 			NbodyClusterPosition[3] = (NbodyClusterPosition[3] * kpc_cm / LengthUnits)*(NbodyClusterPosition[3] * kpc_cm / LengthUnits);
+		} else {
+			NbodyClusterPosition[3] = 0;
 		}
 
 		NbodySmoothingLength = NbodySmoothingLength * kpc_cm / LengthUnits;

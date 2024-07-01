@@ -27,6 +27,9 @@ extern double EPS2;
 extern double InitialRadiusOfAC;
 extern int    FixNumNeighbor;
 
+extern int BinaryRegularization;
+extern double KSTime;
+extern double KSDistance;
 
 /*********************************************************************
  *  Time related variables

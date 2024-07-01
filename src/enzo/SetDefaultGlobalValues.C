@@ -815,13 +815,18 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
   UseCUDA		     = 0;
   UseNBODY		     = 0;
 #ifdef NBODY
+  UseNBODY		     = 1;
 	NbodyFirst       = TRUE;
 	isNbodyParticleIdentification = FALSE;
 	for (int i=0; i<MAX_DIMENSION+1; i++)
 		NbodyClusterPosition[i] = 0.;
 	NbodySmoothingLength  = 0.;
 	NbodyTimeStepConstant = 0.;
-	NbodyNeighborRadius   =0.;
+	NbodyNeighborRadius   = 0.;
+	NbodyFixNumNeighbor   = 30;
+	NbodyBinaryRegularization = 0;
+	NbodyBinaryDistance = 0.0002;
+	NbodyBinaryTimeStep = 2e-5;
 #endif
 
   UseFloor		     = 0;

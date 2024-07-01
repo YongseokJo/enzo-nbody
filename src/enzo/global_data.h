@@ -67,6 +67,9 @@ EXTERN float NbodySmoothingLength;
 EXTERN float NbodyTimeStepConstant;
 EXTERN float NbodyNeighborRadius;
 EXTERN int NbodyFixNumNeighbor;
+EXTERN int NbodyBinaryRegularization;
+EXTERN float NbodyBinaryDistance;
+EXTERN float NbodyBinaryTimeStep;
 
 /* by YS, MPI COMMs*/
 extern MPI_Comm enzo_comm;

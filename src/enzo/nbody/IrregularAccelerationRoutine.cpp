@@ -19,7 +19,7 @@ Particle *FirstComputation;
 // 2. the sorted list should be update regularly
 bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 {
-
+	int bin_termination;
 		fprintf(nbpout, "Irregular force starts...\n");
 #ifdef time_trace
 	_time.irr_chain.markStart();
@@ -39,21 +39,23 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 
 
 	while (CreateComputationList(FirstComputation) && ComputationList.size() != 0) {
-			
-		if (AddNewBinariesToList(ComputationList, particle) && ComputationList.size() == 0) {
-			fprintf(nbpout, "No irregular particle to update afte binary formation.\n");
-			break;
-		}
 
-		if ((BinaryList.size()>0)&(binary_time_prev != binary_time)) {
-			fprintf(binout, "-------------------------------------\n");
-			fprintf(binout, "irr_time = %e \n",
-					ComputationList[0]->CurrentTimeIrr*1e10/1e6*EnzoTimeStep);
-			fprintf(binout, "binary_time = %e \n",
-					binary_time*1e10/1e6*EnzoTimeStep);
-			fprintf(binout, "Evolve.cpp: integrating binaries\n");
-			fprintf(binout, "# of binaries = %d \n",int(BinaryList.size()));
-			BinaryAccelerationRoutine(binary_time, binary_block, particle);
+		if (BinaryRegularization) {
+			if (AddNewBinariesToList(ComputationList, particle) && ComputationList.size() == 0) {
+				fprintf(nbpout, "No irregular particle to update afte binary formation.\n");
+				break;
+			}
+
+			if ((BinaryList.size()>0)&(binary_time_prev != binary_time)) {
+				fprintf(binout, "-------------------------------------\n");
+				fprintf(binout, "irr_time = %e \n",
+						ComputationList[0]->CurrentTimeIrr*1e10/1e6*EnzoTimeStep);
+				fprintf(binout, "binary_time = %e \n",
+						binary_time*1e10/1e6*EnzoTimeStep);
+				fprintf(binout, "Evolve.cpp: integrating binaries\n");
+				fprintf(binout, "# of binaries = %d \n",int(BinaryList.size()));
+				BinaryAccelerationRoutine(binary_time, binary_block, particle);
+			}
 		}
 
 		for (Particle* ptcl:ComputationList) {
@@ -129,12 +131,13 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 
 		// update particles and chain
 		// The next particle of the particle calculated lastly should be the start of the next iteration.
-		binary_time_prev = binary_time;
-		binary_block = ComputationList[0]->CurrentBlockIrr+ComputationList[0]->TimeBlockIrr;
-		binary_time  = binary_block*time_step;
+		if (BinaryRegularization) {
+			binary_time_prev = binary_time;
+			binary_block = ComputationList[0]->CurrentBlockIrr+ComputationList[0]->TimeBlockIrr;
+			binary_time  = binary_block*time_step;
+			bin_termination = 0;	
+		}
 		global_time_irr = ComputationList[0]->CurrentBlockIrr+ComputationList[0]->TimeBlockIrr;
-		
-		int bin_termination = 0;	
 		for (Particle* ptcl:ComputationList) {
 			//std::cout << ptcl->PID << " " ;
 			ptcl->updateParticle();
@@ -144,8 +147,8 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 			ptcl->calculateTimeStepIrr(ptcl->a_tot, ptcl->a_irr);
 			//std::cout << "after TimeStepCal\n" << std::flush;
 			if (ptcl->isCMptcl) {
-				if (ptcl->BinaryInfo->r > ptcl->BinaryInfo->r0*2.0
-						|| ptcl->BinaryInfo->TimeStep > 2.0*KSTime) {
+				if (BinaryRegularization && (ptcl->BinaryInfo->r > ptcl->BinaryInfo->r0*2.0
+						|| ptcl->BinaryInfo->TimeStep > 2.0*KSTime)) {
 					fprintf(binout, "Terminating Binary at time : %e \n", binary_time);
 					KSTermination(ptcl, particle, binary_time, binary_block);
 					bin_termination++;
@@ -156,8 +159,8 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 		}
 
 		// because NextRegTime might have been changed.
-		if (bin_termination > 0) 
-			CreateComputationChain(particle); 
+		if (BinaryRegularization && bin_termination > 0)
+			CreateComputationChain(particle);
 
 #ifdef time_trace
 		_time.irr_sort.markEnd();
