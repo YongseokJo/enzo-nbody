@@ -297,6 +297,7 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
  
   // set the default MetaData values
  
+
   SetDefaultGlobalValues(MetaData);
  
   // Read the MetaData/global values from the Parameter file
@@ -324,7 +325,7 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
 		}
 #ifdef NBODY
 		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
-		NumberOfParticleAttributes = NumberOfParticleAttributes + 3; // for Acceleration
+		NumberOfParticleAttributes = NumberOfParticleAttributes + 4; // for Acceleration
 		fprintf(stderr,"NumOfAtt=%d\n",NumberOfParticleAttributes);
 #endif
 	}
@@ -908,7 +909,8 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
       ProblemType != 31 &&  // BWO (isolated galaxies)
       ProblemType != 60 &&
       ProblemType != 106 && //AK
-      ProblemType != 108)   //Yuan (Cluster)
+      ProblemType != 108 &&  //Yuan (Cluster)
+      ProblemType != -978) // AGORA
     ConvertTotalEnergyToGasEnergy(&TopGrid);
   
   // If using StarParticles, set the number to zero 

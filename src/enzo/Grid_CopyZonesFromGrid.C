@@ -450,8 +450,12 @@ note: include buffer zones of this grid but not the other grid. */
 	/* Clean up if we have transfered data. */
 
 
-	if (MyProcessorNumber != OtherGrid->ProcessorNumber)
+	if (MyProcessorNumber != OtherGrid->ProcessorNumber) {
 		OtherGrid->DeleteAllFields();
+#ifdef NBODY
+		OtherGrid->DeleteAllFieldsNoStar();
+#endif
+	}
 
 
 

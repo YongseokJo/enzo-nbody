@@ -437,8 +437,10 @@ c
 c     Loop over particles
 c
 c      write(6,*) 'star_feedback7: start'
+c    by YS I added type 12 which is nbody particles
       do n=1, npart
-         if (tcp(n) .gt. 0 .and. mp(n) .gt. 0 .and. type(n) .eq. 2) then
+         if ((tcp(n).ge.0).and.(mp(n).gt.0).and.
+     &       ((type(n).eq.2).or.(type(n).eq.12))) then 
 c
 c
 c        The star particle creation algorithm partnered with this 
@@ -462,12 +464,14 @@ c          in question.
             minitial = mp(n) / 
      &           (1._RKIND - m_eject*(1._RKIND - (1._RKIND + xv1)
      &           * exp(-xv1)))
+
 c
 c       Then, calculate the amount of mass that would have formed in
 c         this timestep.
 c
-            mform = minitial * ((1._RKIND + xv1)*exp(-xv1) - 
+            mform = minitial * ((1._RKIND + xv1)*exp(-xv1) -
      &                          (1._RKIND + xv2)*exp(-xv2))
+c            mform = mp(n) - minitial * (1._RKIND + xv2)*exp(-xv2)
             mform = max(min(mform, mp(n)), 0._RKIND)
 c
 c         Compute index of the cell that the star particle
@@ -489,7 +493,7 @@ c
 c
 c          skip if very little mass is formed.
 c
-            if (mform/d(i,j,k) .lt. 1.e-10_RKIND) goto 10
+c            if (mform/d(i,j,k) .lt. 1.e-10_RKIND) goto 10
 c
 c           subtract ejected mass from particle (ejection due
 c           to winds, supernovae)

@@ -128,6 +128,7 @@ class grid
 #ifdef NBODY
 		float *ParticleAccelerationNoStar[MAX_DIMENSION+1];  //  by YS
 		int NumberOfNbodyParticlesInGrid;
+		int NumberOfNewNbodyParticlesInGrid;
 #endif
 		float *ParticleMass;                     // pointer to mass array
 		PINT  *ParticleNumber;                   // unique identifier
@@ -163,16 +164,16 @@ class grid
 		// 
 
 #ifdef NBODY
-		float *PotentialField[2];
-		float *AccelerationField[MAX_DIMENSION][2]; // cell cntr acceleration at n+1/2
-		float *GravitatingMassField[2]; 
-		float *GravitatingMassFieldParticles[2];     // for particles only // by YS Jo
-#else
+		float *PotentialFieldNoStar;
+		float *AccelerationFieldNoStar[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
+		float *GravitatingMassFieldNoStar; 
+		float *GravitatingMassFieldParticlesNoStar;     // for particles only // by YS Jo
+#endif
 		float *PotentialField;
 		float *AccelerationField[MAX_DIMENSION]; // cell cntr acceleration at n+1/2
 		float *GravitatingMassField; 
 		float *GravitatingMassFieldParticles;     // for particles only // by YS Jo
-#endif
+																							//
 		FLOAT  GravitatingMassFieldLeftEdge[MAX_DIMENSION];
 		int    GravitatingMassFieldDimension[MAX_DIMENSION];
 		FLOAT  GravitatingMassFieldCellSize;     // all dimensions must be the same
@@ -426,9 +427,9 @@ class grid
 
 
 #ifdef NBODY
-		float **GetPotentialField(void) {return PotentialField;};
-		float **GetGravitatingMassFieldParticles(void) {return GravitatingMassFieldParticles;};
-		float **GetGravitatingMassField(void) {return GravitatingMassField;};
+		float *GetPotentialField(void) {return PotentialField;};
+		float *GetGravitatingMassFieldParticles(void) {return GravitatingMassFieldParticles;};
+		float *GetGravitatingMassField(void) {return GravitatingMassField;};
 #endif
 
 		/* Return, set level of this grid */
@@ -871,6 +872,9 @@ class grid
 		/* Delete all the fields, but leave other grid data. */
 
 		void DeleteAllFields();
+#ifdef NBODY
+		void DeleteAllFieldsNoStar();
+#endif
 
 		/* Delete all the fields except for the particle data */
 
@@ -1105,6 +1109,10 @@ class grid
 
 		int CopyActiveZonesFromGrid(grid *GridOnSameLevel,
 				FLOAT EdgeOffset[MAX_DIMENSION], int SendField);
+#ifdef NBODY
+		int CopyActiveZonesFromGridNoStar(grid *GridOnSameLevel,
+				FLOAT EdgeOffset[MAX_DIMENSION], int SendField);
+#endif
 
 		/* gravity: copy coincident potential field zones from grid in the argument
 			 (gg #7).  Return SUCCESS or FAIL. */
@@ -1218,6 +1226,9 @@ class grid
 		/* Gravity: Interpolate accelerations from other grid. */
 
 		int InterpolateAccelerations(grid *FromGrid);
+#ifdef NBODY
+		int InterpolateAccelerationsNoStar(grid *FromGrid);
+#endif
 
 		/* Gravity: Compute particle and grid accelerations. */
 
@@ -1258,6 +1269,7 @@ class grid
 		/* Gravity: set the potential boundary for isolated BC's */
 
 		int SetIsolatedPotentialBoundary();
+		int SetIsolatedPotentialBoundaryNoStar();
 
 		/* Gravity: Set the external acceleration fields. */
 
@@ -1301,26 +1313,20 @@ class grid
 
 		void DeleteGravitatingMassField() {
 #ifdef NBODY
-			delete [] GravitatingMassField[1]; 
-			delete [] GravitatingMassField[0]; 
-			GravitatingMassField[0] = NULL;
-			GravitatingMassField[1] = NULL;
-#else
+			delete [] GravitatingMassFieldNoStar; 
+			GravitatingMassFieldNoStar = NULL;
+#endif
 			delete [] GravitatingMassField; 
 			GravitatingMassField = NULL;
-#endif
 		};
 
 		/* Gravity: Init GravitatingMassField. */
 
 		void InitGravitatingMassField(int size) {
 #ifdef NBODY
-			//GravitatingMassField = new float*[2];
-			GravitatingMassField[0] = new float[size];
-			GravitatingMassField[1] = new float[size];
-#else
-			GravitatingMassField = new float[size];
+			GravitatingMassFieldNoStar = new float[size];
 #endif
+			GravitatingMassField = new float[size];
 		}
 
 		/* Gravity */
@@ -1335,14 +1341,11 @@ class grid
 			if (!((SelfGravity || UniformGravity || PointSourceGravity || ExternalGravity))) return;
 			for (int dim = 0; dim < GridRank; dim++) {
 #ifdef NBODY
-				delete [] AccelerationField[dim][0]; 
-				delete [] AccelerationField[dim][1]; 
-				AccelerationField[dim][0] = NULL;
-				AccelerationField[dim][1] = NULL;
-#else
+				delete [] AccelerationFieldNoStar[dim]; 
+				AccelerationFieldNoStar[dim] = NULL;
+#endif
 				delete [] AccelerationField[dim]; 
 				AccelerationField[dim] = NULL;
-#endif
 			}
 		};
 
@@ -1352,7 +1355,12 @@ class grid
 
 		/* Gravity: deposit baryons into target GravitatingMassField. */
 
+#ifdef NBODY
 		int DepositBaryons(grid *TargetGrid, FLOAT DepositTime, bool NoStar); // by YS
+#else
+		int DepositBaryons(grid *TargetGrid, FLOAT DepositTime); // by YS
+#endif
+
 
 		// -------------------------------------------------------------------------
 		// Functions for accessing various grid-based information
@@ -1593,14 +1601,12 @@ class grid
 
 		void DeleteGravitatingMassFieldParticles() {
 #ifdef NBODY
-			delete [] GravitatingMassFieldParticles[1]; 
-			delete [] GravitatingMassFieldParticles[0]; 
-			GravitatingMassFieldParticles[0] = NULL;
-			GravitatingMassFieldParticles[1] = NULL;
-#else
+			delete [] GravitatingMassFieldParticlesNoStar; 
+			GravitatingMassFieldParticlesNoStar = NULL;
+#endif
 			delete [] GravitatingMassFieldParticles; 
 			GravitatingMassFieldParticles = NULL;
-#endif
+
 			GravitatingMassFieldParticlesCellSize = FLOAT_UNDEFINED;
 		};
 
@@ -1755,15 +1761,19 @@ class grid
 #ifdef NBODY
 		/* */
 		void SetNumberOfNbodyParticles(void){
-			int i, count=0;
+			int i, count=0, count_new=0;
 			if (MyProcessorNumber == ProcessorNumber) 
 				for (i=0; i<NumberOfParticles; i++) {
 					//fprintf(stderr,"ParticleType: %d", ParticleType[i]);
 					if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 						count++;
 					}
+					if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+						count_new++;
+					}
 				}
 			NumberOfNbodyParticlesInGrid = count;
+			NumberOfNewNbodyParticlesInGrid = count_new;
 		}
 
 		/* */
@@ -1774,6 +1784,14 @@ class grid
 				return 0;
 		}
 
+		int ReturnNumberOfNewNbodyParticles(void){
+			if (MyProcessorNumber == ProcessorNumber) 
+				return NumberOfNewNbodyParticlesInGrid;
+			else
+				return 0;
+		}
+
+
 
 		/* Reduce ParticleAccelerationNoStar so that it can have only acceleration
 		 * of the Nbody particles. */
@@ -1782,7 +1800,8 @@ class grid
 
 			for (int dim=0; dim<MAX_DIMENSION; dim++ ) {
 				for (int i=0; i<NumberOfParticles; i++) {
-					ParticleAttribute[NumberOfParticleAttributes-3+dim][i] = ParticleAccelerationNoStar[dim][i];
+					ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAccelerationNoStar[dim][i];
+					//ParticleAttribute[NumberOfParticleAttributes-4+dim][i] = ParticleAcceleration[dim][i];
 				}
 				delete [] ParticleAccelerationNoStar[dim];
 				ParticleAccelerationNoStar[dim] = NULL;
@@ -1792,8 +1811,9 @@ class grid
 
 
 
-		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[]) {
+		int CopyNbodyParticlesFirst(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
+				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[],
+				float *NbodyParticleCreationTimeTmp, float *NbodyParticleDynamicalTimeTmp) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
@@ -1802,13 +1822,21 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
-					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					NbodyParticleMassTemp[*count]         = ParticleMass[i]*dv;
+					NbodyParticleIDTemp[*count]           = ParticleNumber[i];
+					NbodyParticleCreationTimeTmp[*count]  = ParticleAttribute[0][i];
+					NbodyParticleDynamicalTimeTmp[*count] = ParticleAttribute[1][i];
 
+					//fprintf(stderr, "In Grid, PID: %d \n", ParticleNumber[i]);
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
-						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-3+dim][i];
+
+					}
+					// if you want potential then go with MAX_DIMENSION+1 by YS
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+						//NbodyParticleAccelerationNoStarTemp[dim][*count] = 246.22271888;
 					} // ENDFOR dim
 					(*count)++;
 				} // ENDIF nbody particles
@@ -1817,25 +1845,124 @@ class grid
 		}
 
 
-		int UpdateNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[],
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[]) {
+
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], float *NbodyParticleAccelerationNoStarTemp[],
+				int* count_new, int NewNbodyParticleIDTemp[], float NewNbodyParticleMassTemp[],
+				float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[], float *NewNbodyParticleAccelerationNoStarTemp[],
+				float *NewNbodyParticleCreationTimeTmp, float *NewNbodyParticleDynamicalTimeTmp
+				) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
 			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
-				//if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-				if (ParticleNumber[i] == NbodyParticleIDTemp[*count]) {
-					ParticleMass[i] = NbodyParticleMassTemp[*count]/dv ;
 
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+					fprintf(stderr, "Mass Of NewNbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
+					NewNbodyParticleMassTemp[*count_new]         = ParticleMass[i]*dv;
+					NewNbodyParticleIDTemp[*count_new]           = ParticleNumber[i];
+					NewNbodyParticleCreationTimeTmp[*count_new]  = ParticleAttribute[0][i];
+					NewNbodyParticleDynamicalTimeTmp[*count_new] = ParticleAttribute[1][i];
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][*count]+0.5;
-						ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][*count];
+						//if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+						NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i]-0.5;
+						NewNbodyParticleVelocityTemp[dim][*count_new] = ParticleVelocity[dim][i];
+						//}
+						NewNbodyParticleAccelerationNoStarTemp[dim][*count_new] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
+					} // ENDFOR dim
+					(*count_new)++;
+				} // endif particle_type_nbody_new
+
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					fprintf(stderr, "Mass Of NbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
+					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
+					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
+					for (int dim=0; dim<MAX_DIMENSION; dim++) {
+						NbodyParticleAccelerationNoStarTemp[dim][*count] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
 					} // ENDFOR dim
 					(*count)++;
-				} // ENDIF partID matched
+				} // ENDIF nbody particles
 			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+
+
+		int UpdateNbodyParticles(int* count,
+				int NumberOfNbodyParticles,int NbodyParticleIDTemp[],
+			 	float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[],
+				int NewNumberOfNbodyParticles,int NewNbodyParticleIDTemp[],
+			 	float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[]) {
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
+			for (int i=0; i < NumberOfParticles; i++) {
+				for (int j=0; j<NumberOfNbodyParticles; j++) {
+					if (ParticleNumber[i] == NbodyParticleIDTemp[j]) {
+						//fprintf(stdout,"Escaped PID=%d, x=%lf\n", ParticleNumber[i], NbodyParticlePositionTemp[0][j]);
+						if (NbodyParticlePositionTemp[0][j] > 1e8 ) {
+							fprintf(stdout,"Escaped PID=%d in deletion\n", ParticleNumber[i]);
+							NbodyParticlePositionTemp[0][j] -= 1e10;
+							ParticleType[i] = PARTICLE_TYPE_STAR;
+						} // particle removal
+						for (int dim=0; dim<MAX_DIMENSION; dim++) {
+							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j]+0.5;
+							ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][j];
+						} // ENDFOR dim
+						(*count)++;
+						break;
+					} // ENDIF partID matched
+				} // ENDFOR nbody particles
+				for (int j=0; j<NewNumberOfNbodyParticles; j++) {
+					if (ParticleNumber[i] == NewNbodyParticleIDTemp[j]) {
+						ParticleType[i] = PARTICLE_TYPE_NBODY;
+						if (NewNbodyParticlePositionTemp[0][j] > 1e8 ) {
+							NewNbodyParticlePositionTemp[0][j] -= 1e10;
+							ParticleType[i] = PARTICLE_TYPE_STAR;
+						} // particle removal
+						for (int dim=0; dim<MAX_DIMENSION; dim++) {
+							ParticlePosition[dim][i] = NewNbodyParticlePositionTemp[dim][j]+0.5;
+							ParticleVelocity[dim][i] = NewNbodyParticleVelocityTemp[dim][j];
+						} // ENDFOR dim
+						(*count)++;
+						break;
+					} // ENDIF partID matched
+				} // ENDFOR new nbody particles
+			} // ENDFOR number of particles
+			return SUCCESS;
+		}
+
+		int IdentifyNbodyParticles() {
+
+			const float thres_r2 = NbodyClusterPosition[3];
+			float r2;
+
+			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
+
+			//float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
+			for (int i=0; i < NumberOfParticles; i++) {
+				if (ParticleType[i] == PARTICLE_TYPE_DARK_MATTER || ParticleType[i] == PARTICLE_TYPE_NBODY) {
+					continue;
+				}
+				r2 = 0;
+				r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])
+					*(ParticlePosition[0][i] - NbodyClusterPosition[0]);
+				r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1])
+					*(ParticlePosition[1][i] - NbodyClusterPosition[1]);
+				r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2])
+					*(ParticlePosition[2][i] - NbodyClusterPosition[2]);
+				if ( r2 < thres_r2 ) {
+					if (NbodyFirst) {
+						ParticleType[i] = PARTICLE_TYPE_NBODY;
+					}
+					else {
+						ParticleType[i] = PARTICLE_TYPE_NBODY_NEW;
+					}
+				} // endif
+			} // endfor particles
 			return SUCCESS;
 		}
 #endif
@@ -2834,19 +2961,15 @@ class grid
 
 								/* Calculate the potential across the grid. */
 #ifdef NBODY
-								void CalculatePotentialField(float *PotentialField[], int DensNum, float DensityUnits,
+								void CalculatePotentialFieldNoStar(float *PotentialField, int DensNum, float DensityUnits,
 										float TimeUnits, float LengthUnits);
-#else
+#endif
 								void CalculatePotentialField(float *PotentialField, int DensNum, float DensityUnits,
 										float TimeUnits, float LengthUnits);
-#endif
 
 								/* Find the minumum of the potential in a given region */
-#ifdef NBODY
-								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField[]);
-#else
+
 								float FindMinimumPotential(FLOAT *cellpos, FLOAT radius, float *PotentialField);
-#endif
 
 
 

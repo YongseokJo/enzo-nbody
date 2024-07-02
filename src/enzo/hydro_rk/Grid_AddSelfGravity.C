@@ -39,15 +39,10 @@ int grid::AddSelfGravity(float coef)
 	for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++, igrid++) {
 	  temp1 = OldBaryonField[DensNum][igrid] / BaryonField[DensNum][igrid];
 	  temp2 =  dtFixed*0.5*(1.0 + temp1);
-#ifdef NBODY
-	  gx = AccelerationField[0][0][igrid];
-	  gy = (GridRank > 1) ? AccelerationField[1][0][igrid] : 0.0;
-	  gz = (GridRank > 2) ? AccelerationField[2][0][igrid] : 0.0;
-#else
+
 	  gx = AccelerationField[0][igrid];
 	  gy = (GridRank > 1) ? AccelerationField[1][igrid] : 0.0;
 	  gz = (GridRank > 2) ? AccelerationField[2][igrid] : 0.0;
-#endif
 	  vx = BaryonField[Vel1Num][igrid];
 	  vy = BaryonField[Vel2Num][igrid];
 	  vz = BaryonField[Vel3Num][igrid];

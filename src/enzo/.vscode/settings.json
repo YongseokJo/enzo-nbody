@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "PrepareNbodyComputation.C": "cpp",
+        "EvolveLevel.C": "cpp",
+        "FinalizeNbodyComputation.C": "cpp",
+        "UpdateParticlePositions.C": "cpp",
+        "Grid_UpdateParticleVelocity.C": "cpp",
+        "Grid_UpdateParticlePosition.C": "cpp",
+        "StarParticleFinalize.C": "cpp",
+        "CommunicationUpdateStarParticleCount.C": "cpp"
+    },
+    "C_Cpp.dimInactiveRegions": false
+}

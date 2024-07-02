@@ -538,7 +538,11 @@ typedef long long int   HDF5_hid_t;
 #define PARTICLE_TYPE_COLOR_STAR     9
 #define PARTICLE_TYPE_SIMPLE_SOURCE 10
 #define PARTICLE_TYPE_RAD           11
+#ifdef NBODY
 #define PARTICLE_TYPE_NBODY         12  //by YS 
+#define PARTICLE_TYPE_NBODY_NEW     13  //by YS 
+#define PARTICLE_TYPE_NBODY_REMOVE  14  //by YS 
+#endif
 
 #define CHILDRENPERPARENT           12
 

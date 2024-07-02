@@ -22,6 +22,7 @@
 #include<stdlib.h>
 #include "ErrorExceptions.h"
 #include "macros_and_parameters.h"
+#include "communicators.h"
  
 //----------------------------------------------------------------------
  
@@ -38,7 +39,7 @@ void c_error (char *sourcefile, Eint32 linenumber)
  
 #ifdef USE_MPI
   MPI_Arg id;
-  ierr = MPI_Comm_rank( MPI_COMM_WORLD, &id);
+  ierr = MPI_Comm_rank( enzo_comm, &id);
 #else
   int id;
   id = 0;
@@ -52,7 +53,7 @@ void c_error (char *sourcefile, Eint32 linenumber)
  
   error_code = -1;
 #ifdef USE_MPI
-  ierr = MPI_Abort( MPI_COMM_WORLD, error_code);
+  ierr = MPI_Abort( enzo_comm, error_code);
 #else
   exit(error_code);
 #endif
@@ -70,7 +71,7 @@ void c_warning (char *sourcefile, Eint32 linenumber)
  
 #ifdef USE_MPI
   MPI_Arg id;
-  ierr = MPI_Comm_rank( MPI_COMM_WORLD, &id);
+  ierr = MPI_Comm_rank( enzo_comm, &id);
 #else
   int id;
   id = 0;

@@ -30,7 +30,11 @@ int grid::ReturnNumberOfStarParticles(void)
   if (MyProcessorNumber == ProcessorNumber)
     for (n = 0; n < NumberOfParticles; n++) {
       abstype = ABS(ParticleType[n]);
+#ifdef NBODY
+      if (abstype == PARTICLE_TYPE_STAR || abstype == PARTICLE_TYPE_NBODY_NEW ||
+#else
       if (abstype == PARTICLE_TYPE_STAR ||
+#endif
 	  (abstype >= PARTICLE_TYPE_MUST_REFINE &&
 	   abstype != PARTICLE_TYPE_MBH)) np++;
     }

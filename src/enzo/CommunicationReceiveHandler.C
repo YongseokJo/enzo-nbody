@@ -195,21 +195,29 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 						errcode = grid_one->CopyZonesFromGrid(grid_two, EdgeOffset);
 						break;
 
-					case 3:
 #ifdef NBODY
+					case 3:
 						errcode = grid_one->DepositParticlePositions(grid_two,
 								CommunicationReceiveArgument[0][index],
 								CommunicationReceiveArgumentInt[0][index], NoStar);
-#endif
 						break;
-
 
 					case 5:
 						errcode = grid_one->DepositBaryons(grid_two,
 								CommunicationReceiveArgument[0][index],NoStar);
 						break;
+#else
+					case 3:
+						errcode = grid_one->DepositParticlePositions(grid_two,
+								CommunicationReceiveArgument[0][index],
+								CommunicationReceiveArgumentInt[0][index]);
+						break;
 
-
+					case 5:
+						errcode = grid_one->DepositBaryons(grid_two,
+								CommunicationReceiveArgument[0][index]);
+						break;
+#endif
 //
 					case 4:
 						errcode = grid_one->CopyParentToGravitatingFieldBoundary(grid_two);
@@ -252,6 +260,9 @@ int CommunicationReceiveHandler(fluxes **SubgridFluxesEstimate[],
 
 					case 109:
 						errcode = grid_one->CopyPotentialFieldNoStar(grid_two, EdgeOffset);
+						break;
+					case 110:
+						errcode = grid_one->InterpolateAccelerationsNoStar(grid_two);
 						break;
 #endif
 

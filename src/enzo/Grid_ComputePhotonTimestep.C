@@ -178,19 +178,11 @@ float grid::ComputePhotonTimestep()
 
   if (SelfGravity) {
     for (dim = 0; dim < GridRank; dim++)
-#ifdef NBODY
-			if (AccelerationField[dim][0])
-#else
+
 			if (AccelerationField[dim])
-#endif
 				for (i = 0; i < size; i++) {
-#ifdef NBODY
-					dtTemp = sqrt(CellWidth[dim][0]/
-							fabs(AccelerationField[dim][0][i])+tiny_number);
-#else
 					dtTemp = sqrt(CellWidth[dim][0]/
 							fabs(AccelerationField[dim][i])+tiny_number);
-#endif
 					dtAcceleration = min(dtAcceleration, dtTemp);
 				}
 		if (dtAcceleration != huge_number)

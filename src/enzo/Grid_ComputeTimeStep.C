@@ -413,20 +413,12 @@ float grid::ComputeTimeStep()
 
 	if (SelfGravity) {
 		for (dim = 0; dim < GridRank; dim++) 
-#ifdef NBODY
-			if (AccelerationField[dim][0]) 
-#else
+
 			if (AccelerationField[dim]) 
-#endif
 
 				for (i = 0; i < size; i++) {
-#ifdef NBODY
-					dtTemp = sqrt(CellWidth[dim][0]/
-							fabs(AccelerationField[dim][0][i])+tiny_number);
-#else
 					dtTemp = sqrt(CellWidth[dim][0]/
 							fabs(AccelerationField[dim][i])+tiny_number);
-#endif
 					dtAcceleration = min(dtAcceleration, dtTemp);
 				}
 		if (dtAcceleration != huge_number)
@@ -507,19 +499,11 @@ float grid::ComputeTimeStep()
 
 		dtQuantum *= CourantSafetyNumber;
 
-#ifdef NBODY
-		if (SelfGravity && (PotentialField[0] != NULL)){
-#else
 		if (SelfGravity && (PotentialField != NULL)){
-#endif
 			int gsize = GravitatingMassFieldDimension[0]*GravitatingMassFieldDimension[1]*GravitatingMassFieldDimension[2];
 
 			for (int i=0; i<gsize; ++i){
-#ifdef NBODY
-				dtQuantum = min(dtQuantum, fabs(hmcoef*1./(PotentialField[0][i])));
-#else
 				dtQuantum = min(dtQuantum, fabs(hmcoef*1./(PotentialField[i])));
-#endif
 			}
 		}
 

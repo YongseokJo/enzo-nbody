@@ -79,9 +79,11 @@ int grid::UpdateParticleVelocity(float TimeStep)
 				 already been divided by a(t). */
 
 			for (i = 0; i < NumberOfParticles; i++) {
+#ifdef NBODY
 				// by YS Jo
-				//if ( ParticleType[i] == PARTICLE_TYPE_NBODY ) continue;
+				if ( ParticleType[i] == PARTICLE_TYPE_NBODY || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW ) continue;
 				//&& GridLevel != MaximumRefinementLevel )
+#endif				
 
 #ifdef VELOCITY_METHOD1
 
@@ -125,15 +127,17 @@ int grid::UpdateParticleVelocity(float TimeStep)
 
 			}
 		}
-		else
+		else {
 
 			/* Otherwise, just add the acceleration. */
 
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
-				ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY  && ParticleType[i] != PARTICLE_TYPE_NBODY_NEW ) 
 #endif
+					ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
 			}
+		}
 
 	}
 

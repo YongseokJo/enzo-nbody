@@ -195,7 +195,7 @@ int Group_ReadAllData(char *name, HierarchyEntry *TopGrid, TopGridData &MetaData
   MPI_Arg mpi_rank;
 
 #ifdef USE_MPI
-  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  MPI_Comm_rank(enzo_comm, &mpi_rank);
 #else
   mpi_rank = 0;
 #endif

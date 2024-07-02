@@ -20,6 +20,7 @@
 #include "StochasticForcing.h"
 #include "global_data.h"
 #include "error.h"
+#include "communicators.h"
 
 /* function prototypes */
 
@@ -53,7 +54,7 @@ void StochasticForcing::CommunicationBroadcastSpectrum(void)
   MPI_Datatype DataTypeFloat = (sizeof(float) == 4) ? MPI_FLOAT : MPI_DOUBLE;
   MPI_Arg stat;
 
-  stat = MPI_Bcast(buffer, TransferSize, DataTypeFloat, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  stat = MPI_Bcast(buffer, TransferSize, DataTypeFloat, ROOT_PROCESSOR, enzo_comm);
     if( stat != MPI_SUCCESS ){my_exit(EXIT_FAILURE);}
 
 #ifdef MPI_INSTRUMENTATION

@@ -649,26 +649,14 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
  
   float *dmfield = new float[size];
   int StartIndex[MAX_DIMENSION], Zero[] = {0,0,0};
-#ifdef NBODY
-  if (level <= MaximumGravityRefinementLevel &&
-			GravitatingMassFieldParticles[0] != NULL) {
-#else
+
   if (level <= MaximumGravityRefinementLevel &&
 			GravitatingMassFieldParticles != NULL) {
-#endif
 		for (dim = 0; dim < MAX_DIMENSION; dim++)
       StartIndex[dim] =
       nint((CellLeftEdge[dim][0] - GravitatingMassFieldParticlesLeftEdge[dim])/
 	   GravitatingMassFieldParticlesCellSize);
-#ifdef NBODY
-    FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles[0], dmfield,
-			 GravitatingMassFieldParticlesDimension,
-			 GravitatingMassFieldParticlesDimension+1,
-			 GravitatingMassFieldParticlesDimension+2,
-			 GridDimension, GridDimension+1, GridDimension+2,
-			 Zero, Zero+1, Zero+2,
-			 StartIndex, StartIndex+1, StartIndex+2);
-#else
+
     FORTRAN_NAME(copy3d)(GravitatingMassFieldParticles, dmfield,
 			 GravitatingMassFieldParticlesDimension,
 			 GravitatingMassFieldParticlesDimension+1,
@@ -676,7 +664,6 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 			 GridDimension, GridDimension+1, GridDimension+2,
 			 Zero, Zero+1, Zero+2,
 			 StartIndex, StartIndex+1, StartIndex+2);
-#endif
   } else
     for (i = 0; i < size; i++)
       dmfield[i] = 0;
@@ -1154,8 +1141,14 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
       if (ComovingCoordinates)
 	StarMakerOverDensityThreshold /= mh / DensityUnits;  
 
-      for (i = NumberOfNewParticlesSoFar; i < NumberOfNewParticles; i++)
+      for (i = NumberOfNewParticlesSoFar; i < NumberOfNewParticles; i++) {
+			// by YS, have to have an option for this from config file.
+#ifdef noNBODY
+          tg->ParticleType[i] = NbodyStar;
+#else
           tg->ParticleType[i] = NormalStarType;
+#endif
+			}
     } 
 
     if (STARMAKE_METHOD(SPRINGEL_HERNQUIST_STAR)) {
@@ -1903,7 +1896,6 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 
 
   if (STARFEED_METHOD(INSTANT_STAR)) {
-
     // check whether the particles are correctly located in grids 
     // Ji-hoon Kim in Nov.2009
 
@@ -1929,27 +1921,28 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 
       float mbhradius = MBHFeedbackThermalRadius * pc_cm / LengthUnits; 
  
-      FORTRAN_NAME(star_feedback7)(
-       GridDimension, GridDimension+1, GridDimension+2,
-          BaryonField[DensNum], dmfield,
-          BaryonField[TENum], BaryonField[GENum], BaryonField[Vel1Num],
-          BaryonField[Vel2Num], BaryonField[Vel3Num], MetalPointer,
-       &DualEnergyFormalism, &MetallicityField, &HydroMethod,
-       &dtFixed, BaryonField[NumberOfBaryonFields], &CellWidthTemp,
-          &Time, &zred,
-       &DensityUnits, &LengthUnits, &VelocityUnits, &TimeUnits,
-          &StarEnergyToThermalFeedback, &StarMassEjectionFraction,
-          &StarMetalYield,
-       &NumberOfParticles,
-       CellLeftEdge[0], CellLeftEdge[1], CellLeftEdge[2], &GhostZones, &level,
-       ParticlePosition[0], ParticlePosition[1],
-          ParticlePosition[2],
-       ParticleVelocity[0], ParticleVelocity[1],
-          ParticleVelocity[2], 
-       ParticleMass, ParticleAttribute[1], ParticleAttribute[0],
-          ParticleAttribute[2], ParticleType, &RadiationData.IntegratedStarFormation, 
-       &MBHParticleType, &mbhradius);
- 
+			FORTRAN_NAME(star_feedback7)(
+					GridDimension, GridDimension+1, GridDimension+2,
+					BaryonField[DensNum], dmfield,
+					BaryonField[TENum], BaryonField[GENum], BaryonField[Vel1Num],
+					BaryonField[Vel2Num], BaryonField[Vel3Num], MetalPointer,
+					&DualEnergyFormalism, &MetallicityField, &HydroMethod,
+					&dtFixed, BaryonField[NumberOfBaryonFields], &CellWidthTemp,
+					&Time, &zred,
+					&DensityUnits, &LengthUnits, &VelocityUnits, &TimeUnits,
+					&StarEnergyToThermalFeedback, &StarMassEjectionFraction,
+					&StarMetalYield,
+					&NumberOfParticles,
+					CellLeftEdge[0], CellLeftEdge[1], CellLeftEdge[2], &GhostZones, &level,
+					ParticlePosition[0], ParticlePosition[1],
+					ParticlePosition[2],
+					ParticleVelocity[0], ParticleVelocity[1],
+					ParticleVelocity[2], 
+					ParticleMass, ParticleAttribute[1], ParticleAttribute[0],
+					ParticleAttribute[2], ParticleType, &RadiationData.IntegratedStarFormation, 
+					&MBHParticleType, &mbhradius);
+
+
   } 
 
 

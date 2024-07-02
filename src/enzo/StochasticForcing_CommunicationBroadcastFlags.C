@@ -20,6 +20,7 @@
 #include "StochasticForcing.h"
 #include "global_data.h"
 #include "error.h"
+#include "communicators.h"
 
 /* function prototypes */
 
@@ -40,7 +41,7 @@ void StochasticForcing::CommunicationBroadcastFlags(void)
   MPI_Datatype DataTypeInt = (sizeof(int) == 4) ? MPI_INT : MPI_LONG_LONG_INT;
   MPI_Arg stat;
 
-  stat = MPI_Bcast(mask, NumModes, DataTypeInt, ROOT_PROCESSOR, MPI_COMM_WORLD);
+  stat = MPI_Bcast(mask, NumModes, DataTypeInt, ROOT_PROCESSOR, enzo_comm);
     if( stat != MPI_SUCCESS ){my_exit(EXIT_FAILURE);}
  
 #ifdef MPI_INSTRUMENTATION

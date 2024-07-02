@@ -838,11 +838,9 @@ int grid::ReadExtraFields(hid_t group_id)
     for (dim = 0; dim < GridRank; dim++) {
       if(this->AccelerationField[dim] != NULL) {
 #ifdef NBODY
-        delete this->AccelerationField[dim][0];
-        delete this->AccelerationField[dim][1];
-#else
-        delete this->AccelerationField[dim];
+        delete this->AccelerationFieldNoStar[dim];
 #endif
+        delete this->AccelerationField[dim];
       }
       snprintf(acc_name, 254, "AccelerationField%"ISYM, dim);
       this->read_dataset(GridRank, FullOutDims, acc_name,
@@ -863,26 +861,19 @@ int grid::ReadExtraFields(hid_t group_id)
         size *= GravitatingMassFieldDimension[dim];
         GMFOutDims[GridRank-dim-1] = GravitatingMassFieldDimension[dim];
     }
-#ifdef NBODY
-		if(this->GravitatingMassField[0] != NULL) {
-#else
+
 		if(this->GravitatingMassField != NULL) {
-#endif
 #ifdef NBODY
-        delete this->GravitatingMassField[0];
-        delete this->GravitatingMassField[1];
-#else
-        delete this->GravitatingMassField;
+        delete this->GravitatingMassFieldNoStar;
 #endif
+        delete this->GravitatingMassField;
 			}
       //fprintf(stderr, "ALLOCATING %"ISYM" for GMF\n", size);
 #ifdef NBODY
 			//this->GravitatingMassField = new float*[2];
-			this->GravitatingMassField[0] = new float[size];
-			this->GravitatingMassField[1] = new float[size];
-#else
-			this->GravitatingMassField = new float[size];
+			this->GravitatingMassFieldNoStar = new float[size];
 #endif
+			this->GravitatingMassField = new float[size];
       this->read_dataset(GridRank, GMFOutDims, "GravitatingMassField",
           group_id, HDF5_REAL, (VOIDP) this->GravitatingMassField, FALSE);
   }
@@ -897,27 +888,17 @@ int grid::ReadExtraFields(hid_t group_id)
         size *= GravitatingMassFieldDimension[dim];
         GMFOutDims[GridRank-dim-1] = GravitatingMassFieldDimension[dim];
     }
-#ifdef NBODY
-		if(this->PotentialField[0] != NULL) {
-#else
 		if(this->PotentialField != NULL) {
-#endif
 #ifdef NBODY
-        delete this->PotentialField[1];
-        delete this->PotentialField[0];
-#else
-        delete this->PotentialField;
+        delete this->PotentialFieldNoStar;
 #endif
+        delete this->PotentialField;
 			}
       //fprintf(stderr, "ALLOCATING %"ISYM" for PF\n", size);
 #ifdef NBODY
-			//this->PotentialField = new float*[2];
-			this->PotentialField[0] = new float[size];
-			this->PotentialField[1] = new float[size];
-#else
-			this->PotentialField = new float[size];
-
+			this->PotentialFieldNoStar = new float[size];
 #endif
+			this->PotentialField = new float[size];
       this->read_dataset(GridRank, GMFOutDims, "PotentialField",
           group_id, HDF5_REAL, (VOIDP) this->PotentialField, FALSE);
   }

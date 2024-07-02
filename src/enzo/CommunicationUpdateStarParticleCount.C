@@ -27,6 +27,7 @@
 #endif /* USE_MPI */
 
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include "performance.h"
 #include "ErrorExceptions.h"
@@ -59,6 +60,7 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 	/* Set ParticleCount to zero and record number of particles for grids
 		 on this processor. */
 
+	fprintf(stderr,"USPC1\n");  // by YS
 	for (grid = 0; grid < NumberOfGrids; grid++) {
 		TotalParticleCount[grid] = 0;
 		TotalStarParticleCount[grid] = 0;
@@ -74,6 +76,7 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 		}
 	}
 
+	fprintf(stderr,"USPC2\n");  // by YS
 #ifdef USE_MPI
 
 	/* Get counts from each processor to get total list of new particles. */
@@ -86,18 +89,23 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 
 	MPI_Arg GridCount = NumberOfGrids;
 
+	fprintf(stderr,"Num of Grids=%d\n", NumberOfGrids);  // by YS
+
 	int index;
 	for (grid = 0, index = 0; grid < NumberOfGrids; index += 2, grid++) {
 		buffer[index] = PartialParticleCount[grid];
 		buffer[index+1] = PartialStarParticleCount[grid];
 	}
+	std::cout << "USPC2-1" << std::endl;  // by YS
 	MPI_Allreduce(buffer, rbuffer, 2*GridCount,
-			DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+			DataTypeInt, MPI_SUM, enzo_comm);
+	std::cout << "USPC2-2" << std::endl;  // by YS
 	for (grid = 0, index = 0; grid < NumberOfGrids; index += 2, grid++) {
 		TotalParticleCount[grid] = rbuffer[index];
 		TotalStarParticleCount[grid] = rbuffer[index+1];
 	}
 
+	fprintf(stderr,"USPC3\n");  // by YS
 #ifdef UNUSED
 	if (MyProcessorNumber == ROOT_PROCESSOR)
 		for (grid = 0; grid < NumberOfGrids; grid++) {
@@ -152,6 +160,7 @@ int CommunicationUpdateStarParticleCount(HierarchyEntry *Grids[],
 
 	}
 
+	fprintf(stderr,"USPC4\n");  // by YS
 #ifdef UNUSED
 	fprintf(stdout, "\nin CUSPC.C \n", MetaData->NumberOfParticles); 
 	fprintf(stdout, "MetaData->NumberOfParticles = %d\n", MetaData->NumberOfParticles); 
@@ -227,9 +236,9 @@ int CommunicationUpdateStarParticleCountOld(HierarchyEntry *Grids[],
 	MPI_Arg GridCount = NumberOfGrids;
 
 	MPI_Allreduce(PartialParticleCount, TotalParticleCount, GridCount,
-			DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+			DataTypeInt, MPI_SUM, enzo_comm);
 	MPI_Allreduce(PartialStarParticleCount, TotalStarParticleCount, GridCount,
-			DataTypeInt, MPI_SUM, MPI_COMM_WORLD);
+			DataTypeInt, MPI_SUM, enzo_comm);
 
 #ifdef MPI_INSTRUMENTATION
 	endtime = MPI_Wtime();

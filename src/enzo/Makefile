@@ -47,9 +47,12 @@ MODULES  =
 VERBOSE  = 1
 ETAGS_COMMAND = "0"
 
-NCXX = cpp #g++
+#NCXX = cpp #g++
+NCXX = mpicxx
 NVCC = nvcc
-F77 = gfortran
+#F77 = gfortran
+F77 = mpif77
+#F77 = mpiifort
 
 LFLAGS=--header-file=libconfig/scanner.h --prefix=libconfig_yy
 
@@ -114,9 +117,9 @@ all: MACHNOTES MAKETAGS $(EXE).exe
 # I believe this has to be done here, as it is target-specific.
 lib: CFLAGS   += $(MACH_SHARED_FLAGS) -fPIC
 lib: CXXFLAGS += $(MACH_SHARED_FLAGS) -DSHARED_LIBRARY
-lib: FFLAGS   += $(MACH_SHARED_FLAGS) -fPIC
+lib: FFLAGS   += $(MACH_SHARED_FLAGS) -fPIC  -lmpi 
 lib: F90FLAGS += $(MACH_SHARED_FLAGS)
-lib: LDFLAGS  += $(MACH_SHARED_FLAGS) -lstdc++ L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/lib64 -lcudart 
+#lib: LDFLAGS  += $(MACH_SHARED_FLAGS) -lstdc++ L/mnt/sw/nix/store/bdhdh478f6slibd9zpgmgw8grnqq78im-cuda-11.4.4/lib64 -lcudart 
 lib: lib$(EXE)_p$(ASSEMBLE_PARTICLE_NUMBER)_b$(ASSEMBLE_PRECISION_NUMBER).$(MACH_SHARED_EXT)
 
 #-----------------------------------------------------------------------
@@ -251,17 +254,17 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(F77)  -x f77 -cpp -lstdc++-c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >& $(OUTPUT) ; \
+	  $(F77)  -x f77 -cpp -lstdc++-c -lmpi  -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES)  $*.for >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for"; \
+             echo "$(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -lmpi -I./nbody/include $(INCLUDES) $(DEFINES) $*.for"; \
              echo; \
-             $(for) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for; \
+             $(for) -x f77 -cpp -lstdc++ -lmpi  -c -o $@ $(FFLAGS) -lmpi  -I./nbody/include $(INCLUDES) $(DEFINES) $*.for; \
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(F77) -x f77 -cpp -lstdc++ -c -o $@ $(FFLAGS) -I./nbody/include $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
+	  $(F77) -x f77 -cpp -lstdc++ -c -lmpi  -o $@ $(FFLAGS)  -lmpi -I./nbody/include  $(INCLUDES) $(DEFINES) $*.for >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
@@ -343,18 +346,18 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NCXX) -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle  -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp \
 	    >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
              echo; \
-             echo "$(NCXX) -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp"; \
+             echo "$(NCXX) -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody $(INCLUDES) $*.cpp"; \
              echo; \
-             $(NCXX)-o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp;\
+             $(NCXX)-o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(NCXX) -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/include -I./nbody $(INCLUDES) $*.cpp \
+	  $(NCXX) -c -std=c++11 -march=native -o $@ $(DEFINES) $(CXXFLAGS) -I./nbody/Particle -I./nbody/Binary -I./nbody $(INCLUDES) $*.cpp \
 	    >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
@@ -366,24 +369,26 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC)  -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
 	     echo; \
-             echo "$(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -I./nbody/include -I./nbody  $(INCLUDES) $*.cu"; \
+             echo "$(CUDACOMPILER) -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) -I./nbody/include -I./nbody  $(INCLUDES) $*.cu"; \
              echo; \
-             $(CUDACOMPILER)  -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu;\
+             $(CUDACOMPILER) -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) $(INCLUDES) $*.cu;\
              echo; \
              exit 1; \
           fi ; \
 	else \
-	  $(CUDACOMPILER) -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC) -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
 	     exit 1; \
 	  fi ; \
 	fi)
+
+#-G -Xcompiler -rdynamic -lineinfo   $(CUDACOMPFLAGS)
 
 #-----------------------------------------------------------------------
 # Generate all make-generated source files
@@ -477,6 +482,9 @@ clean:
 	-@rm -f *.so *.o uuid/*.o *.mod *.f *.f90 DEPEND.bak *~ $(OUTPUT) enzo.exe \
           auto_show*.C hydro_rk/*.o *.oo hydro_rk/*.oo \
 					nbody/*.o \
+					nbody/Particle/*.o \
+					nbody/Binary/*.o \
+					nbody/cuda/*.o \
           uuid/*.oo DEPEND TAGS \
           libconfig/*.o \
           python_bridge/problemtype_handler.C \

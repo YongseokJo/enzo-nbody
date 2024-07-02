@@ -48,11 +48,8 @@ int grid::AddBaryonsToGravitatingMassField()
   }
  
   /* Error check. */
-#ifdef NBODY 
-  if (GravitatingMassField[0] == NULL) {
-#else
+
   if (GravitatingMassField == NULL) {
-#endif
     ENZO_FAIL("GravitatingMassField not allocated.\n");
   }
  
@@ -86,20 +83,16 @@ int grid::AddBaryonsToGravitatingMassField()
 		     Offset[0];
       for (i = 0; i < GridDimension[0]; i++, index++, gmfindex++) {
 #ifdef NBODY
-	GravitatingMassField[0][gmfindex] += BaryonField[DensNum][index];
-	GravitatingMassField[1][gmfindex] += BaryonField[DensNum][index];
-#else
-	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
+	GravitatingMassFieldNoStar[gmfindex] += BaryonField[DensNum][index];
 #endif
+	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
 		}
   // Add FDM density
   if (QuantumPressure ==1){
 #ifdef NBODY
-      GravitatingMassField[0][gmfindex] += BaryonField[FDMDensNum][index];
-      GravitatingMassField[1][gmfindex] += BaryonField[FDMDensNum][index];
-#else
-      GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
+      GravitatingMassFieldNoStar[gmfindex] += BaryonField[FDMDensNum][index];
 #endif
+      GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
     }
   }
  
@@ -114,20 +107,16 @@ int grid::AddBaryonsToGravitatingMassField()
       for (i = GridStartIndex[0]; i <= GridEndIndex[0]; i++,
 	     index++, gmfindex++) {
 #ifdef NBODY
-	GravitatingMassField[0][gmfindex] += BaryonField[DensNum][index];
-	GravitatingMassField[1][gmfindex] += BaryonField[DensNum][index];
-#else
-	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
+	GravitatingMassFieldNoStar[gmfindex] += BaryonField[DensNum][index];
 #endif
+	GravitatingMassField[gmfindex] += BaryonField[DensNum][index];
 			}
   // Add FDM density
   if (QuantumPressure ==1){
 #ifdef NBODY
-      GravitatingMassField[0][gmfindex] += BaryonField[FDMDensNum][index];
-      GravitatingMassField[1][gmfindex] += BaryonField[FDMDensNum][index];
-#else
-      GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
+      GravitatingMassFieldNoStar[gmfindex] += BaryonField[FDMDensNum][index];
 #endif
+      GravitatingMassField[gmfindex] += BaryonField[FDMDensNum][index];
     }
     }
  

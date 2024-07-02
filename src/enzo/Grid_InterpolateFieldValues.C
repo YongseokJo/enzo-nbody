@@ -626,9 +626,12 @@ int grid::InterpolateFieldValues(grid *ParentGrid
  
   /* Clean up if we have transfered data. */
  
-  if (MyProcessorNumber != ParentGrid->ProcessorNumber)
-
+  if (MyProcessorNumber != ParentGrid->ProcessorNumber) {
     ParentGrid->DeleteAllFields();
+#ifdef NBODY
+    ParentGrid->DeleteAllFieldsNoStar();
+#endif
+	}
  
   return SUCCESS;
 }

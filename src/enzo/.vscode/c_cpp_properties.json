@@ -1,0 +1,39 @@
+/*
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/mnt/sw/nix/store/5gzzqpkmbz1rjmlwxa3f9mvmzalkzqlk-intel-oneapi-mpi-2021.9.0/include"
+            ],
+            "defines": [],
+            "compilerPath": "/mnt/sw/nix/store/6560mkp838syd8jpp6gdyyisczwcvs67-gcc-11.4.0/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
+*/
+
+
+{
+    "configurations": [
+        {
+            "name": "Intel C++ Compiler",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/mnt/sw/nix/store/5gzzqpkmbz1rjmlwxa3f9mvmzalkzqlk-intel-oneapi-mpi-2021.9.0/include",
+                "/mnt/sw/nix/store/bjxnws41q81ccp0lybgzacy5wdv2n82g-hdf5-1.8.22/include"
+            ],
+            "defines": [],
+            "compilerPath": "/mnt/sw/nix/store/28902lbw6l097jh8njdkvg6ww3r5pd4c-intel-oneapi-compilers-2023.1.0/compiler/2023.1.0/linux/bin/intel64/icc",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
