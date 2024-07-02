@@ -728,10 +728,17 @@ Z-X = N*(Y-X)/(M+N) -> This should be applied to particles
 */
 // this should be improved by using iterative loop
 void GetNewCenterOfMass(std::vector<Particle*> &particle, double *mass2, double *x2[Dim], double *v2[Dim], int n2, double x_X[], double v_X[]) {
-	 	
+
 	double M=0., N=0.;
 	double x_Y[Dim], v_Y[Dim], x_Z[Dim], v_Z[Dim];
-	
+
+	for (int dim=0; dim<Dim; dim++) {
+		x_Y[dim] = 0;
+		x_Z[dim] = 0;
+		v_Y[dim] = 0;
+		v_Z[dim] = 0;
+	}
+
 	for (Particle* ptcl:particle)
 		M += ptcl->Mass/EnzoMass;
 

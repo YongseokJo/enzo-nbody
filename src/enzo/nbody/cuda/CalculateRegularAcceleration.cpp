@@ -200,15 +200,15 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		/*******************************************************
 		 * Acceleartion correction according to current neighbor
 		 ********************************************************/
-		fprintf(nbpout, "MyPID (%d) = %d\n", NumNeighborReceive[i], ptcl->PID);
-		fprintf(nbpout, "NeighborPID = ");
+		//fprintf(nbpout, "MyPID (%d) = %d\n", NumNeighborReceive[i], ptcl->PID);
+		//fprintf(nbpout, "NeighborPID = ");
 		for (int j=0;  j<NumNeighborReceive[i]; j++) {
 			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
 			//std::cout <<  NeighborIndex << ",  ";
-			fprintf(nbpout, "%d, ", particle[NeighborIndex]->PID);
+			//fprintf(nbpout, "%d, ", particle[NeighborIndex]->PID);
 			CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp);
 		} // endfor j1, over neighbor at current time
-		fprintf(nbpout, "\n");
+		//fprintf(nbpout, "\n");
 		for (int dim=0; dim<Dim; dim++) {
 			AccIrr[i][dim]           += a_tmp[dim];
 			AccIrrDot[i][dim]        += adot_tmp[dim];
