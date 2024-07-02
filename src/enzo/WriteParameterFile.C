@@ -18,6 +18,8 @@
 
 #include "preincludes.h" 
 #include <time.h>
+#include <cmath>            // For std::sqrt
+#include "phys_constants.h" // for kpc_cm
 #include "macros_and_parameters.h"
 #include "typedefs.h"
 #include "global_data.h"
@@ -27,8 +29,6 @@
 #include "Grid.h"
 #include "TopGridData.h"
 #include "ActiveParticle.h"
-#include <cmath>            // For std::sqrt
-#include "phys_constants.h" // for kpc_cm
  
 /* function prototypes */
  

@@ -909,7 +909,8 @@ int InitializeNew(char *filename, HierarchyEntry &TopGrid,
       ProblemType != 31 &&  // BWO (isolated galaxies)
       ProblemType != 60 &&
       ProblemType != 106 && //AK
-      ProblemType != 108)   //Yuan (Cluster)
+      ProblemType != 108 &&  //Yuan (Cluster)
+      ProblemType != -978) // AGORA
     ConvertTotalEnergyToGasEnergy(&TopGrid);
   
   // If using StarParticles, set the number to zero 
