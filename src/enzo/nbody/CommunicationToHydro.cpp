@@ -107,11 +107,11 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "Enzo Time                = %lf\n", TimeStep);
 	fprintf(nbpout, "Nbody Time               = %lf\n", EnzoTimeStep);
 	fprintf(nbpout, "EPS2                     = %lf\n", EPS2);
-	fprintf(nbpout, "InitialRadiusOfAC        = %lf\n", InitialRadiusOfAC);
+	fprintf(nbpout, "InitialRadiusOfAC        = %.2e\n", InitialRadiusOfAC);
 	fprintf(nbpout, "eta                      = %lf\n", eta);
-	fprintf(nbpout, "ClusterRadius2           = %lf\n", ClusterRadius2);
+	fprintf(nbpout, "ClusterRadius2           = %.2e\n", ClusterRadius2);
 	fprintf(nbpout, "StarMassEjectionFraction = %lf\n", StarMassEjectionFraction);
-	fprintf(nbpout, "StarParticleFeedback     = %lf\n", StarParticleFeedback);
+	fprintf(nbpout, "StarParticleFeedback     = %d\n", StarParticleFeedback);
 	fprintf(nbpout, "FixNumNeighbor           = %d\n", FixNumNeighbor);
 	fprintf(nbpout, "BinaryRegularization     = %d\n", BinaryRegularization);
 	fprintf(nbpout, "KSTime                   = %lf\n", KSTime);
@@ -633,9 +633,11 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	std::cout << "NBODY+: Data sent!" << std::endl;
 	fprintf(stdout, "NBODY+: Data sent!\n");
 
+	fprintf(stderr, "NBODY: PID=");
 	for (Particle* ptcl:particle) {
-		fprintf(stderr, "NBODY: PID=%d, X=(%.3e, %.3e, %.3e)\n", 
-				ptcl->PID,ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(stderr, "%d, ", ptcl->PID);
+		//fprintf(stderr, "NBODY: PID=%d, X=(%.3e, %.3e, %.3e)\n", 
+				//ptcl->PID,ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
 		//fprintf(stderr, "NBODY: Pos  Of news=(%.3e, %.3e, %.3e)\n",
 				//ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
 		//fprintf(stderr, "NBODY: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
@@ -644,7 +646,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		//fprintf(stderr, "NBODY: Acc  Of news=(%.3e, %.3e, %.3e)\n",
 		//		ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
 	}
-
+	fprintf(stderr, "\n");
 
 	/*
 	for (Particle* ptcl:particle) {
@@ -653,19 +655,32 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	*/
 
 
-		/*
+		fprintf(stderr, "NBODY:(Escape) PID=\n");
 	for (Particle* ptcl:EscapeList) {
-		fprintf(stderr, "NBODY:(Escape) PID=%d\n", ptcl->PID);
+		fprintf(stderr, "%d, ", ptcl->PID);
+		/*
 		fprintf(stderr, "NBODY3-1: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
 				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
 		fprintf(stderr, "NBODY3-1: Pos  Of news=(%.3e, %.3e, %.3e)\n",
 				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
 		fprintf(stderr, "NBODY3-1: Acc  Of news=(%.3e, %.3e, %.3e)\n",
 				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
-	}
 				*/
+	}
+		fprintf(stderr, "\n ");
 
-	// erase
+	// erase from other particles' neighbor
+	for (Particle* ptcl: particle) {
+		ptcl->ACList.erase(
+				std::remove_if(ptcl->ACList.begin(), ptcl->ACList.end(),
+					[](Particle* p) {
+					bool to_remove = p->isErase;
+					return to_remove;
+					}),
+				ptcl->ACList.end());
+	}
+
+	// erase from particle vector
 	particle.erase(
 			std::remove_if(particle.begin(), particle.end(),
 				[](Particle* p) {
@@ -678,10 +693,10 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	EscapeList.clear();
 
 
-
-		/*
+	fprintf(stderr, "NBODY:(particle after) PID=\n");
 	for (Particle* ptcl:particle) {
-		fprintf(stderr, "NBODY:(particle after) PID=%d\n", ptcl->PID);
+		fprintf(stderr, "%d, ", ptcl->PID);
+		/*
 		fprintf(stderr, "NBODY3-2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
 		fprintf(stderr, "NBODY3-2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
 				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
@@ -689,9 +704,9 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
 		fprintf(stderr, "NBODY3-2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
 				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
-	}
-
 				*/
+	}
+		fprintf(stderr, "\n ");
 
 
 

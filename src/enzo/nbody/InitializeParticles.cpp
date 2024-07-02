@@ -175,11 +175,13 @@ void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 	}
 
 
+	/*
 	fprintf(stdout, "Neighbors of %d : \n", ptcl1->PID);
 	for (Particle* ptcl:ptcl1->ACList) {
 		std::cout << ptcl->PID << ", ";
 	}
 	std::cout << std::endl;
+	*/
 
 	//std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
 	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
