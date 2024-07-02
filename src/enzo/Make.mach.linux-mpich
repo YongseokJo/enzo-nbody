@@ -93,7 +93,7 @@ MACH_OPT_WARN        = -Wall -g
 MACH_OPT_DEBUG       = -g
 MACH_OPT_HIGH        = -O2
 MACH_OPT_AGGRESSIVE  = -O3 -g
-
+MACH_OPT_CUDA = -std=c++11
 #-----------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------
