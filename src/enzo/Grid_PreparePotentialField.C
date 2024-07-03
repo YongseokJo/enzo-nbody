@@ -84,7 +84,7 @@ int grid::PreparePotentialField(grid *ParentGrid)
 	}
 
 
-	fprintf(stderr, "Now okay?\n");
+	if (debug1) fprintf(stderr, "Now okay?\n");
 
 	/* Declarations. */
 

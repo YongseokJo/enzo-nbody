@@ -80,20 +80,20 @@ int StarParticleFinalize(HierarchyEntry *Grids[], TopGridData *MetaData,
 
   /* Update the star particle counters. */
 
-	fprintf(stderr,"SPF1\n");  // by YS
+	if (debug1) fprintf(stderr,"SPF1\n");  // by YS
   CommunicationUpdateStarParticleCount(Grids, MetaData, NumberOfGrids,
 				       TotalStarParticleCountPrevious);
 
   /* Update position and velocity of star particles from the actual
      particles */
 
-	fprintf(stderr,"SPF2\n");  // by YS
+	if (debug1) fprintf(stderr,"SPF2\n");  // by YS
   for (ThisStar = AllStars; ThisStar; ThisStar = ThisStar->NextStar)
     ThisStar->UpdatePositionVelocity();
 
 
 
-	fprintf(stderr,"SPF3\n");  // by YS
+	if (debug1) fprintf(stderr,"SPF3\n");  // by YS
 
 
   /* Apply any stellar feedback onto the grids and add any gas to the
@@ -186,9 +186,9 @@ int StarParticleFinalize(HierarchyEntry *Grids[], TopGridData *MetaData,
 
   /* Set minimum refinement level for metallicity if desired */
 
-	fprintf(stderr,"SPF4\n");  // by YS
+	if (debug1) fprintf(stderr,"SPF4\n");  // by YS
   StarParticleSetRefinementLevel(AllStars);
-	fprintf(stderr,"SPF5\n");  // by YS
+	if (debug1) fprintf(stderr,"SPF5\n");  // by YS
 
   /* Delete the global star particle list, AllStars */
 

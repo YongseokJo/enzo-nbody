@@ -200,19 +200,19 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 		/* Next, send data and process grids on the same processor. */
 
-		fprintf(stdout,"4-1\n"); // by YS
+		if (debug1) fprintf(stdout,"4-1\n"); // by YS
 		CommunicationDirection = COMMUNICATION_SEND;
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			DepositParticleMassField(Grids[grid1], EvaluateTime, FALSE);
 
 		/* Finally, receive the data and process it. */
 
-		fprintf(stdout,"4-2\n"); // by YS
+		if (debug1) fprintf(stdout,"4-2\n"); // by YS
 		CommunicationReceiveHandler();
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("DepositParticleMassField");
-	fprintf(stdout,"\nProc:%d 4-2 ends.\n", MyProcessorNumber); //by YS
+	if (debug1) fprintf(stdout,"\nProc:%d 4-2 ends.\n", MyProcessorNumber); //by YS
 
 
 #ifdef FORCE_BUFFER_PURGE
@@ -250,14 +250,14 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 		/* Next, send data and process grids on the same processor. */
 
-		fprintf(stdout,"\nProc:%d 4-10\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"\nProc:%d 4-10\n", MyProcessorNumber); // by YS
 		CommunicationDirection = COMMUNICATION_SEND;
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			DepositParticleMassField(Grids[grid1], EvaluateTime, TRUE);
 
 		/* Finally, receive the data and process it. */
 
-		fprintf(stdout,"\nProc:%d 4-20\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"\nProc:%d 4-20\n", MyProcessorNumber); // by YS
 		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
 
 	} // ENDFOR grid batches
@@ -326,11 +326,11 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
 		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
 
-		fprintf(stdout,"Proc:%d, 4-30\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-30\n",MyProcessorNumber); // by YS
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			PrepareGravitatingMassField1(Grids[grid1]);
 
-		fprintf(stdout,"Proc:%d, 4-31\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-31\n",MyProcessorNumber); // by YS
 		/* Next, send data and process grids on the same processor. */
 
 		CommunicationDirection = COMMUNICATION_SEND;
@@ -338,13 +338,13 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			PrepareGravitatingMassField1(Grids[grid1]);
 
 		/* Finally, receive the data and process it. */
-		fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
 
 		CommunicationReceiveHandler();
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField1");
-	fprintf(stdout,"Proc:%d, 4-4\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, 4-4\n", MyProcessorNumber); // by YS
 
 
 #ifdef FORCE_MSG_PROGRESS 
@@ -380,7 +380,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			PrepareGravitatingMassField2a(Grids[grid1], MetaData, LevelArray,
 					level, When);
 #endif
-		fprintf(stdout,"4-5"); // by YS
+		if (debug1) fprintf(stdout,"4-5"); // by YS
 
 #ifndef BITWISE_IDENTICALITY
 		/* Next, send data and process grids on the same processor. */
@@ -396,10 +396,10 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 					level, When);
 #endif
 
-		fprintf(stdout,"4-6"); // by YS
+		if (debug1) fprintf(stdout,"4-6"); // by YS
 		CommunicationReceiveHandler();
 #endif /* BITWISE_IDENTICALITY */
-		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField2a");
@@ -438,7 +438,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField2b");
 
-	fprintf(stdout,"Proc:%d, 4-8\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, 4-8\n", MyProcessorNumber); // by YS
 
 
 
@@ -468,11 +468,11 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
 		CommunicationDirection = COMMUNICATION_POST_RECEIVE;
 
-		fprintf(stdout,"Proc:%d, 4-30\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-30\n",MyProcessorNumber); // by YS
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			PrepareGravitatingMassFieldNoStar1(Grids[grid1]);
 
-		fprintf(stdout,"Proc:%d, 4-31\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-31\n",MyProcessorNumber); // by YS
 		/* Next, send data and process grids on the same processor. */
 
 		CommunicationDirection = COMMUNICATION_SEND;
@@ -480,13 +480,13 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			PrepareGravitatingMassFieldNoStar1(Grids[grid1]);
 
 		/* Finally, receive the data and process it. */
-		fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-32\n", MyProcessorNumber); // by YS
 
 		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField1");
-	fprintf(stdout,"Proc:%d, 4-4\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, 4-4\n", MyProcessorNumber); // by YS
 
 
 #ifdef FORCE_MSG_PROGRESS 
@@ -522,7 +522,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 			PrepareGravitatingMassFieldNoStar2a(Grids[grid1], MetaData, LevelArray,
 					level, When);
 #endif
-		fprintf(stdout,"4-5"); // by YS
+		if (debug1) fprintf(stdout,"4-5"); // by YS
 
 #ifndef BITWISE_IDENTICALITY
 		/* Next, send data and process grids on the same processor. */
@@ -538,10 +538,10 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 					level, When);
 #endif
 
-		fprintf(stdout,"4-6"); // by YS
+		if (debug1) fprintf(stdout,"4-6"); // by YS
 		CommunicationReceiveHandler(NULL,NULL,FALSE,NULL,TRUE);
 #endif /* BITWISE_IDENTICALITY */
-		fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-7\n", MyProcessorNumber); // by YS
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField2a");
@@ -580,7 +580,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	} // ENDFOR grid batches
 	LCAPERF_STOP("PrepareGravitatingMassField2b");
 
-	fprintf(stdout,"Proc:%d, 4-8\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, 4-8\n", MyProcessorNumber); // by YS
 
 	/*******************************************************************************/
 	// No Star Done
@@ -612,7 +612,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 		CommunicationReceiveIndex = 0;
 		CommunicationReceiveCurrentDependsOn = COMMUNICATION_NO_DEPENDENCE;
 
-		fprintf(stdout,"4-8'\n"); // by YS
+		if (debug1) fprintf(stdout,"4-8'\n"); // by YS
 #ifdef FAST_SIB
 		for (grid1 = StartGrid; grid1 < EndGrid; grid1++)
 			for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
@@ -631,7 +631,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 							MetaData->RightFaceBoundaryCondition,
 							&grid::CopyOverlappingMassField);
 #endif
-		fprintf(stdout,"4-9\n"); // by YS
+		if (debug1) fprintf(stdout,"4-9\n"); // by YS
 
 		CommunicationDirection = COMMUNICATION_SEND;
 #ifdef FAST_SIB
@@ -656,7 +656,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("CopyOverlappingMassField");
-	fprintf(stdout,"4-10\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10\n"); // by YS
 
 
 #ifdef NBODY
@@ -698,7 +698,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 							MetaData->RightFaceBoundaryCondition,
 							&grid::CopyOverlappingMassFieldNoStar);
 #endif
-		fprintf(stdout,"4-9\n"); // by YS
+		if (debug1) fprintf(stdout,"4-9\n"); // by YS
 
 		CommunicationDirection = COMMUNICATION_SEND;
 #ifdef FAST_SIB
@@ -723,7 +723,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 	} // ENDFOR grid batches
 	LCAPERF_STOP("CopyOverlappingMassField");
-	fprintf(stdout,"4-10?\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10?\n"); // by YS
 
 	/************************************************************************/
 	// No Star Ends
@@ -768,7 +768,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	/************************************************************************/
 	/* Compute the potential for the top grid. */
 
-	fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
+	if (debug1) fprintf(stdout,"Proc:%d, Pre barrier\n",MyProcessorNumber); //by YS 
 	//CommunicationBarrier(); //by YS 
 	//fprintf(stdout,"Proc:%d, Post barrier\n",MyProcessorNumber);//by YS 
 
@@ -864,7 +864,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 				if (CopyGravPotential)
 					Grids[grid1]->GridData->CopyPotentialToBaryonField();
 			}
-			fprintf(stdout,"4-12"); // by YS
+			if (debug1) fprintf(stdout,"4-12"); // by YS
 
 			if (traceMPI) fprintf(tracePtr, "ITPOT post-recv\n");
 
@@ -918,7 +918,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 									&grid::CopyPotentialField);
 #endif
 
-				fprintf(stdout,"4-13"); // by YS
+				if (debug1) fprintf(stdout,"4-13"); // by YS
 #ifndef BITWISE_IDENTICALITY
 #ifdef FORCE_MSG_PROGRESS 
 				CommunicationBarrier();
@@ -1048,7 +1048,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 									&grid::CopyPotentialFieldNoStar);
 #endif
 
-				fprintf(stdout,"4-13"); // by YS
+				if (debug1) fprintf(stdout,"4-13"); // by YS
 #ifndef BITWISE_IDENTICALITY
 #ifdef FORCE_MSG_PROGRESS 
 				CommunicationBarrier();
@@ -1117,7 +1117,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 
 
 
-	fprintf(stdout,"4-14"); // by YS
+	if (debug1) fprintf(stdout,"4-14"); // by YS
 	/* if level > MaximumGravityRefinementLevel, then do final potential
 		 solve (and acceleration interpolation) here rather than in the main
 		 EvolveLevel since it involves communications. */
@@ -1139,7 +1139,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 						 DIFFERENCE_TYPE_NORMAL, MaximumGravityRefinementLevel);
 			}
 
-		fprintf(stdout,"4-15"); // by YS
+		if (debug1) fprintf(stdout,"4-15"); // by YS
 		/* Interpolate potential for reallevel grids from coarser grids. */
 
 		if (!CopyGravPotential) {
@@ -1222,7 +1222,7 @@ int PrepareDensityField(LevelHierarchyEntry *LevelArray[],
 	} // end: if (reallevel > MaximumGravityRefinementLevel)
 
 	//CommunicationBarrier();// by YS Jo
-	fprintf(stdout,"4-16"); // by YS
+	if (debug1) fprintf(stdout,"4-16"); // by YS
 
 
 	// --------------------------------------------------

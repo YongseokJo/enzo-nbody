@@ -45,7 +45,7 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 	int i, j, k, dim, size;
 	float x, DomainCellSize[MAX_DIMENSION];
 
-	fprintf(stdout,"4-10-2-0\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-2-0\n"); // by YS
 	PrintMemoryUsage("Enter FFT");
 
 	for (dim = 0; dim < MAX_DIMENSION; dim++)
@@ -68,7 +68,7 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 		strip0[i].Data = NULL;
 	}
 
-	fprintf(stdout,"4-10-2-1\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-2-1\n"); // by YS
 	/* -------------------------------------- */
 	/* Create regions striped along last dim. */
 
@@ -89,7 +89,7 @@ int CommunicationParallelFFT(region *InRegion, int NumberOfInRegions,
 		strip1[i].Data = NULL;
 	}
 
-	fprintf(stdout,"4-10-2-2\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-2-2\n"); // by YS
 	/* -------------------------------------- */
 
 	if (direction == FFT_FORWARD) {
