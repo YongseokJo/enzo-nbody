@@ -48,7 +48,7 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 		DomainDim[dim] = 1;
 	}
 
-	fprintf(stdout,"4-10-30-1\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-1\n"); // by YS
 	/* -------------------------------------------------- */
 	/* Generate a description of the initial data layout. */
 
@@ -76,7 +76,7 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 	}
 	DomainDim[0] += 2;
 
-	fprintf(stdout,"4-10-30-2\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-2\n"); // by YS
 	/* set start index and region for unused dims. */
 
 	for (dim = GridRank; dim < MAX_DIMENSION; dim++) {
@@ -89,11 +89,11 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 	InitialRegion->Processor = ProcessorNumber;
 	InitialRegion->Data      = NULL;
 
-	fprintf(stdout,"4-10-30-3\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-3\n"); // by YS
 	/* If the data is on this processor then copy it to a new region. */
 
 	if (MyProcessorNumber == InitialRegion->Processor) {
-	fprintf(stdout,"Proc:%d, InitialRegion?\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, InitialRegion?\n", MyProcessorNumber); // by YS
 
 
 		/* Set FieldPointer to the appropriate field. */
@@ -120,12 +120,12 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 		if (Field == POTENTIAL_FIELD)
 			FieldPointer = PotentialField;
 #endif
-	fprintf(stdout,"4-10-30-4\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-4\n"); // by YS
 		if (FieldPointer == NULL) {
 			ENZO_VFAIL("Field type %"ISYM" not recognized.\n", Field)
 		}
 
-	fprintf(stdout,"4-10-30-5\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-5\n"); // by YS
 		InitialRegion->Data = new float[size];
 
 		FORTRAN_NAME(copy3d)(FieldPointer, InitialRegion->Data,
@@ -136,7 +136,7 @@ int grid::PrepareFFT(region *InitialRegion, int Field, int DomainDim[])
 				Zero, Zero+1, Zero+2,
 				GravStart, GravStart+1, GravStart+2);
 
-	fprintf(stdout,"4-10-30-6\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30-6\n"); // by YS
 		/* Delete old field. */
 
 		if (Field == GRAVITATING_MASS_FIELD) {

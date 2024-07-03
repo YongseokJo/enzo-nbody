@@ -29,7 +29,7 @@ int grid::ClearGravitatingMassField()
 {
  
   /* Return is this is not the right processor. */
-	fprintf(stdout,"Proc:%d, In Clear\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"Proc:%d, In Clear\n", MyProcessorNumber); // by YS
  
   if (MyProcessorNumber != ProcessorNumber)
     return SUCCESS;

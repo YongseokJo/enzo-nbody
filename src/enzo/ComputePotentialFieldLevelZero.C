@@ -422,7 +422,7 @@ int ComputePotentialFieldLevelZeroPer(TopGridData *MetaData,
 			}
 #endif
 
-	fprintf(stdout,"4-10-9\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-9\n"); // by YS
 #ifdef FORCE_MSG_PROGRESS 
 	CommunicationBarrier();
 #endif
@@ -505,7 +505,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 {
 
 	//CommunicationBarrier();// by YS
-	fprintf(stdout,"4-10-0\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-0\n"); // by YS
 	/* Static declarations (for Green's function). */
 
 	static int FirstCall = TRUE, NumberOfGreensRegions;
@@ -544,7 +544,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 		 recalculate the Green's function. */
 
 	//CommunicationBarrier();
-	fprintf(stdout,"4-10-1\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-1\n"); // by YS
 	if (NumberOfProcessors > 1 && LoadBalancing > 1 &&
 			MetaData->CycleNumber % LoadBalancingCycleSkip == 0 &&
 			StaticRefineRegionLevel[0] == INT_UNDEFINED)
@@ -582,7 +582,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 				}
 
 			//CommunicationBarrier();
-			fprintf(stdout,"4-10-2\n"); // by YS
+			if (debug1) fprintf(stdout,"4-10-2\n"); // by YS
 			/* Forward FFT Greens function. */
 
 			//      TransposeOnCompletion = FALSE;  // for isolated case we can skip transpose back
@@ -593,7 +593,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 				ENZO_FAIL("Error in CommunicationParallelFFT.");
 			}
 			//CommunicationBarrier();
-			fprintf(stdout,"4-10-3\n"); // by YS
+			if (debug1) fprintf(stdout,"4-10-3\n"); // by YS
 
 			/* Clean up. */
 
@@ -607,7 +607,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 	} // end: if (FirstCall)
 
 	//CommunicationBarrier();
-	fprintf(stdout,"4-10-30\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-30\n"); // by YS
 															 
 
 	/* ------------------------------------------------------------------- */
@@ -630,7 +630,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 		}
 
 	//CommunicationBarrier();
-	fprintf(stdout,"4-10-4 no\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-4 no\n"); // by YS
 	/* If doing isolated BC's then double the domain size. */
 
 	if (MetaData->GravityBoundary == TopGridIsolated) {
@@ -650,7 +650,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 		ENZO_FAIL("Error in CommunicationParallelFFT.");
 	}
 
-	fprintf(stdout,"4-10-5 no\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-5 no\n"); // by YS
 	/* Quick error check. */
 
 	if (NumberOfOutRegions != NumberOfGreensRegions) {
@@ -707,7 +707,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 		ENZO_FAIL("Error in CommunicationParallelFFT.");
 	}
 
-	fprintf(stdout,"4-10-6 no\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-6 no\n"); // by YS
 	/* Copy Potential in active region into while grid. */
 
 	for (grid1 = 0; grid1 < NumberOfGrids; grid1++)
@@ -716,7 +716,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 			ENZO_FAIL("Error in grid->FinishFFT.");
 		}
 
-	fprintf(stdout,"4-10-7 no\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-7 no\n"); // by YS
 
 
 
@@ -737,7 +737,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 			Grids[grid1]->GridData->SetIsolatedPotentialBoundaryNoStar();
 	}
 
-	fprintf(stdout,"4-10-8\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-8\n"); // by YS
 #ifdef FORCE_MSG_PROGRESS 
 	CommunicationBarrier();
 #endif
@@ -768,7 +768,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 			}
 #endif
 
-	fprintf(stdout,"4-10-9\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-9\n"); // by YS
 #ifdef FORCE_MSG_PROGRESS 
 	CommunicationBarrier();
 #endif
@@ -796,7 +796,7 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 				ENZO_FAIL("Error in grid->CopyPotentialField.");
 			}
 #endif 
-	fprintf(stdout,"4-10-10\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-10\n"); // by YS
 
 #ifdef FORCE_MSG_PROGRESS
 	CommunicationBarrier();
@@ -816,6 +816,6 @@ int ComputePotentialFieldLevelZeroPerNoStar(TopGridData *MetaData,
 		delete [] OutRegion;
 
 
-	fprintf(stdout,"4-10-11\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-11\n"); // by YS
 	return SUCCESS;
 }

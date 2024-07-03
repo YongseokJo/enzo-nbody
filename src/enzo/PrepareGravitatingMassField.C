@@ -54,17 +54,17 @@ int PrepareGravitatingMassField1(HierarchyEntry *Grid)
   grid *CurrentGrid = Grid->GridData;
 
   /* Gravity: initialize and clear the gravitating mass field. */
-		fprintf(stdout,"Proc:%d, 4-3-1\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-3-1\n",MyProcessorNumber); // by YS
 
   if (CommunicationDirection == COMMUNICATION_POST_RECEIVE ||
       CommunicationDirection == COMMUNICATION_SEND_RECEIVE) {
-		fprintf(stdout,"Proc:%d, 4-3-2\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-3-2\n",MyProcessorNumber); // by YS
     if (CurrentGrid->InitializeGravitatingMassField(RefinementFactor) == FAIL){
       ENZO_FAIL("Error in grid->InitializeGravitatingMassField.\n");
     }
     CurrentGrid->ClearGravitatingMassField();
     //CurrentGrid->ClearGravitatingMassFieldNoStar();
-		fprintf(stdout,"Proc:%d, 4-3-3\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-3-3\n",MyProcessorNumber); // by YS
 	}
 
   /* Baryons: copy parent density (no interpolation) to regions in
@@ -104,7 +104,7 @@ int PrepareGravitatingMassField2a(HierarchyEntry *Grid, TopGridData *MetaData,
  
   /* Baryons: deposit mass into GravitatingMassField. */
  
-		fprintf(stdout,"Proc:%d, 4-4-1\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-4-1\n",MyProcessorNumber); // by YS
   // IF STATEMENT HERE TO MAKE IT SO NO GAS CONTRIBUTES TO GRAVITY
   if(!SelfGravityGasOff){
     if (DepositBaryons(Grid, When, FALSE) == FAIL) {
@@ -113,7 +113,7 @@ int PrepareGravitatingMassField2a(HierarchyEntry *Grid, TopGridData *MetaData,
     }
   }
  
-		fprintf(stdout,"Proc:%d, 4-4-2\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-4-2\n",MyProcessorNumber); // by YS
   /* Particles: go through all the other grids on this level and add all
      their overlapping GravitatingMassFieldParticles to this grid's
      GravitatingMassField.  Handle periodicity properly. */
@@ -132,7 +132,7 @@ int PrepareGravitatingMassField2a(HierarchyEntry *Grid, TopGridData *MetaData,
   //  for (grid2 = 0; grid2 < SiblingList[grid1].NumberOfSiblings; grid2++)
   //fprintf(stderr,"grid %i %i\n", grid1, grid2);
 
-		fprintf(stdout,"Proc:%d, 4-4-3\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-4-3\n",MyProcessorNumber); // by YS
 #else
   if (CopyOverlappingParticleMassFields(CurrentGrid, MetaData,
                                         LevelArray, level) == FAIL) {
@@ -140,7 +140,7 @@ int PrepareGravitatingMassField2a(HierarchyEntry *Grid, TopGridData *MetaData,
   }
 #endif
 
-		fprintf(stdout,"Proc:%d, 4-4-4\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-4-4\n",MyProcessorNumber); // by YS
   /* If we are using comoving coordinates, we must adjust the source term. */
  
   if (CommunicationDirection == COMMUNICATION_SEND ||
@@ -153,7 +153,7 @@ int PrepareGravitatingMassField2a(HierarchyEntry *Grid, TopGridData *MetaData,
  
   } // end: if (CommunicationDirection != COMMUNICATION_SEND)
  
-		fprintf(stdout,"Proc:%d, 4-4-5\n",MyProcessorNumber); // by YS
+		if (debug1) fprintf(stdout,"Proc:%d, 4-4-5\n",MyProcessorNumber); // by YS
   return SUCCESS;
 }
 

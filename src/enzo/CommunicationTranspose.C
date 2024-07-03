@@ -127,7 +127,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 
 	/* Loop over processor jumps (number of processors ahead to send). */
 
-	fprintf(stdout,"4-10-2-2-1\n"); // by YS
+	if (debug1) fprintf(stdout,"4-10-2-2-1\n"); // by YS
 			//CommunicationBarrier(); //by YS
 	for (n = 0; n < NumberOfProcessors; n++) {
 
@@ -149,7 +149,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 
 				} // end: if (proc jump == n)
 
-		fprintf(stdout,"4-10-2-2-2\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-2-2-2\n"); // by YS
 		/* Allocate buffer and copy data into buffer. */
 
 		ReceiveBuffer = NULL;
@@ -160,7 +160,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 		//  fprintf(stderr, "CT(%"ISYM"): sends = %"ISYM"  SendSize = %"ISYM"\n", MyProcessorNumber,
 		//	    sends, SendSize);
 
-		fprintf(stdout,"4-10-2-2-3\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-2-2-3\n"); // by YS
 		for (i = 0; i < sends; i++) {
 			j = Sends[i].Processor;
 			if (FromRegion[j].Data == NULL) {
@@ -192,7 +192,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 		}
 
 		/* shift buffer by n processors. */
-		fprintf(stdout,"4-10-2-2-4\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-2-2-4\n"); // by YS
 
 		if (n > 0) {
 
@@ -232,14 +232,14 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 			//		status.MPI_ERROR)
 			//      }
 			//CommunicationBarrier(); //by YS
-			fprintf(stdout,"4-10-2-2-5\n"); // by YS
+			if (debug1) fprintf(stdout,"4-10-2-2-5\n"); // by YS
 			MPI_Irecv((void*) ReceiveBuffer, RecvCount, DataType, Source, 
 					MPI_TRANSPOSE_TAG, enzo_comm, &RequestHandle);
 			MPI_Send((void*) SendBuffer, Count, DataType, Dest, 
 					MPI_TRANSPOSE_TAG, enzo_comm);
-			fprintf(stdout,"4-10-2-2-5-1\n"); // by YS
+			if (debug1) fprintf(stdout,"4-10-2-2-5-1\n"); // by YS
 			MPI_Wait(&RequestHandle, &status);
-			fprintf(stdout,"4-10-2-2-5-2\n"); // by YS
+			if (debug1) fprintf(stdout,"4-10-2-2-5-2\n"); // by YS
 
 #ifdef MPI_INSTRUMENTATION
 			endtime = MPI_Wtime();
@@ -261,7 +261,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 
 		//    fprintf(stderr, "CT(%"ISYM"): receives = %"ISYM"\n", MyProcessorNumber, receives);
 
-		fprintf(stdout,"4-10-2-2-6\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-2-2-6\n"); // by YS
 		for (i = 0; i < receives; i++) {
 
 			j = Receives[i].Processor;
@@ -295,7 +295,7 @@ int NonUnigridCommunicationTranspose(region *FromRegion, int NumberOfFromRegions
 				Receives[i].RegionDim[2];
 		}
 
-		fprintf(stdout,"4-10-2-2-7\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-2-2-7\n"); // by YS
 		/* Clean up. */
 
 		//    fprintf(stderr, "CT(%"ISYM"): end jump %"ISYM"\n", MyProcessorNumber, n);

@@ -74,7 +74,7 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
 			}
 		}
 #endif
-		fprintf(stdout,"4-1-1\n"); // by YS
+		if (debug1) fprintf(stdout,"4-1-1\n"); // by YS
  
 //  fprintf(stderr, "--DepositParticleMassField (Send) Initialize & Clear\n");
  
@@ -96,7 +96,7 @@ int DepositParticleMassField(HierarchyEntry *Grid, FLOAT TimeMidStep)
   }
 #endif
 
-		fprintf(stdout,"4-1-2\n"); // by YS
+		if (debug1) fprintf(stdout,"4-1-2\n"); // by YS
  
   /* Recursively deposit particles in children (at TimeMidStep). */
   if (Grid->NextGridNextLevel != NULL) {

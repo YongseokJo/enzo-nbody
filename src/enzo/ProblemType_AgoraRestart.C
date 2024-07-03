@@ -311,7 +311,7 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				} // end: loop over levels
 			}
 
-			fprintf(stderr, "Why1?\n"); //by YS
+			if (debug1) fprintf(stderr, "Why1?\n"); //by YS
 
 
 			/* set up field names and units */

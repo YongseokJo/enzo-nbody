@@ -238,7 +238,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 	} // ENDIF different processors
 
-	fprintf(stdout,"\nProc:%d 4-2-1\n", MyProcessorNumber); // by YS
+	if (debug1) fprintf(stdout,"\nProc:%d 4-2-1\n", MyProcessorNumber); // by YS
 	if (MyProcessorNumber == ProcessorNumber) {
 
 		/* If using CIC-mode deposit, then set cloudsize equal to cellsize. */

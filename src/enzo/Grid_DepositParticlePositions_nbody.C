@@ -193,7 +193,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		ENZO_VFAIL("DepositField = %"ISYM" not recognized.\n", DepositField)
 	}  
 	fprintf(stdout,"DepositField=%d\n", DepositField);
-	fprintf(stdout,"4-2-0\n");  // by YS
+	if (debug1) fprintf(stdout,"4-2-0\n");  // by YS
 
 	/* If on different processors, generate a temporary field to hold
 		 the density. */
@@ -262,7 +262,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 	} // ENDIF different processors
 
-	fprintf(stdout,"4-2-1\n");  // by YS
+	if (debug1) fprintf(stdout,"4-2-1\n");  // by YS
 	if (MyProcessorNumber == ProcessorNumber) {
 
 		/* If using CIC-mode deposit, then set cloudsize equal to cellsize. */
@@ -349,7 +349,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		//MyProcessor == Target->ProcessorNumber != this->ProcessorNumber
 		this->UpdateParticlePosition(TimeDifference, TRUE);
 
-		fprintf(stdout,"4-2-2\n");  // by YS
+		if (debug1) fprintf(stdout,"4-2-2\n");  // by YS
 		/*
 
 			 Right now all active particles are unsmoothed.
@@ -394,7 +394,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 		}
 
-		fprintf(stdout,"4-2-3\n");  // by YS
+		if (debug1) fprintf(stdout,"4-2-3\n");  // by YS
 		/* Deposit particles. */
 
 		if (SmoothField == FALSE) {
@@ -404,14 +404,14 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			/* Deposit sink particles (only) to field using CIC or NGP. 
 				 (only use NGP if cellsize > cloudsize - i.e. source is subgrid) */
 
-			fprintf(stdout,"4-2-3-1\n");  // by YS
+			if (debug1) fprintf(stdout,"4-2-3-1\n");  // by YS
 			if (ParticleSubgridDepositMode == NGP_DEPOSIT && CellSize > 1.5*CloudSize) {
 				PFORTRAN_NAME(ngp_deposit)
 					(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
 					 &GridRank, &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, 
 					 LeftEdge, Dimension, Dimension+1, Dimension+2, &FCellSize);
 			} else {
-				fprintf(stdout,"4-2-3-2\n");  // by YS
+				if (debug1) fprintf(stdout,"4-2-3-2\n");  // by YS
 				PFORTRAN_NAME(cic_deposit)
 					(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], 
 					 &GridRank, &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, 
@@ -425,14 +425,14 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 
 			//  fprintf(stderr, "------DP Call Fortran smooth_deposit with DPPSmoothRadius = %"GSYM"\n", DepositPositionsParticleSmoothRadius);
 
-			fprintf(stdout,"4-2-3-3\n");  // by YS
+			if (debug1) fprintf(stdout,"4-2-3-3\n");  // by YS
 			PFORTRAN_NAME(smooth_deposit)
 				(ParticlePosition[0], ParticlePosition[1], ParticlePosition[2], &GridRank,
 				 &NumberOfParticles, ParticleMassPointer, DepositFieldPointer, LeftEdge, 
 				 Dimension, Dimension+1, Dimension+2, &FCellSize, 
 				 &DepositPositionsParticleSmoothRadius);
 		}
-		fprintf(stdout,"4-2-3-4\n");  // by YS
+		fif (debug1) printf(stdout,"4-2-3-4\n");  // by YS
 
 
 		if ((this->ReturnNumberOfStarParticles() > 0) && 
@@ -444,7 +444,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 			}
 			delete [] ParticleMassPointerSink;
 		}
-		fprintf(stdout,"4-2-3-9\n");  // by YS
+		if (debug1) fprintf(stdout,"4-2-3-9\n");  // by YS
 
 		if (NumberOfActiveParticles > 0) {
 			FLOAT** ActiveParticlePosition = new FLOAT*[GridRank];
@@ -464,7 +464,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 					ActiveParticleMassPointer[i] = min(DepositParticleMaximumParticleMass,
 							ParticleMassPointer[i]);
 			}
-			fprintf(stdout,"4-2-3-10\n");  // by YS
+			if (debug1) fprintf(stdout,"4-2-3-10\n");  // by YS
 
 			if (SmoothField == FALSE) {
 
@@ -494,7 +494,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 	/* If on different processors, copy deposited field back to the
 		 target grid and add to the correct field. */
 
-	fprintf(stdout,"4-2-4\n");  // by YS
+	if (debug1) fprintf(stdout,"4-2-4\n");  // by YS
 	if (ProcessorNumber != TargetGrid->ProcessorNumber) {
 
 #ifdef USE_MPI
@@ -519,7 +519,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		double time1 = ReturnWallTime();
 
 		if (MyProcessorNumber == ProcessorNumber)  {
-				fprintf(stdout,"Here?1 \n");  // by YS
+				if (debug1) fprintf(stdout,"Here?1 \n");  // by YS
 			CommunicationBufferedSend(DepositFieldPointer, Count, DataType, 
 					Dest, MPI_SENDREGION_TAG, 
 					enzo_comm, BUFFER_IN_PLACE);
@@ -540,7 +540,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 				CommunicationReceiveCurrentDependsOn;
 			CommunicationReceiveIndex++;
 		}
-		fprintf(stdout,"4-2-5\n");  // by YS
+		if (debug1) fprintf(stdout,"4-2-5\n");  // by YS
 
 
 		CommunicationTime += ReturnWallTime() - time1;
@@ -565,7 +565,7 @@ int grid::DepositParticlePositions(grid *TargetGrid, FLOAT DepositTime,
 		} // end: if (MyProcessorNumber == TargetGrid->ProcessorNumber)
 
 	} // end: If (ProcessorNumber != TargetGrid->ProcessorNumber)
-	fprintf(stdout,"4-2-6\n");  // by YS
+	if (debug1) fprintf(stdout,"4-2-6\n");  // by YS
 
 	if (MyProcessorNumber == ProcessorNumber) {
 

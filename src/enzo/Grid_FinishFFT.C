@@ -66,7 +66,7 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 
 		/* Set FieldPointer to the appropriate field. */
 
-		fprintf(stdout,"4-10-6-1\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-6-1\n"); // by YS
 		float *FieldPointer;
 
 		if (Field == POTENTIAL_FIELD) {
@@ -98,7 +98,7 @@ int grid::FinishFFT(region *InitialRegion, int Field, int DomainDim[])
 			 GravStart, GravStart+1, GravStart+2,
 			 Zero, Zero+1, Zero+2);
  
-		fprintf(stdout,"4-10-6-2\n"); // by YS
+		if (debug1) fprintf(stdout,"4-10-6-2\n"); // by YS
     /* Delete old field. */
  
     delete [] InitialRegion->Data;
