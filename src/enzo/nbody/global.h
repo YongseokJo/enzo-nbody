@@ -26,6 +26,7 @@ extern double eta;
 extern double EPS2;
 extern double InitialRadiusOfAC;
 extern int    FixNumNeighbor;
+extern int    FixNumNeighbor0;
 
 extern int BinaryRegularization;
 extern double KSTime;

@@ -1961,6 +1961,11 @@ class grid
 					else {
 						ParticleType[i] = PARTICLE_TYPE_NBODY_NEW;
 					}
+				}
+				else {
+					if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
+						ParticleType[i] = PARTICLE_TYPE_STAR;
+					}
 				} // endif
 			} // endfor particles
 			return SUCCESS;
