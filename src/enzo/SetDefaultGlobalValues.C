@@ -827,6 +827,7 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
 	NbodyBinaryRegularization = 0;
 	NbodyBinaryDistance = 0.0002;
 	NbodyBinaryTimeStep = 2e-5;
+	NbodyNewStarToNbody = 0;
 #endif
 
   UseFloor		     = 0;

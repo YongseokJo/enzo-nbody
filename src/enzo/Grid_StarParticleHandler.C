@@ -1143,8 +1143,11 @@ int grid::StarParticleHandler(HierarchyEntry* SubgridPointer, int level,
 
       for (i = NumberOfNewParticlesSoFar; i < NumberOfNewParticles; i++) {
 			// by YS, have to have an option for this from config file.
-#ifdef noNBODY
+#ifdef NBODY
+				if (NbodyNewStarToNbody)
           tg->ParticleType[i] = NbodyStar;
+				else
+          tg->ParticleType[i] = NormalStarType;
 #else
           tg->ParticleType[i] = NormalStarType;
 #endif

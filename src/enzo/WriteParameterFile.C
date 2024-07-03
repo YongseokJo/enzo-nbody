@@ -1162,6 +1162,7 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
   fprintf(fptr, "UseCUDA = %"ISYM"\n", UseCUDA);
 #endif
   fprintf(fptr, "\nUseNBODY                    = %"ISYM"\n", UseNBODY);
+	fprintf(fptr, "NbodyNewStarToNbody = %d\n", NbodyNewStarToNbody);
 	fprintf(fptr, "UseNbodyClusterIdentification = %d\n", isNbodyParticleIdentification);
 	fprintf(fptr, "NbodyClusterPosition          = %lf %lf %lf\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
 	fprintf(fptr, "NbodyClusterRadius            = %lf\n", std::sqrt(NbodyClusterPosition[3]) / kpc_cm * LengthUnits); //added by wispedia

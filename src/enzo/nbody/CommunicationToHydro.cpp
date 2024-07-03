@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include "global.h"
 #include "defs.h"
 
@@ -10,7 +11,7 @@ double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration
 double EnzoCurrentTime, ClusterRadius2;
 double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
 double EPS2, eta, InitialRadiusOfAC;
-int FixNumNeighbor;
+int FixNumNeighbor, FixNumNeighbor0;
 int BinaryRegularization;
 double KSTime;
 double KSDistance;
@@ -103,6 +104,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	}
 
 	InitialRadiusOfAC *= EnzoLength;
+	FixNumNeighbor0    = FixNumNeighbor;
 
 	fprintf(nbpout, "Enzo Time                = %lf\n", TimeStep);
 	fprintf(nbpout, "Nbody Time               = %lf\n", EnzoTimeStep);
@@ -481,6 +483,8 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		}
 	}
 	NNB += newNNB;
+
+	FixNumNeighbor = std::min((int) std::floor(NNB/2), FixNumNeighbor0);
 
 
 	fprintf(nbpout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
