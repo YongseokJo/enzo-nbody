@@ -25,6 +25,7 @@ void Particle::predictParticleSecondOrder(double time) {
 			PredPosition[dim] = Position[dim];
 			PredVelocity[dim] = Velocity[dim];
 		}
+		PredMass = Mass;
 		return;
 	}
 
@@ -38,6 +39,17 @@ void Particle::predictParticleSecondOrder(double time) {
 		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + a_tot[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
 		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
 	}
+
+	if (StarParticleFeedback != 0) {
+		PredMass = Mass + evolveStarMass(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr*1.01);
+		Mdot     = (PredMass - Mass)/TimeStepIrr*1e-2;
+	}
+	else {
+		PredMass = Mass;
+		Mdot     = 0;
+	}
+
+			////TimeStepIrr*1e-2; // derivative can be improved
 
 	return;
 }
@@ -53,6 +65,7 @@ void Particle::predictParticleSecondOrderIrr(double time) {
 			PredPosition[dim] = Position[dim];
 			PredVelocity[dim] = Velocity[dim];
 		}
+		PredMass = Mass;
 		return;
 	}
 
@@ -65,6 +78,15 @@ void Particle::predictParticleSecondOrderIrr(double time) {
 	for (int dim=0; dim<Dim; dim++) {
 		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + a_tot[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
 		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
+	}
+
+	if (StarParticleFeedback != 0) {
+		PredMass = Mass + evolveStarMass(CurrentTimeIrr, CurrentTimeIrr+TimeStepIrr*1.01);
+		Mdot     = (PredMass - Mass)/TimeStepIrr*1e-2;
+	}
+	else {
+		PredMass = Mass;
+		Mdot     = 0;
 	}
 
 	return;
@@ -116,6 +138,7 @@ void Particle::updateParticle() {
 		Position[dim] = NewPosition[dim];
 		Velocity[dim] = NewVelocity[dim];
 	}
+	Mass = PredMass;
 }
 
 

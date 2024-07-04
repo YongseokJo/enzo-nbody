@@ -11,6 +11,7 @@ double Particle::evolveStarMass(double t1, double t2) {
 	if ((isStarEvolution == false) || (t2 == 0)) {
 		return 0;
 	}
+
 	double dm;
 
 	switch (StarParticleFeedback) {
@@ -30,7 +31,7 @@ double Particle::evolveStarMass(double t1, double t2) {
 	return dm;
 }
 
-
+// Everything here is in enzo unit
 double star_feedback7(double t1, double t2, Particle *self) {
 	double dm, tau1, tau2, m1, m2;
 
