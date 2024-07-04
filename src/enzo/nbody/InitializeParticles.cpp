@@ -93,6 +93,7 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 			particle[i]->PredPosition[dim] =  particle[i]->Position[dim];
 			particle[i]->PredVelocity[dim] =  particle[i]->Velocity[dim];
 		}
+		particle[i]->PredMass =  particle[i]->Mass;
 	}
 
 	std::cout << "Timestep initializing..." << std::endl;
@@ -208,6 +209,9 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 		r0 = dist2(ptcl->Position, newPtcl->Position);
 
 		for (Particle* neighbor:ptcl->ACList) {
+			if (ptcl == neighbor)
+				continue;
+
 			r1 = dist2(ptcl->Position, neighbor->Position);
 
 			if (r1 > r_max) {

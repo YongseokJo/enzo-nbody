@@ -71,7 +71,7 @@ typedef unsigned long long ULL;
 
 
 /*********************************************************************
- * Particle Types 
+ * Particle Types
  *********************************************************************/
 // Particle Type Definition
 // Particle type defined by combination of binary switches

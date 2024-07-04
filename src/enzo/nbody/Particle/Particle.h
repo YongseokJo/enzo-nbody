@@ -23,6 +23,7 @@ class Particle
 		int PID;
 		int ParticleType;
 		double Mass;
+		double Mdot;
 		double InitialMass;
 		double CreationTime;
 		double DynamicalTime;
@@ -43,6 +44,7 @@ class Particle
 		ULL TimeBlockReg;
 		int TimeLevelIrr;
 		int TimeLevelReg;
+		double PredMass;
 		double PredPosition[Dim];
 		double PredVelocity[Dim];
 		double a_tot[Dim][HERMITE_ORDER];
@@ -80,6 +82,7 @@ class Particle
 		void __initialize__(void) {
 			//std::cout << "Constructor called" << std::endl;
 			Mass            = 0;
+			Mdot            = 0;
 			InitialMass     = 0;
 			NumberOfAC      = 0; // number of neighbors
 			RadiusOfAC      = -1;
@@ -100,6 +103,7 @@ class Particle
 			isBinary        = false;
 			isCMptcl        = false;
 			isErase         = false;
+			PredMass        = 0.;
 			for (int i=0; i<Dim; i++) {
 				Velocity[i]     = 0.;
 				Position[i]     = 0.;

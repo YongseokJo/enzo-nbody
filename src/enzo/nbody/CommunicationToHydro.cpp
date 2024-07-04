@@ -491,7 +491,8 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
 	fprintf(nbpout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
 	fprintf(nbpout, "NBODY+    : Particle size     = %d\n", particle.size());
-	fprintf(nbpout, "NBODY+    : RegularList size = %d\n", RegularList.size());
+	fprintf(nbpout, "NBODY+    : RegularList size  = %d\n", RegularList.size());
+	fprintf(nbpout, "NBODY+    : FixNumNeighbor    = %d\n", FixNumNeighbor);
 
 
 	fprintf(stdout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");

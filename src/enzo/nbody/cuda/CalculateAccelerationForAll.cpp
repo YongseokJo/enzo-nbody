@@ -358,7 +358,7 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 
 	// copy the data of particles to the arrays to be sent
 	for (int i=0; i<NNB; i++) {
-		Mass[i] = particle[i]->Mass;
+		Mass[i] = particle[i]->PredMass;
 		Mdot[i] = 0; //particle[i]->Mass;
 		if (particle[i]->NumberOfAC == 0)	
 			particle[i]->predictParticleSecondOrder(time);

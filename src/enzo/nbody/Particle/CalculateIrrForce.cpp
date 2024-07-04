@@ -82,23 +82,24 @@ void Particle::calculateIrrForce() {
 			vx += v[dim]*x[dim];
 		}
 		if (r2 == 0)  {
-			fprintf(stderr, "r2 is zero (%d and %d)",PID, ptcl->PID);
+			fprintf(stderr, "r2 is zero (%d and %d)\n",PID, ptcl->PID);
 			//fflush(stderr);
 			continue;
 		}
 
-		mdot = ptcl->evolveStarMass(CurrentTimeIrr,
-				CurrentTimeIrr+TimeStepIrr*1.01)/TimeStepIrr*1e-2; // derivative can be improved
-																													 //
-																													 // add the contribution of jth particle to acceleration of current and predicted times
-
 		/*
-		if (r2 < EPS2)
-			r2 = EPS2;  // add softening length
+		if (StarParticleFeedback != 0)
+			mdot = ptcl->evolveStarMass(CurrentTimeIrr,
+					CurrentTimeIrr+TimeStepIrr*1.01)/TimeStepIrr*1e-2; // derivative can be improved
+																													   // add the contribution of jth particle to acceleration of current and predicted times
 		*/
 
+		if (r2 < EPS2)
+			r2 = EPS2;  // add softening length
 
-		m_r3 = ptcl->Mass/r2/sqrt(r2);
+
+		m_r3 = ptcl->PredMass/r2/sqrt(r2);
+
 
 		for (int dim=0; dim<Dim; dim++){
 			a_tmp[dim]    += m_r3*x[dim];
