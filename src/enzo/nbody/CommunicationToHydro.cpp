@@ -16,6 +16,8 @@ int BinaryRegularization;
 double KSTime;
 double KSDistance;
 
+
+int writeParticle(std::vector<Particle*> &particle, double MinRegTime, int outputNum);
 void InitializeNewParticle(std::vector<Particle*> &particle, int offset);
 void GetCenterOfMass(double *mass, double *x[Dim], double *v[Dim], double x_com[], double v_com[], int N);
 void GetNewCenterOfMass(std::vector<Particle*> &particle, double *mass2, double *x2[Dim], double *v2[Dim], int n2, double x_X[], double v_X[]);
@@ -37,6 +39,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Status status;
 
 	fprintf(nbpout, "NBODY+: First Waiting for Enzo to receive data...\n");
+	fflush(nbpout);
 
 	CommunicationInterBarrier();
 	fprintf(nbpout, "NBODY+: Frist Receiving data from Enzo...\n");
@@ -120,6 +123,11 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "KSDistance               = %lf\n", KSDistance);
 
 
+	for (int dim=0; dim<Dim; dim++) {
+		ClusterAcceleration[dim]=0;
+		ClusterPosition[dim]=0;
+		ClusterVelocity[dim]=0;
+	}
 	if (NNB != 0) {
 		// set COM for background acc
 		GetCenterOfMass(Mass, Position, Velocity, ClusterPosition, ClusterVelocity, NNB);
@@ -153,6 +161,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 		fprintf(stderr, "Initial PID order= ");
 		for (int i=0; i<NNB; i++) {
+			particle[i]->ParticleOrder = i;
 			if (i == NNB-1)
 				ptclPtr = nullptr;
 			else
@@ -163,17 +172,15 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 		FirstParticleInEnzo = particle[0];
 		fprintf(stderr, "\n");
 
-		/*
-		std::cout << "enzo Pos     :" << Position[0][0] << ", " << Position[0][1] << std::endl;
-		std::cout << "nbody Pos    :" << Position[0][0]*EnzoLength << ", " << Position[0][1]*EnzoLength << std::endl;
-		std::cout << "enzo Vel     :" << Velocity[1][0] << ", " << Velocity[1][1] << std::endl;
-		std::cout << "nbody Vel    :" << Velocity[1][0]*EnzoVelocity << ", " << Velocity[1][1]*EnzoVelocity << std::endl;
-		std::cout << "km/s Vel     :" << Velocity[1][0]*VelocityUnits/1e5 << ", " << Velocity[1][1]*VelocityUnits/1e5 << std::endl;
-		std::cout << "enzo  Mass   :" << Mass[0] << std::endl;
-		std::cout << "nbody Mass   :" << Mass[0]*EnzoMass << std::endl;
-		std::cout << "CreationTime :" << CreationTime[0] << std::endl;
-		std::cout << "DynamicalTime:" << DynamicalTime[0] << std::endl;
-		*/
+		std::cerr << "enzo Pos     :" << Position[0][0] << ", " << Position[0][1] << std::endl;
+		std::cerr << "nbody Pos    :" << Position[0][0]*EnzoLength << ", " << Position[0][1]*EnzoLength << std::endl;
+		std::cerr << "enzo Vel     :" << Velocity[1][0] << ", " << Velocity[1][1] << std::endl;
+		std::cerr << "nbody Vel    :" << Velocity[1][0]*EnzoVelocity << ", " << Velocity[1][1]*EnzoVelocity << std::endl;
+		std::cerr << "km/s Vel     :" << Velocity[1][0]*VelocityUnits/1e5 << ", " << Velocity[1][1]*VelocityUnits/1e5 << std::endl;
+		std::cerr << "enzo  Mass   :" << Mass[0] << std::endl;
+		std::cerr << "nbody Mass   :" << Mass[0]*EnzoMass << std::endl;
+		std::cerr << "CreationTime :" << CreationTime[0] << std::endl;
+		std::cerr << "DynamicalTime:" << DynamicalTime[0] << std::endl;
 
 		delete [] PID;
 		delete [] Mass;
@@ -185,13 +192,21 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 			delete[] BackgroundAcceleration[dim];
 		}
 	}
+
+	FixNumNeighbor = std::min((int) std::floor(NNB/2), FixNumNeighbor0);
 	fprintf(nbpout, "NBODY+: %d particles loaded!\n", NNB);
+	fflush(stdout);
+	fflush(stderr);
+	fflush(nbpout);
+	fflush(gpuout);
+	fflush(binout);
 	return true;
 }
 
 
 int ReceiveFromEzno(std::vector<Particle*> &particle) {
 
+	int i;
 	int *PID, *newPID;
 	double *BackgroundAcceleration[Dim];
 	double *Mass, *newMass, *newPosition[Dim], *newVelocity[Dim], *newBackgroundAcceleration[Dim];
@@ -267,6 +282,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	//std::cout << "Enzo  Mass    :" << Mass[0]*EnzoMass << std::endl;
 	//std::cout << "enzo Time :" << TimeStep << std::endl;
 	//std::cout << "nbody Time:" << EnzoTimeStep << std::endl;
+	FixNumNeighbor = std::min((int) std::floor((NNB+newNNB)/2), FixNumNeighbor0);
 
 
 
@@ -374,6 +390,10 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	FirstParticleInEnzo->PID << "in ReceiveFromEzno" << std::endl;
 
 	Particle* ptclPtr;
+#define star_formation_location_test
+#ifdef star_formation_location_test
+	std::vector<Particle*> new_particle; 
+#endif
 	//Particle *newPtcl = new Particle[newNNB]; // we shouldn't delete it, maybe make it to vector
 	
 	if (newNNB > 0) {
@@ -401,8 +421,14 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 			//initialize current time
 			particle.push_back(new Particle(newPID, newMass, newCreationTime, newDynamicalTime, newPosition, newVelocity,
 					newBackgroundAcceleration, NormalStar+SingleParticle+NewParticle, ptclPtr, i));
+#ifdef star_formation_location_test
+			new_particle.push_back(particle[NNB+i]);
+#endif
 		}
 
+#ifdef star_formation_location_test
+		writeParticle(new_particle, EnzoCurrentTime, outNum++);
+#endif
 		// build paticle chain
 		for (int i=0; i<newNNB; i++) {
 			if (i == newNNB-1)
@@ -433,23 +459,37 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		std::cout << "NBODY+    : "  << newNNB << " new particles loaded!" << std::endl;
 
 		// This includes modification of regular force and irregular force
-		InitializeNewParticle(particle, NNB);
 	}
 
-	/*
+	i=0;
 	for (Particle* ptcl:particle) {
-		fprintf(stderr, "NBODY2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
-		fprintf(stderr, "NBODY2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
-				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
-		fprintf(stderr, "NBODY2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
-				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
-		fprintf(stderr, "NBODY2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
-				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
+		ptcl->ParticleOrder = i;
+		i++;
 	}
-	*/
+
+	/* Initialize New Particles */
+	InitializeNewParticle(particle, NNB);
+
+	for (Particle* ptcl:particle) {
+		fprintf(nbpout, "NBODY2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+		fprintf(nbpout, "NBODY2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+		fprintf(nbpout, "NBODY2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+		fprintf(nbpout, "NBODY2: Acc  Of regs=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_reg[0][0], ptcl->a_reg[1][0], ptcl->a_reg[2][0]);
+		fprintf(nbpout, "NBODY2: Acc  Of irrs=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_irr[0][0], ptcl->a_irr[1][0], ptcl->a_irr[2][0]);
+		fprintf(nbpout, "NBODY2: Back Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->BackgroundAcceleration[0], ptcl->BackgroundAcceleration[1], ptcl->BackgroundAcceleration[2]);
+		fprintf(nbpout, "NBODY2: Timestep (%.3e, %.3e), nn=%d\n",
+				ptcl->TimeStepReg, ptcl->TimeStepIrr, ptcl->NumberOfAC);
+		fprintf(nbpout, "NBODY2: Timestep (%llu, %llu), (%d, %d)\n",
+				ptcl->TimeBlockReg, ptcl->TimeBlockIrr, ptcl->TimeLevelReg, ptcl->TimeLevelIrr);
+	}
 
 	// Initialization
-	int i=0;
+	i=0;
 	//RegularList.clear();
 	for (Particle* elem:particle) {
 		for (int dim=0; dim<Dim; dim++) {
@@ -484,13 +524,15 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	}
 	NNB += newNNB;
 
-	FixNumNeighbor = std::min((int) std::floor(NNB/2), FixNumNeighbor0);
+	//FixNumNeighbor = std::min((int) std::floor(NNB/2), FixNumNeighbor0);
 
 
 	fprintf(nbpout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
 	fprintf(nbpout, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
 	fprintf(nbpout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
 	fprintf(nbpout, "NBODY+    : Particle size     = %d\n", particle.size());
+	fprintf(nbpout, "NBODY+    : NextRegTimeStep   = %.3e\n", NextRegTimeBlock*time_step);
+	fprintf(nbpout, "NBODY+    : NextRegTimeBlock  = %d\n", NextRegTimeBlock);
 	fprintf(nbpout, "NBODY+    : RegularList size  = %d\n", RegularList.size());
 	fprintf(nbpout, "NBODY+    : FixNumNeighbor    = %d\n", FixNumNeighbor);
 
@@ -500,6 +542,11 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	fprintf(stdout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
 	fprintf(stdout, "NBODY+    : Particle size     = %d\n", particle.size());
 	fprintf(stdout, "NBODY+    : RegularList size = %d\n", RegularList.size());
+	fflush(stdout);
+	fflush(stderr);
+	fflush(nbpout);
+	fflush(gpuout);
+	fflush(binout);
 	return true;
 }
 
@@ -510,6 +557,8 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	std::cout << "NBODY+: Entering SendToEnzo..." << std::endl;
 	if (NNB == 0 && newNNB == 0) {
 		std::cout << "NBODY+: Skipping SendToEnzo..." << std::endl;
+		fflush(stdout);
+		fflush(stderr);
 		return DONE;
 	}
 	MPI_Request request;
@@ -737,6 +786,11 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	fprintf(stdout, "NBODY+    : newly updated NNB = %d\n", NNB);
 	fprintf(stdout, "NBODY+    : Particle size     = %d\n", particle.size());
 
+	fflush(stdout);
+	fflush(stderr);
+	fflush(nbpout);
+	fflush(gpuout);
+	fflush(binout);
 	return true;
 }
 

@@ -35,6 +35,11 @@ int nbody(int MyProcessorNumber) {
 	fprintf(nbpout, "Nbody Output Starts!\n");
 	fprintf(binout, "Binary Output Starts!\n");
 	fprintf(gpuout, "CUDA Output Starts!\n");
+	fflush(nbpout);
+	fflush(binout);
+	fflush(gpuout);
+
+
 
 
 
@@ -54,6 +59,7 @@ int nbody(int MyProcessorNumber) {
 	 *********************************************************************/
 	fclose(binout);
 	fclose(nbpout);
+	fclose(gpuout);
 
 	return true;
 }

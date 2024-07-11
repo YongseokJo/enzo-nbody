@@ -4,9 +4,10 @@
 
 
 int time_block = -30;
-ULL block_max = static_cast<ULL>(pow(2, -time_block));
-double time_step = std::pow(2,time_block);
-
+//int time_block = 0;
+ULL block_max = static_cast<ULL>(pow(2., -time_block));
+//double time_step = std::pow(2.,time_block);
+double time_step = -1;
 double getNewTimeStep(double f[3][4], double df[3][4]);
 void getBlockTimeStep(double dt, int& TimeLevel, ULL &TimeBlock, double &TimeStep);
 
@@ -74,12 +75,12 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 
 	// resetting time_block based on the system
 	time_block = std::max(-60, min_time_level-MIN_LEVEL_BUFFER);
-	block_max = static_cast<ULL>(pow(2, -time_block));
-	time_step = std::pow(2,time_block);
+	block_max = static_cast<ULL>(pow(2., -time_block));
+	time_step = std::pow(2.,time_block);
 
 	for (Particle* ptcl: particle) {
-		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2, ptcl->TimeLevelIrr-time_block));
-		ptcl->TimeBlockReg = static_cast<ULL>(pow(2, ptcl->TimeLevelReg-time_block));
+		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
+		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));
 #ifdef IRR_TEST
 		ptcl->TimeStepReg = 1;
 		ptcl->TimeLevelReg = 0;
@@ -98,6 +99,7 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 
 int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 	fprintf(nbpout, "Initializing timesteps ...\n");
+	int min_time_level=0;
 	double dtIrr, dtReg;
 	Particle *ptcl;
 
@@ -126,16 +128,35 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 		ptcl->CurrentBlockReg = 0;
 	} // endfor size
 
-	for (int i=offset; i<offset+newNNB; i++){
-		ptcl = particle[i];
-		if (ptcl->NumberOfAC != 0) {
-			while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg) {
-				ptcl->TimeLevelIrr--;
+
+	// Irregular Time Step Correction
+	if (time_step == -1) {
+		for (int i=offset; i<offset+newNNB; i++){
+			ptcl = particle[i];
+			if (ptcl->NumberOfAC != 0) {
+				while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg) {
+					ptcl->TimeStepIrr *= 0.5;
+					ptcl->TimeBlockIrr *= 0.5;
+					ptcl->TimeLevelIrr--;
+				}
+			}
+			if (ptcl->TimeLevelIrr < min_time_level) {
+				min_time_level = ptcl->TimeLevelIrr;
 			}
 		}
-		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2, ptcl->TimeLevelIrr-time_block));
-		ptcl->TimeBlockReg = static_cast<ULL>(pow(2, ptcl->TimeLevelReg-time_block));
-	} //endfor size
+
+		// resetting time_block based on the system
+		time_block = std::max(-60, min_time_level-MIN_LEVEL_BUFFER);
+		block_max = static_cast<ULL>(pow(2., -time_block));
+		time_step = std::pow(2.,time_block);
+	}
+
+	for (int i=offset; i<offset+newNNB; i++){
+		ptcl = particle[i];
+		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
+		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));
+	}
+
 	return true;
 }
 

@@ -301,7 +301,7 @@ Eint32 MAIN_NAME(Eint32 argc, char *argv[])
 		//comm       = MPI_COMM_WORLD;
 		//inter_comm = inter_comm;
 		//nbody_comm = nbody_comm;
-		fprintf(stderr, "NBODY6++ starts!\n");
+		fprintf(stderr, "NBODY+ starts!\n");
 		nbody(MyProcessorNumber);
 		my_exit(EXIT_SUCCESS);
 	} 

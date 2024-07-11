@@ -74,13 +74,18 @@ int PrepareNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 
-	int i, GridNum, LocalNumberOfNbodyParticles=0;
+	int i, GridNum, LocalNumberOfNbodyParticles=0, NewLocalNumberOfNbodyParticles=0;
 	LevelHierarchyEntry *Temp;
 	int start_index;
 
-	fprintf(stdout, "ENZO: Entering SendToNbodyFirst ...\n");
-	FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles);
 	NumberOfNewNbodyParticles = 0;
+	fprintf(stdout, "ENZO: Entering SendToNbodyFirst ...\n");
+	//FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles);
+	FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles, &NewLocalNumberOfNbodyParticles);
+	fprintf(stderr, "ENZO: Entering SendToNbodyFirst ...\n");
+	fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
+	fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
+
 
 	//if (NumberOfNbodyParticles == 0)
 		//return SUCCESS;
@@ -95,8 +100,8 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 				TemperatureUnits=1;
 	double MassUnits=1;
 	float Time, TimeStep;
-	Time = LevelArray[level]->GridData->ReturnTime(); // Not sure ?
-	TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure ?
+	Time = LevelArray[level]->GridData->ReturnTime(); // Not sure for cosmology?
+	TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure for cosmology?
 	if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
 				&TimeUnits, &VelocityUnits, &MassUnits, Time) == FAIL) {
 		ENZO_FAIL("Error in GetUnits.");
@@ -134,12 +139,12 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 				if (Temp->GridData->CopyNbodyParticlesFirst(&count, NbodyParticleIDTemp, NbodyParticleMassTemp,
 							NbodyParticlePositionTemp, NbodyParticleVelocityTemp, NbodyParticleAccelerationNoStarTemp,
 							NbodyParticleCreationTimeTemp, NbodyParticleDynamicalTimeTemp) == FAIL) {
-					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+					ENZO_FAIL("Error in grid::CopyNbodyParticlesFirst.");
 				}
 			}
 		}
 		if (count != LocalNumberOfNbodyParticles) {
-			ENZO_FAIL("Error in grid::CopyNbodyParticles.");
+			ENZO_FAIL("Error in grid::CopyNbodyParticlesFirst.");
 		}
 	}
 
@@ -216,7 +221,9 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		/*----------------------------------------------------------*/
 		/******** Send Arrays to Fortran Nbody6++  First Time  *****/
 		/*--------------------------------------------------------*/
-		fprintf(stdout, "ENZO: Waiting for NBODY+ to send data \n");
+		fprintf(stdout, "ENZO: Waiting for NBODY+ to send data (first) \n");
+		fprintf(stderr, "ENZO: Waiting for NBODY+ to send data (first) \n");
+		fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
 		CommunicationInterBarrier();
 		MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 		if (NumberOfNbodyParticles != 0) {

@@ -139,6 +139,8 @@ bool UpdateComputationChain(Particle* ptcl) {
 
 bool CreateComputationChain(std::vector<Particle*> &particle) {
 
+	fprintf(nbpout, "CreateComputationList ...\n");
+	fflush(nbpout);
 	std::vector<int> index{};
 	std::vector<int> sorted_index{};
 	std::vector<double> time{};
@@ -247,80 +249,13 @@ bool CreateComputationChain(std::vector<Particle*> &particle) {
 	index.clear();
 	time.clear();
 
-	return true;
-}
 
-/*
-bool CreateComputationChain(std::vector<Particle*> &particle, std::vector<Particle*> &ComputationChainTmp) {
-	// This stores the first particle of each level in the particle chain
-
-	double NextIrrTime = 0.0;
-	std::vector<double >timesteps{};
-	std::vector<int> index{};
-
-	for (int i=0; i<NNB; i++) {
-		NextIrrTime = particle[i]->CurrentTimeIrr+particle[i]->TimeStepIrr;
-		if (particle[i]->NumberOfAC == 0|| NextIrrTime > NextRegTime)
-			continue;
-		timesteps.push_back(NextIrrTime);
-		index.push_back(i);
-	}
-
-	if (index.size() == 0) {
-		return false;
-	}
-
-#ifdef debug
-	std::cout << "Index" << '\n';
-	for (int i=0; i<NNB; i++) {
-		std::cout << index[i] << ' ';
-	}
-	std::cout << '\n';
-
-	std::cout << "Timesteps" << '\n';
-	for (int i=0; i<NNB; i++) {
-		std::cout << timesteps[i] << ' ';
-	}
-	std::cout << '\n';
-#endif
-
-
-  MergeSort(index, timesteps, 0, index.size()-1);
-
-	ComputationChainTmp.push_back(particle[index[0]]);
-	for (int i=0; i<index.size()-1; i++) {
-		if (timesteps[i] != timesteps[i+1])
-			ComputationChainTmp.push_back(particle[index[i+1]]);
-	}
-
-
-
-#ifdef debug
-	std::cout << "Index" << '\n';
-	for (int i=0; i<NNB; i++) {
-		std::cout << index[i] << ' ';
-	}
-	std::cout << '\n';
-
-	std::cout << "Timesteps" << '\n';
-	for (int i=0; i<NNB; i++) {
-		std::cout << timesteps[i] << ' ';
-	}
-	std::cout << '\n';
-
-#endif
-
-
-	for (Particle* elem: particle) {
-		for (int i=0; i<NNB-1; i++) {
-			if (elem->getPID() == index[i])
-				elem->NextParticle = particle[index[i+1]];
-		}
-	}
+	fprintf(nbpout, "CreateComputationList done (size=%lu).\n",ComputationList.size());
+	fflush(nbpout);
 
 	return true;
 }
-*/
+
 
 
 void Merge(std::vector<int> index, std::vector<double> timesteps, int left, int mid, int right) {

@@ -35,6 +35,7 @@ void Evolve(std::vector<Particle*> &particle) {
 
 	if (NNB < 2) {
 		fprintf(nbpout, "No particle to be calculated ...\n");
+		fflush(nbpout);
 		goto Communication;
 	}
 
@@ -42,7 +43,7 @@ void Evolve(std::vector<Particle*> &particle) {
 
 	while (true)
 	{
-		writeParticle(particle, EnzoCurrentTime, outNum++);
+		//writeParticle(particle, EnzoCurrentTime, outNum++);
 		while (global_time < 1)
 		{
 			// It's time to compute regular force.

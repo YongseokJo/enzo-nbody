@@ -12,7 +12,7 @@ double Particle::evolveStarMass(double t1, double t2) {
 		return 0;
 	}
 
-	double dm;
+	double dm=0;
 
 	switch (StarParticleFeedback) {
 		case 0:
@@ -25,7 +25,8 @@ double Particle::evolveStarMass(double t1, double t2) {
 			break;
 
 		default:
-			std::cout << "EvolveStarMass: Invalid choice" << std::endl;
+			dm = 0;
+			//std::cout << "EvolveStarMass: Invalid choice" << std::endl;
 	}
 
 	return dm;

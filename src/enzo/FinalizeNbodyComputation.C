@@ -46,7 +46,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 	if (LevelArray[level+1] == NULL) {
-		int i, GridNum, LocalNumberOfNbodyParticles, NewLocalNumberOfNbodyParticles;
+		int i, GridNum, LocalNumberOfNbodyParticles=0, NewLocalNumberOfNbodyParticles=0;
 		LevelHierarchyEntry *Temp;
 		int start_index, start_index_new;
 

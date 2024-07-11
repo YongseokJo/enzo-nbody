@@ -28,7 +28,7 @@ Particle::Particle(int *PID, double *Mass, double *CreationTime, double *Dynamic
 	this->NextParticleInEnzo         = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 Particle::Particle(
@@ -57,7 +57,7 @@ int *PID, double *Mass, double *CreationTime, double *DynamicalTime,
 	this->NextParticleInEnzo         = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 
@@ -78,7 +78,7 @@ void Particle::setParticleInfo(double *data, int PID) {
 	this->Velocity[2]  = data[5];
 	this->Mass         = data[6];
 	this->ParticleType = NormalStar+SingleParticle;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 void Particle::setParticleInfo(double *data, int PID, Particle* NextParticleInEnzo) {
@@ -92,7 +92,7 @@ void Particle::setParticleInfo(double *data, int PID, Particle* NextParticleInEn
 	this->Mass         = data[6];
 	this->ParticleType = NormalStar+SingleParticle;
 	this->NextParticleInEnzo = NextParticleInEnzo;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
@@ -106,7 +106,7 @@ void Particle::setParticleInfo(int *PID, double *BackgroundAcceleration[Dim], Pa
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 void Particle::setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim], Particle* NextParticleInEnzo, int i) {
@@ -120,7 +120,7 @@ void Particle::setParticleInfo(double *Mass, double *BackgroundAcceleration[Dim]
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 
@@ -147,7 +147,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *CreationTime, dou
 	this->NextParticleInEnzo         = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 
@@ -174,7 +174,7 @@ void Particle::setParticleInfo(int *PID, double *Mass, double *CreationTime, dou
 	this->NextParticleInEnzo = NextParticleInEnzo;
 	this->CurrentTimeReg             = 0;
 	this->CurrentTimeIrr             = 0;
-	this->RadiusOfAC     = InitialRadiusOfAC;
+	//this->RadiusOfAC     = InitialRadiusOfAC;
 }
 
 

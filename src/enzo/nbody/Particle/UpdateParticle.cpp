@@ -1,4 +1,6 @@
 #include "../global.h"
+#include "../defs.h"
+#include <algorithm>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -141,4 +143,108 @@ void Particle::updateParticle() {
 	Mass = PredMass;
 }
 
+
+
+
+void Particle::UpdateRadius() {
+	if (LocalDensity == 0) {
+		RadiusOfAC = 0.11;
+		LocalDensity = 10;
+	}
+	else {
+		/* exponential (aggressive) */
+		/*
+			 const double c = 0.5;
+			 const double b = std::log(2) / (NumNeighborMax);  // ln(2) / 40
+			 double exp = a * (std::exp(b * NumberOfAC) - 1);
+			 */
+
+		/* n=2 polynomial (mild) as n increases it grows mild */
+		const int n = 3;
+		const double c = (NumNeighborMax-FixNumNeighbor);
+		const double b = 0.5 / pow(c,n);  // ln(2) / 40
+		double x = NumberOfAC-FixNumNeighbor;
+		double a = n%2==0 ? b*std::abs(x)*pow(x,n-1) : b*pow(x,n);
+		RadiusOfAC *= (1-a);
+	}
+	/*
+	if (NumberOfAC > FixNumNeighbor) {
+		if (NumberOfAC > 2*FixNumNeighbor) {
+			RadiusOfAC *= 0.90;
+		}
+		else if (NumberOfAC > 3*FixNumNeighbor) {
+			RadiusOfAC *= 0.80;
+		}
+		else {
+			RadiusOfAC *= 0.95;
+		}
+	}
+	if (NumberOfAC < FixNumNeighbor)
+		RadiusOfAC *= 1.05;
+		*/
+
+	/*
+	double MeanRadius=0, TotalMass=0, LocalDensity0=0;
+	for (Particle *neighbor:ACList) {
+		MeanRadius += neighbor->Mass*dist(Position,neighbor->Position);
+		TotalMass  += neighbor->Mass;
+	}
+	MeanRadius        /= TotalMass/1.2;  // this is the mean radius with some factor
+	LocalDensity0      = TotalMass/std::pow(MeanRadius,3.0);
+
+	if (LocalDensity == 0) {
+		this->RadiusOfAC   = std::pow(LocalDensity0/(this->Mass*FixNumNeighbor), -1.0/3.0); 
+
+		if (LocalDensity0 > 1.3*LocalDensity) 
+			this->RadiusOfAC *= 0.9;
+		else if (LocalDensity0 < 0.7*LocalDensity) 
+			this->RadiusOfAC *= 1.1;
+
+		if (NumberOfAC < FixNumNeighbor/2)
+			this->RadiusOfAC *= 1.2;
+
+		if (NumberOfAC > FixNumNeighbor*2)
+			this->RadiusOfAC *= 0.8;
+	}
+	*/
+
+
+	//this->LocalDensity = LocalDensity0;
+
+	//this->RadiusOfAC   = std::pow(LocalDensity0/(this->Mass*FixNumNeighbor), -1.0/3.0); 
+	//fprintf(stdout, "PID %d : TWR = %.3e, TM=%.3e, LD0=%.3e, RAC=%.3e, mass=%.3e\n", 
+			//PID, MeanRadius, TotalMass, LocalDensity0, RadiusOfAC, Mass);
+	//fflush(stdout); 
+}
+
+
+void Particle::UpdateNeighbor(std::vector<Particle*> &particle) {
+	bool isExcess=false;
+	ACList.clear();
+	NumberOfAC = 0;
+	for (Particle* ptcl:particle) {
+
+		if (ptcl->PID==PID)
+			continue;
+
+		if (dist(Position, ptcl->Position)<this->RadiusOfAC) {
+			ACList.push_back(ptcl);	
+			NumberOfAC++;
+			if (NumberOfAC >= NumNeighborMax) {
+				isExcess = true; 
+				break;
+			}
+		}
+	}
+
+	if (isExcess) {
+		std::cerr << "Number of neighbors exceeded." << std::endl;
+		this->RadiusOfAC *= 0.8;
+		UpdateNeighbor(particle);	
+	}
+	else {
+		std::sort(ACList.begin(),ACList.end(),
+				[](Particle* p1, Particle* p2) { return p1->ParticleOrder < p2->ParticleOrder;});
+	}
+}
 

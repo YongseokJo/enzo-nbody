@@ -242,11 +242,12 @@ void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[], int *Loc
 void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],
 		int *LocalNumberOfNbodyParticles, int *NewLocalNumberOfNbodyParticles) {
 
-	*LocalNumberOfNbodyParticles=0;
-	*NewLocalNumberOfNbodyParticles=0;
+	*LocalNumberOfNbodyParticles    = 0;
+	*NewLocalNumberOfNbodyParticles = 0;
 	int level;
   LevelHierarchyEntry *Temp;
-	NumberOfNbodyParticles = 0;
+	NumberOfNbodyParticles    = 0;
+	NumberOfNewNbodyParticles = 0;
 
 	//fprintf(stderr,"In the FindTotalNbody\n");
 

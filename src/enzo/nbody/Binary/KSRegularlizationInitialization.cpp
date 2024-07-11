@@ -41,6 +41,9 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 		v[dim]    = 0.;
 	}
 
+	//std::sort(particle.begin(),particle.end(),
+				//[](Particle* p1, Particle* p2) { return p1->PID > p2->PID; });
+
 	for (int i=0; i<2; i++) {
 
 		if (i==0) 
@@ -50,8 +53,10 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 
 		// updated the predicted positions and velocities just in case
 		ptcl1->predictParticleSecondOrderIrr(current_time);
-		std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
-		std::sort(particle.begin(),particle.end());
+		//std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
+		std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end(),
+				[](Particle* p1, Particle* p2) { return p1->ParticleOrder < p2->ParticleOrder;});
+
 
 		// initialization of relevant variables 
 		j = 0;
@@ -72,7 +77,7 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 			vr = 0;
 			v2 = 0;
 
-			if (ptcl1 == ptcl2) {
+			if (ptcl1->PID == ptcl2->PID) {
 				continue;
 			}
 
@@ -87,7 +92,7 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 
 			m_r3 = ptcl2->Mass/r2/sqrt(r2); 
 
-			if ((ptcl1->NumberOfAC==0) || (ptcl2 != ptcl1->ACList[j])) {
+			if ((ptcl1->NumberOfAC==0) || j >= ptcl1->NumberOfAC || (ptcl2 != ptcl1->ACList[j])) {
 				for (int dim=0; dim<Dim; dim++) {
 					// Calculate 0th and 1st derivatives of acceleration
 					ptcl1->a_reg[dim][0] += m_r3*x[dim];
@@ -152,7 +157,7 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 		vdf_r2 = 0;
 		rdfdot_r2 = 0;
 
-		if ((ptcl2 == ptclI)||(ptcl2==ptclJ)) {
+		if ((ptcl2->PID == ptclI->PID)||(ptcl2->PID==ptclJ->PID)) {
 			continue;
 		}
 
@@ -187,7 +192,7 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 		c = 3*vdf_r2 + rdfdot_r2 + a*(3*b-4*a*a);
 
 
-		if ((ptcl1->NumberOfAC==0) || (ptcl2 != ptcl1->ACList[j])) {
+		if ((ptcl1->NumberOfAC==0) || j >= ptcl1->NumberOfAC ||(ptcl2 != ptcl1->ACList[j])) {
 			for (int dim=0; dim<Dim; dim++) {
 				adot2 = -ptcl2->Mass*(a1[dim]-a2[dim])/r3-6*a*a21dot[dim]-3*b*a21[dim];
 				adot3 = -ptcl2->Mass*(a1dot[dim]-a2dot[dim])/r3-9*a*adot2-9*b*a21dot[dim]-3*c*a21[dim];
@@ -240,7 +245,7 @@ void Particle::isKSCandidate() {
 	// temporary calculation variables
 	double x[Dim],v[Dim];
 	double r_now2, r_next2;
-	double next_time = CurrentTimeIrr;
+	double current_time;
 	double r_min = 1e8;
 	int numberOfPairCandidate=0;
 	Particle* minPtcl;
@@ -248,7 +253,6 @@ void Particle::isKSCandidate() {
 
 	// predict the particle position to obtain more information
 	// particle regularlized if the conditions are satisfied at a future time
-	this->predictParticleSecondOrderIrr(next_time);
 
 	// need to consider case when c.m particles are the cause of the small steps
 	// need to be added later - CHECK
@@ -259,31 +263,24 @@ void Particle::isKSCandidate() {
 		r_now2 = 0.0;
 		r_next2 = 0.0;
 
-		if ((ptcl->TimeLevelIrr) > (TimeLevelIrr+3) || ptcl->isBinary || ptcl->isCMptcl)
+
+		if ((ptcl->TimeLevelIrr) > (this->TimeLevelIrr+3) || ptcl->isBinary || ptcl->isCMptcl)
 			continue;
 
 
 		// find out what the paired particle is
-		ptcl->predictParticleSecondOrderIrr(CurrentTimeIrr);
-		for (int dim=0; dim<Dim; dim++) {
+		current_time = this->CurrentTimeIrr > ptcl->CurrentTimeIrr ? \
+									 this->CurrentTimeIrr : ptcl->CurrentTimeIrr;
+		this->predictParticleSecondOrderIrr(current_time);
+		ptcl->predictParticleSecondOrderIrr(current_time);
 
-
-			// calculate position and velocity differences
-			x[dim] = ptcl->Position[dim] - this->Position[dim];
-			v[dim] = ptcl->Velocity[dim] - this->Velocity[dim];
-
-			// calculate the square of radius and inner product of r and v for each case
-			r_now2 += x[dim]*x[dim];
-		}
-
-		ptcl->predictParticleSecondOrderIrr(next_time);
 		for (int dim=0; dim<Dim; dim++) {
 			// calculate position and velocity differences
 			x[dim] = ptcl->PredPosition[dim] - this->PredPosition[dim];
 			v[dim] = ptcl->PredVelocity[dim] - this->PredVelocity[dim];
 
 			// calculate the square of radius and inner product of r and v for each case
-			r_next2 += x[dim]*x[dim];
+			r_now2 += x[dim]*x[dim];
 		}
 
 		// find out the close particles
@@ -292,14 +289,6 @@ void Particle::isKSCandidate() {
 			numberOfPairCandidate += 1;
 			if (r_now2<r_min) {
 				r_min = r_now2;
-				minPtcl = ptcl;
-			}
-		}
-
-		if (r_next2<KSDistance) {
-			numberOfPairCandidate += 1;
-			if (r_next2<r_min) {
-				r_min = r_next2;
 				minPtcl = ptcl;
 			}
 		}
@@ -388,10 +377,8 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 
 
 	Particle* ptcl;
-	if (ptclI->CurrentTimeIrr >= ptclJ->CurrentTimeIrr)
-		ptcl = ptclI;
-	else
-		ptcl = ptclJ;
+	ptcl =  ptclI->CurrentTimeIrr >= ptclJ->CurrentTimeIrr \
+					? ptclI : ptclJ;
 
 	fprintf(binout, "The ID of ith particle is %d of %d and %d\n",ptclCM->PID, ptclI->PID, ptclJ->PID);
 	//fflush(binout);
@@ -409,36 +396,36 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	ptclCM->TimeBlockReg    = ptcl->TimeBlockReg;
 	ptclCM->TimeLevelReg    = ptcl->TimeLevelReg;
 
-	ptclCM->PID = -(ptcl->PID + NNB);
+	ptclCM->PID             = -(ptcl->PID + NNB);
 	ptclCM->BinaryParticleI = ptclI;
 	ptclCM->BinaryParticleJ = ptclJ;
-	ptclCM->BinaryInfo = ptclBin;
-	ptclCM->isCMptcl = true;
-	ptclCM->Mass = ptclI->Mass + ptclJ->Mass;
+	ptclCM->BinaryInfo      = ptclBin;
+	ptclCM->isCMptcl        = true;
+	ptclCM->Mass            = ptclI->Mass + ptclJ->Mass;
 	ptclI->predictParticleSecondOrderIrr(ptclCM->CurrentTimeIrr);
 	ptclJ->predictParticleSecondOrderIrr(ptclCM->CurrentTimeIrr);
 	for (int dim=0; dim<Dim; dim++) {
-		ptclCM->Position[dim] = (ptclI->PredPosition[dim]*ptclI->Mass + ptclJ->PredPosition[dim]*ptclJ->Mass)/ptclCM->Mass;
-		ptclCM->Velocity[dim] = (ptclI->PredVelocity[dim]*ptclI->Mass + ptclJ->PredVelocity[dim]*ptclJ->Mass)/ptclCM->Mass;
+		ptclCM->Position[dim]     = (ptclI->PredPosition[dim]*ptclI->Mass + ptclJ->PredPosition[dim]*ptclJ->Mass)/ptclCM->Mass;
+		ptclCM->Velocity[dim]     = (ptclI->PredVelocity[dim]*ptclI->Mass + ptclJ->PredVelocity[dim]*ptclJ->Mass)/ptclCM->Mass;
 		ptclCM->PredPosition[dim] = ptclCM->Position[dim];
 		ptclCM->PredVelocity[dim] = ptclCM->Velocity[dim];
 	}
 
-	ptclBin->ptclCM = ptclCM;
-	ptclBin->CurrentTime = ptcl->CurrentTimeIrr;
+	ptclBin->ptclCM       = ptclCM;
+	ptclBin->CurrentTime  = ptcl->CurrentTimeIrr;
 	// ptclBin->CurrentTau = 0.0; // already initialized at formation, but added for safety.
 	// ptclBin->PredTau = 0.0;
 
 
 
 	// copy the neighbor list for c.m particle
+	ptclCM->NumberOfAC = 0;
 	ptclCM->RadiusOfAC = ptcl->RadiusOfAC;
-	for (Particle* ptcl: ptcl->ACList) {
-		if (ptcl == ptclJ)
+	for (Particle* neighbor: ptcl->ACList) {
+		if (neighbor->PID == ptclJ->PID || neighbor->PID == ptclI->PID)
 			continue;
-		
-		ptclCM->ACList.push_back(ptcl);
-		ptclCM->NumberOfAC += 1;
+		ptclCM->ACList.push_back(neighbor);
+		ptclCM->NumberOfAC++;
 	}
 
 
@@ -471,9 +458,32 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	}
 
 
+
+
+
+
+
 	//update particle vector, nextregtime, computation chain and list
 	ptclI->isErase = true;
 	ptclJ->isErase = true;
+
+	// update ParticleOrder
+	int j=0;
+	for (Particle *ptcl: particle) {
+		ptcl->ParticleOrder -= j;
+		if (ptclI == ptcl || ptclJ == ptcl)
+			j++;
+	}
+
+	/*
+	fprintf(stderr, "particle:");
+	for (Particle* ptcl:particle) {
+		fprintf(stderr, "%d, ", ptcl->PID);
+	}
+	fprintf(stderr, "\n");
+	*/
+
+	// erase particle I and J
 	particle.erase(
 			std::remove_if(particle.begin(), particle.end(),
 				[](Particle* p) {
@@ -484,12 +494,26 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	ptclI->isErase = false;
 	ptclJ->isErase = false;
 
+	/*
+	fprintf(stderr, "particle (%d, %d):", ptclI->PID, ptclJ->PID);
+	for (Particle* ptcl:particle) {
+		fprintf(stderr, "%d, ", ptcl->PID);
+	}
+	fprintf(stderr, "\n");
+	*/
+
+
+	// update particle order and add it to particle vector
+	ptclCM->ParticleOrder=particle.size();
 	particle.push_back(ptclCM);
 	UpdateNextRegTime(particle);
 
   CreateComputationChain(particle);
 	CreateComputationList(FirstComputation);
 
+	// Add the binary to binary integration list
+	//std::cout << "Add the ptclBin to Binary List" << std::endl;
+	BinaryList.push_back(ptclBin);
 
 
 	fprintf(binout, "\nKSRegularlizationInitialization.cpp: result of CM particle value calculation\n");
@@ -523,7 +547,6 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	//fflush(binout);
 
 
-
 	// we also need to change the neighbor list of Particles
 	// assuming that all the neighbors are bidirectional
 	// may need to update later if the radius for neighbor differs depending on the particle
@@ -547,17 +570,13 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 
 		if (size != ptcl->NumberOfAC) {
 			ptcl->ACList.push_back(ptclCM);
+			ptcl->NumberOfAC++;
 		}
 		//fflush(stderr);
 	}
+	// this makes binary particles have their CM particle as a neighbor
 	ptclI->isErase = false;
 	ptclJ->isErase = false;
-
-
-
-	// Add the binary to binary integration list
-	//std::cout << "Add the ptclBin to Binary List" << std::endl;
-	BinaryList.push_back(ptclBin);
 
 	fprintf(binout, "\n---------------------END-OF-NEW-BINARY---------------------\n\n");
 	//fflush(binout);

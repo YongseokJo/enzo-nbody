@@ -116,8 +116,8 @@ void Binary::InitializeBinary(double current_time) {
     ptclJ = ptclCM->BinaryParticleJ;
 
     // just in case
-    ptclI->predictParticleSecondOrder(current_time);
-    ptclJ->predictParticleSecondOrder(current_time);
+    ptclI->predictParticleSecondOrderIrr(current_time);
+    ptclJ->predictParticleSecondOrderIrr(current_time);
 
 
     r2 = 0;
@@ -203,7 +203,7 @@ void Binary::InitializeBinary(double current_time) {
 
     for (Particle* ptcl: ptclCM->ACList) {
 
-        ptcl->predictParticleSecondOrder(current_time);
+        ptcl->predictParticleSecondOrderIrr(current_time);
 
         dr2i = 0.0;
         dr2j = 0.0;

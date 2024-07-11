@@ -16,7 +16,7 @@ void direct_sum(double *x, double *v, double r2, double vx,
 
 	for (int dim=0; dim<Dim; dim++){
 		a[dim]    += mass*_r3*x[dim];
-		adot[dim] += mass*_r3*(v[dim] - 3*x[dim]*vx/r2)+mdot*x[dim]*_r3;
+		adot[dim] += mass*_r3*(v[dim] - 3*x[dim]*vx/r2); //+mdot*x[dim]*_r3;
 	}
 }
 

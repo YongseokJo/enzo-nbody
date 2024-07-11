@@ -205,7 +205,7 @@ struct Result{
 
 struct  Neighbor{
 	int NumNeighbor;
-	int NeighborList[MaxNumNeighbor]; // this needs to be modified.
+	int NeighborList[NumNeighborMax]; // this needs to be modified.
 
 
 	__device__ void clear() {

@@ -43,8 +43,8 @@ int GetUnits(float *DensityUnits, float *LengthUnits,
   }
   else {
       /* Determine the units. */
-      *DensityUnits = GlobalDensityUnits;
-      *MassUnits = GlobalMassUnits;
+      *DensityUnits     = GlobalDensityUnits;
+      *MassUnits        = GlobalMassUnits;
       *LengthUnits      = GlobalLengthUnits;
       *TemperatureUnits = mh*pow(GlobalLengthUnits/GlobalTimeUnits,2)/kboltz;   //K
       *TimeUnits        = GlobalTimeUnits;

@@ -55,16 +55,13 @@ void InitializeParticle(std::vector<Particle*> &particle) {
 
 	UpdateNextRegTime(particle);
 
-	/*
-	RegularList.clear();
 	for (Particle* ptcl:particle) {
 		for (int dim=0; dim<Dim; dim++) {
 			ptcl->PredPosition[dim] =  ptcl->Position[dim];
 			ptcl->PredVelocity[dim] =  ptcl->Velocity[dim];
 		}
-		RegularList.push_back(ptcl);
 	}
-	*/
+
 	fprintf(nbpout, "Initialization finished.\n");
 }
 
@@ -100,6 +97,7 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 	InitializeTimeStep(particle, offset);
 	std::cout << "Timestep finished." << std::endl;
 
+	UpdateNextRegTime(particle);
 	std::cout << "Initialization of New Particles finished." << std::endl;
 }
 
@@ -118,71 +116,32 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 // the particle we want to find the neighbors of and the full particle list
 void FindNeighbor(Particle* ptcl1, std::vector<Particle*> &particle) {
 
-	// No need to find neighbors if the total number of particles is less than 100
-	//if (NNB<=100) return;
+	// update 
+	ptcl1->UpdateRadius();
+	ptcl1->UpdateNeighbor(particle);
 
-	double dx;
-	double r2;
-	double r_max=0;
-	double r_nb[FixNumNeighbor];
-	int index_max, i=0; // nb_index[FixNumNeighbor], 
-	std::vector<int> nb_index(FixNumNeighbor); 
+	/*
+	std::cout << ptcl1->PID << "("<< ptcl1->NumberOfAC <<")" << "=" <<std::flush;
+	for (Particle * nn:ptcl1->ACList) {
+		std::cout << nn->PID << ", ";
+	}
+	std::cout << std::endl;
+	*/
 
-	// search for neighbors for ptcl
-	for (Particle *ptcl2:particle) {
-
-		if  (ptcl1 == ptcl2) {
-			i++;
-			continue;
-		}
-
-		r2 = 0.0;
-		for (int dim=0; dim<Dim; dim++) {
-			dx = ptcl2->Position[dim] - ptcl1->Position[dim];
-			r2 += dx*dx;
-		}
-
-		if (ptcl1->NumberOfAC < FixNumNeighbor) {
-			if (r2 > r_max) {
-				r_max     = r2;
-				index_max = ptcl1->NumberOfAC;
-			}
-			nb_index[ptcl1->NumberOfAC] = i;
-			r_nb[ptcl1->NumberOfAC]   = r2;
-			ptcl1->NumberOfAC++;
-		}
-		else {
-			if ( r2 < r_max) {
-				r_nb[index_max]     = r2;
-				nb_index[index_max] = i;
-				// update new r_max
-				r_max = r2;
-				for (int k=0; k<FixNumNeighbor; k++) {
-					if (r_nb[k] > r_max) {
-						r_max     = r_nb[k];
-						index_max = k;
-					}
-				}
-			}
-		}
-		i++;
-	} // endfor
-
-
+	/*
 	std::sort(nb_index.begin(), nb_index.end());
 	for (int j:nb_index) {
 		ptcl1->ACList.push_back(particle[j]);
 		//std::cout << j << ", ";
 	}
-
-
-	/*
-	fprintf(stdout, "Neighbors of %d : \n", ptcl1->PID);
-	for (Particle* ptcl:ptcl1->ACList) {
-		std::cout << ptcl->PID << ", ";
-	}
-	std::cout << std::endl;
 	*/
+
+
+	fprintf(nbpout, "%d neighbors of %d : ", ptcl1->NumberOfAC, ptcl1->PID);
+	for (Particle* ptcl:ptcl1->ACList) {
+		fprintf(nbpout, "%d, ", ptcl->PID);
+	}
+	fprintf(nbpout, "\n");
 
 	//std::sort(ptcl1->ACList.begin(),ptcl1->ACList.end());
 	//std::cout << "# of Neighbors = " << ptcl1->NumberOfAC << std::endl;
@@ -198,38 +157,66 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 	double r0, r1;
 	double r_max;
 	int index, max_index;
+	bool isExcess=false;
 
-	FindNeighbor(newPtcl, particle);
+	newPtcl->UpdateRadius();
 
-	for (Particle* ptcl: newPtcl->ACList) {
-		index = 0;
-		r_max = 0;
-		max_index = -1;
-
-		r0 = dist2(ptcl->Position, newPtcl->Position);
-
-		for (Particle* neighbor:ptcl->ACList) {
-			if (ptcl == neighbor)
-				continue;
-
-			r1 = dist2(ptcl->Position, neighbor->Position);
-
-			if (r1 > r_max) {
-				r_max = r1;
-				max_index = index;
+	for (Particle* ptcl: particle) {
+		if (ptcl->PID == newPtcl->PID)
+			continue;
+		r0 = dist(ptcl->Position, newPtcl->Position);
+		if (r0 < newPtcl->RadiusOfAC) {
+			if (newPtcl->NumberOfAC < NumNeighborMax)
+				newPtcl->ACList.push_back(ptcl);
+			else {
+				newPtcl->NumberOfAC *= 0.8;
+				isExcess = true;
 			}
-
-			index++;
 		}
 
-		if (r0 < r_max) {
-			if (max_index == -1 || r_max == 0) {
-				fprintf(stderr, "Max Index = %d, r_max = %e\n", max_index, r_max);
-				throw std::runtime_error("Fatal Error in FindNewNeighbor.cpp\n");	
+		if (r0 < ptcl->RadiusOfAC) {
+			if (newPtcl->NumberOfAC < NumNeighborMax)
+				ptcl->ACList.push_back(ptcl);
+			else {
+				index = 0;
+				r_max = 0;
+				max_index = -1;
+				ptcl->NumberOfAC *= 0.8;
+				for (Particle* neighbor:ptcl->ACList) {
+					if (ptcl == neighbor)
+						continue;
+
+					r1 = dist(ptcl->Position, neighbor->Position);
+
+					if (r1 > r_max) {
+						r_max = r1;
+						max_index = index;
+					}
+
+					index++;
+				}
+
+				if (r0 < r_max) {
+					if (max_index == -1 || r_max == 0) {
+						fprintf(stderr, "Max Index = %d, r_max = %e\n", max_index, r_max);
+						throw std::runtime_error("Fatal Error in FindNewNeighbor.cpp\n");	
+					}
+					ptcl->ACList.erase(ptcl->ACList.begin() + max_index);
+					ptcl->ACList.push_back(newPtcl);
+				}
 			}
-			ptcl->ACList.erase(ptcl->ACList.begin() + max_index);
-			ptcl->ACList.push_back(newPtcl);
 		}
+	}
+
+	if (isExcess) {
+		std::cerr << "Number of neighbors exceeded." << std::endl;
+		newPtcl->RadiusOfAC *= 0.8;
+		newPtcl->UpdateNeighbor(particle);	
+	}
+	else {
+		newPtcl->NumberOfAC = newPtcl->ACList.size();
+		std::sort(newPtcl->ACList.begin(),newPtcl->ACList.end(),
+				[](Particle* p1, Particle* p2) { return p1->ParticleOrder < p2->ParticleOrder;});
 	}
 
 	return ;
@@ -242,7 +229,8 @@ void ReInitializeKSParticle(Particle* KSParticle, std::vector<Particle*> &partic
 
 	std::cout << "Finding Neighbors... \n" << std::endl;	
 	KSParticle->ACList.clear();
-	FindNeighbor(KSParticle, particle);
+	KSParticle->UpdateRadius();
+	KSParticle->UpdateNeighbor(particle);
 
 	std::cout << "Calculating Acceleration... \n" << std::endl;	
 
@@ -321,6 +309,9 @@ void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle) 
 			v2    += v[dim]*v[dim];
 		}
 
+		if (r2 < EPS2)
+			r2 = EPS2;  // add softening length
+
 		m_r3 = ptcl2->Mass/r2/sqrt(r2); 
 
 		if ((ptcl1->NumberOfAC==0) || (ptcl2 != ptcl1->ACList[j])) {
@@ -397,6 +388,9 @@ void CalculateAcceleration23(Particle* ptcl1, std::vector<Particle*> &particle) 
 			vr        += v[dim]*x[dim];
 			v2        += v[dim]*v[dim];
 		}
+
+		if (r2 < EPS2)
+			r2 = EPS2;  // add softening length
 
 		r3   = r2*sqrt(r2);
 		m_r3 = ptcl2->Mass/r3; 
@@ -530,6 +524,9 @@ void CalculateAcceleration23_new(Particle* ptcl1, std::vector<Particle*> &partic
 		if (r2 > 0.2 || (ptcl2 != ptcl1->ACList[j]))
 			continue;
 			*/
+
+		if (r2 < EPS2)
+			r2 = EPS2;  // add softening length
 
 		a13 = 1/r2;
 		a14 = ptcl2->Mass*a13*sqrt(a13);
