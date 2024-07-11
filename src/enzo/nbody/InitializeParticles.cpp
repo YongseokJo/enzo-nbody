@@ -87,10 +87,18 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 		CalculateAcceleration23(particle[offset+i], particle);
 
 		for (int dim=0; dim<Dim; dim++) {
-			particle[i]->PredPosition[dim] =  particle[i]->Position[dim];
-			particle[i]->PredVelocity[dim] =  particle[i]->Velocity[dim];
+			particle[offset+i]->PredPosition[dim] =  particle[offset+i]->Position[dim];
+			particle[offset+i]->PredVelocity[dim] =  particle[offset+i]->Velocity[dim];
 		}
-		particle[i]->PredMass =  particle[i]->Mass;
+		particle[offset+i]->PredMass =  particle[offset+i]->Mass;
+
+
+		fprintf(nbpout, "%d neighbors of %d : ",
+			 	particle[offset+i]->NumberOfAC, particle[offset+i]->PID);
+		for (Particle* ptcl:particle[offset+i]->ACList) {
+			fprintf(nbpout, "%d, ", ptcl->PID);
+		}
+		fprintf(nbpout, "\n");
 	}
 
 	std::cout << "Timestep initializing..." << std::endl;
@@ -99,6 +107,8 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 
 	UpdateNextRegTime(particle);
 	std::cout << "Initialization of New Particles finished." << std::endl;
+
+
 }
 
 
@@ -166,22 +176,24 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 			continue;
 		r0 = dist(ptcl->Position, newPtcl->Position);
 		if (r0 < newPtcl->RadiusOfAC) {
-			if (newPtcl->NumberOfAC < NumNeighborMax)
+			if (newPtcl->NumberOfAC < NumNeighborMax) {
 				newPtcl->ACList.push_back(ptcl);
-			else {
-				newPtcl->NumberOfAC *= 0.8;
-				isExcess = true;
+				newPtcl->NumberOfAC++;
 			}
+			else 
+				isExcess = true;
 		}
 
 		if (r0 < ptcl->RadiusOfAC) {
-			if (newPtcl->NumberOfAC < NumNeighborMax)
+			if (newPtcl->NumberOfAC < NumNeighborMax) {
 				ptcl->ACList.push_back(ptcl);
+				ptcl->NumberOfAC++;
+			}
 			else {
 				index = 0;
 				r_max = 0;
 				max_index = -1;
-				ptcl->NumberOfAC *= 0.8;
+				ptcl->RadiusOfAC *= 0.9;
 				for (Particle* neighbor:ptcl->ACList) {
 					if (ptcl == neighbor)
 						continue;
@@ -218,7 +230,6 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 		std::sort(newPtcl->ACList.begin(),newPtcl->ACList.end(),
 				[](Particle* p1, Particle* p2) { return p1->ParticleOrder < p2->ParticleOrder;});
 	}
-
 	return ;
 }
 

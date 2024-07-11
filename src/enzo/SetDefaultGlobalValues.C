@@ -828,6 +828,7 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
 	NbodyBinaryDistance = 0.0002;
 	NbodyBinaryTimeStep = 2e-5;
 	NbodyNewStarToNbody = 0;
+	NbodyRestartStarToNbody = 0;
 #endif
 
   UseFloor		     = 0;

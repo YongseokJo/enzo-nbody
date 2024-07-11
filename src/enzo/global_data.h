@@ -71,6 +71,7 @@ EXTERN int NbodyBinaryRegularization;
 EXTERN float NbodyBinaryDistance;
 EXTERN float NbodyBinaryTimeStep;
 EXTERN int NbodyNewStarToNbody;
+EXTERN int NbodyRestartStarToNbody;
 
 /* by YS, MPI COMMs*/
 extern MPI_Comm enzo_comm;

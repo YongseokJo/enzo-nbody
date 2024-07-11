@@ -33,7 +33,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	int *PID;
 	double *Mass, *Position[Dim], *Velocity[Dim], *BackgroundAcceleration[Dim];
 	double *CreationTime, *DynamicalTime;
-	double TimeStep, TimeUnits, LengthUnits, VelocityUnits, MassUnits;
+	double TimeStep, TimeUnits, LengthUnits, VelocityUnits, DensityUnits;//MassUnits;
 
 	MPI_Request request;
 	MPI_Status status;
@@ -70,7 +70,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&TimeStep,                 1, MPI_DOUBLE, 0,  600, inter_comm, &status);
 	MPI_Recv(&TimeUnits,                1, MPI_DOUBLE, 0,  700, inter_comm, &status);
 	MPI_Recv(&LengthUnits,              1, MPI_DOUBLE, 0,  800, inter_comm, &status);
-	MPI_Recv(&MassUnits,                1, MPI_DOUBLE, 0,  900, inter_comm, &status);
+	MPI_Recv(&DensityUnits,             1, MPI_DOUBLE, 0,  900, inter_comm, &status);
 	MPI_Recv(&VelocityUnits,            1, MPI_DOUBLE, 0, 1000, inter_comm, &status);
 	MPI_Recv(&StarParticleFeedback    , 1, MPI_INT   , 0, 1100, inter_comm, &status);
 	MPI_Recv(&StarMassEjectionFraction, 1, MPI_DOUBLE, 0, 1200, inter_comm, &status);
@@ -89,7 +89,8 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 
 	// Enzo to Nbody unit convertors
-	EnzoMass         = MassUnits/Msun/mass_unit;
+	//EnzoMass         = MassUnits/Msun/mass_unit;
+	EnzoMass         = DensityUnits*pow(LengthUnits,3.)/Msun/mass_unit;
 	EnzoLength       = LengthUnits/pc/position_unit;
 	EnzoVelocity     = VelocityUnits/pc*yr/velocity_unit;
 	EnzoTime         = TimeUnits/yr/time_unit;
@@ -150,9 +151,9 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
-				Position[dim][i]               -= ClusterPosition[dim];
-				Velocity[dim][i]               -= ClusterVelocity[dim];
+				//BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+				//Position[dim][i]               -= ClusterPosition[dim];
+				//Velocity[dim][i]               -= ClusterVelocity[dim];
 			}
 
 			particle.push_back(new Particle(PID, Mass, CreationTime, DynamicalTime, Position, Velocity,
@@ -181,6 +182,21 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 		std::cerr << "nbody Mass   :" << Mass[0]*EnzoMass << std::endl;
 		std::cerr << "CreationTime :" << CreationTime[0] << std::endl;
 		std::cerr << "DynamicalTime:" << DynamicalTime[0] << std::endl;
+
+	for (Particle* ptcl:particle) {
+		fprintf(nbpout, "NBODY0: PID=%d\n", ptcl->PID);
+		fprintf(nbpout, "NBODY0: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass*mass_unit);
+		fprintf(nbpout, "NBODY0: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+				ptcl->Velocity[0]*velocity_unit/yr*pc/1e5, ptcl->Velocity[1]*velocity_unit/yr*pc/1e5, ptcl->Velocity[2]*velocity_unit/yr*pc/1e5);
+		fprintf(nbpout, "NBODY0: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->Position[0]*position_unit, ptcl->Position[1]*position_unit, ptcl->Position[2]*position_unit);
+		fprintf(nbpout, "NBODY0: Acc  Of regs=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_reg[0][0], ptcl->a_reg[1][0], ptcl->a_reg[2][0]);
+		fprintf(nbpout, "NBODY0: Acc  Of irrs=(%.3e, %.3e, %.3e)\n",
+				ptcl->a_irr[0][0], ptcl->a_irr[1][0], ptcl->a_irr[2][0]);
+		fprintf(nbpout, "NBODY0: Back Acc  Of news=(%.3e, %.3e, %.3e)\n",
+				ptcl->BackgroundAcceleration[0], ptcl->BackgroundAcceleration[1], ptcl->BackgroundAcceleration[2]);
+	}
 
 		delete [] PID;
 		delete [] Mass;
@@ -461,6 +477,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		// This includes modification of regular force and irregular force
 	}
 
+	// update particle order 
 	i=0;
 	for (Particle* ptcl:particle) {
 		ptcl->ParticleOrder = i;
@@ -470,7 +487,9 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	/* Initialize New Particles */
 	InitializeNewParticle(particle, NNB);
 
-	for (Particle* ptcl:particle) {
+	Particle* ptcl;
+	for (int i=0; i<newNNB; i++) {
+		ptcl = particle[NNB+i];
 		fprintf(nbpout, "NBODY2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
 		fprintf(nbpout, "NBODY2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
 				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
