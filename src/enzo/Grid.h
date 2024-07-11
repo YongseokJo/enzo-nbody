@@ -1760,32 +1760,37 @@ class grid
 
 #ifdef NBODY
 		/* */
-		void SetNumberOfNbodyParticles(void){
+		void SetNumberOfNbodyParticles(void) {
+			if (MyProcessorNumber != ProcessorNumber) return;
 			int i, count=0, count_new=0;
-			if (MyProcessorNumber == ProcessorNumber) 
 				for (i=0; i<NumberOfParticles; i++) {
 					//fprintf(stderr,"ParticleType: %d", ParticleType[i]);
 					if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
 						count++;
 					}
 					if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-						count_new++;
+						if (NbodyFirst) {
+							ParticleType[i] = PARTICLE_TYPE_NBODY_NEW+10;
+							fprintf(stderr, "Something's wrong");
+						}
+						else
+							count_new++;
 					}
 				}
-			NumberOfNbodyParticlesInGrid = count;
-			NumberOfNewNbodyParticlesInGrid = count_new;
+				NumberOfNbodyParticlesInGrid = count;
+				NumberOfNewNbodyParticlesInGrid = count_new;
 		}
 
 		/* */
 		int ReturnNumberOfNbodyParticles(void){
-			if (MyProcessorNumber == ProcessorNumber) 
+			if (MyProcessorNumber == ProcessorNumber)
 				return NumberOfNbodyParticlesInGrid;
 			else
 				return 0;
 		}
 
 		int ReturnNumberOfNewNbodyParticles(void){
-			if (MyProcessorNumber == ProcessorNumber) 
+			if (MyProcessorNumber == ProcessorNumber)
 				return NumberOfNewNbodyParticlesInGrid;
 			else
 				return 0;

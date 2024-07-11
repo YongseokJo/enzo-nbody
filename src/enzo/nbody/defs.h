@@ -19,7 +19,7 @@
  * Some parameters
  *********************************************************************/
 #define MIN_LEVEL_BUFFER 30
-#define MaxNumNeighbor   100
+#define NumNeighborMax   100
 
 
 /*********************************************************************

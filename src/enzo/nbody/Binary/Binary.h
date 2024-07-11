@@ -20,7 +20,6 @@ class Binary
 		bool isTerminate;
 		bool isErase;
 
-
 		// information of binary particles in cartesian coordinates
 		double Mass;
 

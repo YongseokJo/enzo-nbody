@@ -13,32 +13,16 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	int TimeLevelTmp, TimeLevelTmp0;
 	ULL TimeBlockTmp;
 
-	if (this->NumberOfAC == 0)
+	if (this->NumberOfAC == 0) {
+		TimeLevelIrr = TimeLevelReg;
+		TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
+		TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
 		return;
+	}
 
 	getBlockTimeStep(getNewTimeStepIrr(a_tot, a_irr), TimeLevelTmp, TimeBlockTmp, TimeStepTmp);
 	TimeLevelTmp0 = TimeLevelTmp;
 
-	/*
-	if (PID == 965) {
-		fprintf(stderr, "stepirr=%.3e, levelirr=%d, blockirr=%llu\n", TimeStepTmp, TimeLevelTmp, TimeBlockTmp);
-		fprintf(stderr, "currentblokirr=%llu, nexttimereg=%llu \n", CurrentBlockIrr, NextRegTimeBlock);
-		fprintf(stderr, "currentblockreg=%llu, levelreg=%d, blockreg=%llu\n", CurrentBlockReg, TimeLevelReg, TimeBlockReg);
-	}
-	*/
-
-	/*
-	if (NextRegTimeBlock < TimeBlockReg && isRegular) {
-		fprintf(stderr, "PID=%d, NextRegTimeBlock=%llu, TimeBlockReg=%llu\n", PID, NextRegTimeBlock, TimeBlockReg);
-	}
-	*/
-
-	/*
-	if (PID == 430) {
-		std::cerr << "Before TimeLevelIrr=" << TimeLevelIrr << ", TimeLevelReg="<< TimeLevelReg << std::endl;
-		std::cerr << "       TimeLevelTmp=" << TimeLevelTmp << std::endl;
-	}
-	*/
 
 	if (TimeLevelTmp > TimeLevelIrr) {
 		if (fmod(CurrentBlockIrr, 2*TimeBlockIrr)==0) {
@@ -64,25 +48,8 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 		TimeBlockTmp = TimeBlockIrr;
 	}
 
-	/*
-	if (PID == 430) {
-		std::cerr << "Middle TimeLevelTmp=" << TimeLevelTmp << std::endl;
-		std::cerr << std::endl;
-	}
-	*/
 
-	//std::cout << "TimeStepIrrTmp=" << TimeStepIrrTmp << std::endl;
 	while (((CurrentBlockIrr < CurrentBlockReg+TimeBlockReg) && (CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg)) || (TimeLevelTmp >= TimeLevelReg)) {
-		/*
-		fprintf(stderr,"CurrentBlockIrr = %llu\n",
-				CurrentBlockIrr);
-		fprintf(stderr,"CurrentBlockReg = %llu\n",
-				CurrentBlockReg);
-		fprintf(stderr,"TimeBlockReg    = %llu\n",
-				TimeBlockReg);
-		fprintf(stderr,"TimeBlockIrr    = %llu\n",
-				TimeBlockIrr);
-				*/
 		if (TimeLevelTmp > TimeLevelReg)
 			fprintf(stderr, "PID=%d, Irr=%d, Reg=%d\n", PID, TimeLevelTmp0, TimeLevelReg);
 

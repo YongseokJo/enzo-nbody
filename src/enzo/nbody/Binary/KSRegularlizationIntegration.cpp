@@ -19,17 +19,16 @@ void Binary::KSIntegration(double next_time, int &calnum){
     double binaryCalTime;
 
     calnum = 0;
-
-    while ((CurrentTime + TimeStep) <= next_time) {
+    //while ((CurrentTime + TimeStep) <= next_time) {
+    do {
 
         // first predict the future position of the binary particle. 
-
         binaryCalTime = CurrentTime + TimeStep;
         calnum += 1;
 
         //fprintf(binout,"-----------------------------------------------------------------------------------------------\n");
-        //fprintf(binout, "In KSRegularlizationIntegration.cpp KSIntegration, after position prediction for %dth time\n",calnum);
-	//fflush(binout);
+				//fprintf(binout, "In KSRegularlizationIntegration.cpp KSIntegration, after position prediction for %dth time\n",calnum);
+				//fflush(binout);
 
 
         predictBinary(binaryCalTime);
@@ -37,7 +36,7 @@ void Binary::KSIntegration(double next_time, int &calnum){
         // if there are zero neighbors for binary particles, calculate by unperturbed equations
 
         IntegrateBinary(binaryCalTime);
-    }
+    } while ((CurrentTime + TimeStep) <= next_time);
 
     if ((r>2*r0)||(TimeStep>2*KSTime)) {
         isTerminate = true;
@@ -97,10 +96,10 @@ void Binary::predictBinary(double next_time) {
     // the binary particle prediction consists of two parts
     // first, we need to predict the future position of the center of mass
 
-    for (int dim=0; dim<Dim; dim++) {
-		ptclCM->PredPosition[dim] = ptclCM->Position[dim] + ptclCM->Velocity[dim]*dtCM + ptclCM->a_tot[dim][0]*dt2CM/2 + ptclCM->a_tot[dim][1]*dt3CM/6;
-		ptclCM->PredVelocity[dim] = ptclCM->Velocity[dim] + ptclCM->a_tot[dim][0]*dtCM + ptclCM->a_tot[dim][1]*dt2CM/2;
-	}
+		for (int dim=0; dim<Dim; dim++) {
+			ptclCM->PredPosition[dim] = ptclCM->Position[dim] + ptclCM->Velocity[dim]*dtCM + ptclCM->a_tot[dim][0]*dt2CM/2 + ptclCM->a_tot[dim][1]*dt3CM/6;
+			ptclCM->PredVelocity[dim] = ptclCM->Velocity[dim] + ptclCM->a_tot[dim][0]*dtCM + ptclCM->a_tot[dim][1]*dt2CM/2;
+		}
 
 
     // then we need to convey this information to the single particles as well
@@ -229,7 +228,6 @@ void Binary::IntegrateBinary(double next_time) {
     Particle* ptclJ;
 
     // variables for updating time step
-    
     int TimeLevelTmp;
     double TimeStepTmp;
 
@@ -260,10 +258,10 @@ void Binary::IntegrateBinary(double next_time) {
     }
 
 
-    if (ptclCM->NumberOfAC >1) {
+    if (ptclCM->NumberOfAC > 0) {
 
         for (Particle* ptcl: ptclCM->ACList) {
-            ptcl->predictParticleSecondOrder(next_time);
+            ptcl->predictParticleSecondOrderIrr(next_time);
         }
 
         // predict the positions of binary pair particles to highest order possible
@@ -505,7 +503,7 @@ void Binary::IntegrateBinary(double next_time) {
     CurrentTime = next_time;
     CurrentTau += dtau;
 
-    dtau_temp = std::min(r/ptclCM->Mass,0.5*abs(h));
+    dtau_temp = std::min(r/ptclCM->Mass,0.5*std::abs(h));
     dtau = 0.8*eta*sqrt(dtau_temp)/pow((1 + 1000.0 * gamma), 1.0/3.0);
 
     dtau2 = dtau*dtau;

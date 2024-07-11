@@ -18,13 +18,10 @@ double getNewTimeStepReg(double v[3], double df[3][4]) {
 	v2     = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 
 
-	double dta, dtb = -1;
-  dta  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
-	dta  = std::sqrt(eta*dta);
-	if (F2 != 0)
-		dtb = std::sqrt(eta*v2/F2);
-	//return std::max(dta, dtb);
-	return dta;
+  TimeStep  = (std::sqrt(v2*Fdot2)+F2)/(std::sqrt(F2*F2dot2)+Fdot2);
+	TimeStep  = std::sqrt(eta*TimeStep);
+
+	return TimeStep;
 }
 
 
@@ -38,30 +35,9 @@ double getNewTimeStepIrr(double f[3][4], double df[3][4]) {
 	F3dot2 = df[0][3]*df[0][3] + df[1][3]*df[1][3] + df[2][3]*df[2][3];
 
 
-	/*
-	else if  (F2 == 0 && F2dot2 != 0)
-		DivergentPrevent = 1 ; //std::sqrt(F2/Fdot2/dt);
-	else if (F2 != 0 && F2dot2 == 0)
-		DivergentPrevent = 1 ; //std::sqrt(F2/Fdot2/dt);
-													 */
-	//fprintf(stdout, "NBODY+: f dots: %e, %e, %e, %e\n", F2, Fdot2, F2dot2, F3dot2);
-	/*
-	if (F2 != 0 && F2dot2 != 0 && dt != 0) {
-		DivergentPrevent = std::sqrt(F2/Fdot2)/dt;
-		fprintf(stdout, "F2 = %e, F2dot2 = %e, dt = %e\n", F2, F2dot2, dt);
-		fprintf(stdout, "DivergentPrevent = %e\n", DivergentPrevent);
-	}
-	else {
-		DivergentPrevent = 1;
-	}
-	*/
 
   TimeStep  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
-  //TimeStep  = F2/Fdot2;
-	//TimeStep  = std::sqrt(DivergentPrevent*eta*TimeStep);
 	TimeStep  = std::sqrt(eta*TimeStep);
-	//std::cout<< TimeStep << " ";
-	//exit(EXIT_FAILURE); 
 	return TimeStep;
 }
 
@@ -75,30 +51,8 @@ double getNewTimeStep(double f[3][4], double df[3][4]) {
 	F3dot2 = df[0][3]*df[0][3] + df[1][3]*df[1][3] + df[2][3]*df[2][3];
 
 
-	/*
-	else if  (F2 == 0 && F2dot2 != 0)
-		DivergentPrevent = 1 ; //std::sqrt(F2/Fdot2/dt);
-	else if (F2 != 0 && F2dot2 == 0)
-		DivergentPrevent = 1 ; //std::sqrt(F2/Fdot2/dt);
-													 */
-	//fprintf(stdout, "NBODY+: f dots: %e, %e, %e, %e\n", F2, Fdot2, F2dot2, F3dot2);
-	/*
-	if (F2 != 0 && F2dot2 != 0 && dt != 0) {
-		DivergentPrevent = std::sqrt(F2/Fdot2)/dt;
-		fprintf(stdout, "F2 = %e, F2dot2 = %e, dt = %e\n", F2, F2dot2, dt);
-		fprintf(stdout, "DivergentPrevent = %e\n", DivergentPrevent);
-	}
-	else {
-		DivergentPrevent = 1;
-	}
-	*/
-
   TimeStep  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
-  //TimeStep  = F2/Fdot2;
-	//TimeStep  = std::sqrt(DivergentPrevent*eta*TimeStep);
 	TimeStep  = std::sqrt(eta*TimeStep);
-	//std::cout<< TimeStep << " ";
-	//exit(EXIT_FAILURE); 
 	return TimeStep;
 }
 

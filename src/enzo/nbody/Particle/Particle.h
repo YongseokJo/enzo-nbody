@@ -20,6 +20,7 @@ class Particle
 		//
 
 	public:
+		int ParticleOrder;
 		int PID;
 		int ParticleType;
 		double Mass;
@@ -51,6 +52,7 @@ class Particle
 		double a_reg[Dim][HERMITE_ORDER];
 		double a_irr[Dim][HERMITE_ORDER];
 		double BackgroundAcceleration[Dim];
+		double LocalDensity;
 		Particle* NextParticleInEnzo;
 		Particle* NextParticleForComputation;
 		Particle* BinaryPairParticle;
@@ -87,18 +89,19 @@ class Particle
 			NumberOfAC      = 0; // number of neighbors
 			RadiusOfAC      = -1;
 			ParticleType    = -9999;
-			CurrentTimeIrr  = 0.; // consistent with actual current time
-			CurrentTimeReg  = 0.;
+			CurrentTimeIrr  = 0; // consistent with actual current time
+			CurrentTimeReg  = 0;
 			CurrentBlockIrr = 0; // consistent with actual current time
 			CurrentBlockReg = 0;
-			PredTimeIrr     = 0;
-			PredTimeReg     = 0;
-			TimeStepIrr     = 0;
-			TimeStepReg     = 0;
+			PredTimeIrr     = 0.;
+			PredTimeReg     = 0.;
+			TimeStepIrr     = 0.;
+			TimeStepReg     = 0.;
 			TimeLevelIrr    = 0;
 			TimeLevelReg    = 0;
 			TimeBlockIrr    = 0;
 			TimeBlockReg    = 0;
+			LocalDensity    = 0.;
 			isStarEvolution = false;
 			isBinary        = false;
 			isCMptcl        = false;
@@ -122,6 +125,7 @@ class Particle
 			BinaryParticleI = nullptr;
 			BinaryParticleJ = nullptr;
 			BinaryInfo      = nullptr;
+			ACList.clear();
 		}
 
 
@@ -167,9 +171,22 @@ class Particle
 		void isKSCandidate();
 		void convertBinaryCoordinatesToCartesian();
 		void polynomialPrediction(double current_time);
+		void UpdateRadius();
+		void UpdateNeighbor(std::vector<Particle*> &particle);
 
 		//destructor
-    ~Particle() = default;
+		~Particle() {
+			ACList.clear();
+			// Deallocate memory
+			ACList.shrink_to_fit();
+			NextParticleInEnzo         = nullptr;
+			NextParticleForComputation = nullptr;
+			BinaryPairParticle         = nullptr;
+			BinaryParticleI            = nullptr;
+			BinaryParticleJ            = nullptr;
+			BinaryInfo                 = nullptr;
+			fprintf(stderr, "deleting particle, pid=%d\n", PID);
+		};
 };
 
 

@@ -82,6 +82,7 @@ extern MPI_Comm nbody_comm;
 extern bool IsOutput;
 extern double outputTime;
 extern double outputTimeStep;
+extern int outNum;
 
 extern FILE* binout; // binary output
 extern FILE* nbpout; // nbody+ output

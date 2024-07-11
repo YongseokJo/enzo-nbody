@@ -96,7 +96,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	}
 
 	// send the arrays to GPU
-	SendToDevice(&NNB, MassSend, PositionSend, VelocitySend, MdotSend, &FixNumNeighbor);
+	//SendToDevice(&NNB, MassSend, PositionSend, VelocitySend, MdotSend, &FixNumNeighbor);
 
 
 	// calculate the force by sending the particles to GPU in multiples of 1024
@@ -349,6 +349,8 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	double * Mdot;
 	double(*Position)[Dim];
 	double(*Velocity)[Dim];
+	int size = (int) particle.size();
+	int num=100; // this is garbage
 
 	// allocate memory to the temporary variables
 	Mass     = new double[NNB];
@@ -357,7 +359,7 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	Velocity = new double[NNB][Dim];
 
 	// copy the data of particles to the arrays to be sent
-	for (int i=0; i<NNB; i++) {
+	for (int i=0; i<size; i++) {
 		Mass[i] = particle[i]->PredMass;
 		Mdot[i] = 0; //particle[i]->Mass;
 		if (particle[i]->NumberOfAC == 0)	
@@ -372,7 +374,7 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	}
 
 	// send the arrays to GPU
-	SendToDevice(&NNB, Mass, Position, Velocity, Mdot, &FixNumNeighbor);
+	SendToDevice(&size, Mass, Position, Velocity, Mdot, &num);
 
 	// free the temporary variables
 	delete[] Mass;

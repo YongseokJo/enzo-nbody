@@ -90,13 +90,13 @@ int writeParticle(std::vector<Particle*> &particle, double current_time, int out
 			if (ptcl->isCMptcl)  {
 				ptcl->convertBinaryCoordinatesToCartesian();
 				write_out(output, ptcl->BinaryParticleI);
-				write_neighbor(output_nn, ptcl->BinaryParticleI);
+				//write_neighbor(output_nn, ptcl->BinaryParticleI);
 				write_out(output, ptcl->BinaryParticleJ);
-				write_neighbor(output_nn, ptcl->BinaryParticleJ);
+				//write_neighbor(output_nn, ptcl->BinaryParticleJ);
 			}
 			else {
 				write_out(output, ptcl);
-				write_neighbor(output_nn, ptcl);
+				//write_neighbor(output_nn, ptcl);
 			}
     }
 
@@ -116,23 +116,26 @@ void write_out(std::ofstream& outputFile, const Particle* ptcl) {
         outputFile  << std::left
 										<< std::setw(width) << ptcl->PID
 										<< std::setw(width) << ptcl->Mass*mass_unit
-                    << std::setw(width) << ptcl->Position[0]*position_unit
-                    << std::setw(width) << ptcl->Position[1]*position_unit
-                    << std::setw(width) << ptcl->Position[2]*position_unit
-                    << std::setw(width) << ptcl->Velocity[0]*velocity_unit/yr*pc/1e5
-                    << std::setw(width) << ptcl->Velocity[1]*velocity_unit/yr*pc/1e5
-                    << std::setw(width) << ptcl->Velocity[2]*velocity_unit/yr*pc/1e5 << '\n';
+                    << std::setw(width) << ptcl->PredPosition[0]*position_unit
+                    << std::setw(width) << ptcl->PredPosition[1]*position_unit
+                    << std::setw(width) << ptcl->PredPosition[2]*position_unit
+                    << std::setw(width) << ptcl->PredVelocity[0]*velocity_unit/yr*pc/1e5
+                    << std::setw(width) << ptcl->PredVelocity[1]*velocity_unit/yr*pc/1e5
+                    << std::setw(width) << ptcl->PredVelocity[2]*velocity_unit/yr*pc/1e5
+										<< std::endl;
+
+
 }
 
 
 void write_neighbor(std::ofstream& outputFile, const Particle* ptcl) {
 	outputFile  << std::left\
-			<< std::setw(width) << ptcl->PID << " = [" ;
+			<< std::setw(width) << ptcl->PID << " = " ;
 	for (Particle* nn:ptcl->ACList) {
 			outputFile << nn->PID << ", ";
 	
 	}
-	outputFile << "]\n";
+	outputFile << "\n";
 
 }
 

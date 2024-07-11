@@ -15,7 +15,8 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 			if (ptcl->CurrentBlockReg >= ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg != ptcl->CurrentBlockIrr)
 				fprintf(nbpout,"-------error--------------------------------------------------------------------------------- \n");
 			fprintf(nbpout, "PID=%d, CurrentTime (Irr, Reg) = (%.3e(%llu), %.3e(%llu)) Myr, NextRegTime= %.3e Myr(%llu),\n"\
-					"dtIrr = %.4e Myr, dtReg = %.4e Myr, blockIrr=%llu (%d), blockReg=%llu (%d), nn=%d\na_tot=%.3e, back=%.3e\n",
+					"dtIrr = %.4e Myr, dtReg = %.4e Myr, blockIrr=%llu (%d), blockReg=%llu (%d), nn=%d, RAC=%.4e"\
+					"\na_tot=%.3e, back=%.3e\n",
 					ptcl->PID,
 					ptcl->CurrentTimeIrr*EnzoTimeStep*1e10/1e6,
 					ptcl->CurrentBlockIrr,
@@ -30,6 +31,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 					ptcl->TimeBlockReg,
 					ptcl->TimeLevelReg,
 					ptcl->NumberOfAC,
+					ptcl->RadiusOfAC,
 					ptcl->a_tot[0][0],
 					ptcl->BackgroundAcceleration[0]
 					);
@@ -75,6 +77,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 	}
 
 	fprintf(nbpout, "Finishing regular force ...\n");
+	fflush(nbpout);
 
 	//global_time = NextRegTimeBlock*time_step;
 	return true;

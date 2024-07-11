@@ -39,14 +39,23 @@ static bool is_open = false;
 static bool devinit = false;
 static bool first   = true;
 static int variable_size;
-const int memory_size = 512;
 //BackgroundParticle *h_background, *d_background;
-BackgroundParticle *h_background; //, *background;
-BackgroundParticle *d_background;
-Result *h_result, *d_result;
-TargetParticle *h_target, *d_target;
-Neighbor *h_neighbor, *d_neighbor;
-Neighbor *do_neighbor;
+
+extern BackgroundParticle *h_background; //, *background;
+extern BackgroundParticle *d_background;
+extern Result *h_result, *d_result;
+extern TargetParticle *h_target, *d_target;
+extern Neighbor *h_neighbor, *d_neighbor;
+//extern Neighbor *do_neighbor;
+
+
+BackgroundParticle *h_background=nullptr; //, *background;
+BackgroundParticle *d_background=nullptr;
+Result *h_result=nullptr, *d_result=nullptr;
+TargetParticle *h_target=nullptr, *d_target=nullptr;
+Neighbor *h_neighbor=nullptr, *d_neighbor=nullptr;
+//Neighbor *do_neighbor=nullptr;
+
 
 
 /*************************************************************************
@@ -126,13 +135,15 @@ void GetAcceleration(
 
 	for (int tg_offset = 0; tg_offset < NumTarget; tg_offset += BLOCK) {
 		CalculateAcceleration <<< block_size, thread_size >>>
-			(NNB, NumTarget, tg_offset, d_target, d_background, d_result, do_neighbor);
+			(NNB, NumTarget, tg_offset, d_target, d_background, d_result, d_neighbor);
 	} // endfor i, target particles
 
+	/*
 	for (int nn_offset=0; (nn_offset)*BLOCK*THREAD<NumTarget; nn_offset++) {
 		OrganizeNeighbor <<< block_size, thread_size >>>
 			(do_neighbor, d_neighbor, nn_offset, NumTarget);
 	}
+	*/
 		//printf("CUDA: calculation done\n");
 	//} // endfor offset
 
@@ -162,6 +173,10 @@ void GetAcceleration(
 		adot[i][2] = h_result[i].adot.z;
 	}
 
+	my_free(h_background , d_background);
+	my_free(h_result     , d_result);
+	my_free(h_target     , d_target);
+	my_free(h_neighbor   , d_neighbor);
 	//printf("CUDA: done?\n");
 }
 
@@ -183,7 +198,7 @@ __global__ void CalculateAcceleration(
 
 
 	float r_max = 0;
-	float r_nb[MaxNumNeighbor];
+	float r_nb[NumNeighborMax];
 	int index_max;
 	int bg_index;
 	__shared__ Result res[THREAD];
@@ -276,16 +291,27 @@ __device__ void kernel(
 	 	return;
 	}
 
+
 	// neighbor
-	//if(min(dr2, dr2p) < j.mass * i.r2) {
-	if (neighbor.NumNeighbor < FixNumNeighbor_d) {
+#define Radius
+#ifdef Radius
+	//if( dr2 < j.mass * i.r2 || dr2p < j.mass * i.r2 ) {
+	if( dr2 < j.mass * i.r2 && neighbor.NumNeighbor < NumNeighborMax) {
+		neighbor.NeighborList[neighbor.NumNeighbor] = bg_index;
+		neighbor.NumNeighbor++;
+		return;
+	}
+#endif
+
+#define no_NN
+#ifdef NN
+	if (neighbor.NumNeighbor < FixNumNeighbor) {
 		if (dr2 > r_max) {
 			r_max     = dr2;
 			index_max = neighbor.NumNeighbor;
 		}
 		neighbor.NeighborList[neighbor.NumNeighbor] = bg_index;
-		r_nb[neighbor.NumNeighbor]                = dr2;
-		neighbor.NumNeighbor++;
+		r_nb[neighbor.NumNeighbor++]                = dr2;
 	}
 	else {
 		if (dr2 < r_max) {
@@ -293,7 +319,7 @@ __device__ void kernel(
 			neighbor.NeighborList[index_max] = bg_index;
 			// update new r_max
 			r_max = dr2;
-			for (int k=0; k<FixNumNeighbor_d; k++) {
+			for (int k=0; k<FixNumNeighbor; k++) {
 				if (r_nb[k] > r_max) {
 					r_max     = r_nb[k];
 					index_max = k;
@@ -301,7 +327,7 @@ __device__ void kernel(
 			}
 		}
 	}
-	//}
+#endif
 
 	if (dr2 < EPS2_d) {
 		dr2 =  EPS2_d;
@@ -403,6 +429,15 @@ void _ReceiveFromHost(
 
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
 	//cudaMemcpyToSymbol(d_background, &d_background_tmp, new_size(NNB)*sizeof(BackgroundParticle));
+
+
+	variable_size = new_size(NNB);
+	my_allocate(&h_background , &d_background, variable_size);
+	my_allocate(&h_result     , &d_result    , variable_size);
+	my_allocate(&h_target     , &d_target    , variable_size);
+	my_allocate(&h_neighbor   , &d_neighbor  , variable_size);
+	//my_allocate_d(&do_neighbor, variable_size*THREAD);
+	/*
 	if ((first) || (new_size(NNB) > variable_size )) {
 		//fprintf(gpuout, "CUDA: FixNumNeighbor=%d, FixNumNeighbor=%d\n", _FixNumNeihgbor, FixNumNeighbor);
 		//printf("CUDA: FixNumNeighbor=%d, FixNumNeighbor=%d\n", _FixNumNeihgbor, FixNumNeighbor);
@@ -425,7 +460,7 @@ void _ReceiveFromHost(
 		//fprintf(gpuout, "CUDA: new size of NNB=%d\n", variable_size);
 		//fflush(gpuout);
 	}
-
+	*/
 	//fprintf(stdout, "CUDA: receive starts\n");
 	/*
 	cudaStatus = cudaMallocManaged(&background, new_size(NNB)*sizeof(BackgroundParticle)); //NNB*sizeof(BackgroundParticle));
@@ -463,6 +498,7 @@ void _InitializeDevice(int irank){
 	fprintf(gpuout, "# GPU initialization - rank: %d; HOST %s; NGPU %d; device: %d %s\n", irank, hostname,numGPU, devid, prop.name);
 
 	cudaSetDevice(device);
+	cudaDeviceSynchronize();
 
 	is_open = true;
 	// CUDA is now initialized and ready to be used
@@ -502,34 +538,6 @@ void _CloseDevice() {
 		return;
 	}
 	is_open = false;
-
-
-	cudaError_t error;
-
-	printf("CUDA: ?!! ...\n");
-	my_free(h_result    , d_result);
-	fprintf(stderr, "result ...\n");
-	my_free(h_target    , d_target);
-	fprintf(stderr, "target ...\n");
-	my_free(h_neighbor  , d_neighbor);
-	fprintf(stderr, "neighbor ...\n");
-	my_free(h_background, d_background);
-
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
-
-#ifdef PROFILE
-	fprintf(stderr, "rank: %d***************\n",devid);
-	fprintf(stderr, "time send : %f sec\n", time_send);
-	fprintf(stderr, "time grav : %f sec\n", time_grav);
-	fprintf(stderr, "time nb   : %f sec\n", time_nb);
-	fprintf(stderr, "time out  : %f sec\n", time_out);
-	fprintf(stderr, "%f Gflops (gravity part only)\n", 60.e-9 * numInter / time_grav);
-	fprintf(stderr, "***********************\n");
-#endif
 }
 
 
