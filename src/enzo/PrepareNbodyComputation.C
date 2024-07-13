@@ -243,6 +243,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 					 	1, 500, inter_comm);
 			}
 		}
+		fprintf(stderr, "ENZO: data sending! \n");
 		MPI_Send(&TimeStep,                    1, MPI_DOUBLE, 1,  600, inter_comm);
 		MPI_Send(&TimeUnits,                   1, MPI_DOUBLE, 1,  700, inter_comm);
 		MPI_Send(&LengthUnits,                 1, MPI_DOUBLE, 1,  800, inter_comm);
@@ -255,14 +256,17 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&NbodyTimeStepConstant	     , 1, MPI_DOUBLE, 1, 1500, inter_comm);
 		MPI_Send(&NbodyNeighborRadius		     , 1, MPI_DOUBLE, 1, 1600, inter_comm);
 		MPI_Send(&NbodyClusterPosition[3]    , 1, MPI_DOUBLE, 1, 1700, inter_comm);
+		MPI_Send(&IdentifyNbodyParticles     , 1, MPI_INT   , 1, 1750, inter_comm);
 		MPI_Send(&NbodyFixNumNeighbor        , 1, MPI_INT   , 1, 1800, inter_comm);
 		MPI_Send(&NbodyBinaryRegularization  , 1, MPI_INT   , 1, 1900, inter_comm);
 		MPI_Send(&NbodyBinaryDistance        , 1, MPI_DOUBLE, 1, 2000, inter_comm);
 		MPI_Send(&NbodyBinaryTimeStep        , 1, MPI_DOUBLE, 1, 2100, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
 
+		fprintf(stderr, "ENZO: ComovingCoordinates=%d\n",ComovingCoordinates);
 		MPI_Send(&ComovingCoordinates        , 1, MPI_INT   , 1, 3000, inter_comm);
 		if (ComovingCoordinates) {
+			fprintf(stderr, "ENZO: cosmo data sending! \n");
 			MPI_Send(&HubbleConstantNow        , 1, MPI_DOUBLE, 1, 3010, inter_comm);
 			MPI_Send(&OmegaMatterNow           , 1, MPI_DOUBLE, 1, 3020, inter_comm);
 			MPI_Send(&OmegaDarkMatterNow       , 1, MPI_DOUBLE, 1, 3030, inter_comm);
@@ -281,7 +285,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 			MPI_Send(CosmologyTableLogt, CosmologyTableNumberOfBins, MPI_DOUBLE, 1, 3160, inter_comm);
 		}
 		CommunicationInterBarrier();
-
+		fprintf(stderr, "ENZO: data sent! \n");
 
 		if (start_index_all != NULL)
 			delete [] start_index_all;

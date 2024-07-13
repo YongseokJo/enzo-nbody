@@ -13,8 +13,9 @@ double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration
 double EnzoCurrentTime, ClusterRadius2;
 double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
 double EPS2, eta, InitialRadiusOfAC;
-int FixNumNeighbor, FixNumNeighbor0;
+int FixNumNeighbor, FixNumNeighbor0, IdentifyNbodyParticles;
 int BinaryRegularization;
+
 double KSTime;
 double KSDistance;
 
@@ -82,33 +83,38 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&eta                     , 1, MPI_DOUBLE, 0, 1500, inter_comm, &status);
 	MPI_Recv(&InitialRadiusOfAC       , 1, MPI_DOUBLE, 0, 1600, inter_comm, &status);
 	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1700, inter_comm, &status);
+	MPI_Recv(&IdentifyNbodyParticles  , 1, MPI_INT   , 0, 1750, inter_comm, &status);
 	MPI_Recv(&FixNumNeighbor          , 1, MPI_INT   , 0, 1800, inter_comm, &status);
 	MPI_Recv(&BinaryRegularization    , 1, MPI_INT   , 0, 1900, inter_comm, &status);
 	MPI_Recv(&KSDistance              , 1, MPI_DOUBLE, 0, 2000, inter_comm, &status);
 	MPI_Recv(&KSTime                  , 1, MPI_DOUBLE, 0, 2100, inter_comm, &status);
 	//MPI_Recv(&HydroMethod         , 1, MPI_INT   , 0, 1200, inter_comm, &status);
+	fprintf(nbpout, "data receiving!\n");
+	fflush(nbpout);
 
-
-	MPI_Recv(&ComovingCoordinates        , 1, MPI_INT   , 1, 3000, inter_comm, &status);
+	MPI_Recv(&ComovingCoordinates        , 1, MPI_INT   , 0, 3000, inter_comm, &status);
+	fprintf(nbpout, "ComovingCoordinates=%d\n",ComovingCoordinates);
+	fflush(nbpout);
 	if (ComovingCoordinates) {
-		MPI_Recv(&HubbleConstantNow        , 1, MPI_DOUBLE, 1, 3010, inter_comm, &status);
-		MPI_Recv(&OmegaMatterNow           , 1, MPI_DOUBLE, 1, 3020, inter_comm, &status);
-		MPI_Recv(&OmegaDarkMatterNow       , 1, MPI_DOUBLE, 1, 3030, inter_comm, &status);
-		MPI_Recv(&OmegaLambdaNow           , 1, MPI_DOUBLE, 1, 3040, inter_comm, &status);
-		MPI_Recv(&OmegaRadiationNow        , 1, MPI_DOUBLE, 1, 3050, inter_comm, &status);
-		MPI_Recv(&ComovingBoxSize          , 1, MPI_DOUBLE, 1, 3060, inter_comm, &status);
-		MPI_Recv(&MaxExpansionRate         , 1, MPI_DOUBLE, 1, 3070, inter_comm, &status);
-		MPI_Recv(&InitialTimeInCodeUnits   , 1, MPI_DOUBLE, 1, 3080, inter_comm, &status);
-		MPI_Recv(&InitialRedshift          , 1, MPI_DOUBLE, 1, 3090, inter_comm, &status);
-		MPI_Recv(&FinalRedshift            , 1, MPI_DOUBLE, 1, 3100, inter_comm, &status);
-		MPI_Recv(&CosmologyTableNumberOfBins, 1, MPI_INT  , 1, 3110, inter_comm, &status);
-		MPI_Recv(&CosmologyTableLogtIndex   , 1, MPI_INT  , 1, 3120, inter_comm, &status);
-		MPI_Recv(&CosmologyTableLogaInitial , 1, MPI_DOUBLE, 1, 3130, inter_comm, &status);
-		MPI_Recv(&CosmologyTableLogaFinal   , 1, MPI_DOUBLE, 1, 3140, inter_comm, &status);
+		fprintf(nbpout, "Cosmo data receiving!\n");
+		MPI_Recv(&HubbleConstantNow        , 1, MPI_DOUBLE, 0, 3010, inter_comm, &status);
+		MPI_Recv(&OmegaMatterNow           , 1, MPI_DOUBLE, 0, 3020, inter_comm, &status);
+		MPI_Recv(&OmegaDarkMatterNow       , 1, MPI_DOUBLE, 0, 3030, inter_comm, &status);
+		MPI_Recv(&OmegaLambdaNow           , 1, MPI_DOUBLE, 0, 3040, inter_comm, &status);
+		MPI_Recv(&OmegaRadiationNow        , 1, MPI_DOUBLE, 0, 3050, inter_comm, &status);
+		MPI_Recv(&ComovingBoxSize          , 1, MPI_DOUBLE, 0, 3060, inter_comm, &status);
+		MPI_Recv(&MaxExpansionRate         , 1, MPI_DOUBLE, 0, 3070, inter_comm, &status);
+		MPI_Recv(&InitialTimeInCodeUnits   , 1, MPI_DOUBLE, 0, 3080, inter_comm, &status);
+		MPI_Recv(&InitialRedshift          , 1, MPI_DOUBLE, 0, 3090, inter_comm, &status);
+		MPI_Recv(&FinalRedshift            , 1, MPI_DOUBLE, 0, 3100, inter_comm, &status);
+		MPI_Recv(&CosmologyTableNumberOfBins, 1, MPI_INT  , 0, 3110, inter_comm, &status);
+		MPI_Recv(&CosmologyTableLogtIndex   , 1, MPI_INT  , 0, 3120, inter_comm, &status);
+		MPI_Recv(&CosmologyTableLogaInitial , 1, MPI_DOUBLE, 0, 3130, inter_comm, &status);
+		MPI_Recv(&CosmologyTableLogaFinal   , 1, MPI_DOUBLE, 0, 3140, inter_comm, &status);
 		CosmologyTableLoga = new double[CosmologyTableNumberOfBins];
 		CosmologyTableLogt = new double[CosmologyTableNumberOfBins];
-		MPI_Recv(CosmologyTableLoga, CosmologyTableNumberOfBins, MPI_DOUBLE, 1, 3150, inter_comm, &status);
-		MPI_Recv(CosmologyTableLogt, CosmologyTableNumberOfBins, MPI_DOUBLE, 1, 3160, inter_comm, &status);
+		MPI_Recv(CosmologyTableLoga, CosmologyTableNumberOfBins, MPI_DOUBLE, 0, 3150, inter_comm, &status);
+		MPI_Recv(CosmologyTableLogt, CosmologyTableNumberOfBins, MPI_DOUBLE, 0, 3160, inter_comm, &status);
 	}
 	CommunicationInterBarrier();
 	fprintf(nbpout, "Data received!\n");
@@ -151,9 +157,9 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 
 	for (int dim=0; dim<Dim; dim++) {
-		ClusterAcceleration[dim]=0;
-		ClusterPosition[dim]=0;
-		ClusterVelocity[dim]=0;
+		ClusterAcceleration[dim] = 0;
+		ClusterPosition[dim]     = 0;
+		ClusterVelocity[dim]     = 0;
 	}
 	if (NNB != 0) {
 		// set COM for background acc
@@ -169,17 +175,17 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 			}
 			total_mass += Mass[i];
 		}
-		
-		for (int dim=0; dim<Dim; dim++) 
+
+		for (int dim=0; dim<Dim; dim++)
 			ClusterAcceleration[dim] /= total_mass;
 
 		Particle* ptclPtr;
 
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
-				//BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
-				//Position[dim][i]               -= ClusterPosition[dim];
-				//Velocity[dim][i]               -= ClusterVelocity[dim];
+				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+				Position[dim][i]               -= ClusterPosition[dim];
+				Velocity[dim][i]               -= ClusterVelocity[dim];
 			}
 
 			particle.push_back(new Particle(PID, Mass, CreationTime, DynamicalTime, Position, Velocity,
@@ -706,7 +712,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				Position[dim][i] += ClusterPosition[dim];
 				Velocity[dim][i] += ClusterVelocity[dim];
 			}
-			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
+			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
 				Position[0][i] += 1e10;
 				EscapeList.push_back(ptcl);
 				ptcl->isErase = true;
@@ -735,7 +741,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				newPosition[dim][i] += ClusterPosition[dim];
 				newVelocity[dim][i] += ClusterVelocity[dim];
 			}
-			if (ClusterRadius2 > 0 && r2 > ClusterRadius2) {
+			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) {
 				newPosition[0][i] += 1e10;
 				EscapeList.push_back(ptcl);
 				ptcl->isErase = true;
