@@ -75,8 +75,8 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		/* Find the index of the array */
 		start_index = FindStartIndex(&LocalNumberOfNbodyParticles);
 		start_index_new = FindStartIndex(&NewLocalNumberOfNbodyParticles);
-		fprintf(stderr,"NumberOfParticles=%d in FINAL\n",NumberOfNbodyParticles);
-		fprintf(stderr,"NewNumberOfParticles=%d in FINAL\n",NumberOfNewNbodyParticles);
+		//fprintf(stderr,"NumberOfParticles=%d in FINAL\n",NumberOfNbodyParticles);
+		//fprintf(stderr,"NewNumberOfParticles=%d in FINAL\n",NumberOfNewNbodyParticles);
 
 
 #ifdef USE_MPI
@@ -124,15 +124,15 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			/*-----------------------------------------------*/
 			/******** Recv Arrays to Fortran Nbody+    *****/
 			/*-----------------------------------------------*/
-			fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
+			//fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
 
 
 			fprintf(stdout, "ENZO: Waiting for NBODY+ to receive data \n");
-			fprintf(stderr, "ENZO: NNB    = %d \n", NumberOfNbodyParticles);
-			fprintf(stderr, "ENZO: newNNB = %d \n", NumberOfNewNbodyParticles);
+			//fprintf(stderr, "ENZO: NNB    = %d \n", NumberOfNbodyParticles);
+			//fprintf(stderr, "ENZO: newNNB = %d \n", NumberOfNewNbodyParticles);
 			InitializeNbodyArrays(1);
 			CommunicationInterBarrier();
-			fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
+			//fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
 			if (NumberOfNbodyParticles != 0)
 			{
 				for (int dim = 0; dim < MAX_DIMENSION; dim++)
@@ -141,7 +141,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					ierr = MPI_Recv(NbodyParticleVelocity[dim], NumberOfNbodyParticles, MPI_DOUBLE, 1, 400, inter_comm, &status);
 				}
 			}
-			fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
+			//fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
 			if (NumberOfNewNbodyParticles > 0) {
 				for (int dim=0; dim<MAX_DIMENSION; dim++) {
 					ierr = MPI_Recv(NewNbodyParticlePosition[dim], NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm, &status);
@@ -151,8 +151,8 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 			CommunicationInterBarrier();
 			fprintf(stdout, "ENZO: Data received.\n");
 
-			fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
-			fprintf(stderr,"enzo: X=%e, V=%e\n ",NbodyParticlePosition[0][0], NbodyParticleVelocity[0][0]);
+			//fprintf(stderr,"NumberOfParticles after NBODY=%d\n",NumberOfNbodyParticles);
+			//fprintf(stderr,"enzo: X=%e, V=%e\n ",NbodyParticlePosition[0][0], NbodyParticleVelocity[0][0]);
 
 
 			/* Sending Index, NumberOfParticles, NbodyArrays to other processs */
@@ -192,7 +192,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 
-			fprintf(stderr,"Root:Done?2-5\n");
+			//fprintf(stderr,"Root:Done?2-5\n");
 
 			if (start_index_all != NULL)
 				delete [] start_index_all;
@@ -292,8 +292,10 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					ENZO_FAIL("Error in grid::CopyNbodyParticles.");
 				}
 
+		/*
 		fprintf(stderr,"Proc %d, # of Nbody = %d, count = %d\n", 
 				MyProcessorNumber, LocalNumberOfNbodyParticles, count);
+				*/
 
 
 

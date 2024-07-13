@@ -31,6 +31,7 @@
 #include "CommunicationUtilities.h"
 #include "NbodyRoutines.h"  //added  
 #include "phys_constants.h"
+#include "CosmologyParameters.h"
 
 void InitializeNbodyArrays(bool NbodyFirst);
 void InitializeNbodyArrays(void);
@@ -83,8 +84,8 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 	//FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles);
 	FindTotalNumberOfNbodyParticles(LevelArray, &LocalNumberOfNbodyParticles, &NewLocalNumberOfNbodyParticles);
 	fprintf(stderr, "ENZO: Entering SendToNbodyFirst ...\n");
-	fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
-	fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
+	//fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
+	//fprintf(stderr,"NumberOfParticles=%d\n",NumberOfNbodyParticles);
 
 
 	//if (NumberOfNbodyParticles == 0)
@@ -211,7 +212,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 			MPI_Wait(&request, &status);
 
 		}
-		fprintf(stderr,"Done?1-2\n");
+		//fprintf(stderr,"Done?1-2\n");
 
 
 		fprintf(stdout, "First TimeStep: %e, %f\n", TimeStep, TimeUnits);
@@ -223,7 +224,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		/*--------------------------------------------------------*/
 		fprintf(stdout, "ENZO: Waiting for NBODY+ to send data (first) \n");
 		fprintf(stderr, "ENZO: Waiting for NBODY+ to send data (first) \n");
-		fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
+		//fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
 		CommunicationInterBarrier();
 		MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 		if (NumberOfNbodyParticles != 0) {
@@ -259,6 +260,26 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&NbodyBinaryDistance        , 1, MPI_DOUBLE, 1, 2000, inter_comm);
 		MPI_Send(&NbodyBinaryTimeStep        , 1, MPI_DOUBLE, 1, 2100, inter_comm);
 		//MPI_Send(&HydroMethod         , 1, MPI_INT   , 1, 1200, inter_comm);
+
+		MPI_Send(&ComovingCoordinates        , 1, MPI_INT   , 1, 3000, inter_comm);
+		if (ComovingCoordinates) {
+			MPI_Send(&HubbleConstantNow        , 1, MPI_DOUBLE, 1, 3010, inter_comm);
+			MPI_Send(&OmegaMatterNow           , 1, MPI_DOUBLE, 1, 3020, inter_comm);
+			MPI_Send(&OmegaDarkMatterNow       , 1, MPI_DOUBLE, 1, 3030, inter_comm);
+			MPI_Send(&OmegaLambdaNow           , 1, MPI_DOUBLE, 1, 3040, inter_comm);
+			MPI_Send(&OmegaRadiationNow        , 1, MPI_DOUBLE, 1, 3050, inter_comm);
+			MPI_Send(&ComovingBoxSize          , 1, MPI_DOUBLE, 1, 3060, inter_comm);
+			MPI_Send(&MaxExpansionRate         , 1, MPI_DOUBLE, 1, 3070, inter_comm);
+			MPI_Send(&InitialTimeInCodeUnits   , 1, MPI_DOUBLE, 1, 3080, inter_comm);
+			MPI_Send(&InitialRedshift          , 1, MPI_DOUBLE, 1, 3090, inter_comm);
+			MPI_Send(&FinalRedshift            , 1, MPI_DOUBLE, 1, 3100, inter_comm);
+			MPI_Send(&CosmologyTableNumberOfBins, 1, MPI_INT  , 1, 3110, inter_comm);
+			MPI_Send(&CosmologyTableLogtIndex   , 1, MPI_INT  , 1, 3120, inter_comm);
+			MPI_Send(&CosmologyTableLogaInitial , 1, MPI_DOUBLE, 1, 3130, inter_comm);
+			MPI_Send(&CosmologyTableLogaFinal   , 1, MPI_DOUBLE, 1, 3140, inter_comm);
+			MPI_Send(CosmologyTableLoga, CosmologyTableNumberOfBins, MPI_DOUBLE, 1, 3150, inter_comm);
+			MPI_Send(CosmologyTableLogt, CosmologyTableNumberOfBins, MPI_DOUBLE, 1, 3160, inter_comm);
+		}
 		CommunicationInterBarrier();
 
 
@@ -529,7 +550,7 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 			}
 		}
 
-		fprintf(stderr,"Done?1-2\n");
+		//fprintf(stderr,"Done?1-2\n");
 
 
 
@@ -555,9 +576,10 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		}
 
 
-		fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);
+		//fprintf(stderr, "NumberOfNewNbodyParticles=%d in PNC\n", NumberOfNewNbodyParticles);
 		MPI_Send(&NumberOfNewNbodyParticles, 1, MPI_INT, 1, 100, inter_comm);
 		if (NumberOfNewNbodyParticles != 0) {
+			/*
 			for (int i = 0; i < NumberOfNewNbodyParticles; i++) {
 				fprintf(stderr, "Mass Of NewNbodyParticles=%.3e\n", NewNbodyParticleMass[i]);
 				fprintf(stderr, "Vel  Of NewNbodyParticles=(%.3e, %.3e, %.3e)\n", 
@@ -567,6 +589,7 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 				fprintf(stderr, "Acc  Of NewNbodyParticles=(%.3e, %.3e, %.3e)\n",
 						NewNbodyParticleAccelerationNoStar[0][i], NewNbodyParticleAccelerationNoStar[1][i], NewNbodyParticleAccelerationNoStar[2][i]);
 			}
+			*/
 			MPI_Send(NewNbodyParticleID           , NumberOfNewNbodyParticles, MPI_INT   , 1, 200, inter_comm);
 			MPI_Send(NewNbodyParticleMass         , NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 201, inter_comm);
 			MPI_Send(NewNbodyParticleCreationTime , NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 202, inter_comm);

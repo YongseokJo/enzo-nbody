@@ -173,6 +173,8 @@ class Particle
 		void polynomialPrediction(double current_time);
 		void UpdateRadius();
 		void UpdateNeighbor(std::vector<Particle*> &particle);
+		void NeighborCorrection(double r, Particle* newPtcl, std::vector<Particle*> &particle);
+		void ComputeAcceleration(Particle* ptcl, double (&a)[Dim], double (&adot)[Dim]);
 
 		//destructor
 		~Particle() {

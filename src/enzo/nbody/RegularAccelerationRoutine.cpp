@@ -76,6 +76,9 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 		CalculateRegAccelerationOnGPU(RegularList, particle);
 	}
 
+	global_time = NextRegTimeBlock*time_step;
+	UpdateNextRegTime(particle);
+
 	fprintf(nbpout, "Finishing regular force ...\n");
 	fflush(nbpout);
 
@@ -91,6 +94,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle) {
 	RegularList.clear();
 	for (Particle *ptcl:particle)
 	{
+
 		// Next regular time step
 		time_tmp = ptcl->CurrentBlockReg + ptcl->TimeBlockReg;
 
@@ -100,7 +104,8 @@ void UpdateNextRegTime(std::vector<Particle*> &particle) {
 				RegularList.clear();
 				time = time_tmp;
 			}
-			RegularList.push_back(ptcl);
+			if (ptcl->NumberOfAC != particle.size()-1)
+				RegularList.push_back(ptcl);
 		}
 	}
 	NextRegTimeBlock = time;

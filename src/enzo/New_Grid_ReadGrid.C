@@ -527,7 +527,8 @@ int grid::Group_ReadGrid(FILE *fptr, int GridID, HDF5_hid_t file_id,
 						ENZO_VFAIL("file: %s: particle %"ISYM" has unknown type %"ISYM"\n", name, i, ParticleType[i])
 					}
 #ifdef NBODY
-				if (NbodyRestartStarToNbody && ParticleType[i] == PARTICLE_TYPE_STAR) {
+				if (NbodyRestartStarToNbody && (ParticleType[i] == PARTICLE_TYPE_STAR 
+							|| ParticleType[i] == 12 || ParticleType[i] == 13 || ParticleType[i] == 14)) {
 					ParticleType[i] = PARTICLE_TYPE_NBODY;
 				}
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
@@ -545,7 +546,8 @@ int grid::Group_ReadGrid(FILE *fptr, int GridID, HDF5_hid_t file_id,
 				if (ReturnParticleType(i) == PARTICLE_TYPE_NBODY_NEW) { 
 					ParticleType[i] = PARTICLE_TYPE_NBODY;
 				}
-				else if (NbodyRestartStarToNbody && ReturnParticleType(i) == PARTICLE_TYPE_STAR) {
+				else if (NbodyRestartStarToNbody && (ReturnParticleType(i) == PARTICLE_TYPE_STAR 
+							|| ReturnParticleType(i) == 12 || ReturnParticleType(i) == 13 || ReturnParticleType(i) == 14)) {
 					ParticleType[i] = PARTICLE_TYPE_NBODY;
 				}
 				else {

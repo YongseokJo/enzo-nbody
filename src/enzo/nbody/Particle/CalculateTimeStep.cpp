@@ -49,13 +49,15 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	}
 
 
-	while (((CurrentBlockIrr < CurrentBlockReg+TimeBlockReg) && (CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg)) || (TimeLevelTmp >= TimeLevelReg)) {
-		if (TimeLevelTmp > TimeLevelReg)
-			fprintf(stderr, "PID=%d, Irr=%d, Reg=%d\n", PID, TimeLevelTmp0, TimeLevelReg);
+	if (this->NumberOfAC != NNB)
+		while (((CurrentBlockIrr < CurrentBlockReg+TimeBlockReg) && (CurrentBlockIrr+TimeBlockTmp > CurrentBlockReg+TimeBlockReg)) || (TimeLevelTmp >= TimeLevelReg)) {
+			//if (TimeLevelTmp > TimeLevelReg)
+			//fprintf(stderr, "PID=%d, Irr=%d, Reg=%d\n", PID, TimeLevelTmp0, TimeLevelReg);
 
-		TimeLevelTmp--;
-		TimeBlockTmp *= 0.5;
-	}
+			TimeLevelTmp--;
+			TimeBlockTmp *= 0.5;
+		}
+
 
 	TimeLevelIrr = TimeLevelTmp;
 
@@ -67,6 +69,13 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 	TimeStepIrr = static_cast<double>(pow(2, TimeLevelIrr));
 	TimeBlockIrr = static_cast<ULL>(pow(2, TimeLevelIrr-time_block));
 
+	if (this->NumberOfAC == NNB) {
+		CurrentTimeReg  = CurrentTimeIrr;
+		CurrentBlockReg = CurrentBlockIrr;
+		TimeBlockReg    = TimeBlockIrr;
+		TimeStepReg     = TimeStepIrr;
+		TimeLevelReg    = TimeLevelIrr;
+	}
 	/*
 	if (PID == 430) {
 		std::cerr << "After TimeLevelIrr=" << TimeLevelIrr << std::endl;

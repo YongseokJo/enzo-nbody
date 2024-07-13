@@ -26,13 +26,28 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	double dtIrr, dtReg;
 
 	for (Particle* ptcl: particle) {
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
-		//std::cout << "dtReg=" << dtReg << std::endl;
-		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeBlockReg, ptcl->TimeStepReg);
+		if (ptcl->NumberOfAC != particle.size()-1) {
+			dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
+			getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeBlockReg, ptcl->TimeStepReg);
+
+			ptcl->TimeStepReg  = std::min(1.,ptcl->TimeStepReg);
+			ptcl->TimeBlockReg = std::min(block_max, ptcl->TimeBlockReg);
+			ptcl->TimeLevelReg = std::min(0, ptcl->TimeLevelReg);
+		}
 
 		if (ptcl->NumberOfAC != 0) {
 			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeBlockIrr, ptcl->TimeStepIrr);
+
+			ptcl->TimeStepIrr  = std::min(1.,ptcl->TimeStepIrr);
+			ptcl->TimeBlockIrr = std::min(block_max, ptcl->TimeBlockIrr);
+			ptcl->TimeLevelIrr = std::min(0, ptcl->TimeLevelIrr);
+
+			if (ptcl->NumberOfAC == particle.size()-1) {
+				ptcl->TimeStepReg  = ptcl->TimeStepIrr;
+				ptcl->TimeBlockReg = ptcl->TimeBlockIrr;
+				ptcl->TimeLevelReg = ptcl->TimeLevelIrr;
+			}
 		}
 		else {
 			ptcl->TimeBlockIrr = ptcl->TimeBlockReg;
@@ -40,21 +55,10 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 			ptcl->TimeStepIrr  = ptcl->TimeStepReg;
 		}
 
-		ptcl->TimeStepReg  = std::min(1.,ptcl->TimeStepReg);
-		ptcl->TimeBlockReg = std::min(block_max, ptcl->TimeBlockReg);
-		ptcl->TimeLevelReg = std::min(0, ptcl->TimeLevelReg);
-
 		ptcl->CurrentTimeIrr  = 0;
 		ptcl->CurrentTimeReg  = 0;
 		ptcl->CurrentBlockIrr = 0;
 		ptcl->CurrentBlockReg = 0;
-
-#define no_IRR_TEST
-#ifdef IRR_TEST
-		ptcl->TimeStepReg = 1;
-		ptcl->TimeLevelReg = 0;
-		ptcl->TimeBlockReg = block_max;
-#endif
 	}
 
 
@@ -62,16 +66,18 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	// Irregular Time Step Correction
 	for (Particle* ptcl: particle) {
 		if (ptcl->NumberOfAC != 0) {
-			while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg) {
+			while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg 
+					&& ptcl->NumberOfAC != particle.size()-1) {
 				ptcl->TimeStepIrr *= 0.5;
 				ptcl->TimeBlockIrr *= 0.5;
 				ptcl->TimeLevelIrr--;
 			}
-		}
-		if (ptcl->TimeLevelIrr < min_time_level) {
-			min_time_level = ptcl->TimeLevelIrr;
+			if (ptcl->TimeLevelIrr < min_time_level) {
+				min_time_level = ptcl->TimeLevelIrr;
+			}
 		}
 	}
+
 
 	// resetting time_block based on the system
 	time_block = std::max(-60, min_time_level-MIN_LEVEL_BUFFER);
@@ -81,14 +87,7 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	for (Particle* ptcl: particle) {
 		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
 		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));
-#ifdef IRR_TEST
-		ptcl->TimeStepReg = 1;
-		ptcl->TimeLevelReg = 0;
-		ptcl->TimeBlockReg = block_max;
-#endif
 	}
-
-
 
 
 	fprintf(stdout, "nbody+:time_block = %d, EnzoTimeStep=%e\n", time_block, EnzoTimeStep);
@@ -105,22 +104,34 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 
 	for (int i=offset; i<offset+newNNB; i++){
 		ptcl = particle[i];
-		dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
-		getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeBlockReg, ptcl->TimeStepReg);
+		if (ptcl->NumberOfAC != particle.size()-1) {
+			dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
+			getBlockTimeStep(dtReg, ptcl->TimeLevelReg, ptcl->TimeBlockReg, ptcl->TimeStepReg);
+
+			ptcl->TimeStepReg  = std::min(1.,ptcl->TimeStepReg);
+			ptcl->TimeBlockReg = std::min(block_max, ptcl->TimeBlockReg);
+			ptcl->TimeLevelReg = std::min(0, ptcl->TimeLevelReg);
+		}
 
 		if (ptcl->NumberOfAC != 0) {
 			dtIrr = getNewTimeStep(ptcl->a_tot, ptcl->a_irr);
 			getBlockTimeStep(dtIrr, ptcl->TimeLevelIrr, ptcl->TimeBlockIrr, ptcl->TimeStepIrr);
+
+			ptcl->TimeStepIrr  = std::min(1.,ptcl->TimeStepIrr);
+			ptcl->TimeBlockIrr = std::min(block_max, ptcl->TimeBlockIrr);
+			ptcl->TimeLevelIrr = std::min(0, ptcl->TimeLevelIrr);
+
+			if (ptcl->NumberOfAC == particle.size()-1) {
+				ptcl->TimeStepReg  = ptcl->TimeStepIrr;
+				ptcl->TimeBlockReg = ptcl->TimeBlockIrr;
+				ptcl->TimeLevelReg = ptcl->TimeLevelIrr;
+			}
 		}
 		else {
 			ptcl->TimeBlockIrr = ptcl->TimeBlockReg;
 			ptcl->TimeLevelIrr = ptcl->TimeLevelReg;
 			ptcl->TimeStepIrr  = ptcl->TimeStepReg;
 		}
-
-		ptcl->TimeStepReg  = std::min(1.,ptcl->TimeStepReg);
-		ptcl->TimeBlockReg = std::min(block_max, ptcl->TimeBlockReg);
-		ptcl->TimeLevelReg = std::min(0, ptcl->TimeLevelReg);
 
 		ptcl->CurrentTimeIrr  = 0;
 		ptcl->CurrentTimeReg  = 0;
@@ -130,28 +141,34 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 
 
 	// Irregular Time Step Correction
+	for (int i=offset; i<offset+newNNB; i++){
+		ptcl = particle[i];
+		if (ptcl->NumberOfAC != 0) {
+			while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg 
+					&& ptcl->NumberOfAC != particle.size()-1) {
+				ptcl->TimeStepIrr *= 0.5;
+				ptcl->TimeBlockIrr *= 0.5;
+				ptcl->TimeLevelIrr--;
+			}
+		}
+	}
+
 	if (time_step == -1) {
 		for (int i=offset; i<offset+newNNB; i++){
 			ptcl = particle[i];
 			if (ptcl->NumberOfAC != 0) {
-				while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg) {
-					ptcl->TimeStepIrr *= 0.5;
-					ptcl->TimeBlockIrr *= 0.5;
-					ptcl->TimeLevelIrr--;
+				if (ptcl->TimeLevelIrr < min_time_level) {
+					min_time_level = ptcl->TimeLevelIrr;
 				}
 			}
-			if (ptcl->TimeLevelIrr < min_time_level) {
-				min_time_level = ptcl->TimeLevelIrr;
-			}
 		}
-
 		// resetting time_block based on the system
 		time_block = std::max(-60, min_time_level-MIN_LEVEL_BUFFER);
 		block_max = static_cast<ULL>(pow(2., -time_block));
 		time_step = std::pow(2.,time_block);
 	}
 
-	for (int i=offset; i<offset+newNNB; i++){
+	for (int i=offset; i<offset+newNNB; i++) {
 		ptcl = particle[i];
 		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
 		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));

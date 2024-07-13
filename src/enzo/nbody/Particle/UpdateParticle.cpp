@@ -38,8 +38,8 @@ void Particle::predictParticleSecondOrder(double time) {
 	// only predict the positions if necessary
 	// how about using polynomial correction here?
 	for (int dim=0; dim<Dim; dim++) {
-		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + a_tot[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
-		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
+		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + a_tot[dim][0] + BackgroundAcceleration[dim])*dt/2 + Velocity[dim])*dt + Position[dim];
+		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0] + BackgroundAcceleration[dim])*dt   + Velocity[dim];
 	}
 
 	if (StarParticleFeedback != 0) {
@@ -78,8 +78,8 @@ void Particle::predictParticleSecondOrderIrr(double time) {
 	// only predict the positions if necessary
 	// how about using polynomial correction here?
 	for (int dim=0; dim<Dim; dim++) {
-		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + a_tot[dim][0])*dt/2 + Velocity[dim])*dt + Position[dim];
-		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + a_tot[dim][0])*dt   + Velocity[dim];
+		PredPosition[dim] = ((a_tot[dim][1]*dt/3 + (a_tot[dim][0]+BackgroundAcceleration[dim]))*dt/2 + Velocity[dim])*dt + Position[dim];
+		PredVelocity[dim] =  (a_tot[dim][1]*dt/2 + (a_tot[dim][0]+BackgroundAcceleration[dim]))*dt   + Velocity[dim];
 	}
 
 	if (StarParticleFeedback != 0) {
@@ -147,6 +147,7 @@ void Particle::updateParticle() {
 
 
 void Particle::UpdateRadius() {
+
 	if (LocalDensity == 0) {
 		RadiusOfAC = 0.11;
 		LocalDensity = 10;
@@ -247,4 +248,69 @@ void Particle::UpdateNeighbor(std::vector<Particle*> &particle) {
 				[](Particle* p1, Particle* p2) { return p1->ParticleOrder < p2->ParticleOrder;});
 	}
 }
+
+
+
+void Particle::NeighborCorrection(double r0, Particle* newPtcl, std::vector<Particle*> &particle) {
+	double r1, r_max;
+	int index, max_index;
+	bool isExcess;
+	double a[Dim], adot[Dim];
+
+	if (newPtcl->NumberOfAC < NumNeighborMax) {
+		ACList.push_back(newPtcl);
+		NumberOfAC++;
+		this->ComputeAcceleration(newPtcl,a,adot);
+		for (int dim=0; dim<Dim; dim++) {
+			this->a_irr[dim][0] += a[dim];
+			this->a_irr[dim][1] += adot[dim];
+		}
+	}
+	else {
+		index = 0;
+		r_max = 0;
+		max_index = -1;
+		RadiusOfAC *= 0.9;
+		for (Particle* neighbor:ACList) {
+			if (this->PID == neighbor->PID)
+				continue;
+
+			r1 = dist(Position, neighbor->Position);
+
+			if (r1 > r_max) {
+				r_max = r1;
+				max_index = index;
+			}
+			index++;
+		}
+
+		if (r0 < r_max) {
+			if (max_index == -1 || r_max == 0) {
+				fprintf(stderr, "Max Index = %d, r_max = %e\n", max_index, r_max);
+				throw std::runtime_error("Fatal Error in FindNewNeighbor.cpp\n");	
+			}
+			//fprintf(stderr, "particle removed=%d\n", ptcl->ACList[max_index]->PID);
+			this->ComputeAcceleration(ACList[max_index],a,adot);
+			for (int dim=0; dim<Dim; dim++) {
+				this->a_irr[dim][0] -= a[dim];
+				this->a_irr[dim][1] -= adot[dim];
+				this->a_reg[dim][0] += a[dim];
+				this->a_reg[dim][1] += adot[dim];
+			}
+			this->ComputeAcceleration(newPtcl,a,adot);
+			for (int dim=0; dim<Dim; dim++) {
+				this->a_irr[dim][0] += a[dim];
+				this->a_irr[dim][1] += adot[dim];
+				this->a_reg[dim][0] -= a[dim];
+				this->a_reg[dim][1] -= adot[dim];
+			}
+			ACList.erase(ACList.begin() + max_index);
+			ACList.push_back(newPtcl);
+		}
+	}
+
+}
+
+
+
 
