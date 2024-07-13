@@ -99,3 +99,8 @@ extern double StarMassEjectionFraction;
 extern double EnzoCurrentTime;
 
 
+/*********************************************************************
+ *  Cosmology
+ *********************************************************************/
+extern int ComovingCoordinates;
+
