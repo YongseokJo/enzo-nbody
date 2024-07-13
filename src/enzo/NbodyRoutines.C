@@ -285,8 +285,8 @@ int FindStartIndex(int* LocalNumberOfNbodyParticles) {
 	MPI_Scan(LocalNumberOfNbodyParticles, &start_index, 1, MPI_INT, MPI_SUM, enzo_comm);
 	start_index -= *LocalNumberOfNbodyParticles;
 
-	fprintf(stderr, "Proc: %d, LocalNumberOfNbodyParticles:%d\n",MyProcessorNumber, *LocalNumberOfNbodyParticles);
-	fprintf(stderr, "Proc: %d, Start Index:%d\n",MyProcessorNumber, start_index);
+	//fprintf(stderr, "Proc: %d, LocalNumberOfNbodyParticles:%d\n",MyProcessorNumber, *LocalNumberOfNbodyParticles);
+	//fprintf(stderr, "Proc: %d, Start Index:%d\n",MyProcessorNumber, start_index);
 
 	//MPI_Op_free(&myOp);
 #endif

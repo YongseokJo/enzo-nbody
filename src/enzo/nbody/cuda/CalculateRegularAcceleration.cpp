@@ -234,7 +234,7 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 			ptcl->a_reg[dim][1] = AccRegDotReceive[i][dim];
 			ptcl->a_irr[dim][0] = a_tmp[dim];    //AccIrr[i][dim];
 			ptcl->a_irr[dim][1] = adot_tmp[dim]; //AccIrrDot[i][dim];
-			ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0] + ptcl->BackgroundAcceleration[dim];
+			ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0]; //+ ptcl->BackgroundAcceleration[dim];
 			ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
 			// in case
 			if (ptcl->NumberOfAC == 0) {
@@ -285,10 +285,10 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		}
 		ptcl->UpdateRadius();
 	}
-	global_time = NextRegTimeBlock*time_step;
-	UpdateNextRegTime(particle);
 
 
+	//global_time = NextRegTimeBlock*time_step;
+	//UpdateNextRegTime(particle);
 
 
 	// free all temporary variables

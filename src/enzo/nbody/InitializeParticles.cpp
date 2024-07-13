@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <algorithm>
 #include "global.h"
@@ -29,7 +30,7 @@ void UpdateNextRegTime(std::vector<Particle*> &particle);
 
 void InitializeParticle(std::vector<Particle*> &particle) {
 
-	if (NNB == 0) {
+	if (particle.size() < 2) {
 		fprintf(nbpout, "Initialization skips.\n");
 		return;
 	}
@@ -75,6 +76,8 @@ void InitializeParticle(std::vector<Particle*> &particle) {
  */
 void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 
+	if (newNNB == 0)
+		return;
 	std::cout << "Initialization of " << newNNB << " New Particles starts." << std::endl;
 
 	// loop over particles to initialize acceleration
@@ -91,20 +94,13 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 			particle[offset+i]->PredVelocity[dim] =  particle[offset+i]->Velocity[dim];
 		}
 		particle[offset+i]->PredMass =  particle[offset+i]->Mass;
-
-
-		fprintf(nbpout, "%d neighbors of %d : ",
-			 	particle[offset+i]->NumberOfAC, particle[offset+i]->PID);
-		for (Particle* ptcl:particle[offset+i]->ACList) {
-			fprintf(nbpout, "%d, ", ptcl->PID);
-		}
-		fprintf(nbpout, "\n");
 	}
 
 	std::cout << "Timestep initializing..." << std::endl;
 	InitializeTimeStep(particle, offset);
 	std::cout << "Timestep finished." << std::endl;
 
+	
 	UpdateNextRegTime(particle);
 	std::cout << "Initialization of New Particles finished." << std::endl;
 
@@ -163,10 +159,7 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 
 	// No need to find neighbors if the total number of particles is less than 100
 	//if (NNB<=100) return;
-	
-	double r0, r1;
-	double r_max;
-	int index, max_index;
+	double r0;
 	bool isExcess=false;
 
 	newPtcl->UpdateRadius();
@@ -180,50 +173,18 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 				newPtcl->ACList.push_back(ptcl);
 				newPtcl->NumberOfAC++;
 			}
-			else 
-				isExcess = true;
-		}
-
-		if (r0 < ptcl->RadiusOfAC) {
-			if (newPtcl->NumberOfAC < NumNeighborMax) {
-				ptcl->ACList.push_back(ptcl);
-				ptcl->NumberOfAC++;
-			}
 			else {
-				index = 0;
-				r_max = 0;
-				max_index = -1;
-				ptcl->RadiusOfAC *= 0.9;
-				for (Particle* neighbor:ptcl->ACList) {
-					if (ptcl == neighbor)
-						continue;
-
-					r1 = dist(ptcl->Position, neighbor->Position);
-
-					if (r1 > r_max) {
-						r_max = r1;
-						max_index = index;
-					}
-
-					index++;
-				}
-
-				if (r0 < r_max) {
-					if (max_index == -1 || r_max == 0) {
-						fprintf(stderr, "Max Index = %d, r_max = %e\n", max_index, r_max);
-						throw std::runtime_error("Fatal Error in FindNewNeighbor.cpp\n");	
-					}
-					ptcl->ACList.erase(ptcl->ACList.begin() + max_index);
-					ptcl->ACList.push_back(newPtcl);
-				}
+				isExcess = true;
 			}
 		}
+		if (r0 < ptcl->RadiusOfAC) 
+			ptcl->NeighborCorrection(r0, newPtcl, particle);
 	}
 
 	if (isExcess) {
 		std::cerr << "Number of neighbors exceeded." << std::endl;
 		newPtcl->RadiusOfAC *= 0.8;
-		newPtcl->UpdateNeighbor(particle);	
+		newPtcl->UpdateNeighbor(particle);
 	}
 	else {
 		newPtcl->NumberOfAC = newPtcl->ACList.size();
@@ -305,7 +266,7 @@ void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle) 
 		vx = 0;
 		v2 = 0;
 
-		if (ptcl1 == ptcl2) {
+		if (ptcl1->PID == ptcl2->PID) {
 			continue;
 		}
 
@@ -345,7 +306,7 @@ void CalculateAcceleration01(Particle* ptcl1, std::vector<Particle*> &particle) 
 		for (int order=0; order<2; order++) {
 			ptcl1->a_tot[dim][order] = ptcl1->a_reg[dim][order] + ptcl1->a_irr[dim][order];  
 		}
-		ptcl1->a_tot[dim][0] += ptcl1->BackgroundAcceleration[dim]; //fix the error
+		//ptcl1->a_tot[dim][0] += ptcl1->BackgroundAcceleration[dim]; //fix the error
 	}
 	return;
 }
@@ -384,7 +345,7 @@ void CalculateAcceleration23(Particle* ptcl1, std::vector<Particle*> &particle) 
 		vdf_r2 = 0;
 		rdfdot_r2 = 0;
 
-		if (ptcl1 == ptcl2) {
+		if (ptcl1->PID == ptcl2->PID) {
 			continue;
 		}
 
@@ -476,7 +437,6 @@ void CalculateAcceleration23(Particle* ptcl1, std::vector<Particle*> &particle) 
 
 
 
-	/*
 	std::cout << "NBODY+: total acceleartion = " << std::flush;
 	for (int order=0; order<HERMITE_ORDER; order++) {
 		std::cout << "a" << order << "(";
@@ -506,7 +466,6 @@ void CalculateAcceleration23(Particle* ptcl1, std::vector<Particle*> &particle) 
 		std::cout << "), ";
 	} // endfor dim
 	std::cout << std::endl;
-	*/
 }
 
 

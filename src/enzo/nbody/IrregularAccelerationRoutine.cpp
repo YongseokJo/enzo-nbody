@@ -65,6 +65,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 
 		for (Particle* ptcl:ComputationList) {
 
+			/*
 			if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
 				fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
 
@@ -106,6 +107,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 					ptcl->Velocity[0],ptcl->Velocity[1],ptcl->Velocity[2]
 					);
 			fflush(nbpout);
+			*/
 
 			/*
 			fprintf(stdout, "in irr, PID=%d : ", ptcl->PID);

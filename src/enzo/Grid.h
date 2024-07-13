@@ -1864,7 +1864,7 @@ class grid
 			for (int i=0; i < NumberOfParticles; i++) {
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-					fprintf(stderr, "Mass Of NewNbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
+					//fprintf(stderr, "Mass Of NewNbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
 					NewNbodyParticleMassTemp[*count_new]         = ParticleMass[i]*dv;
 					NewNbodyParticleIDTemp[*count_new]           = ParticleNumber[i];
 					NewNbodyParticleCreationTimeTmp[*count_new]  = ParticleAttribute[0][i];
@@ -1880,7 +1880,7 @@ class grid
 				} // endif particle_type_nbody_new
 
 				if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					fprintf(stderr, "Mass Of NbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
+					//fprintf(stderr, "Mass Of NbodyParticles=%lf in Copy\n", ParticleMass[i]*dv);
 					NbodyParticleIDTemp[*count]   = ParticleNumber[i];
 					NbodyParticleMassTemp[*count] = ParticleMass[i]*dv;
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {

@@ -149,7 +149,7 @@ void Particle::calculateIrrForce() {
 
 
 	for (int dim=0; dim<Dim; dim++) {
-		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0] + a_reg[dim][1]*dt_ex +BackgroundAcceleration[dim]; // affect the next
+		a_tot[dim][0] = a_reg[dim][0] + a_irr[dim][0] + a_reg[dim][1]*dt_ex; //+BackgroundAcceleration[dim]; // affect the next
 		a_tot[dim][1] = a_reg[dim][1] + a_irr[dim][1];
 		a_tot[dim][2] = a_reg[dim][2] + a_irr[dim][2];
 		a_tot[dim][3] = a_reg[dim][3] + a_irr[dim][3];

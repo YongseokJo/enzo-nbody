@@ -2181,6 +2181,12 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 			ENZO_FAIL("Error in GetUnits.");
 		}
 
+		// this is for background acceleration
+		if (NumberOfParticleAttributes < 7) {
+			NumberOfParticleAttributes = 7;
+			fprintf(stdout, "NumberOfParticleAttributes = %d\n", NumberOfParticleAttributes);
+		}
+
 		if (isNbodyParticleIdentification) {
 			NbodyClusterPosition[3] = (NbodyClusterPosition[3] * kpc_cm / LengthUnits)*(NbodyClusterPosition[3] * kpc_cm / LengthUnits);
 		} else {
