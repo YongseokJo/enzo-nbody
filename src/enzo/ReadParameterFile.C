@@ -1272,6 +1272,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		ret += sscanf(line, "NbodyRestartStarToNbody = %"ISYM, &NbodyRestartStarToNbody);
 		ret += sscanf(line, "NbodyNewStarToNbody = %"ISYM, &NbodyNewStarToNbody);
     ret += sscanf(line, "UseNbodyClusterIdentification = %"ISYM, &isNbodyParticleIdentification);
+    ret += sscanf(line, "IdentificationOnTheFly = %"ISYM, &isIdentificationOnTheFly);
 		ret += sscanf(line, "NbodyClusterPosition = %"FSYM" %"FSYM" %"FSYM, 
 				NbodyClusterPosition, NbodyClusterPosition+1, NbodyClusterPosition+2);
 		ret += sscanf(line, "NbodyClusterRadius = %"FSYM, NbodyClusterPosition+3);

@@ -1165,6 +1165,7 @@ int WriteParameterFile(FILE *fptr, TopGridData &MetaData, char *name = NULL)
 	fprintf(fptr, "NbodyRestartStarToNbody       = %d\n", NbodyRestartStarToNbody);
 	fprintf(fptr, "NbodyNewStarToNbody					 = %d\n", NbodyNewStarToNbody);
 	fprintf(fptr, "UseNbodyClusterIdentification = %d\n", isNbodyParticleIdentification);
+	fprintf(fptr, "IdentificationOnTheFly        = %d\n", isIdentificationOnTheFly);
 	fprintf(fptr, "NbodyClusterPosition          = %lf %lf %lf\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
 	fprintf(fptr, "NbodyClusterRadius            = %lf\n", std::sqrt(NbodyClusterPosition[3]) / kpc_cm * LengthUnits); //added by wispedia
 	fprintf(fptr, "NbodySmoothingLength          = %f\n",  NbodySmoothingLength / kpc_cm * LengthUnits);

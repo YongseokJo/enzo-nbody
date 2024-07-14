@@ -63,6 +63,7 @@ EXTERN float *NbodyParticleAccelerationNoStar[MAX_DIMENSION];
 EXTERN float NbodyClusterPosition[MAX_DIMENSION+1];
 EXTERN int NbodyFirst;
 EXTERN int isNbodyParticleIdentification;
+EXTERN int isIdentificationOnTheFly;
 EXTERN float NbodySmoothingLength;
 EXTERN float NbodyTimeStepConstant;
 EXTERN float NbodyNeighborRadius;

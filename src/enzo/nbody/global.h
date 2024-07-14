@@ -98,6 +98,7 @@ extern int HydroMethod;
 extern double StarMassEjectionFraction;
 extern double EnzoCurrentTime;
 extern int IdentifyNbodyParticles;
+extern int IdentifyOnTheFly;
 
 
 /*********************************************************************
