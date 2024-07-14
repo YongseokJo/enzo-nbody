@@ -1952,15 +1952,15 @@ class grid
 			//float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
-				if (ParticleType[i] == PARTICLE_TYPE_STAR 
+				if (ParticleType[i] == PARTICLE_TYPE_STAR  || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW
 						|| (NbodyFirst && ParticleType[i] == PARTICLE_TYPE_NBODY)) {
 					r2 = 0;
-					r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])
-						*(ParticlePosition[0][i] - NbodyClusterPosition[0]);
-					r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1])
-						*(ParticlePosition[1][i] - NbodyClusterPosition[1]);
-					r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2])
-						*(ParticlePosition[2][i] - NbodyClusterPosition[2]);
+					r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])\
+								*(ParticlePosition[0][i] - NbodyClusterPosition[0]);
+					r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1])\
+								*(ParticlePosition[1][i] - NbodyClusterPosition[1]);
+					r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2])\
+								*(ParticlePosition[2][i] - NbodyClusterPosition[2]);
 					if ( r2 < thres_r2 ) {
 						if (NbodyFirst) {
 							ParticleType[i] = PARTICLE_TYPE_NBODY;
@@ -1971,7 +1971,7 @@ class grid
 					}
 					else {
 						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW || 
-								(NbodyFirst && PARTICLE_TYPE_NBODY)) {
+								(NbodyFirst && ParticleType[i] == PARTICLE_TYPE_NBODY)) {
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						}
 					}

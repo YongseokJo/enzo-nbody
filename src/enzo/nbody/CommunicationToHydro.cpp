@@ -11,7 +11,7 @@
 Particle* FirstParticleInEnzo = nullptr;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 double EnzoCurrentTime, ClusterRadius2;
-double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim];
+double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim], EnzoClusterPosition[Dim+1];
 double EPS2, eta, InitialRadiusOfAC;
 int FixNumNeighbor, FixNumNeighbor0, IdentifyNbodyParticles;
 int BinaryRegularization, IdentifyOnTheFly;
@@ -82,7 +82,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&EPS2                    , 1, MPI_DOUBLE, 0, 1400, inter_comm, &status);
 	MPI_Recv(&eta                     , 1, MPI_DOUBLE, 0, 1500, inter_comm, &status);
 	MPI_Recv(&InitialRadiusOfAC       , 1, MPI_DOUBLE, 0, 1600, inter_comm, &status);
-	MPI_Recv(&ClusterRadius2          , 1, MPI_DOUBLE, 0, 1700, inter_comm, &status);
+	MPI_Recv(EnzoClusterPosition      , 4, MPI_DOUBLE, 0, 1700, inter_comm, &status);
 	MPI_Recv(&IdentifyNbodyParticles  , 1, MPI_INT   , 0, 1750, inter_comm, &status);
 	MPI_Recv(&IdentifyOnTheFly        , 1, MPI_INT   , 0, 1775, inter_comm, &status);
 	MPI_Recv(&FixNumNeighbor          , 1, MPI_INT   , 0, 1800, inter_comm, &status);
@@ -120,6 +120,8 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	CommunicationInterBarrier();
 	fprintf(nbpout, "Data received!\n");
 
+
+	ClusterRadius2 = EnzoClusterPosition[3]; 
 
 	// Enzo to Nbody unit convertors
 	//EnzoMass         = MassUnits/Msun/mass_unit;
@@ -707,12 +709,18 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			for (int dim=0; dim<Dim; dim++) {
 				Position[dim][i]  = ptcl->Position[dim]/EnzoLength;
 				Velocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
-				r2               += Position[dim][i]*Position[dim][i];
+
+				if (IdentifyNbodyParticles && IdentifyOnTheFly)
+					r2 += Position[dim][i]*Position[dim][i];
 
 				// COM correction
 				Position[dim][i] += ClusterPosition[dim];
 				Velocity[dim][i] += ClusterVelocity[dim];
+
+				if (IdentifyNbodyParticles && !IdentifyOnTheFly)
+					r2 += (Position[dim][i]-EnzoClusterPosition[dim])*(Position[dim][i]-EnzoClusterPosition[dim]);
 			}
+
 			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
 				Position[0][i] += 1e10;
 				EscapeList.push_back(ptcl);
@@ -736,11 +744,16 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			for (int dim=0; dim<Dim; dim++) {
 				newPosition[dim][i]  = ptcl->Position[dim]/EnzoLength;
 				newVelocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
-				r2                  += newPosition[dim][i]*newPosition[dim][i];
+
+				if (IdentifyNbodyParticles && IdentifyOnTheFly)
+					r2 += newPosition[dim][i]*newPosition[dim][i];
 
 				// COM correction
 				newPosition[dim][i] += ClusterPosition[dim];
 				newVelocity[dim][i] += ClusterVelocity[dim];
+
+				if (IdentifyNbodyParticles && !IdentifyOnTheFly)
+					r2 += (newPosition[dim][i]-EnzoClusterPosition[dim])*(newPosition[dim][i]-EnzoClusterPosition[dim]);
 			}
 			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) {
 				newPosition[0][i] += 1e10;
