@@ -269,7 +269,6 @@ void FindTotalNumberOfNbodyParticles(LevelHierarchyEntry *LevelArray[],
 	NumberOfNbodyParticles = *LocalNumberOfNbodyParticles;
 	NumberOfNewNbodyParticles = *NewLocalNumberOfNbodyParticles;
 #endif
-
 }
 
 
@@ -299,11 +298,43 @@ void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int le
 	if (!isNbodyParticleIdentification)
 		return;
 
-
   LevelHierarchyEntry *Temp;
 
-	for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
-		Temp->GridData->IdentifyNbodyParticles();
+	if (NbodyClusterPosition[0] == -1 || NbodyClusterPosition[0] == 0) {
+		double TotalMass=0;
+
+		NbodyClusterPosition[0] = 0.;
+		NbodyClusterPosition[1] = 0.;
+		NbodyClusterPosition[2] = 0.;
+
+		for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++) {
+			for (Temp = LevelArray[level]; Temp; Temp = Temp->NextGridThisLevel) {
+				Temp->GridData->GetNbodyCenterOfMass(TotalMass);
+			}
+		}
+
+		CommunicationAllReduceValues(NbodyClusterPosition, 3, MPI_SUM);
+		CommunicationAllReduceValues(&TotalMass, 1, MPI_SUM);
+
+		if (TotalMass==0)
+			return;
+
+		NbodyClusterPosition[0] /= TotalMass;
+		NbodyClusterPosition[1] /= TotalMass;
+		NbodyClusterPosition[2] /= TotalMass;
+
+		fprintf(stderr, "GetCenterOfMass\n");
+		fprintf(stderr, "NbodyClusterPosition = (%.3e, %.3e, %.3e), R2=%.3e\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2], NbodyClusterPosition[3]);
+	}
+	else {
+		fprintf(stderr, "NbodyClusterPosition = (%.3e, %.3e, %.3e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
+	}
+
+
+	for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++) {
+		for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel) {
+			Temp->GridData->IdentifyNbodyParticles();
+		}
 	}
 }
 
@@ -328,6 +359,29 @@ void GetCenterOfMass(double *mass, double *x[MAX_DIMENSION], double *v[MAX_DIMEN
 	}
 }
 
+
+
+
+
+void grid::GetNbodyCenterOfMass(double &TotalMass) {
+
+	if (MyProcessorNumber != ProcessorNumber) return;
+
+
+	double Mass;
+
+	float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+
+	for (int i=0; i < NumberOfParticles; i++) {
+		if (ParticleType[i] == PARTICLE_TYPE_NBODY) {
+			Mass = ParticleMass[i]*dv;
+			NbodyClusterPosition[0] += ParticlePosition[0][i]*Mass;
+			NbodyClusterPosition[1] += ParticlePosition[1][i]*Mass;
+			NbodyClusterPosition[2] += ParticlePosition[2][i]*Mass;
+			TotalMass += Mass;
+		}
+	}
+}
 
 
 #ifdef no_use

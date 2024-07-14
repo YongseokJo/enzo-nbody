@@ -1760,6 +1760,9 @@ class grid
 
 #ifdef NBODY
 		/* */
+
+		void GetNbodyCenterOfMass(double &TotalMass);
+
 		void SetNumberOfNbodyParticles(void) {
 			if (MyProcessorNumber != ProcessorNumber) return;
 			int i, count=0, count_new=0;
@@ -1834,7 +1837,7 @@ class grid
 
 					//fprintf(stderr, "In Grid, PID: %d \n", ParticleNumber[i]);
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
-						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i]-0.5;
+						NbodyParticlePositionTemp[dim][*count] = ParticlePosition[dim][i];
 						NbodyParticleVelocityTemp[dim][*count] = ParticleVelocity[dim][i];
 
 					}
@@ -1871,7 +1874,7 @@ class grid
 					NewNbodyParticleDynamicalTimeTmp[*count_new] = ParticleAttribute[1][i];
 					for (int dim=0; dim<MAX_DIMENSION; dim++) {
 						//if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-						NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i]-0.5;
+						NewNbodyParticlePositionTemp[dim][*count_new] = ParticlePosition[dim][i];
 						NewNbodyParticleVelocityTemp[dim][*count_new] = ParticleVelocity[dim][i];
 						//}
 						NewNbodyParticleAccelerationNoStarTemp[dim][*count_new] = ParticleAttribute[NumberOfParticleAttributes-4+dim][i];
@@ -1913,7 +1916,7 @@ class grid
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
-							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j]+0.5;
+							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j];
 							ParticleVelocity[dim][i] = NbodyParticleVelocityTemp[dim][j];
 						} // ENDFOR dim
 						(*count)++;
@@ -1928,7 +1931,7 @@ class grid
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
-							ParticlePosition[dim][i] = NewNbodyParticlePositionTemp[dim][j]+0.5;
+							ParticlePosition[dim][i] = NewNbodyParticlePositionTemp[dim][j];
 							ParticleVelocity[dim][i] = NewNbodyParticleVelocityTemp[dim][j];
 						} // ENDFOR dim
 						(*count)++;
@@ -1949,27 +1952,28 @@ class grid
 			//float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
-				if (ParticleType[i] == PARTICLE_TYPE_DARK_MATTER || ParticleType[i] == PARTICLE_TYPE_NBODY) {
-					continue;
-				}
-				r2 = 0;
-				r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])
-					*(ParticlePosition[0][i] - NbodyClusterPosition[0]);
-				r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1])
-					*(ParticlePosition[1][i] - NbodyClusterPosition[1]);
-				r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2])
-					*(ParticlePosition[2][i] - NbodyClusterPosition[2]);
-				if ( r2 < thres_r2 ) {
-					if (NbodyFirst) {
-						ParticleType[i] = PARTICLE_TYPE_NBODY;
+				if (ParticleType[i] == PARTICLE_TYPE_STAR 
+						|| (NbodyFirst && ParticleType[i] == PARTICLE_TYPE_NBODY)) {
+					r2 = 0;
+					r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])
+						*(ParticlePosition[0][i] - NbodyClusterPosition[0]);
+					r2 += (ParticlePosition[1][i] - NbodyClusterPosition[1])
+						*(ParticlePosition[1][i] - NbodyClusterPosition[1]);
+					r2 += (ParticlePosition[2][i] - NbodyClusterPosition[2])
+						*(ParticlePosition[2][i] - NbodyClusterPosition[2]);
+					if ( r2 < thres_r2 ) {
+						if (NbodyFirst) {
+							ParticleType[i] = PARTICLE_TYPE_NBODY;
+						}
+						else {
+							ParticleType[i] = PARTICLE_TYPE_NBODY_NEW;
+						}
 					}
 					else {
-						ParticleType[i] = PARTICLE_TYPE_NBODY_NEW;
-					}
-				}
-				else {
-					if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW) {
-						ParticleType[i] = PARTICLE_TYPE_STAR;
+						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW || 
+								(NbodyFirst && PARTICLE_TYPE_NBODY)) {
+							ParticleType[i] = PARTICLE_TYPE_STAR;
+						}
 					}
 				} // endif
 			} // endfor particles

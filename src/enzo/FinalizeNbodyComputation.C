@@ -122,7 +122,7 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 
 
 			/*-----------------------------------------------*/
-			/******** Recv Arrays to Fortran Nbody+    *****/
+			/******** Recv Arrays from Nbody+    *****/
 			/*-----------------------------------------------*/
 			//fprintf(stderr,"NumberOfParticles=%d in Final\n",NumberOfNbodyParticles);
 
@@ -147,6 +147,10 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 					ierr = MPI_Recv(NewNbodyParticlePosition[dim], NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 500, inter_comm, &status);
 					ierr = MPI_Recv(NewNbodyParticleVelocity[dim], NumberOfNewNbodyParticles, MPI_DOUBLE, 1, 600, inter_comm, &status);
 				}
+			}
+
+			if ((NumberOfNbodyParticles+NumberOfNewNbodyParticles)!=0 && isIdentificationOnTheFly) {
+				ierr = MPI_Recv(NbodyClusterPosition, 3, MPI_DOUBLE, 1, 700, inter_comm, &status);
 			}
 			CommunicationInterBarrier();
 			fprintf(stdout, "ENZO: Data received.\n");
@@ -278,6 +282,8 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 #endif
 
 
+		if ((NumberOfNbodyParticles+NumberOfNewNbodyParticles)!=0 && isIdentificationOnTheFly) 
+			MPI_Bcast(NbodyClusterPosition, 3, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm);
 
 		/* Update Particle Velocity and Position Back to Grids */
 		int count = 0;

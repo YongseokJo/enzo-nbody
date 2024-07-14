@@ -818,10 +818,12 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
   UseNBODY		     = 1;
 	NbodyFirst       = TRUE;
 	isNbodyParticleIdentification = FALSE;
-	for (int i=0; i<MAX_DIMENSION+1; i++)
-		NbodyClusterPosition[i] = 0.;
-	NbodySmoothingLength  = 0.;
-	NbodyTimeStepConstant = 0.;
+	isIdentificationOnTheFly      = FALSE;
+	for (int i=0; i<MAX_DIMENSION; i++)
+		NbodyClusterPosition[i] = -1.;
+	NbodyClusterPosition[3] = 0.;
+	NbodySmoothingLength  = -1;
+	NbodyTimeStepConstant = 0.01;
 	NbodyNeighborRadius   = 0.;
 	NbodyFixNumNeighbor   = 30;
 	NbodyBinaryRegularization = 0;

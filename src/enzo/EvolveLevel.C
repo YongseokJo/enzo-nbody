@@ -501,7 +501,8 @@ int EvolveLevel(TopGridData *MetaData, LevelHierarchyEntry *LevelArray[],
 
 
 #ifdef NBODY
-				IdentifyNbodyParticlesEvolveLevel(LevelArray, level);
+				if (LevelArray[level+1] == NULL)
+					IdentifyNbodyParticlesEvolveLevel(LevelArray, level);
 #endif
 
 
