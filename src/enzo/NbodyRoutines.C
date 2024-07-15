@@ -323,13 +323,9 @@ void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int le
 		NbodyClusterPosition[1] /= TotalMass;
 		NbodyClusterPosition[2] /= TotalMass;
 
-		fprintf(stderr, "GetCenterOfMass\n");
-		fprintf(stderr, "NbodyClusterPosition = (%.e, %.e, %.e), R2=%.3e\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2], NbodyClusterPosition[3]);
+		//fprintf(stderr, "GetCenterOfMass\n");
+		//fprintf(stderr, "NbodyClusterPosition = (%.e, %.e, %.e), R2=%.3e\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2], NbodyClusterPosition[3]);
 	}
-	else {
-		fprintf(stderr, "NbodyClusterPosition = (%.e, %.e, %.e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
-	}
-
 
 	for (int level1=0; level1<MAX_DEPTH_OF_HIERARCHY-1;level1++) {
 		for (Temp = LevelArray[level1]; Temp; Temp = Temp->NextGridThisLevel) {
