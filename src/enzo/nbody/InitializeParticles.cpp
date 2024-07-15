@@ -104,7 +104,6 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset) {
 	UpdateNextRegTime(particle);
 	std::cout << "Initialization of New Particles finished." << std::endl;
 
-
 }
 
 

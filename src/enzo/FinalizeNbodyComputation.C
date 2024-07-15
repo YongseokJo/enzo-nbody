@@ -149,8 +149,10 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 				}
 			}
 
-			if ((NumberOfNbodyParticles+NumberOfNewNbodyParticles)!=0 && isIdentificationOnTheFly) {
+			if ((NumberOfNbodyParticles+NumberOfNewNbodyParticles)!=0 && isNbodyParticleIdentification && isIdentificationOnTheFly) {
 				ierr = MPI_Recv(NbodyClusterPosition, 3, MPI_DOUBLE, 1, 700, inter_comm, &status);
+				fprintf(stdout, "In Final, NbodyClusterPosition = (%e, %e, %e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
+				fprintf(stderr, "In Final, NbodyClusterPosition = (%e, %e, %e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
 			}
 			CommunicationInterBarrier();
 			fprintf(stdout, "ENZO: Data received.\n");
@@ -282,8 +284,10 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 #endif
 
 
-		if ((NumberOfNbodyParticles+NumberOfNewNbodyParticles)!=0 && isIdentificationOnTheFly) 
+		if (isNbodyParticleIdentification && isIdentificationOnTheFly)  {
 			MPI_Bcast(NbodyClusterPosition, 3, MPI_DOUBLE, ROOT_PROCESSOR, enzo_comm);
+			fprintf(stderr, "In Final all, NbodyClusterPosition = (%e, %e, %e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
+		}
 
 		/* Update Particle Velocity and Position Back to Grids */
 		int count = 0;
