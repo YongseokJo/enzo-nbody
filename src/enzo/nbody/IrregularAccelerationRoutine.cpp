@@ -64,6 +64,9 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 		}
 
 		for (Particle* ptcl:ComputationList) {
+			
+
+
 
 			if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
 				fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
@@ -114,6 +117,20 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 			}
 			fprintf(stdout,"\n");	
 			*/
+
+			if (ptcl->a_irr[0][0] == 0. && ptcl->NumberOfAC != 0) {
+				fprintf(stderr, "my PID = %d : ",ptcl->PID);
+				fprintf(nbpout, "my PID = %d : ",ptcl->PID);
+				for (Particle* nn:ptcl->ACList) {
+					fprintf(stderr, "%d ",nn->PID);
+					fprintf(nbpout, "%d ",nn->PID);
+				}
+				fprintf(stderr, "\n");
+				fprintf(nbpout, "\n");
+				fflush(stderr);
+				fflush(nbpout);
+				throw std::runtime_error("IrregularAccelerationRoutine.cpp");
+			}
 
 #ifdef time_trace
 			_time.irr_force.markStart();

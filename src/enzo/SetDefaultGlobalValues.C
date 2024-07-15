@@ -824,7 +824,7 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
 	NbodyClusterPosition[3] = 0.;
 	NbodySmoothingLength  = -1;
 	NbodyTimeStepConstant = 0.01;
-	NbodyNeighborRadius   = 0.;
+	NbodyNeighborRadius   = 0.00011;
 	NbodyFixNumNeighbor   = 30;
 	NbodyBinaryRegularization = 0;
 	NbodyBinaryDistance = 0.0002;

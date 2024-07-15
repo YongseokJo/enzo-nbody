@@ -147,16 +147,18 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 	fprintf(nbpout, "Enzo Time                = %lf\n", TimeStep);
 	fprintf(nbpout, "Nbody Time               = %lf\n", EnzoTimeStep);
-	fprintf(nbpout, "EPS2                     = %lf\n", EPS2);
-	fprintf(nbpout, "InitialRadiusOfAC        = %.2e\n", InitialRadiusOfAC);
+	fprintf(nbpout, "EPS2                     = %lf pc**2\n", EPS2*position_unit*position_unit);
+	fprintf(nbpout, "InitialRadiusOfAC        = %.2e pc\n", InitialRadiusOfAC*position_unit);
 	fprintf(nbpout, "eta                      = %lf\n", eta);
-	fprintf(nbpout, "ClusterRadius2           = %.2e\n", ClusterRadius2*EnzoLength*EnzoLength);
+	fprintf(nbpout, "ClusterRadius2           = %.2e pc**2\n", ClusterRadius2*EnzoLength*EnzoLength*position_unit*position_unit);
 	fprintf(nbpout, "StarMassEjectionFraction = %lf\n", StarMassEjectionFraction);
 	fprintf(nbpout, "StarParticleFeedback     = %d\n", StarParticleFeedback);
 	fprintf(nbpout, "FixNumNeighbor           = %d\n", FixNumNeighbor);
 	fprintf(nbpout, "BinaryRegularization     = %d\n", BinaryRegularization);
 	fprintf(nbpout, "KSTime                   = %lf\n", KSTime);
 	fprintf(nbpout, "KSDistance               = %lf\n", KSDistance);
+	fprintf(nbpout, "IdentifyNbodyParticles   = %d\n", IdentifyNbodyParticles);
+	fprintf(nbpout, "IdentifyOnTheFly         = %d\n\n", IdentifyOnTheFly);
 
 
 	for (int dim=0; dim<Dim; dim++) {
@@ -414,7 +416,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 				if (PID[i] == particle[j]->PID) {
 					particle[j]->setParticleInfo(Mass, BackgroundAcceleration, NextPtr, i);
 					NextPtr = particle[j];
-					fprintf(stdout, "NBODY+: pid= %d, x=%e\n",particle[j]->PID,particle[j]->Position[0]);
+					//fprintf(stdout, "NBODY+: pid= %d, x=%e\n",particle[j]->PID,particle[j]->Position[0]);
 					if (i == 0) {
 						FirstParticleInEnzo = particle[j];
 					}
@@ -561,6 +563,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 		}
 		*/
 
+		/*
 		Particle* ptcl;
 		fprintf(stderr, "New particles PID = ");
 		for (int i=0; i<newNNB; i++) {
@@ -583,6 +586,7 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 					ptcl->TimeBlockReg, ptcl->TimeBlockIrr, ptcl->TimeLevelReg, ptcl->TimeLevelIrr);
 		}
 		fprintf(stderr, "\n");
+		*/
 	}
 
 	// Initialization
@@ -632,12 +636,11 @@ int ReceiveFromEzno(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "NBODY+    : FixNumNeighbor    = %d\n", FixNumNeighbor);
 
 
-	fprintf(stdout, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
-	fprintf(stdout, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
-	fprintf(stdout, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
-	fprintf(stdout, "NBODY+    : Particle size     = %d\n", particle.size());
-	fprintf(stdout, "NBODY+    : RegularList size = %d\n", RegularList.size());
-	fflush(stdout);
+	fprintf(stderr, "NBODY+    : In ReceiveFromEzno (after new particle might be added): \n");
+	fprintf(stderr, "NBODY+    : original NNB      = %d (+%d)\n", NNB-newNNB, newNNB);
+	fprintf(stderr, "NBODY+    : newly updated NNB = %d\n", NNB, newNNB);
+	fprintf(stderr, "NBODY+    : Particle size     = %d\n", particle.size());
+	fprintf(stderr, "NBODY+    : RegularList size = %d\n", RegularList.size());
 	fflush(stderr);
 	fflush(nbpout);
 	fflush(gpuout);
@@ -766,12 +769,14 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	}
 
 	if (ptcl != nullptr) {
-		std::cout << "NBODY+: Warrning! NextParticleInEnzo does not match!" << std::endl;
+		fprintf(nbpout, "NBODY+: Warrning! NextParticleInEnzo does not match!\n");
+		std::cerr << "NBODY+: Warrning! NextParticleInEnzo does not match!" << std::endl;
+		fflush(nbpout);
+		throw std::runtime_error("CommunicationToHydro.cpp:774");
 	}
-	std::cout << "NBODY+: Waiting for Enzo to sent data..." << std::endl;
-	fprintf(stdout, "NBODY+: Waiting for Enzo to sent data...\n");
+	std::cerr << "NBODY+: Waiting for Enzo to sent data..." << std::endl;
+	fprintf(nbpout, "NBODY+: Waiting for Enzo to sent data...\n");
 	CommunicationInterBarrier();
-	std::cout << "NBODY+: Sending data to Enzo..." << std::endl;
 	if (NNB-newNNB != 0)
 	{
 		for (int dim = 0; dim < Dim; dim++)
@@ -780,7 +785,7 @@ int SendToEzno(std::vector<Particle*> &particle) {
 			MPI_Send(Velocity[dim], NNB - newNNB, MPI_DOUBLE, 0, 400, inter_comm);
 		}
 	}
-	std::cout << "NBODY+: Escape particles=" << EscapeParticleNum << std::endl;
+	std::cerr << "NBODY+: Escape particles=" << EscapeParticleNum << std::endl;
 
 	//fprintf(stderr,"NewNumberOfParticles=%d\n",NumberOfNewNbodyParticles);
 	if (newNNB > 0) {
@@ -792,16 +797,22 @@ int SendToEzno(std::vector<Particle*> &particle) {
 
 
 	if (NNB != 0 && IdentifyOnTheFly) {
-			MPI_Send(ClusterPosition, 3, MPI_DOUBLE, 0, 700, inter_comm);
+		fprintf(stderr, "NBODY: ClusterPosition =(%lf, %lf, %lf)\n",
+				ClusterPosition[0]-0.5, ClusterPosition[1]-0.5, ClusterPosition[2]-0.5);
+		fprintf(stderr, "NBODY: ClusterPosition =(%lf, %lf, %lf)\n",
+				(ClusterPosition[0]-0.5)*EnzoLength*position_unit,
+				(ClusterPosition[1]-0.5)*EnzoLength*position_unit,
+				(ClusterPosition[2]-0.5)*EnzoLength*position_unit);
+		MPI_Send(ClusterPosition, 3, MPI_DOUBLE, 0, 700, inter_comm);
 	}
 
 	CommunicationInterBarrier();
 	std::cout << "NBODY+: Data sent!" << std::endl;
 	fprintf(stdout, "NBODY+: Data sent!\n");
 
-	//fprintf(stderr, "NBODY: PID=");
+	fprintf(stderr, "NBODY:(particle before) PID=");
 	for (Particle* ptcl:particle) {
-		//fprintf(stderr, "%d, ", ptcl->PID);
+		fprintf(stderr, "%d, ", ptcl->PID);
 		//fprintf(stderr, "NBODY: PID=%d, X=(%.3e, %.3e, %.3e)\n", 
 				//ptcl->PID,ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
 		//fprintf(stderr, "NBODY: Pos  Of news=(%.3e, %.3e, %.3e)\n",
@@ -812,18 +823,13 @@ int SendToEzno(std::vector<Particle*> &particle) {
 		//fprintf(stderr, "NBODY: Acc  Of news=(%.3e, %.3e, %.3e)\n",
 		//		ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
 	}
-	//fprintf(stderr, "\n");
-
-	/*
-	for (Particle* ptcl:particle) {
-		fprintf(stderr, "NBODY:(particle before) PID=%d\n", ptcl->PID);
-	}
-	*/
+	fprintf(stderr, "\n");
 
 
-		//fprintf(stderr, "NBODY:(Escape) PID=\n");
+
+	fprintf(stderr, "NBODY:(Escape) PID=\n");
 	for (Particle* ptcl:EscapeList) {
-		//fprintf(stderr, "%d, ", ptcl->PID);
+		fprintf(stderr, "%d, ", ptcl->PID);
 		/*
 		fprintf(stderr, "NBODY3-1: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
 				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
@@ -833,17 +839,20 @@ int SendToEzno(std::vector<Particle*> &particle) {
 				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
 				*/
 	}
-		//fprintf(stderr, "\n ");
+	fprintf(stderr, "\n ");
 
 
 	// erase from other particles' neighbor
 	// and correct force, but not too much worry about a_reg for now
+	int size_tmp = 0;
 	for (Particle* ptcl: particle) {
+		size_tmp = ptcl->NumberOfAC;
 		auto it = ptcl->ACList.erase(
 				std::remove_if(ptcl->ACList.begin(), ptcl->ACList.end(),
 					[ptcl](Particle* p) {
 					bool to_remove = p->isErase;
 					if (to_remove) {
+					fprintf(stderr, "earsing %d of %d\n", p->PID, ptcl->PID);
 						double a[Dim], adot[Dim];
 						ptcl->ComputeAcceleration(p,a,adot);
 						for (int dim=0; dim<Dim; dim++) {
@@ -855,11 +864,14 @@ int SendToEzno(std::vector<Particle*> &particle) {
 					}),
 				ptcl->ACList.end());
 
-		if (it != ptcl->ACList.end())  {
+		if (size_tmp != ptcl->ACList.size())  {
+			fprintf(stderr, "Acceleration Correction PID=%d\n", ptcl->PID);
 			for (int dim=0;dim<Dim;dim++) {
 				ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0];
 				ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
 			}
+			ptcl->NumberOfAC = ptcl->ACList.size();
+			fprintf(stderr, "NN=%d, a_irr=%e\n", ptcl->NumberOfAC, ptcl->a_irr[0][0]);
 		}
 	}
 
@@ -876,20 +888,20 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	EscapeList.clear();
 
 
-	//fprintf(stderr, "NBODY:(particle after) PID=\n");
+	fprintf(stderr, "NBODY:(particle after) PID=\n");
 	for (Particle* ptcl:particle) {
-		//fprintf(stderr, "%d, ", ptcl->PID);
+		fprintf(stderr, "%d, ", ptcl->PID);
 		/*
-		fprintf(stderr, "NBODY3-2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
-		fprintf(stderr, "NBODY3-2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
-				ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
-		fprintf(stderr, "NBODY3-2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
-				ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
-		fprintf(stderr, "NBODY3-2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
-				ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
-				*/
+			 fprintf(stderr, "NBODY3-2: Mass Of NewNbodyParticles=%.3e\n", ptcl->Mass);
+			 fprintf(stderr, "NBODY3-2: Vel  Of news=(%.3e, %.3e, %.3e)\n", 
+			 ptcl->Velocity[0], ptcl->Velocity[1], ptcl->Velocity[2]);
+			 fprintf(stderr, "NBODY3-2: Pos  Of news=(%.3e, %.3e, %.3e)\n",
+			 ptcl->Position[0], ptcl->Position[1], ptcl->Position[2]);
+			 fprintf(stderr, "NBODY3-2: Acc  Of news=(%.3e, %.3e, %.3e)\n",
+			 ptcl->a_tot[0][0], ptcl->a_tot[1][0], ptcl->a_tot[2][0]);
+			 */
 	}
-		//fprintf(stderr, "\n ");
+	fprintf(stderr, "\n ");
 
 
 
@@ -910,17 +922,16 @@ int SendToEzno(std::vector<Particle*> &particle) {
 	std::cout << "NBODY+: Sending data finished." << std::endl;
 
 
-	fprintf(stdout, "NBODY+    : In SendToEzno (after particle might be escaped): \n");
-	fprintf(stdout, "NBODY+    : original NNB      = %d (-%d)\n", NNB+EscapeParticleNum, EscapeParticleNum);
-	fprintf(stdout, "NBODY+    : newly updated NNB = %d\n", NNB);
-	fprintf(stdout, "NBODY+    : Particle size     = %d\n", particle.size());
+	fprintf(stderr, "NBODY+    : In SendToEnzo (after particle might be escaped): \n");
+	fprintf(stderr, "NBODY+    : original NNB      = %d (-%d)\n", NNB+EscapeParticleNum, EscapeParticleNum);
+	fprintf(stderr, "NBODY+    : newly updated NNB = %d\n", NNB);
+	fprintf(stderr, "NBODY+    : Particle size     = %d\n", particle.size());
 
-	fprintf(nbpout, "NBODY+    : In SendToEzno (after particle might be escaped): \n");
+	fprintf(nbpout, "NBODY+    : In SendToEnzo (after particle might be escaped): \n");
 	fprintf(nbpout, "NBODY+    : original NNB      = %d (-%d)\n", NNB+EscapeParticleNum, EscapeParticleNum);
 	fprintf(nbpout, "NBODY+    : newly updated NNB = %d\n", NNB);
 	fprintf(nbpout, "NBODY+    : Particle size     = %d\n", particle.size());
 
-	fflush(stdout);
 	fflush(stderr);
 	fflush(nbpout);
 	fflush(gpuout);

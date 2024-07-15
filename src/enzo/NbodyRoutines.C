@@ -324,10 +324,10 @@ void IdentifyNbodyParticlesEvolveLevel(LevelHierarchyEntry *LevelArray[], int le
 		NbodyClusterPosition[2] /= TotalMass;
 
 		fprintf(stderr, "GetCenterOfMass\n");
-		fprintf(stderr, "NbodyClusterPosition = (%.3e, %.3e, %.3e), R2=%.3e\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2], NbodyClusterPosition[3]);
+		fprintf(stderr, "NbodyClusterPosition = (%.e, %.e, %.e), R2=%.3e\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2], NbodyClusterPosition[3]);
 	}
 	else {
-		fprintf(stderr, "NbodyClusterPosition = (%.3e, %.3e, %.3e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
+		fprintf(stderr, "NbodyClusterPosition = (%.e, %.e, %.e)\n", NbodyClusterPosition[0], NbodyClusterPosition[1], NbodyClusterPosition[2]);
 	}
 
 
