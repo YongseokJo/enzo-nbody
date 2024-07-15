@@ -43,6 +43,7 @@ int GetUnits(float *DensityUnits, float *LengthUnits,
 		float *VelocityUnits, double *MassUnits, FLOAT Time);
 inline int nlines(const char* fname);
 
+
 int nlines(const char* fname) {
 
 	FILE* fptr = fopen(fname, "r");
@@ -75,16 +76,19 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 		float Bfield[MAX_DIMENSION];
 		FLOAT ScaleLength;
 		FLOAT ScaleHeight;
+		FLOAT ScaleLengthPlummer; //by Jo YS
 		float DiskMass;
 		float GasFraction;
 		float DiskTemperature;
+		float DiskMassPlummer; // by Jo YS
 		float DiskMetallicity;
 		float HaloMass;
 		float HaloTemperature;
 		float HaloMetallicity;
-		FLOAT VCircRadius[VCIRC_TABLE_LENGTH];
-		float VCircVelocity[VCIRC_TABLE_LENGTH];
+		FLOAT VCircRadius[VCIRC_TABLE_LENGTH], VCircRadius1[VCIRC_TABLE_LENGTH]; // by Ahram Lee
+		float VCircVelocity[VCIRC_TABLE_LENGTH], VCircVelocity1[VCIRC_TABLE_LENGTH]; //by Ahram Lee
 		int RefineAtStart;
+		int isPlummer=0;
 
 	public:
 		ProblemType_AgoraRestart() : EnzoProblemType()
@@ -183,8 +187,11 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				ret += sscanf(line, "AgoraRestartCenterPosition = %"PSYM" %"PSYM" %"PSYM,
 						CenterPosition, CenterPosition+1, CenterPosition+2);
 				ret += sscanf(line, "AgoraRestartScaleLength = %"PSYM, &ScaleLength);
+				ret += sscanf(line, "AgoraRestartScaleLengthPlummer = %"PSYM, &ScaleLengthPlummer); // by YS Jo
 				ret += sscanf(line, "AgoraRestartScaleHeight = %"PSYM, &ScaleHeight);
 				ret += sscanf(line, "AgoraRestartDiskMass = %"FSYM, &DiskMass);
+				ret += sscanf(line, "AgoraRestartDiskMassPlummer = %"FSYM, &DiskMassPlummer); // by YS Jo
+				ret += sscanf(line, "isPlummer = %"ISYM, &isPlummer); // by YS Jo
 				ret += sscanf(line, "AgoraRestartGasFraction = %"FSYM, &GasFraction);
 				ret += sscanf(line, "AgoraRestartDiskTemperature = %"FSYM,
 						&DiskTemperature);
@@ -378,6 +385,20 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 						ScaleHeight);
 				fprintf(Outfptr, "AgoraRestartDiskMass                = %"FSYM"\n",
 						DiskMass);
+				/** by YS Jo **/
+				fprintf(Outfptr, "isPlummer                           = %"ISYM"\n",
+						isPlummer); 
+				fprintf(Outfptr, "AgoraRestartScaleLengthPlummer      = %"PSYM"\n",
+						ScaleLengthPlummer); 
+				fprintf(Outfptr, "AgoraRestartDiskMassPlummer	        = %"FSYM"\n", 
+						DiskMassPlummer);
+				fprintf(stdout, "isPlummer                           = %"ISYM"\n",
+						isPlummer); 
+				fprintf(stdout, "AgoraRestartScaleLengthPlummer      = %"FSYM"\n",
+						ScaleLengthPlummer); 
+				fprintf(stdout, "AgoraRestartDiskMassPlummer	        = %"FSYM"\n", 
+						DiskMassPlummer);
+				/**          **/
 				fprintf(Outfptr, "AgoraRestartGasFraction             = %"FSYM"\n",
 						GasFraction);
 				fprintf(Outfptr, "AgoraRestartDiskTemperature         = %"FSYM"\n",
@@ -475,7 +496,8 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 
 			int dim, i, j, k, size, index=0;
 			float RhoZero, DiskGasEnergy, DiskDensity, HaloGasEnergy, HaloDensity,
-						BoxVolume, vcirc, mu;
+						BoxVolume, vcirc, mu,
+						RhoZeroPlummer; //by YS Jo
 			FLOAT x, y, z, radius, xy_radius, cellwidth;
 
 			/* Compute size of this grid */
@@ -521,6 +543,12 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			RhoZero = this->DiskMass * this->GasFraction / (4.*pi) /
 				(POW((this->ScaleLength),2)*(this->ScaleHeight));
 
+
+			if (isPlummer)
+				RhoZeroPlummer = this->DiskMassPlummer / (4.*pi) /  //by Jo YS
+					POW((this->ScaleLengthPlummer),3) * 3;
+
+
 			HaloGasEnergy = this->HaloTemperature / mu / (Gamma - 1) /
 				TemperatureUnits;
 
@@ -559,8 +587,16 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 
 						/* Find disk density, halo density and internal energy */
 
-						DiskDensity = gauss_mass(RhoZero, x/LengthUnits, y/LengthUnits,
-								z/LengthUnits, cellwidth) / POW(cellwidth, 3);
+						// by Jo YS 
+						if (isPlummer) {
+							DiskDensity = plummer_in_gauss_mass(RhoZero, RhoZeroPlummer, x/LengthUnits, y/LengthUnits,
+									z/LengthUnits, cellwidth) / POW(cellwidth,3);
+						}
+						else  {
+
+							DiskDensity = gauss_mass(RhoZero, x/LengthUnits, y/LengthUnits,
+									z/LengthUnits, cellwidth) / POW(cellwidth, 3);
+						}
 
 						if ( HaloDensity*HaloTemperature > DiskDensity*DiskTemperature )
 						{
@@ -826,6 +862,77 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 			 ***/
 		}
 
+
+		/*** by YS Jo ***/
+		float plummer_in_gauss_mass(
+				float RhoZero, float RhoZeroPlummer, FLOAT xpos, FLOAT ypos, FLOAT zpos, FLOAT cellwidth)
+		{
+			// As of now, I hard-coded the Plummer model with 1e6 Msun by YS Jo.
+			// Computes the total mass in a given cell by integrating the density
+			// profile using 5-point Gaussian quadrature.
+			// http://mathworld.wolfram.com/Legendre-GaussQuadrature.html
+			FLOAT EvaluationPoints [5] = {-0.90617985,-0.53846931,0.0,0.53846931,0.90617985};
+			FLOAT Weights [5] = {0.23692689,0.47862867,0.56888889,0.47862867,0.23692689};
+			FLOAT xResult [5];
+			FLOAT yResult [5];
+			FLOAT r, z;
+			float Mass_g = 0, Mass_p = 0; int i,j,k;
+
+			//Cell mass for Exponential Disk by Jo YS
+			for (i=0;i<5;i++)
+			{
+				xResult[i] = 0.0;
+				for (j=0;j<5;j++)
+				{
+					yResult[j] = 0.0;
+					for (k=0;k<5;k++)
+					{
+						r = sqrt((POW(xpos+EvaluationPoints[i]*cellwidth/2.0, 2.0) +
+									POW(ypos+EvaluationPoints[j]*cellwidth/2.0, 2.0) ) );
+						z = fabs(zpos+EvaluationPoints[k]*cellwidth/2.0);
+						yResult[j] +=
+							cellwidth/2.0 * Weights[k] * RhoZero *
+							PEXP(-r/this->ScaleLength) *
+							PEXP(-fabs(z)/this->ScaleHeight);
+					}
+					xResult[i] += cellwidth/2.0*Weights[j]*yResult[j];
+				}
+				Mass_g += cellwidth/2.0*Weights[i]*xResult[i];
+			}
+
+			//Cell mass for Plummer Profile by Jo YS
+			for (i=0;i<5;i++)
+			{
+				xResult[i] = 0.0;
+				for (j=0;j<5;j++)
+				{
+					yResult[j] = 0.0;
+					for (k=0;k<5;k++)
+					{
+						r = sqrt((POW(xpos+EvaluationPoints[i]*cellwidth/2.0, 2.0) +
+									POW(ypos+EvaluationPoints[j]*cellwidth/2.0, 2.0) ) );
+						z = fabs(zpos+EvaluationPoints[k]*cellwidth/2.0);
+						yResult[j] +=
+							cellwidth/2.0 * Weights[k] * RhoZeroPlummer *
+							POW(1+(r*r+z*z)/(this->ScaleLengthPlummer*this->ScaleLengthPlummer), -5/2);
+					}
+					xResult[i] += cellwidth/2.0*Weights[j]*yResult[j];
+				}
+				Mass_p += cellwidth/2.0*Weights[i]*xResult[i];
+			}
+
+			// return the larger value by Jo YS
+			if ( Mass_g > Mass_p ){
+				return Mass_g;
+			}
+			else {
+				return Mass_p;
+			}
+			//return Mass;
+		}
+
+
+
 		float gauss_mass(
 				float RhoZero, FLOAT xpos, FLOAT ypos, FLOAT zpos, FLOAT cellwidth)
 		{
@@ -881,6 +988,19 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				i += 1;
 			}
 
+			// by Ahram Lee
+			if (isPlummer) {
+				fptr = fopen("vcirc_nsc.dat" , "r");
+				i=0;
+				while (fgets(line, MAX_LINE_LENGTH, fptr) != NULL)
+				{
+					ret += sscanf(line, "%"PSYM" %"FSYM, &rad, &vcirc);
+					this->VCircRadius1[i] = rad*kpc_cm; // 3.08567758e21 = kpc/cm
+					this->VCircVelocity1[i] = vcirc*1e5; // 1e5 = (km/s)/(cm/s)
+					i += 1;
+				}
+			}
+
 			fclose(fptr);
 		} // ReadInVcircData
 
@@ -892,8 +1012,30 @@ class ProblemType_AgoraRestart : public EnzoProblemType
 				if (radius < this->VCircRadius[i])
 					break;
 
-			if (i == 0)
-				return (VCircVelocity[i]) * (radius - VCircRadius[0]) / VCircRadius[0];
+			if (i == 0) {
+				/*** Plummer ***/
+				if (isPlummer) {
+					int j;
+					for (j = 0; j < VCIRC_TABLE_LENGTH; j++) {
+						if (radius < this->VCircRadius1[j])
+							break;
+					}
+					if (j == 0)
+						return (VCircVelocity1[j]) * (radius - VCircRadius1[0]) / VCircRadius1[0];
+					else if (j == VCIRC_TABLE_LENGTH)
+						return (VCircVelocity[i]) * (radius - VCircRadius[0]) / VCircRadius[0];
+
+					return VCircVelocity1[j-1] +
+						(VCircVelocity1[j] - VCircVelocity1[j-1]) *
+						(radius - VCircRadius1[j-1])  /
+						(VCircRadius1[j] - VCircRadius1[j-1]);
+
+				}
+
+				else {
+					return (VCircVelocity[i]) * (radius - VCircRadius[0]) / VCircRadius[0];
+				}
+			}
 			else if (i == VCIRC_TABLE_LENGTH)
 				ENZO_FAIL("Fell off the circular velocity interpolation table");
 

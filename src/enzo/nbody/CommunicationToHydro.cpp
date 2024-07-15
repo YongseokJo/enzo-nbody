@@ -797,8 +797,8 @@ int SendToEzno(std::vector<Particle*> &particle) {
 
 
 	if (NNB != 0 && IdentifyOnTheFly) {
-		fprintf(stderr, "NBODY: ClusterPosition =(%lf, %lf, %lf)\n",
-				ClusterPosition[0]-0.5, ClusterPosition[1]-0.5, ClusterPosition[2]-0.5);
+		//fprintf(stderr, "NBODY: ClusterPosition =(%lf, %lf, %lf)\n",
+				//ClusterPosition[0]-0.5, ClusterPosition[1]-0.5, ClusterPosition[2]-0.5);
 		fprintf(stderr, "NBODY: ClusterPosition =(%lf, %lf, %lf)\n",
 				(ClusterPosition[0]-0.5)*EnzoLength*position_unit,
 				(ClusterPosition[1]-0.5)*EnzoLength*position_unit,
