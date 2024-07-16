@@ -2178,7 +2178,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		double MassUnits=1;
 
 		if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
-					&TimeUnits, &VelocityUnits, &MassUnits, 0) == FAIL) {
+					&TimeUnits, &VelocityUnits, &MassUnits, MetaData.Time) == FAIL) {
 			ENZO_FAIL("Error in GetUnits.");
 		}
 
@@ -2189,6 +2189,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		}
 
 		if (isNbodyParticleIdentification) {
+			fprintf(stdout, "LengthUnits=%e\n", LengthUnits);
 			NbodyClusterPosition[3] = (NbodyClusterPosition[3] * kpc_cm / LengthUnits)*(NbodyClusterPosition[3] * kpc_cm / LengthUnits);
 		} else {
 			NbodyClusterPosition[3] = 0;
