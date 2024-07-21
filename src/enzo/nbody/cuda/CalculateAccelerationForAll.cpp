@@ -14,48 +14,43 @@
  *
  */
 
-//void SendAllParticlesToGPU(std::vector <Particle*> &particle);
+void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3], double (&adot)[3], int sign);
+void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle);
+void UpdateNextRegTime(std::vector<Particle*> &particle);
+
 
 void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 
-	// variables for opening GPU
-	int numGpuOpen = NNB+10;
-	int numGpuSend = 1024;
-	int numGpuCal;
-	int mpi_rank = 0;
+
+
+	const int mpi_rank  = 0; // not effective for now
+	int NeighborIndex; // this size should coincide with number of threads
+
+	//int NumGpuCal;
 
 	// variables for saving variables to send to GPU
-	double* MassSend;
-	double* MdotSend;
+	// only regular particle informations are stored here
+	double *MassSend;
+	double *MdotSend;
 	double(*PositionSend)[Dim];
 	double(*VelocitySend)[Dim];
 
-	double* r2OfACSend;
-	double  TimeStepRegTmp, ri2;
+	double* RadiusOfAC2Send;
 	double* TimeStepRegSend;
 
-	double(*AccSend)[Dim];
-	double(*AccDotSend)[Dim];
-	//double *PotSend;
+	double (*AccRegReceive)[Dim];
+	double (*AccRegDotReceive)[Dim];
+	double (*AccIrr)[Dim];
+	double (*AccIrrDot)[Dim];
 
+	//double* PotSend;
 	int **ACListReceive;
 	int *NumNeighborReceive;
-
-	// temporary variables for calculating the irregular force
-	double dx[Dim];
-	double dv[Dim];
-	double rij2,dr2i,dr3i,drdv;
-
-	// extra variables
-	bool neighborOK;
-	int ACnumi2;
-	int ACjid;
-	double dt = particle[0]->TimeStepReg*EnzoTimeStep;
+	int MassFlag;
 
 
-
-	// first let's open the GPU
-	//OpenDevice(&mpi_rank);
+	double a_tmp[Dim]{0}, adot_tmp[Dim]{0};
+	double da, dadot;
 
 
 	// need to make array to send to GPU
@@ -65,111 +60,111 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	PositionSend    = new double[NNB][Dim];
 	VelocitySend    = new double[NNB][Dim];
 
-	r2OfACSend      = new double[NNB];
+	RadiusOfAC2Send = new double[NNB];
 	TimeStepRegSend = new double[NNB];
+	//PotSend         = new double[NNB];
 
-	AccSend         = new double[NNB][Dim];
-	AccDotSend      = new double[NNB][Dim];
+	AccRegReceive    = new double[NNB][Dim];
+	AccRegDotReceive = new double[NNB][Dim];
+	AccIrr           = new double[NNB][Dim];
+	AccIrrDot        = new double[NNB][Dim];
 
-	NumNeighborReceive = new int[NNB];
+	NumNeighborReceive  = new int[NNB];
 	ACListReceive      = new int*[NNB];
+
 	for (int i=0; i<NNB; i++) {
-		ACListReceive[i] = new int[FixNumNeighbor];
-	}
-
-
-	// copy the data of particles to the arrays to be sent
-	for (int i=0; i<NNB; i++) {
-		ri2           = 0;
-		MassSend[i]   = particle[i]->Mass;
-		r2OfACSend[i] = (particle[i]->RadiusOfAC)*(particle[i]->RadiusOfAC);
-		MdotSend[i]   = particle[i]->Mass;
-
+		ACListReceive[i] = new int[NumNeighborMax];
 		for (int dim=0; dim<Dim; dim++) {
-			PositionSend[i][dim] = particle[i]->Position[dim];
-			VelocitySend[i][dim] = particle[i]->Velocity[dim];
-			ri2                 += particle[i]->Position[dim]*particle[i]->Position[dim];
+			AccIrr[i][dim]    = 0;
+			AccIrrDot[i][dim] = 0;
 		}
-
-		TimeStepRegTmp     = 1.0/8.0*sqrt(1.0 + ri2);
-		TimeStepRegSend[i] = std::min(TimeStepRegTmp,1.0);
 	}
+
 
 	// send the arrays to GPU
 	//SendToDevice(&NNB, MassSend, PositionSend, VelocitySend, MdotSend, &FixNumNeighbor);
 
 
-	// calculate the force by sending the particles to GPU in multiples of 1024
-	for (int i=0; i<NNB; i+=numGpuSend) {
-		numGpuCal = std::min(1024,(NNB-i));
+	// Particles have been already at T_new through irregular time step
+	SendAllParticlesToGPU(0., particle);  // needs to be updated
+	
+	
+	Particle * ptcl;
 
-		CalculateAccelerationOnDevice(&NNB, PositionSend, VelocitySend,
-					AccSend, AccDotSend, MdotSend, r2OfACSend, NumNeighborReceive, ACListReceive, dt);
+	for (int i=0; i<particle.size(); i++) {
+		ptcl = particle[i];
+		MassSend[i]   = ptcl->Mass;
+		MdotSend[i]   = 0.; // I will do it later
+		RadiusOfAC2Send[i] = ptcl->RadiusOfAC*ptcl->RadiusOfAC/ptcl->Mass; // mass weighted
 
-		// copy the values of regular forces and neighbors obtained in GPU to particles
-		// and also calculate the irregular forces in the process
-		for (int i2=i; i2<(i+1024); i2++){
-			for (int dim=0; dim<Dim; dim++) {
-				particle[i2]->a_reg[dim][0] += AccSend[i2][dim];
-				particle[i2]->a_reg[dim][1] += AccDotSend[i2][dim];
-			}
-			//ACnumi2 = AClistGpu[i][0];
+		for (int dim=0; dim<Dim; dim++) {
+			PositionSend[i][dim] = ptcl->Position[dim];
+			VelocitySend[i][dim] = ptcl->Velocity[dim];
+		}
+	} // endfor copy info
 
-			// if there are neighbors, save them to neighbor list and calculate the irregular force
-			if (ACnumi2 > 0){
-				particle[i2]->NumberOfAC = ACnumi2;
+	// calculate the force by sending the particles to GPU
+	CalculateAccelerationOnDevice(&NNB, PositionSend, VelocitySend, AccRegReceive, AccRegDotReceive,
+			MdotSend, RadiusOfAC2Send, NumNeighborReceive, ACListReceive, 0.);
 
-				for (int j=1; j<(ACnumi2+1); j++) {
-					//ACjid = AClistGpu[i][j];
-					particle[i2]->ACList.push_back(particle[ACjid]);
+	// Calculate the irregular acceleration components based on neighbors of current regular time.
+	for (int i=0; i<particle.size(); i++) {
 
-					rij2 = 0.0;
-					drdv = 0.0;
+		ptcl = particle[i];  // regular particle in particle list
 
-					for (int dim=0; dim<Dim; dim++) {
-						dx[dim] = particle[ACjid]->Position - particle[i2]->Position;
-						dv[dim] = particle[ACjid]->Velocity - particle[i2]->Velocity;
-						rij2   += dx[dim]*dx[dim];
-						drdv   += dx[dim]*dv[dim];
-					}
+		for (int dim=0; dim<Dim; dim++) {
+			a_tmp[dim]    = 0.;
+			adot_tmp[dim] = 0.;
+		}
 
-					dr2i = 1.0/rij2;
-					dr3i = particle[ACjid]->Mass*dr2i*sqrt(dr2i);
+		/*******************************************************
+		 * Acceleartion correction according to current neighbor
+		 ********************************************************/
+		for (int j=0;  j<NumNeighborReceive[i]; j++) {
+			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
+			CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp, 1);
+		} // endfor j1, over neighbor at current time
 
-					for (int dim=0; dim<Dim; dim++) {
-						particle[i2]->a_irr[dim][0] += dx[dim]*dr3i;
-						particle[i2]->a_irr[dim][1] += (dv[dim]-dx[dim]*drdv)*dr3i;
-					}
-				} // endfor neighbors 
-			} else {  // in case of no neighbors, just set the neighbor number to 0 just in case. 
-				particle[i2]->NumberOfAC = 0;
-			} // if statement on neighbor number ends
+		// update force
+		for (int dim=0; dim<Dim; dim++) {
+			ptcl->a_reg[dim][0] = AccRegReceive[i][dim];
+			ptcl->a_reg[dim][1] = AccRegDotReceive[i][dim];
+			ptcl->a_irr[dim][0] = a_tmp[dim];    //AccIrr[i][dim];
+			ptcl->a_irr[dim][1] = adot_tmp[dim]; //AccIrrDot[i][dim];
+			ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0]; //+ ptcl->BackgroundAcceleration[dim];
+			ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
+			// in case
+		}
 
-
-			// copy the values to other values as well
-			for (int dim=0; dim<3; dim++){
-				particle[i2]->a_tot[dim][0] = particle[i2]->a_reg[dim][0] + particle[i2]->a_irr[dim][0];
-				particle[i2]->a_tot[dim][1] = particle[i2]->a_reg[dim][1] + particle[i2]->a_irr[dim][1];
-			}
-		} // saving the 1024 results from GPU to local class ends
-	} // endfor total calculation 
+		ptcl->ACList.clear();
+		ptcl->NumberOfAC = NumNeighborReceive[i];
+		for (int j=0; j<ptcl->NumberOfAC;j++) {
+			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
+			ptcl->ACList.push_back(particle[NeighborIndex]);
+		}
+		ptcl->UpdateRadius();
+	} 
 
 
 	// free all temporary variables
 	delete[] MassSend;
+	delete[] MdotSend;
 	delete[] PositionSend;
 	delete[] VelocitySend;
-
-	delete[] r2OfACSend;
+	delete[] RadiusOfAC2Send;
 	delete[] TimeStepRegSend;
+	//delete[] PotSend;
 
-	delete[] AccSend;
-	delete[] AccDotSend;
-
-	// close GPU
-	//
-	//CloseDevice();
-
+	delete[] NumNeighborReceive;
+	delete[] AccRegReceive;
+	delete[] AccRegDotReceive;
+	delete[] AccIrr;
+	delete[] AccIrrDot;
+	for (int i=0; i<NNB; i++) {
+		delete[] ACListReceive[i];
+	}
+	delete[] ACListReceive;
+	
 } // calculate 0th, 1st derivative of force + neighbors on GPU ends
 
 
@@ -353,10 +348,10 @@ void SendAllParticlesToGPU(double time, std::vector <Particle*> &particle) {
 	int num=100; // this is garbage
 
 	// allocate memory to the temporary variables
-	Mass     = new double[NNB];
-	Mdot     = new double[NNB];
-	Position = new double[NNB][Dim];
-	Velocity = new double[NNB][Dim];
+	Mass     = new double[size];
+	Mdot     = new double[size];
+	Position = new double[size][Dim];
+	Velocity = new double[size][Dim];
 
 	// copy the data of particles to the arrays to be sent
 	for (int i=0; i<size; i++) {

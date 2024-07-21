@@ -12,7 +12,7 @@
 #define DONE    1
 #define FAIL   -1
 #define mytolerance 5.4210109e-20
-#define no_time_trace
+#define time_trace
 
 
 /*********************************************************************

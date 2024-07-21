@@ -29,8 +29,8 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 
 	Binary* ptclBin;
 
-	fprintf(stdout,"--------------------------------------\n");
-	fprintf(stdout,"In KSRegularlizationTermination.cpp...\n\n");
+	//fprintf(stdout,"--------------------------------------\n");
+	//fprintf(stdout,"In KSRegularlizationTermination.cpp...\n\n");
 
 	ptclI = ptclCM->BinaryParticleI;
 	ptclJ = ptclCM->BinaryParticleJ;
@@ -58,9 +58,9 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 				}),
 			particle.end());
 
-	fprintf(stdout,"initialize particle I \n");
+	//fprintf(stdout,"initialize particle I \n");
 	ReInitializeKSParticle(ptclI, particle);
-	fprintf(stdout,"initialize particle J \n");
+	//fprintf(stdout,"initialize particle J \n");
 	ReInitializeKSParticle(ptclJ, particle);
 
 
@@ -100,7 +100,7 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	// we also need to revert the neighbor list of Particles
 	// assuming that all the neighbors are bidirectional
 	// may need to update later if the radius for neighbor differs depending on the particle
-	fprintf(stdout,"replacing CM particle in neighbor list to component particles \n");
+	//fprintf(stdout,"replacing CM particle in neighbor list to component particles \n");
 
 	int index = 0;
 	//fprintf(stderr, "neighbor of %d, ", ptclCM->PID);
@@ -167,7 +167,7 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	*/
 
 	// delete the original components from the list
-	fprintf(stdout,"deleting CM particle from the particle list\n");
+	//fprintf(stdout,"deleting CM particle from the particle list\n");
 
 
 	//fprintf(stderr,"PID of (CM, I, J) = (%d,%d,%d)\n",ptclCM->PID, ptclI->PID, ptclJ->PID);
@@ -195,7 +195,7 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	*/
 
 	// we also need to delete it from the binary list
-	fprintf(stdout,"deleting binary information from the BinaryList \n");
+	//fprintf(stdout,"deleting binary information from the BinaryList \n");
 	ptclBin->isErase = true;
 	BinaryList.erase(
 			std::remove_if(BinaryList.begin(), BinaryList.end(),
@@ -214,7 +214,7 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	//re-do UpdateNextRegTime
 	UpdateNextRegTime(particle); //
 
-	fprintf(stdout,"add the binary components to particle list (to be included neighbor search)\n");
+	//fprintf(stdout,"add the binary components to particle list (to be included neighbor search)\n");
 	ptclI->ParticleOrder = particle.size();
 	particle.push_back(ptclI);
 	ptclJ->ParticleOrder = particle.size();
@@ -243,10 +243,10 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	ptclJ->isBinary = false;
 	ptclJ->BinaryPairParticle = nullptr;
 
-	fprintf(stdout,"total number of particles = %lu, total number of binaries = %lu \n", particle.size(), BinaryList.size());
-	fprintf(stdout,"total number of ComputationList = %lu\n", ComputationList.size());
+	//fprintf(stdout,"total number of particles = %lu, total number of binaries = %lu \n", particle.size(), BinaryList.size());
+	//fprintf(stdout,"total number of ComputationList = %lu\n", ComputationList.size());
 
-	fprintf(stdout,"end of KS Regularlization Termination \n ");
+	//fprintf(stdout,"end of KS Regularlization Termination \n ");
 
 	fprintf(binout,"PID=%d\n", ptclI->PID);
 	fprintf(binout, "\nPosition: ptclI - x:%e, y:%e, z:%e, \n", ptclI->Position[0], ptclI->Position[1], ptclI->Position[2]);
@@ -298,7 +298,7 @@ void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double cu
 	*/
 	fflush(binout);
 
-	fprintf(stdout,"--------------------------------------\n");
+	//fprintf(stdout,"--------------------------------------\n");
 	//fflush(stdout); 
 
 }

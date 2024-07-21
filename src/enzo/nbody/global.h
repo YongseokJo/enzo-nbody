@@ -55,7 +55,7 @@ extern Particle* FirstComputation;
 extern std::vector<Particle*> ComputationList;
 extern int ComputationTimeMarker;
 extern std::vector<Particle*> RegularList; // how about changing this to particle list
-																					 //
+extern std::vector<Particle*> BinaryCandidateList;
 extern std::vector<Binary*> BinaryList; // List of binaries to calculate
 
 
@@ -86,7 +86,8 @@ extern int outNum;
 
 extern FILE* binout; // binary output
 extern FILE* nbpout; // nbody+ output
-extern FILE* gpuout; // nbody+ output
+extern FILE* gpuout; // cuda output
+extern FILE* pfmout; // performance output
 
 
 

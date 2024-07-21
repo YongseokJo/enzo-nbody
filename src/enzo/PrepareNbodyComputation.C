@@ -569,10 +569,12 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 		//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 10, inter_comm);
 		CommunicationInterBarrier();
 
+		MPI_Send(&NumberOfNbodyParticles, 1, MPI_INT, 1, 10, inter_comm);
+		fprintf(stderr, "The NumberOfNbodyParticles=%d\n", NumberOfNbodyParticles);
 		if (NumberOfNbodyParticles != 0) {
-		for (int j=0; j<NumberOfNbodyParticles; j++)
-			fprintf(stdout, "ENZO: PID in ENZO =%d in PNC\n", NbodyParticleID[j]);
-		//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 10, inter_comm);
+			//for (int j=0; j<NumberOfNbodyParticles; j++)
+				//fprintf(stdout, "ENZO: PID in ENZO =%d in PNC\n", NbodyParticleID[j]);
+				//MPI_Ssend(&NumberOfNbodyParticles, 1, MPI_INT, NumberOfProcessors, 10, inter_comm);
 			MPI_Send(NbodyParticleID  , NumberOfNbodyParticles, MPI_INT   , 1, 25, inter_comm);
 			MPI_Send(NbodyParticleMass, NumberOfNbodyParticles, MPI_DOUBLE, 1, 40, inter_comm);
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {

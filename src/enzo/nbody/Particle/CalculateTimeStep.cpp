@@ -76,12 +76,17 @@ void Particle::calculateTimeStepIrr(double f[3][4],double df[3][4]) {
 		TimeStepReg     = TimeStepIrr;
 		TimeLevelReg    = TimeLevelIrr;
 	}
+
+	if (TimeStepIrr*EnzoTimeStep*1e4 < KSTime)
+		BinaryCandidateList.push_back(this);
 	/*
 	if (PID == 430) {
 		std::cerr << "After TimeLevelIrr=" << TimeLevelIrr << std::endl;
 		std::cerr << std::endl;
 	}
 	*/
+
+
 }
 
 

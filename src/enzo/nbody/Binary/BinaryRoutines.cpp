@@ -10,7 +10,7 @@ void direct_sum(double *x, double *v, double r2, double vx,
                 double mass, double mdot, double (&a)[3], double (&adot)[3]);
 
 
-void generate_Matrix(double a[3], double (&A)[3][4]) {
+void generate_Matrix(double a[4], double (&A)[3][4]) {
  
     A[0][0] =  a[0];
     A[0][1] = -a[1];
@@ -98,7 +98,7 @@ void Binary::InitializeBinary(double current_time) {
 
     // variables related with time step and stumpff coefficients
 
-    double dtau_temp, dtau; // time in u-coordinate system
+    double dtau_temp=0., dtau=0.; // time in u-coordinate system
     double dtau2, dtau3, dtau4, dtau5, dtau6;
     double dt_ks; // ks time in physical units
     double z;
@@ -111,7 +111,8 @@ void Binary::InitializeBinary(double current_time) {
     Particle* ptclI;
     Particle* ptclJ;
 
-    
+		//fprintf(stderr, "InitializeBinary: CM Mass=%e\n", ptclCM->Mass);    
+
     ptclI = ptclCM->BinaryParticleI;
     ptclJ = ptclCM->BinaryParticleJ;
 
@@ -123,34 +124,29 @@ void Binary::InitializeBinary(double current_time) {
     r2 = 0;
     
     // define the relative coordinates for binaries
-
     for (int dim=0; dim<Dim; dim++) {
         x[dim] = ptclI->PredPosition[dim] - ptclJ->PredPosition[dim];
         xdot[dim] = ptclI->PredVelocity[dim] - ptclJ->PredVelocity[dim];
         r2 += x[dim]*x[dim];
     }
 
-    r = sqrt(r2);
+    r = std::sqrt(r2);
 
 
     // TRANSFORMATION OF COORDINATES
 
     // calculate the initial values for new coordinate system
 
-    if (x[0]<0) {
-
+    if (x[0] <= 0.) {
         u[2] = 0.0;
-        u[1] = sqrt(0.5*(r-x[0]));
+        u[1] = std::sqrt(0.5*(r-x[0]));
         u[0] = 0.5*x[1]/u[1];
         u[3] = 0.5*x[2]/u[1];
-
     } else {
-
         u[3] = 0.0;
-        u[0] = sqrt(0.5*(r+x[0]));
+        u[0] = std::sqrt(0.5*(r+x[0]));
         u[1] = 0.5*x[1]/u[0];
         u[2] = 0.5*x[2]/u[0];
-
     }
 
     fprintf(binout, "\n >>>>>>>>>>>>from BinaryRoutines.cpp<<<<<<<<<< \n");
@@ -166,18 +162,20 @@ void Binary::InitializeBinary(double current_time) {
     // calculate the velocity in new coordinates using Levi-civita matrix
     // and also the binding energy per unit reduced mass, represented as h
 
-    h = 0.0; //binding energy per unit reduced mass
-
-    for (int dim=0; dim<4; dim++) {
-
-        udot[dim] = 0.5*(L[0][dim]*xdot[0] + L[1][dim]*xdot[1] + L[2][dim]*xdot[2]);
-        u_pred[dim] = u[dim];
-        udot_pred[dim] = udot[dim];
-
-        h += 2*udot[dim]*udot[dim];
+    h     = 0.; //binding energy per unit reduced mass
+		double tdot2 = 0.;
+		for (int dim=0; dim<4; dim++) {
+        udot[dim]      = 0.5*(L[0][dim]*xdot[0] + L[1][dim]*xdot[1] + L[2][dim]*xdot[2]);
+        u_pred[dim]    = u[dim];
+        //udot_pred[dim] = udot[dim];
+        udot_pred[dim] = u_pred[dim];
+        h             += 2.*udot[dim]*udot[dim];
+				tdot2         += 2.*u[dim]*udot[dim];
     }
 
     h -= ptclCM->Mass/r;
+		double eb = h*ptclI->Mass*ptclJ->Mass/ptclCM->Mass;
+
     a = -0.5*ptclCM->Mass/h;
 
 
@@ -225,8 +223,8 @@ void Binary::InitializeBinary(double current_time) {
 
         }
 
-        _dr3i = 1/(dr2i)/sqrt(dr2i);
-        _dr3j = 1/(dr2j)/sqrt(dr2j);
+        _dr3i = 1/(dr2i)/std::sqrt(dr2i);
+        _dr3j = 1/(dr2j)/std::sqrt(dr2j);
 
 	//fprintf(binout, "dxi = %e %e %e  dvi = %e %e %e \n",dxi[0],dxi[1],dxi[2],dvi[0],dvi[1],dvi[2]);
     	//fprintf(binout, "dxj = %e %e %e  dvj = %e %e %e \n \n",dxj[0],dxj[1],dxj[2],dvj[0],dvj[1],dvj[2]);
@@ -254,7 +252,7 @@ void Binary::InitializeBinary(double current_time) {
         Pdot[dim] *= r;
     }
 
-    Ptot = sqrt(P[0]*P[0] + P[1]*P[1] + P[2]*P[2]);
+    Ptot = std::sqrt(P[0]*P[0] + P[1]*P[1] + P[2]*P[2]);
     fprintf(binout, "Perturbing force - Px:%e, Py:%e, Pz:%e \n", P[0],P[1],P[2]);
 
     gamma = Ptot*r*r/ptclCM->Mass;
@@ -341,9 +339,14 @@ void Binary::InitializeBinary(double current_time) {
 
 
     // obtain the apropriate time step for binary
-
-    dtau_temp = std::min(r/ptclCM->Mass,0.5*abs(h));
-    dtau = 0.8*eta*sqrt(dtau_temp)/pow((1 + 1000.0 * gamma), 1.0/3.0);
+    dtau_temp = std::min(r/ptclCM->Mass, 0.5*std::abs(h));
+		
+		//fprintf(stderr, "InitializeBinary: r=%lf, h=%lf, std::abs(h)=%lf, abs(h)=%d, 0.5*abs(h)=%d\n", 
+				//ptclCM->Mass/r, h, std::abs(h), abs(h), 0.5*abs(h));    
+		//dtau_temp = std::min(ptclCM->Mass/r, 0.5*std::abs(h));
+    dtau = 0.8*eta*std::sqrt(dtau_temp)/std::pow(1. + 1000. * gamma, 1./3.);
+		//fprintf(stderr, "InitializeBinary: dtau=%e, dtau_temp=%e, gamma=%e\n", dtau,dtau_temp,gamma);    
+		//fprintf(stderr, "InitializeBinary: numerator=%e, demonitor=%e\n", 0.8*eta*std::sqrt(dtau_temp), std::pow(1 + 1000. * gamma, 1./3.));    
 
     dtau2 = dtau*dtau;
     dtau3 = dtau2*dtau;
@@ -364,12 +367,13 @@ void Binary::InitializeBinary(double current_time) {
     TimeStep = (tdot*dtau + t2dot*dtau2/2 + t3dot*dtau3/6 + t4dot*dtau4/24 \
              + t5dot*cn_4z[5]*dtau5/120 + t6dot*cn_4z[6]*dtau6/720)/EnzoTimeStep;
 
+		//fprintf(stderr, "InitializeBinary: TimeStep=%e, EnzoTimeStep=%e\n", TimeStep, EnzoTimeStep);    
     // also, convert the time step into block steps. 
 
 //    getBlockTimeStep(TimeStep, TimeLevelTmp, TimeStepTmp);
 
  //   TimeLevel = TimeLevelTmp;
-    dTau = dtau;
+		dTau = dtau;
 
     // save the initial seperation
     r0 = r;

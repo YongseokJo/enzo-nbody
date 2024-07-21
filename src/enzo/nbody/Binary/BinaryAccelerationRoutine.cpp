@@ -5,24 +5,28 @@
 void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std::vector<Particle*> &ComputationList);
 void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double current_time, ULL current_block);
 
-bool AddNewBinariesToList(std::vector<Particle*> &ComputationList, std::vector<Particle*> &particle) {
+bool AddNewBinariesToList(std::vector<Particle*> &particle) {
 
-	fprintf(stdout, "Finding new binaries ...\n");
+	// fprintf(stdout, "Finding new binaries ...\n");
 	// add new binaries
-	for (Particle *ptcl : ComputationList) {
+	for (Particle *ptcl : BinaryCandidateList) {
 		// if the irregular time step is too short, check if it is binary
 		if ((ptcl->TimeStepIrr*EnzoTimeStep*1e4<KSTime) && ( (ptcl->isBinary == false) && (ptcl->isCMptcl == false) )) {
+
+			//fprintf(binout, "BinaryAccelerationRoutine.cpp: new binary particle found! timestep=%e\n",
+					//ptcl->TimeStepIrr*EnzoTimeStep*1e4);
 			ptcl->isKSCandidate();
 			if (ptcl->isBinary) {
-				std::cout << "AddNewBinaries ... new binary pair found" << std::endl;
+				//std::cout << "AddNewBinaries ... new binary pair found" << std::endl;
 				fprintf(binout, "BinaryAccelerationRoutine.cpp: new binary particle found!\n");
 				// the initialization of the binary counterpart will be done together in the following function.
 				NewKSInitialization(ptcl,particle,ComputationList);
-				fprintf(stdout, "New binary of (%d, %d) initialization finished ...\n",ptcl->PID, ptcl->BinaryPairParticle->PID);
+				//fprintf(stdout, "New binary of (%d, %d) initialization finished ...\n",ptcl->PID, ptcl->BinaryPairParticle->PID);
 				fprintf(binout,"\n After binary addition, the number of particles are... %d \n",int(particle.size()));
 			}
 		}
 	}
+	BinaryCandidateList.clear();
 	//fprintf(binout,"\n After binary addition, the number of particles are... %d \n",int(particle.size()));
 	return true;
 }
@@ -44,9 +48,9 @@ void BinaryAccelerationRoutine(double next_time, std::vector<Particle*> &particl
 
 		count += 1;
 
-		fprintf(binout, "\nBinaryAccelerationRoutine.cpp: After KS Integration of %dth binary....\n", count);
-		fprintf(binout, "The ID of ith particle is %d \n",ptclBin->ptclCM->BinaryParticleI->PID);
-		fprintf(binout, "The ID of jth particle is %d \n",ptclBin->ptclCM->BinaryParticleJ->PID);
+		//fprintf(binout, "\nBinaryAccelerationRoutine.cpp: After KS Integration of %dth binary....\n", count);
+		//fprintf(binout, "The ID of ith particle is %d \n",ptclBin->ptclCM->BinaryParticleI->PID);
+		//fprintf(binout, "The ID of jth particle is %d \n",ptclBin->ptclCM->BinaryParticleJ->PID);
 		//fflush(binout);	
 
 		//if (bincount>0) {
