@@ -192,75 +192,75 @@ void Particle::normalizeParticle() {
 
 
 void Particle::convertBinaryCoordinatesToCartesian() {
-	if (this->isCMptcl)  {
+	if (!this->isCMptcl)  {
 		fprintf(stderr,"This is NOT a CM particle!\n");
+		return;
 	}
 	fprintf(stdout,"Converting the KS coordinates to physical coordinates of ptclI and ptclJ\n");
-	Binary* ptclBin = BinaryInfo;
-	Particle* ptclI = BinaryParticleI; 
-	Particle* ptclJ = BinaryParticleJ;
+	fprintf(stderr,"Converting the KS coordinates to physical coordinates of ptclI and ptclJ\n");
 
 	double R[Dim], Rdot[Dim];
 	double Rinv;
 	double ratioM;
 	double L[3][4];
 
-	// update the values of positions of ptclI and ptcl J
-	R[0]   = ptclBin->u[0]*ptclBin->u[0] - ptclBin->u[1]*ptclBin->u[1] - ptclBin->u[2]*ptclBin->u[2] + ptclBin->u[3]*ptclBin->u[3];
-	R[1]   = 2*(ptclBin->u[0]*ptclBin->u[1] - ptclBin->u[2]*ptclBin->u[3]);
-	R[2]   = 2*(ptclBin->u[0]*ptclBin->u[2] + ptclBin->u[1]*ptclBin->u[3]);
-	ratioM = ptclJ->Mass/this->Mass;
+	// update the values of positions of BinaryParticleI and ptcl J
+	R[0]   = BinaryInfo->u[0]*BinaryInfo->u[0] - BinaryInfo->u[1]*BinaryInfo->u[1] - BinaryInfo->u[2]*BinaryInfo->u[2] + BinaryInfo->u[3]*BinaryInfo->u[3];
+	R[1]   = 2*(BinaryInfo->u[0]*BinaryInfo->u[1] - BinaryInfo->u[2]*BinaryInfo->u[3]);
+	R[2]   = 2*(BinaryInfo->u[0]*BinaryInfo->u[2] + BinaryInfo->u[1]*BinaryInfo->u[3]);
+	ratioM = BinaryParticleJ->Mass/this->Mass;
+
 
 	for (int dim=0; dim<Dim; dim++) {
-		ptclI->Position[dim] = this->Position[dim] + ratioM*R[dim];
-		ptclJ->Position[dim] = this->Position[dim] - R[dim];
+		BinaryParticleI->Position[dim] = this->Position[dim] + ratioM*R[dim];
+		BinaryParticleJ->Position[dim] = this->Position[dim] - R[dim];
 	}
 
 
 	// do the same thing for velocity components
-	generate_Matrix(ptclBin->u,L);
+	generate_Matrix(BinaryInfo->u,L);
 
-	Rinv = 1/(ptclBin->u[0]*ptclBin->u[0] + ptclBin->u[1]*ptclBin->u[1] + ptclBin->u[2]*ptclBin->u[2] + ptclBin->u[3]*ptclBin->u[3]) ;
+	Rinv = 1/(BinaryInfo->u[0]*BinaryInfo->u[0] + BinaryInfo->u[1]*BinaryInfo->u[1] + BinaryInfo->u[2]*BinaryInfo->u[2] + BinaryInfo->u[3]*BinaryInfo->u[3]) ;
 
 
 	for (int dim=0; dim<Dim; dim++) {
 		Rdot[dim] = 0.0;
 		for (int dimu=0; dimu<4; dimu++) {
-			Rdot[dim] += 2*L[dim][dimu]*ptclBin->udot[dim]*Rinv;
+			Rdot[dim] += 2*L[dim][dimu]*BinaryInfo->udot[dim]*Rinv;
 		}
 	}
 
 
 	for (int dim=0; dim<Dim; dim++) {
-		ptclI->Velocity[dim] = this->Velocity[dim] + ratioM*Rdot[dim];
-		ptclJ->Velocity[dim] = ptclI->Velocity[dim] - Rdot[dim];
+		BinaryParticleI->Velocity[dim] = this->Velocity[dim] + ratioM*Rdot[dim];
+		BinaryParticleJ->Velocity[dim] = BinaryParticleI->Velocity[dim] - Rdot[dim];
 	}
 
-	ptclI->CurrentBlockIrr = this->CurrentBlockIrr;
-	ptclI->CurrentBlockReg = this->CurrentBlockReg;
-	ptclI->CurrentTimeIrr = this->CurrentBlockIrr*time_step;
-	ptclI->CurrentTimeReg = this->CurrentBlockReg*time_step;
+	BinaryParticleI->CurrentBlockIrr = this->CurrentBlockIrr;
+	BinaryParticleI->CurrentBlockReg = this->CurrentBlockReg;
+	BinaryParticleI->CurrentTimeIrr = this->CurrentBlockIrr*time_step;
+	BinaryParticleI->CurrentTimeReg = this->CurrentBlockReg*time_step;
 
-	ptclI->TimeStepIrr     = this->TimeStepIrr;
-	ptclI->TimeBlockIrr    = this->TimeBlockIrr;
-	ptclI->TimeLevelIrr    = this->TimeLevelIrr;
+	BinaryParticleI->TimeStepIrr     = this->TimeStepIrr;
+	BinaryParticleI->TimeBlockIrr    = this->TimeBlockIrr;
+	BinaryParticleI->TimeLevelIrr    = this->TimeLevelIrr;
 
-	ptclI->TimeStepReg     = this->TimeStepReg;
-	ptclI->TimeBlockReg    = this->TimeBlockReg;
-	ptclI->TimeLevelReg    = this->TimeLevelReg;
+	BinaryParticleI->TimeStepReg     = this->TimeStepReg;
+	BinaryParticleI->TimeBlockReg    = this->TimeBlockReg;
+	BinaryParticleI->TimeLevelReg    = this->TimeLevelReg;
 
-	ptclJ->CurrentBlockIrr = ptclI->CurrentBlockIrr;
-	ptclJ->CurrentBlockReg = ptclI->CurrentBlockReg;
-	ptclJ->CurrentTimeIrr = ptclI->CurrentTimeIrr;
-	ptclJ->CurrentTimeReg = ptclI->CurrentTimeReg;
+	BinaryParticleJ->CurrentBlockIrr = BinaryParticleI->CurrentBlockIrr;
+	BinaryParticleJ->CurrentBlockReg = BinaryParticleI->CurrentBlockReg;
+	BinaryParticleJ->CurrentTimeIrr = BinaryParticleI->CurrentTimeIrr;
+	BinaryParticleJ->CurrentTimeReg = BinaryParticleI->CurrentTimeReg;
 
-	ptclJ->TimeStepIrr     = this->TimeStepIrr;
-	ptclJ->TimeBlockIrr    = this->TimeBlockIrr;
-	ptclJ->TimeLevelIrr    = this->TimeLevelIrr;
+	BinaryParticleJ->TimeStepIrr     = this->TimeStepIrr;
+	BinaryParticleJ->TimeBlockIrr    = this->TimeBlockIrr;
+	BinaryParticleJ->TimeLevelIrr    = this->TimeLevelIrr;
 
-	ptclJ->TimeStepReg     = this->TimeStepReg;
-	ptclJ->TimeBlockReg    = this->TimeBlockReg;
-	ptclJ->TimeLevelReg    = this->TimeLevelReg;
+	BinaryParticleJ->TimeStepReg     = this->TimeStepReg;
+	BinaryParticleJ->TimeBlockReg    = this->TimeBlockReg;
+	BinaryParticleJ->TimeLevelReg    = this->TimeLevelReg;
 
 	fprintf(stdout,"END CONVERTING THE COORDINATES\n \n");
 }

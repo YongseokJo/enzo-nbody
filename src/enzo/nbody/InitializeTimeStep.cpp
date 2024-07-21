@@ -87,6 +87,8 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 	for (Particle* ptcl: particle) {
 		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
 		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));
+		if (ptcl->TimeStepIrr*EnzoTimeStep*1e4 < KSTime)
+			BinaryCandidateList.push_back(ptcl);
 	}
 
 
@@ -96,13 +98,13 @@ int InitializeTimeStep(std::vector<Particle*> &particle) {
 
 
 
-int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
+int InitializeTimeStep(std::vector<Particle*> &particle, int offset, int newSize) {
 	fprintf(nbpout, "Initializing timesteps ...\n");
 	int min_time_level=0;
 	double dtIrr, dtReg;
 	Particle *ptcl;
 
-	for (int i=offset; i<offset+newNNB; i++){
+	for (int i=offset; i<offset+newSize; i++){
 		ptcl = particle[i];
 		if (ptcl->NumberOfAC != particle.size()-1) {
 			dtReg = getNewTimeStep(ptcl->a_reg, ptcl->a_reg);
@@ -141,7 +143,7 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 
 
 	// Irregular Time Step Correction
-	for (int i=offset; i<offset+newNNB; i++){
+	for (int i=offset; i<offset+newSize; i++){
 		ptcl = particle[i];
 		if (ptcl->NumberOfAC != 0) {
 			while (ptcl->TimeLevelIrr >= ptcl->TimeLevelReg 
@@ -154,7 +156,7 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 	}
 
 	if (time_step == -1) {
-		for (int i=offset; i<offset+newNNB; i++){
+		for (int i=offset; i<offset+newSize; i++){
 			ptcl = particle[i];
 			if (ptcl->NumberOfAC != 0) {
 				if (ptcl->TimeLevelIrr < min_time_level) {
@@ -168,10 +170,12 @@ int InitializeTimeStep(std::vector<Particle*> &particle, int offset) {
 		time_step = std::pow(2.,time_block);
 	}
 
-	for (int i=offset; i<offset+newNNB; i++) {
+	for (int i=offset; i<offset+newSize; i++) {
 		ptcl = particle[i];
 		ptcl->TimeBlockIrr = static_cast<ULL>(pow(2., ptcl->TimeLevelIrr-time_block));
 		ptcl->TimeBlockReg = static_cast<ULL>(pow(2., ptcl->TimeLevelReg-time_block));
+		if (ptcl->TimeStepIrr*EnzoTimeStep*1e4 < KSTime)
+			BinaryCandidateList.push_back(ptcl);
 	}
 
 	return true;

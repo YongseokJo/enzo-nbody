@@ -18,7 +18,8 @@ double getNewTimeStepReg(double v[3], double df[3][4]) {
 	v2     = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 
 
-  TimeStep  = (std::sqrt(v2*Fdot2)+F2)/(std::sqrt(F2*F2dot2)+Fdot2);
+  //TimeStep  = (std::sqrt(v2*Fdot2)+F2)/(std::sqrt(F2*F2dot2)+Fdot2);
+  TimeStep  = (std::sqrt(F2*F2dot2)+Fdot2)/(std::sqrt(Fdot2*F3dot2)+F2dot2);
 	TimeStep  = std::sqrt(eta*TimeStep);
 
 	return TimeStep;

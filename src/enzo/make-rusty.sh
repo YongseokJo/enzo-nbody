@@ -41,8 +41,8 @@ make -j16
 #cp enzo.exe enzo_spare_v100.exe
 #cp enzo.exe enzo_test_openmpi_escape.exe
 #cp enzo.exe enzo_test_openmpi.exe
-#cp enzo.exe enzo_sf_test.exe
-cp enzo.exe enzo_cosmo.exe
+cp enzo.exe enzo_sf_test.exe
+#cp enzo.exe enzo_cosmo.exe
 #cp enzo.exe enzo_orbit.exe
 #cp enzo.exe enzo_nbn.exe
 #cp enzo.exe enzo_test_irr.exe

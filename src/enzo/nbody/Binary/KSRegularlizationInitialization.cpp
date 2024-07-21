@@ -134,7 +134,7 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 
 	ptcl1 = ptclCM;
 	ptcl1->predictParticleSecondOrderIrr(current_time);
-	std::cout << "CM particle neighbor = " << ptcl1->NumberOfAC << std::endl;
+	//std::cout << "CM particle neighbor = " << ptcl1->NumberOfAC << std::endl;
 	j = 0;
 
 	for (int dim=0; dim<Dim; dim++) {
@@ -243,13 +243,16 @@ void CalculateKSAcceleration(Particle* ptclI, Particle* ptclJ, Particle* ptclCM,
 void Particle::isKSCandidate() {
 
 	// temporary calculation variables
-	double x[Dim],v[Dim];
-	double r_now2, r_next2;
+	double x[Dim];
+	double r2, m_r3;
 	double current_time;
 	double r_min = 1e8;
 	int numberOfPairCandidate=0;
+	double a_pert[Dim];
 	Particle* minPtcl;
 
+	for (int dim=0; dim<Dim; dim++)
+		a_pert[dim] = 0.;
 
 	// predict the particle position to obtain more information
 	// particle regularlized if the conditions are satisfied at a future time
@@ -260,9 +263,7 @@ void Particle::isKSCandidate() {
 
 		// if particle time step is too large, skip
 		// if the neighbor step is larger then 8 times of the candidate particle, then skip
-		r_now2 = 0.0;
-		r_next2 = 0.0;
-
+		r2 = 0.0;
 
 		if ((ptcl->TimeLevelIrr) > (this->TimeLevelIrr+3) || ptcl->isBinary || ptcl->isCMptcl)
 			continue;
@@ -277,14 +278,20 @@ void Particle::isKSCandidate() {
 		for (int dim=0; dim<Dim; dim++) {
 			// calculate position and velocity differences
 			x[dim] = ptcl->PredPosition[dim] - this->PredPosition[dim];
-			v[dim] = ptcl->PredVelocity[dim] - this->PredVelocity[dim];
 
 			// calculate the square of radius and inner product of r and v for each case
-			r_now2 += x[dim]*x[dim];
+			r2 += x[dim]*x[dim];
 		}
 
+		m_r3 = ptcl->Mass/r2/sqrt(r2);
+
+
+		for (int dim=0; dim<Dim; dim++) {
+			a_pert[dim]    += m_r3*x[dim];
+		}
 		// find out the close particles
 
+		/*
 		if (r_now2<KSDistance) {
 			numberOfPairCandidate += 1;
 			if (r_now2<r_min) {
@@ -292,17 +299,65 @@ void Particle::isKSCandidate() {
 				minPtcl = ptcl;
 			}
 		}
+		*/
+
+		if (r2<r_min) {
+			r_min = r2;
+			minPtcl = ptcl;
+		}
 	}
+	r_min = sqrt(r_min);
+
+
+	/***********************************************************************
+	// THREE conditions should be met to be regularized:
+	// 1. Timestep is smallr than dt_min defined by r_min;
+	// 2. The particles should approaching to each other;
+	// 3. Their binding force should be greater than the perturbing force.
+	***********************************************************************/
+
+
+	// 1. Timestep is smallr than dt_min defined by r_min;
+	const double alpha = 0.04;
+	double dt_min;
+	dt_min = alpha*sqrt(pow(r_min,3.)/(this->Mass+minPtcl->Mass)*2)/EnzoTimeStep;
+	//fprintf(stderr, "r_min=%e pc, dt_min = %e Myr, TimeStepIrr = %e Myr\n", r_min*position_unit, dt_min*EnzoTimeStep*1e4, TimeStepIrr*EnzoTimeStep*1e4);
+	//fflush(stderr);
+	if (TimeStepIrr > dt_min)
+		return;
+
+	// 2. The particles should approaching to each other;
+	// R*V > 0.1*(G*(m1+m2)*R)^1/2
+	double RV=0.;
+	for (int dim=0; dim<Dim; dim++) {
+		RV += (Position[dim] - minPtcl->Position[dim])*(Velocity[dim]-minPtcl->Position[dim]);
+	}
+	//fprintf(stderr, "RV=%e, RHS = %e\n", RV, 0.1*sqrt((this->Mass+minPtcl->Mass)*r_min));
+	//fflush(stderr);
+	if (RV <= 0.02*sqrt((this->Mass+minPtcl->Mass)*r_min))
+		return;
+
+	// 3. Their binding force should be greater than the perturbing force.
+	// a_pert*R^2/(G(m1+m2)) < 0.25
+
+	m_r3 = minPtcl->Mass/pow(r_min,3);
+	for (int dim=0; dim<Dim; dim++) {
+		x[dim] = minPtcl->PredPosition[dim] - this->PredPosition[dim];
+		a_pert[dim] -= m_r3*x[dim];
+		a_pert[dim] += a_reg[dim][0];  // for later use
+	}
+	//fprintf(stderr, "pert force=%e, binding force = %e\n", sqrt(mag(a_pert)), (this->Mass+minPtcl->Mass)/r_min/r_min);
+	//fflush(stderr);
+	if (sqrt(mag(a_pert))*r_min*r_min/(this->Mass+minPtcl->Mass)>=0.25)
+		return;
 
 
 	// save the KS pair information
 	// don't regularlize if the system is already a binary for now
 	// cause that part needs 3 or 4 body regularlization
 	// check if any CM ptcl is chosen for KS regularlization candidate just for debugging
-	if (numberOfPairCandidate>0) {
-		isBinary = true;
-		BinaryPairParticle = minPtcl;
-	}
+	isBinary = true;
+	BinaryPairParticle = minPtcl;
 }
 
 
@@ -344,7 +399,7 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	double dtReg, dtIrr;
 
 
-	std::cout <<"Starting Routine NewKSInitialization" << std::endl;
+	//std::cout <<"Starting Routine NewKSInitialization" << std::endl;
 
 	// BASIC DEFINITIONS
 
@@ -356,17 +411,23 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	//std::cout << "Predicting Particle Positions" << std::endl;
 	fprintf(binout, "\n-------------------------NEW-BINARY------------------------\n") ;
 
-	fprintf(binout, "\nPosition: ptclI - x:%e, y:%e, z:%e, \n", ptclI->Position[0], ptclI->Position[1], ptclI->Position[2]);
-	fprintf(binout, "Velocity: ptclI - vx:%e, vy:%e, vz:%e, \n", ptclI->Velocity[0], ptclI->Velocity[1], ptclI->Velocity[2]);
+	fprintf(binout, "Radius = %e, \n", dist(ptclI->Position, ptclJ->Position));
+	fprintf(binout, "I. Total Acceleration - ax:%e, ay:%e, az:%e, \n", ptclI->a_tot[0][0], ptclI->a_tot[1][0], ptclI->a_tot[2][0]);
+	fprintf(binout, "J. Total Acceleration - ax:%e, ay:%e, az:%e, \n", ptclJ->a_tot[0][0], ptclJ->a_tot[1][0], ptclJ->a_tot[2][0]);
+	fprintf(binout, "I. Time Steps - irregular:%e, regular:%e \n", ptclI->TimeStepIrr*EnzoTimeStep*1e4, ptclI->TimeStepReg*EnzoTimeStep*1e4);
+	fprintf(binout, "J. Time Steps - irregular:%e, regular:%e \n", ptclJ->TimeStepIrr*EnzoTimeStep*1e4, ptclJ->TimeStepReg*EnzoTimeStep*1e4);
 
-	fprintf(binout, "Total Acceleration - ax:%e, ay:%e, az:%e, \n", ptclI->a_tot[0][0], ptclI->a_tot[1][0], ptclI->a_tot[2][0]);
+	//fprintf(binout, "\nPosition: ptclI - x:%e, y:%e, z:%e, \n", ptclI->Position[0], ptclI->Position[1], ptclI->Position[2]);
+	//fprintf(binout, "Velocity: ptclI - vx:%e, vy:%e, vz:%e, \n", ptclI->Velocity[0], ptclI->Velocity[1], ptclI->Velocity[2]);
+
+	/*
 	fprintf(binout, "Total Acceleration - axdot:%e, aydot:%e, azdot:%e, \n", ptclI->a_tot[0][1], ptclI->a_tot[1][1], ptclI->a_tot[2][1]);
 	fprintf(binout, "Total Acceleration - ax2dot:%e, ay2dot:%e, az2dot:%e, \n", ptclI->a_tot[0][2], ptclI->a_tot[1][2], ptclI->a_tot[2][2]);
 	fprintf(binout, "Total Acceleration - ax3dot:%e, ay3dot:%e, az3dot:%e, \n", ptclI->a_tot[0][3], ptclI->a_tot[1][3], ptclI->a_tot[2][3]);
-	fprintf(binout, "Time Steps - irregular:%e, regular:%e \n", ptclI->TimeStepIrr, ptclI->TimeStepReg);
+	*/
 
-	fprintf(binout, "\nPosition: ptclJ - x:%e, y:%e, z:%e, \n", ptclJ->Position[0], ptclJ->Position[1], ptclJ->Position[2]);
-	fprintf(binout, "Velocity: ptclJ - vx:%e, vy:%e, vz:%e, \n", ptclJ->Velocity[0], ptclJ->Velocity[1], ptclJ->Velocity[2]);
+	//fprintf(binout, "\nPosition: ptclJ - x:%e, y:%e, z:%e, \n", ptclJ->Position[0], ptclJ->Position[1], ptclJ->Position[2]);
+	//fprintf(binout, "Velocity: ptclJ - vx:%e, vy:%e, vz:%e, \n", ptclJ->Velocity[0], ptclJ->Velocity[1], ptclJ->Velocity[2]);
 
 
 	// need to put option if there aren't any close neighbors
@@ -433,7 +494,7 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	//std::cout << "CalculateKSAcceleration starts" << std::endl;
 	CalculateKSAcceleration(ptclI,ptclJ,ptclCM,particle);
 
-	std::cout << "Calculating Time steps for the CM particle" << std::endl;
+	//std::cout << "Calculating Time steps for the CM particle" << std::endl;
 	ptclCM->calculateTimeStepReg();
 	if (ptclCM->TimeLevelReg <= ptcl->TimeLevelReg-1 
 			&& ptcl->TimeBlockReg/2+ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr+ptcl->TimeBlockIrr)  { // this ensures that irr time of any particles is smaller than adjusted new reg time.
@@ -535,8 +596,8 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 
 
 	// calculate the initial values of relevant variables
-	std::cout << "Initializing Binary Information" << std::endl;
-	std::cout << "Initializing Binary Information" << std::endl;
+	//std::cout << "Initializing Binary Information" << std::endl;
+	//std::cout << "Initializing Binary Information" << std::endl;
 
 	ptclBin->InitializeBinary(ptclCM->CurrentTimeIrr);
 
@@ -552,7 +613,7 @@ void NewKSInitialization(Particle* ptclI, std::vector<Particle*> &particle, std:
 	// may need to update later if the radius for neighbor differs depending on the particle
 	//
 	// first for particle I
-	std::cout << "Changing the Neighbor List of Particles" << std::endl;
+	//std::cout << "Changing the Neighbor List of Particles" << std::endl;
 
 	ptclI->isErase = true;
 	ptclJ->isErase = true;

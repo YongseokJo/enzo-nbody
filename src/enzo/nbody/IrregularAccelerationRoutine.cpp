@@ -8,7 +8,7 @@ int writeParticle(std::vector<Particle*> &particle, double MinRegTime, int outpu
 bool CreateComputationChain(std::vector<Particle*> &particle);
 bool UpdateComputationChain(Particle* ptcl);
 bool CreateComputationList(Particle* ptcl);
-bool AddNewBinariesToList(std::vector<Particle*> &ComputationList, std::vector<Particle*> &particle);
+bool AddNewBinariesToList(std::vector<Particle*> &particle);
 void BinaryAccelerationRoutine(double next_time, std::vector<Particle*> &particle);
 void KSTermination(Particle* ptclCM, std::vector<Particle*> &particle, double current_time, ULL current_block);
 
@@ -21,7 +21,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 {
 	bool bin_termination;
 	fprintf(nbpout, "Irregular force starts...\n");
-	fflush(nbpout);
+	//fflush(nbpout);
 #ifdef time_trace
 	_time.irr_chain.markStart();
 #endif
@@ -44,7 +44,10 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 	while (CreateComputationList(FirstComputation) && ComputationList.size() != 0) {
 
 		if (BinaryRegularization) {
-			if (AddNewBinariesToList(particle, particle) && ComputationList.size() == 0) {
+#ifdef time_trace
+	_time.irr_bin.markStart();
+#endif
+			if (AddNewBinariesToList(particle) && ComputationList.size() == 0) {
 				fprintf(nbpout, "No irregular particle to update afte binary formation.\n");
 				break;
 			}
@@ -61,64 +64,108 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 						ComputationList[0]->CurrentTimeIrr+ComputationList[0]->TimeStepIrr,
 				 	particle);
 			}
+#ifdef time_trace
+	_time.irr_bin.markEnd();
+	_time.irr_bin.getDuration();
+#endif
 		}
 
 		for (Particle* ptcl:ComputationList) {
-			
 
+			/*
+				 if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
+				 fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
 
+				 fprintf(nbpout, "PID=%d, NextRegTimeBlock= %llu, NextIrrBlock = %llu (%.2e Myr)\n",
+				 ptcl->getPID(), NextRegTimeBlock,
+				 ptcl->CurrentBlockIrr+ptcl->TimeBlockIrr,
+				 (ptcl->CurrentTimeIrr + ptcl->TimeStepIrr)*EnzoTimeStep*1e10/1e6);
+				 fprintf(nbpout, "CurrentTimeIrr = %.2e Myr (%llu), CurrentTimeReg = %.2e Myr (%llu), TimeStepIrr = %.2e Myr (%llu), TimeStepReg= %.2e Myr (%llu)\n",
+				 ptcl->CurrentTimeIrr*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockIrr,
+				 ptcl->CurrentTimeReg*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockReg,
+				 ptcl->TimeStepIrr*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockIrr, 
+				 ptcl->TimeStepReg*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockReg
+				 ); 
 
-			if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
-				fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
-
-			fprintf(nbpout, "PID=%d, NextRegTimeBlock= %llu, NextIrrBlock = %llu (%.2e Myr)\n",
-					ptcl->getPID(), NextRegTimeBlock,
-					ptcl->CurrentBlockIrr+ptcl->TimeBlockIrr,
-					(ptcl->CurrentTimeIrr + ptcl->TimeStepIrr)*EnzoTimeStep*1e10/1e6);
-			fprintf(nbpout, "CurrentTimeIrr = %.2e Myr (%llu), CurrentTimeReg = %.2e Myr (%llu), TimeStepIrr = %.2e Myr (%llu), TimeStepReg= %.2e Myr (%llu)\n",
-					ptcl->CurrentTimeIrr*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockIrr,
-					ptcl->CurrentTimeReg*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockReg,
-				 	ptcl->TimeStepIrr*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockIrr, 
-					ptcl->TimeStepReg*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockReg
-					); 
-
-			if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
-				fprintf(nbpout,"----------------------------------------------------------------------------------------\n");
+				 if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
+				 fprintf(nbpout,"----------------------------------------------------------------------------------------\n");
 			//fflush(nbpout);
 
 
 			fprintf(nbpout, "a_tot = (%.2e,%.2e,%.2e), a_irr = (%.2e,%.2e,%.2e), a1_irr = (%.2e,%.2e,%.2e), a2_irr = (%.2e,%.2e,%.2e), a3_irr = (%.2e,%.2e,%.2e), n_n=%d\n",
-					ptcl->a_tot[0][0],
-					ptcl->a_tot[1][0],
-					ptcl->a_tot[2][0],
-					ptcl->a_irr[0][0],
-					ptcl->a_irr[1][0],
-					ptcl->a_irr[2][0],
-					ptcl->a_irr[0][1],
-					ptcl->a_irr[1][1],
-					ptcl->a_irr[2][1],
-					ptcl->a_irr[0][2],
-					ptcl->a_irr[1][2],
-					ptcl->a_irr[2][2],
-					ptcl->a_irr[0][3],
-					ptcl->a_irr[1][3],
-					ptcl->a_irr[2][3],
-					ptcl->NumberOfAC);
+			ptcl->a_tot[0][0],
+			ptcl->a_tot[1][0],
+			ptcl->a_tot[2][0],
+			ptcl->a_irr[0][0],
+			ptcl->a_irr[1][0],
+			ptcl->a_irr[2][0],
+			ptcl->a_irr[0][1],
+			ptcl->a_irr[1][1],
+			ptcl->a_irr[2][1],
+			ptcl->a_irr[0][2],
+			ptcl->a_irr[1][2],
+			ptcl->a_irr[2][2],
+			ptcl->a_irr[0][3],
+			ptcl->a_irr[1][3],
+			ptcl->a_irr[2][3],
+			ptcl->NumberOfAC);
 			fprintf(nbpout, "x = (%.2e,%.2e,%.2e), v = (%.2e,%.2e,%.2e)\n",
-					ptcl->Position[0],ptcl->Position[1],ptcl->Position[2],
-					ptcl->Velocity[0],ptcl->Velocity[1],ptcl->Velocity[2]
-					);
+			ptcl->Position[0],ptcl->Position[1],ptcl->Position[2],
+			ptcl->Velocity[0],ptcl->Velocity[1],ptcl->Velocity[2]
+			);
 			//fflush(nbpout);
 
+*/
 			/*
-			fprintf(stdout, "in irr, PID=%d : ", ptcl->PID);
-			for (Particle* nn:ptcl->ACList) {
-				fprintf(stdout,"%d, ",nn->PID);	
-			}
-			fprintf(stdout,"\n");	
-			*/
+				 fprintf(stdout, "in irr, PID=%d : ", ptcl->PID);
+				 for (Particle* nn:ptcl->ACList) {
+				 fprintf(stdout,"%d, ",nn->PID);	
+				 }
+				 fprintf(stdout,"\n");	
+				 */
 
 			if (ptcl->a_irr[0][0] == 0. && ptcl->NumberOfAC != 0) {
+				if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
+					fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
+
+				fprintf(nbpout, "PID=%d, NextRegTimeBlock= %llu, NextIrrBlock = %llu (%.2e Myr)\n",
+						ptcl->getPID(), NextRegTimeBlock,
+						ptcl->CurrentBlockIrr+ptcl->TimeBlockIrr,
+						(ptcl->CurrentTimeIrr + ptcl->TimeStepIrr)*EnzoTimeStep*1e10/1e6);
+				fprintf(nbpout, "CurrentTimeIrr = %.2e Myr (%llu), CurrentTimeReg = %.2e Myr (%llu), TimeStepIrr = %.2e Myr (%llu), TimeStepReg= %.2e Myr (%llu)\n",
+						ptcl->CurrentTimeIrr*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockIrr,
+						ptcl->CurrentTimeReg*EnzoTimeStep*1e10/1e6, ptcl->CurrentBlockReg,
+						ptcl->TimeStepIrr*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockIrr, 
+						ptcl->TimeStepReg*EnzoTimeStep*1e10/1e6, ptcl->TimeBlockReg
+						); 
+
+				if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
+					fprintf(nbpout,"----------------------------------------------------------------------------------------\n");
+				//fflush(nbpout);
+
+
+				fprintf(nbpout, "a_tot = (%.2e,%.2e,%.2e), a_irr = (%.2e,%.2e,%.2e), a1_irr = (%.2e,%.2e,%.2e), a2_irr = (%.2e,%.2e,%.2e), a3_irr = (%.2e,%.2e,%.2e), n_n=%d\n",
+						ptcl->a_tot[0][0],
+						ptcl->a_tot[1][0],
+						ptcl->a_tot[2][0],
+						ptcl->a_irr[0][0],
+						ptcl->a_irr[1][0],
+						ptcl->a_irr[2][0],
+						ptcl->a_irr[0][1],
+						ptcl->a_irr[1][1],
+						ptcl->a_irr[2][1],
+						ptcl->a_irr[0][2],
+						ptcl->a_irr[1][2],
+						ptcl->a_irr[2][2],
+						ptcl->a_irr[0][3],
+						ptcl->a_irr[1][3],
+						ptcl->a_irr[2][3],
+						ptcl->NumberOfAC);
+				fprintf(nbpout, "x = (%.2e,%.2e,%.2e), v = (%.2e,%.2e,%.2e)\n",
+						ptcl->Position[0],ptcl->Position[1],ptcl->Position[2],
+						ptcl->Velocity[0],ptcl->Velocity[1],ptcl->Velocity[2]
+						);
+				//fflush(nbpout);
 				fprintf(stderr, "my PID = %d : ",ptcl->PID);
 				fprintf(nbpout, "my PID = %d : ",ptcl->PID);
 				for (Particle* nn:ptcl->ACList) {
@@ -172,7 +219,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 			if (ptcl->isCMptcl) {
 				if (BinaryRegularization && 
 						(ptcl->BinaryInfo->r > ptcl->BinaryInfo->r0*2.0
-						|| ptcl->BinaryInfo->TimeStep > 4.0*KSTime)) {
+						|| ptcl->BinaryInfo->TimeStep > 2.0*KSTime)) {
 					fprintf(binout, "Terminating Binary at time : %e \n", binary_time);
 					KSTermination(ptcl, particle, binary_time, binary_block);
 					bin_termination=true;
@@ -193,7 +240,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 		//fflush(stdout);
 	}
 	fprintf(nbpout, "Finishing irregular force ...\n");
-	fflush(nbpout);
+	//fflush(nbpout);
 
 
 	return true;

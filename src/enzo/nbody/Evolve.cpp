@@ -5,8 +5,8 @@
 
 
 int writeParticle(std::vector<Particle*> &particle, double MinRegTime, int outputNum);
-int ReceiveFromEzno(std::vector<Particle*> &particle);
-int SendToEzno(std::vector<Particle*> &particle);
+int ReceiveFromEnzo(std::vector<Particle*> &particle);
+int SendToEnzo(std::vector<Particle*> &particle);
 bool CreateComputationChain(std::vector<Particle*> &particle);
 bool RegularAccelerationRoutine(std::vector<Particle*> &particle);
 bool IrregularAccelerationRoutine(std::vector<Particle*> &particle);
@@ -47,8 +47,21 @@ void Evolve(std::vector<Particle*> &particle) {
 		while (global_time < 1)
 		{
 			// It's time to compute regular force.
+#ifdef time_trace
+		_time.irr.markStart();
+#endif
 			IrregularAccelerationRoutine(particle);
+#ifdef time_trace
+		_time.irr.markEnd();
+		_time.reg.markStart();
+#endif
 			RegularAccelerationRoutine(particle); // do not update particles unless NNB=0
+#ifdef time_trace
+		_time.reg.markEnd();
+		_time.reg.getDuration();
+		_time.irr.getDuration();
+		_time.output();
+#endif
 			/*
 			std::cout << "CurrentTimeReg  =" << particle[0]->CurrentTimeReg << std::endl;
 			std::cout << "CurrentTimeIrr  =" << particle[0]->CurrentTimeIrr << std::endl;
@@ -63,9 +76,13 @@ void Evolve(std::vector<Particle*> &particle) {
 		{
 			// in case of nnb=1, only analytic solution be needed.
 			fprintf(nbpout, "global time=%lf\n", global_time);
-			SendToEzno(particle);
-			ReceiveFromEzno(particle);
+			SendToEnzo(particle);
+			ReceiveFromEnzo(particle);
 			UpdateNextRegTime(particle);
+			FirstComputation = nullptr;
+			ComputationList.clear();
+			BinaryCandidateList.clear();
+			BinaryList.clear();
 			fprintf(nbpout, "RegularList size=%d\n", RegularList.size());
 			fflush(nbpout);
 		} while (NNB < 2);

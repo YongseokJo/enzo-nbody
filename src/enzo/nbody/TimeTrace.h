@@ -50,12 +50,13 @@ class TimeTracer {
 		TimeEntity irr_chain;
 		TimeEntity irr_force;
 		TimeEntity irr_sort;
+		TimeEntity irr_bin;
 
 	void output() {
 
 		const int width = 25;
 		double current_time = global_time*EnzoTimeStep*1e10/1e6;
-    std::string fname = "performance.out";
+    std::string fname = "performance_output.txt";
 
 
     // Open a file for writing
@@ -119,12 +120,14 @@ class TimeTracer {
 			<< std::setw(width) << "Particle Chain" \
 			<< std::setw(width) << "Force Calculation" \
 			<< std::setw(width) << "Particle Sort" \
+			<< std::setw(width) << "Binary Calculation" \
 		 	<< '\n';
 
 		outputFile  << std::left
 			<< std::setw(width) << irr_chain.duration.count() \
 			<< std::setw(width) << irr_force.duration.count() \
 			<< std::setw(width) << irr_sort.duration.count() \
+			<< std::setw(width) << irr_bin.duration.count() \
 			<< '\n';
 
 		outputFile << "----------------------------------------------------\n" ;

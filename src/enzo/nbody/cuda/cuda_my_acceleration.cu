@@ -30,6 +30,8 @@ __constant__ int FixNumNeighbor_d;
 
 
 extern int NNB;
+extern int _NNB;
+int _NNB=0;
 static double time_send, time_grav, time_out, time_nb;
 static long long numInter;
 static int icall,ini,isend;
@@ -62,7 +64,7 @@ Neighbor *h_neighbor=nullptr, *d_neighbor=nullptr;
  *	 Computing Acceleration
  *************************************************************************/
 __global__ void CalculateAcceleration(
-		const int NNB,
+		const int _NNB,
 		const int NumTarget,
 		const int tg_offset,
 		const TargetParticle target[],
@@ -83,7 +85,7 @@ __device__ void kernel(
 		);
 
 __global__ void OrganizeNeighbor(const Neighbor do_neighbor[], Neighbor d_neighbor[],
-		const int offset, const int NNB);
+		const int offset, const int _NNB);
 
 __device__ void initializeResult(Result &res);
 __device__ void _addition(Result &result, const Result res);
@@ -105,7 +107,7 @@ void GetAcceleration(
 	assert(is_open);
 	fprintf(gpuout, "NumTarget = %d\n", NumTarget);
 	fflush(gpuout);
-	assert((NumTarget > 0) && (NumTarget <= NNB));
+	assert((NumTarget > 0) && (NumTarget <= _NNB));
 
 	cudaError_t cudaStatus;
 	cudaError_t error;
@@ -135,7 +137,7 @@ void GetAcceleration(
 
 	for (int tg_offset = 0; tg_offset < NumTarget; tg_offset += BLOCK) {
 		CalculateAcceleration <<< block_size, thread_size >>>
-			(NNB, NumTarget, tg_offset, d_target, d_background, d_result, d_neighbor);
+			(_NNB, NumTarget, tg_offset, d_target, d_background, d_result, d_neighbor);
 	} // endfor i, target particles
 
 	/*
@@ -151,7 +153,7 @@ void GetAcceleration(
 	//printf("CUDA: neighbor post processing done\n");
 
 	toHost(h_result  , d_result  , variable_size);
-	toHost(h_target  , d_target  , variable_size);
+	//toHost(h_target  , d_target  , variable_size);
 	toHost(h_neighbor, d_neighbor, variable_size);
 	cudaDeviceSynchronize();
 	//printf("CUDA: transfer to host done\n");
@@ -183,7 +185,7 @@ void GetAcceleration(
 
 // each block is assigned with one target particles and N_thread background particles
 __global__ void CalculateAcceleration(
-		const int NNB,
+		const int _NNB,
 		const int NumTarget,
 		const int tg_offset,
 		const TargetParticle target[],
@@ -212,11 +214,11 @@ __global__ void CalculateAcceleration(
 	//printf("CUDA (global): EPS2_d=%lf\n", EPS2_d);
 
 	// looping over N*BlockDim.x+threadId.x;
-	for (int j = 0; j < NNB; j += blockDim.x) {
+	for (int j = 0; j < _NNB; j += blockDim.x) {
 		bg_index = threadIdx.x + j;
 		//printf("CUDA: 1. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
 
-		if (bg_index < NNB) {
+		if (bg_index < _NNB) {
 			//printf("CUDA: 2. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
 			kernel(target[tg_index], background[bg_index], res[threadIdx.x], nb, bg_index, tg_index,
 					r_max, r_nb, index_max);
@@ -239,7 +241,7 @@ __global__ void CalculateAcceleration(
 	// Reduction in shared memory
 	for (int stride = 1; stride < blockDim.x; stride *= 2) {
 		int index = 2 * stride * threadIdx.x;
-		if (index < blockDim.x && bg_index < NNB) {
+		if (index < blockDim.x && bg_index < _NNB) {
 			_addition(res[index], res[index+stride]);
 		}
 		__syncthreads();
@@ -414,7 +416,7 @@ __global__ void OrganizeNeighbor(const Neighbor do_neighbor_t[], Neighbor d_neig
  *	 Communication with HOST
  *************************************************************************/
 void _ReceiveFromHost(
-		int _NNB,
+		int __NNB,
 		double m[],
 		double x[][3],
 		double v[][3],
@@ -422,16 +424,16 @@ void _ReceiveFromHost(
 		int _FixNumNeighbor){
 	//time_send -= get_wtime();
 	nbodymax         = 100000000;
-	NNB              = _NNB;
+	_NNB              = __NNB;
 	isend++;
-	assert(NNB <= nbodymax);
+	assert(_NNB <= nbodymax);
 	cudaError_t cudaStatus;
 
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
 	//cudaMemcpyToSymbol(d_background, &d_background_tmp, new_size(NNB)*sizeof(BackgroundParticle));
 
 
-	variable_size = new_size(NNB);
+	variable_size = new_size(_NNB);
 	my_allocate(&h_background , &d_background, variable_size);
 	my_allocate(&h_result     , &d_result    , variable_size);
 	my_allocate(&h_target     , &d_target    , variable_size);
@@ -467,7 +469,7 @@ void _ReceiveFromHost(
 
 	*/
 
-	for (int j=0; j<NNB; j++) {
+	for (int j=0; j<_NNB; j++) {
 		h_background[j].setParticle(m[j], x[j], v[j], mdot[j]);
 	}
 	toDevice(h_background,d_background,variable_size);

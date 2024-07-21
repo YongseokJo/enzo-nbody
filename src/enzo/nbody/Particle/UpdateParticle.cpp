@@ -167,7 +167,8 @@ void Particle::UpdateRadius() {
 		const double c = (NumNeighborMax-FixNumNeighbor);
 		const double b = 0.5 / pow(c,n);  // ln(2) / 40
 		double x = NumberOfAC-FixNumNeighbor;
-		double a = n%2==0 ? b*std::abs(x)*pow(x,n-1) : b*pow(x,n);
+		//double a = n%2==0 ? b*std::abs(x)*pow(x,n-1) : b*pow(x,n);
+		double a = n%2==0 ?  b*pow(x,n) : b*std::abs(x)*pow(x,n-1);
 		RadiusOfAC *= (1-a);
 	}
 	/*
