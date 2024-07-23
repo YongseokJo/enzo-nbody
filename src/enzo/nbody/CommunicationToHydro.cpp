@@ -283,9 +283,6 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 	
 	int EnzoNNB;
 	MPI_Recv(&EnzoNNB, 1, MPI_INT, 0, 10, inter_comm, &status);
-	fprintf(nbpout, "The numbers of nbody and hydro do not match: NNB=%d, EnzoNNB=%d\n",
-			NNB, EnzoNNB);
-	fflush(nbpout);
 	if (EnzoNNB != NNB) {
 		fprintf(stderr, "The numbers of nbody and hydro do not match: NNB=%d, EnzoNNB=%d\n",
 			 	NNB, EnzoNNB);

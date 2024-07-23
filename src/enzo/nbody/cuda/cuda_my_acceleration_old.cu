@@ -4,21 +4,38 @@
 #include <cmath>
 #include <cassert>
 #include <cuda_runtime.h>
+#include <cublas_v2.h>
 #include "cuda_types.h"
+#include "../defs.h"
+#include "../global.h"
 //#include "cuda_global.h"
 //#include "cuda_functions.h"
 //#include "cuda_routines.h"
 
 #define _PROFILE
 
+//#define THREAD 1024 // 2048 for A100
+//#define BLOCK 32    // 32 for A100 
+
+//#define THREAD 128 // 2048 for A100
 #define THREAD 1024 // 2048 for A100
-#define BLOCK 32    // 32 for A100 
-#define ESP2 1e-2
-#define new_size(A) (A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024
+#define BLOCK 512    // 32 for A100 
+
+#define _six 6
+#define _two 2
+#define _seven 7
+
+__constant__ double EPS2_d; 
+extern double EPS2;
+__constant__ int FixNumNeighbor_d; 
+
+#define new_size(A) ((A > 1024) ? int(pow(2,ceil(log(A)/log(2.0)))) : 1024)
 
 
-static int NNB;
-static int NumNeighborMax;
+//extern int NNB;
+extern int _NNB;
+int _NNB=0;
+//static int NumNeighborMax;
 static double time_send, time_grav, time_out, time_nb;
 static long long numInter;
 static int icall,ini,isend;
@@ -26,391 +43,513 @@ static int nbodymax;
 static int devid, numGPU;
 static bool is_open = false;
 static bool devinit = false;
+static bool first   = true;
+static int variable_size;
+//const int memory_size = 512;
 //BackgroundParticle *h_background, *d_background;
-BackgroundParticle *h_background = nullptr; //, *background;
-BackgroundParticle *d_background = nullptr;
+
+extern double *h_ptcl, *d_ptcl; //, *background;
+extern double *h_result, *d_result;
+extern double *d_diff, *d_magnitudes, *d_r2;
+extern int *h_neighbor, *d_neighbor, *h_num_neighbor, *d_num_neighbor;
+extern int *d_target;
+
+double *h_ptcl=nullptr, *d_ptcl=nullptr;; //, *background;
+double *h_result=nullptr, *d_result=nullptr;
+double *d_diff=nullptr,*d_magnitudes=nullptr, *d_r2=nullptr;
+int *h_neighbor=nullptr, *d_neighbor=nullptr, *d_num_neighbor=nullptr, *h_num_neighbor=nullptr;
+int *d_target=nullptr;
 
 
+extern cudaStream_t stream;
+cudaStream_t stream;
+
+extern double *h_diff, *h_magnitudes;
+double *h_diff, *h_magnitudes;
 
 /*************************************************************************
  *	 Computing Acceleration
  *************************************************************************/
-__global__ void CalculateAcceleration(
-		const int NNB,
-		const int NumTarget,
-		const int tg_offset,
-		const TargetParticle target[],
-		const BackgroundParticle background[],
-		Result result[],
-		Neighbor neighbor[]
-		);
-__device__ void kernel(
-		const TargetParticle &i,
-		const BackgroundParticle &j,
-		Result &res,
-		Neighbor &neighbor,
-		int &bg_index,
-		const int &tg_index
-		);
+__global__	void initialize(double* result, int* neighbor, int* num_neighbor, double* diff, double *magnitudes, int n, int m, int* subset);
+__global__ void compute_pairwise_diff_subset(const double* ptcl, double* diff, int n, int m, const int* subset);
+__global__ void compute_magnitudes_subset(const double *r2, const double* diff, double* magnitudes, int n, int m, int* subset);
+__global__ void compute_forces_subset(const double* ptcl, double *diff, const double* magnitudes, int n, int m, const int* subset);
+__global__ void assign_neighbor(int *neighbor, int* num_neighbor, const double* r2, const double* magnitudes, int n, int m, const int *subset);
+__global__ void reduce_forces(const double *diff, double *result, int n, int m);
 
-__device__ void initializeResult(Result &res);
 __device__ void _addition(Result &result, const Result res);
 __device__ void _copy(Result &result, const Result res);
 
+
+// CUDA kernel to compute the forces for a subset of particles
+__global__ void print_forces_subset(double* result, int m) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (idx < m) {
+		printf("acc: (%d) = %e\n", idx, result[_six*idx]);
+				/*
+				atomicAdd(&result[i+1], scale * diff[six_idx + 1]);
+				atomicAdd(&result[i+2], scale * diff[six_idx + 2]);
+
+				atomicAdd(&result[i+3], scale * (diff[six_idx + 3] - magnitudes[idx+1]*diff[six_idx    ]/magnitudes[idx]));
+				atomicAdd(&result[i+4], scale * (diff[six_idx + 4] - magnitudes[idx+1]*diff[six_idx + 1]/magnitudes[idx]));
+				atomicAdd(&result[i+5], scale * (diff[six_idx + 5] - magnitudes[idx+1]*diff[six_idx + 2]/magnitudes[idx]));
+				*/
+	}
+}
+
+void initializeCudaAndCublas(cublasHandle_t* handle);
+
 void GetAcceleration(
 		int NumTarget,
-		double x[][3],
-		double v[][3],
+		int h_target_list[],
 		double acc[][3],
 		double adot[][3],
-		double mdot[],
-		double r2[],
 		int NumNeighbor[],
 		int **NeighborList
 		) {
-	icall++;
-	//printf("cuda: GetAcceleration: %s\n", is_open ? "true" : "false");
+
+
+	//fprintf(gpuout, "TotalParticle = %d, NumTarget = %d\n", _NNB, NumTarget);
 	assert(is_open);
-	assert((NumTarget > 0) && (NumTarget <= NNB));
-	//printf("CUDA: Calculation Acceleration starting ...\n");
+	assert((NumTarget > 0) && (NumTarget <= _NNB));
 
 	cudaError_t cudaStatus;
 	cudaError_t error;
-	Result *h_result, *d_result;
-	TargetParticle *h_target, *d_target;
-	Neighbor *h_neighbor, *d_neighbor;
-	const int memory_size = 512;
-	int NumTarget_local = 0;
+
+	//cudaStreamCreate(&stream);
+
+	cublasHandle_t handle;
+	initializeCudaAndCublas(&handle);
 
 
-	//printf("CUDA: GetAcceleration starts, thread=%d\n", thread);
-
-	my_allocate(&h_result, &d_result, memory_size);
-	my_allocate(&h_target, &d_target, memory_size);
-	my_allocate(&h_neighbor, &d_neighbor, memory_size*THREAD);
-	printf("CUDA: allocation done\n");
-
-	//time_grav -= get_wtime();
-	for (int offset=0; offset<NumTarget; offset+=memory_size) {
-		NumTarget_local = std::min(memory_size,NumTarget-offset);
-		for(int i=0; i<NumTarget_local; i++) {
-			//printf("CUDA: here6-1\n");
-			//printf("CUDA: x=%.3e, y=%.3e, r=%.3e\n", x[offset+i][0], x[offset+i][1], r2[offset+i]);
-			//setTargetParticle(h_target[i], mdot[offset+i], x[offset+i], v[offset+i], radius[offset+i]);
-			h_result[i].clear_h();
-			h_neighbor[i].clear_h();
-			h_target[i].setParticle(mdot[offset+i], x[offset+i], v[offset+i], r2[offset+i]);
-			//printf("CUDA: res acc x=%.3e, y=%.3e\n", h_result[i].acc.x, h_result[i].acc.y);
-		}
-
-		toDevice(h_result, d_result, memory_size);
-		toDevice(h_target, d_target, memory_size);
-		toDevice(h_neighbor, d_neighbor, memory_size*THREAD);
-		printf("CUDA: transfer done\n");
+	cudaMemcpyToSymbol(EPS2_d, &EPS2, sizeof(double));
+	cudaMemcpyToSymbol(FixNumNeighbor_d, &FixNumNeighbor, sizeof(int));
 
 
-		dim3 thread_size(THREAD, 1, 1);
-		dim3 block_size(1,1,1);
-		int block=0;
-		error = cudaGetLastError();
-		if (error != cudaSuccess) {
-			printf("CUDA error: %s\n", cudaGetErrorString(error));
-			// Handle error
-		}
-
-		for (int tg_offset = 0; tg_offset < NumTarget_local; tg_offset += BLOCK) {
-			block = std::min(BLOCK, NumTarget_local-tg_offset);
-			block_size.x = block;
-			printf("CUDA: i=%d, block=%d\n",tg_offset, block);
-			CalculateAcceleration <<< block_size, thread_size >>>
-				(NNB, NumTarget_local, tg_offset, d_target, d_background, d_result, d_neighbor);
-		} // endfor i, target particles
-		cudaDeviceSynchronize();
-
-		printf("CUDA: calculation done\n");
-		error = cudaGetLastError();
-		if (error != cudaSuccess) {
-			printf("CUDA error: %s\n", cudaGetErrorString(error));
-			// Handle error
-		}
-
-		toHost(h_result  , d_result  , memory_size);
-		toHost(h_target  , d_target  , memory_size);
-		toHost(h_neighbor, d_neighbor, memory_size*THREAD);
-		printf("CUDA: transfer to host done\n");
-
-		//double wt = get_wtime();
-		//time_grav += wt;
-		//time_nb -= wt;
-		//wt = get_wtime();
-		//time_nb += get_wtime();
-		//time_out -= get_wtime();
-
-		error = cudaGetLastError();
-		if (error != cudaSuccess) {
-			printf("CUDA error: %s\n", cudaGetErrorString(error));
-			// Handle error
-		}
-
-		int _offset;
-		for (int i=0;i<NumTarget_local;i++) {
-			_offset = 0;
-			for (int j=0;j<THREAD;j++) {
-				for (int k=0;k<h_neighbor[i*THREAD+j].NumNeighbor;k++) {
-					NeighborList[offset+i][k+_offset] = h_neighbor[i*THREAD+j].NeighborList[k];
-				}
-				_offset += h_neighbor[i*THREAD+j].NumNeighbor;
-			}
-			NumNeighbor[offset+i] = _offset;
-		}
-
-		printf("CUDA: ?! ...\n");
-		// out data
-		for (int i=0; i<NumTarget_local; i++) {
-			acc[offset+i][0]  = h_result[i].acc.x;
-			acc[offset+i][1]  = h_result[i].acc.y;
-			acc[offset+i][2]  = h_result[i].acc.z;
-			adot[offset+i][0] = h_result[i].adot.x;
-			adot[offset+i][1] = h_result[i].adot.y;
-			adot[offset+i][2] = h_result[i].adot.z;
-			//time_out += get_wtime();
-		}
-	} // endfor offset
-
-	printf("CUDA: ?!! ...\n");
-	my_free(h_result    , d_result);
-	fprintf(stderr, "result ...\n");
-	my_free(h_target    , d_target);
-	fprintf(stderr, "target ...\n");
-	my_free(h_neighbor  , d_neighbor);
-	fprintf(stderr, "neighbor ...\n");
-	my_free(h_background, d_background);
-
-	error = cudaGetLastError();
-	if (error != cudaSuccess) {
-		printf("CUDA error: %s\n", cudaGetErrorString(error));
-		// Handle error
-	}
 	/*
-	cudaStatus = cudaFree(background);
-	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "background cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
-	}*/
-	//my_free(h_neighbor_num , d_neighbor_num);
-	//my_free(h_neighbor_list, d_neighbor_list);
-	printf("CUDA: done?\n");
-}
-
-
-// each block is assigned with one target particles and N_thread background particles
-__global__ void CalculateAcceleration(
-		const int NNB,
-		const int NumTarget,
-		const int tg_offset,
-		const TargetParticle target[],
-		const BackgroundParticle background[],
-		Result result[],
-		Neighbor neighbor[]
-		) {
-	int tg_index = blockIdx.x + tg_offset;
-	int bg_index;
-	//extern __shared__ Result res[];
-	__shared__ Result res[THREAD];
-	//res[threadIdx.x] = result[tg_index];
-	res[threadIdx.x].clear();
-	Neighbor nb;
-	nb.clear();
-	//result[tg_index].clear();
-
-	// looping over N*BlockDim.x+threadId.x;
-	if (tg_index < NumTarget) {
-		for (int j = 0; j < NNB; j += blockDim.x) {
-			bg_index = threadIdx.x + j;
-			//printf("CUDA: 1. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-
-			if (bg_index < NNB) {
-				//printf("CUDA: 2. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-
-				kernel(target[tg_index], background[bg_index], res[threadIdx.x],// neighbor[tg_index*blockDim.x+threadIdx.x],
-						nb, bg_index, tg_index);
-						//bg_index, tg_index);
-				neighbor[tg_index*blockDim.x+threadIdx.x].NumNeighbor = nb.NumNeighbor;
-				for (int i=0; i<nb.NumNeighbor; i++) {
-					neighbor[tg_index*blockDim.x+threadIdx.x].NeighborList[i] = nb.NeighborList[i];
-				}
-				//neighbor_num[tg_index*blockDim.x+threadIdx.x].NumNeighbor++;
-				//printf("CUDA: 3. (%d,%d), res=%e\n", threadIdx.x, blockIdx.x, res[threadIdx.x].acc.x);
-						//tg_index, bg_index, res[threadIdx.x].acc.x);
-
-			}
-			else
-			{
-				break;
-			}
-		} //endfor j, backgroun particles
+	for(int i=0; i<NumTarget; i++) {
+		d_result[i].clear();
+		d_neighbor[i].clear();
+		d_dist = 0.;
 	}
+	*/
+	/*
+	fprintf(stderr,"\ntargets=");
+	for(int i=0; i<NumTarget; i++) {
+		fprintf(stderr,"%d, ", h_target_list[i]);
+	}
+	fprintf(stderr,"\n");
+	*/
 
-	//printf("CUDA: 4. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-	// Reduction in shared memory
-	for (int stride = 1; stride < blockDim.x; stride *= 2) {
-		int index = 2 * stride * threadIdx.x;
-		if (index < blockDim.x && bg_index < NNB) {
-			_addition(res[index], res[index+stride]);
+
+
+	toDevice(h_target_list, d_target, NumTarget, stream);
+	//toDevice(h_target_list, d_target, NumTarget);
+
+	// Kernel launch parameters
+	dim3 blockSize(variable_size);
+	dim3 gridSize(NumTarget);
+	//dim3 gridSize((NumTarget * NNB + blockSize.x - 1) / blockSize.x);
+
+	// Compute pairwise differences for the subset
+	initialize<<<gridSize, blockSize, 0, stream>>>\
+		(d_result, d_neighbor, d_num_neighbor, d_diff, d_magnitudes, _NNB, NumTarget, d_target);
+	cudaDeviceSynchronize();
+
+	compute_pairwise_diff_subset<<<gridSize, blockSize, 0, stream>>>\
+		(d_ptcl, d_diff, _NNB, NumTarget, d_target);
+	cudaDeviceSynchronize();
+
+	compute_magnitudes_subset<<<gridSize, blockSize, 0, stream>>>\
+		(d_r2, d_diff, d_magnitudes, _NNB, NumTarget, d_target);
+	cudaDeviceSynchronize();
+
+	// Compute gravitational forces for the subset
+	compute_forces_subset<<<gridSize, blockSize, 0, stream>>>\
+		(d_ptcl, d_diff, d_magnitudes, _NNB, NumTarget, d_target);
+	assign_neighbor<<<gridSize, blockSize, 0, stream>>>\
+		(d_neighbor, d_num_neighbor, d_r2, d_magnitudes, _NNB, NumTarget, d_target);
+	cudaDeviceSynchronize();
+
+	reduce_forces<<<gridSize, blockSize, 0, stream>>>\
+		(d_diff, d_result, _NNB, NumTarget);
+	cudaDeviceSynchronize();
+
+
+	cudaStreamSynchronize(stream); // Wait for all operations to finish
+
+	print_forces_subset<<<gridSize, blockSize>>>\
+		(d_result, NumTarget);
+
+
+
+
+	/*
+	toHost(h_diff, d_diff, _six*NumTarget*NNB);
+	for (int i = 0; i < NumTarget; ++i) {
+		//std::cerr << "PID=" << h_target_list[i] << std::endl;
+		for (int j = 0; j < NNB; ++j) {
+			std::cerr << h_diff[_six*(i * NNB + j)] << " ";
 		}
+		std::cerr << std::endl;
+	}
+	*/
+
+	//toHost(h_result  , d_result  , variable_size, stream);
+	//toHost(h_neighbor, d_neighbor, variable_size, stream);
+
+
+
+	toHost(h_result      , d_result      ,           _six*NumTarget);
+	toHost(h_neighbor    , d_neighbor    , NumNeighborMax*NumTarget);
+	toHost(h_num_neighbor, d_num_neighbor,                NumTarget);
+	//printf("CUDA: transfer to host done\n");
+
+
+	//cudaStreamSynchronize(stream); // Wait for all operations to finish
+
+
+	for (int i=0;i<NumTarget;i++) {
+		for (int j=0;j<h_num_neighbor[i];j++) {
+			NeighborList[i][j] = h_neighbor[NumNeighborMax*i+j];
+			//fprintf(stderr, "%d, ", NeighborList[i][j]);
+		}
+		//fprintf(stdout, "%d (%d) neighbors of %d", h_target_list[i], i, h_num_neighbor[i]);
+		/*
+		for (int j=0;j<h_num_neighbor[i];j++) {
+			fprintf(stdout, "%d, ", NeighborList[i][j]);
+		}
+		*/
+		//fprintf(stdout, "\n");
+		NumNeighbor[i] = h_num_neighbor[i];
+
+		/*
+		fprintf(stderr, "PID=%d: a=(%.4e,%.4e,%.4e), adot=(%.4e,%.4e,%.4e)\n",
+				h_target_list[i],
+				h_result[_six*i],
+				h_result[_six*i+1],
+				h_result[_six*i+2],
+				h_result[_six*i+3],
+				h_result[_six*i+4],
+				h_result[_six*i+5]
+				);
+				*/
+	}
+
+	// out data
+	for (int i=0; i<NumTarget; i++) {
+		acc[i][0]  = h_result[_six*i];
+		acc[i][1]  = h_result[_six*i+1];
+		acc[i][2]  = h_result[_six*i+2];
+		adot[i][0] = h_result[_six*i+3];
+		adot[i][1] = h_result[_six*i+4];
+		adot[i][2] = h_result[_six*i+5];
+	}
+
+	cublasDestroy(handle);
+	/*
+	my_free(h_background , d_background);
+	my_free(h_result     , d_result);
+	my_free(h_target     , d_target);
+	my_free(h_neighbor   , d_neighbor);
+	*/
+	//cudaStreamDestroy(stream);
+	//my_free_d(do_neighbor);
+	//printf("CUDA: done?\n");
+}
+
+
+__global__	void initialize(double* result, int* neighbor, int* num_neighbor, double* diff, double *magnitudes, int n, int m, int* subset) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	diff[_six*idx    ] = 0.;
+	diff[_six*idx + 1] = 0.;
+	diff[_six*idx + 2] = 0.;
+	diff[_six*idx + 3] = 0.;
+	diff[_six*idx + 4] = 0.;
+	diff[_six*idx + 5] = 0.;
+
+	magnitudes[_two*idx    ] = 0.;
+	magnitudes[_two*idx + 1] = 0.;
+
+	if (idx < m * n) {
+		int i = idx / n;
+		int j = idx % n;
+
+		if (j == 0) {
+			result[_six*i] = 0.;
+			result[_six*i + 1] = 0.;
+			result[_six*i + 2] = 0.;
+			result[_six*i + 3] = 0.;
+			result[_six*i + 4] = 0.;
+			result[_six*i + 5] = 0.;
+			num_neighbor[i] = 0;
+			/*
+			for (j=0; j<NumNeighborMax; j++)
+				neighbor[NumNeighborMax*i+j] = 0;
+				*/
+		}
+	}
+}
+
+// CUDA kernel to compute pairwise differences for a subset of particles
+__global__ void compute_pairwise_diff_subset(const double* ptcl, double* diff, int n, int m, const int* subset) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (idx < m * n) {
+		int i = subset[idx / n];
+		int j = idx % n;
+		idx *= _six;
+		i *= _seven;
+		j *= _seven;
+
+		diff[idx]   = ptcl[j]   - ptcl[i];
+		diff[idx+1] = ptcl[j+1] - ptcl[i+1];
+		diff[idx+2] = ptcl[j+2] - ptcl[i+2];
+		diff[idx+3] = ptcl[j+3] - ptcl[i+3];
+		diff[idx+4] = ptcl[j+4] - ptcl[i+4];
+		diff[idx+5] = ptcl[j+5] - ptcl[i+5];
+
+		//printf("(%d,%d) = %e, %e, %e\n", i/_seven, j/_seven,  ptcl[i], ptcl[j], diff[idx]);
+	}
+}
+
+
+__global__ void compute_magnitudes_subset(const double *r2, const double* diff, double* magnitudes, int n, int m, int* subset) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idx < n * m) {
+		int i = subset[idx / n];
+		int j = idx % n;
+		int six_idx = _six*idx;
+		int two_idx = _two*idx;
+
+
+		magnitudes[two_idx]   += diff[(six_idx)]    *diff[(six_idx)];
+		magnitudes[two_idx]   += diff[(six_idx) + 1]*diff[(six_idx) + 1];
+		magnitudes[two_idx]   += diff[(six_idx) + 2]*diff[(six_idx) + 2];
+		magnitudes[two_idx+1] += diff[(six_idx)]    *diff[(six_idx) + 3];
+		magnitudes[two_idx+1] += diff[(six_idx) + 1]*diff[(six_idx) + 4];
+		magnitudes[two_idx+1] += diff[(six_idx) + 2]*diff[(six_idx) + 5];
+
+		//printf("(%d,%d) = %e, %e\n", i, j,  magnitudes[two_idx], r2[i]);
+
+		if (magnitudes[two_idx] <= r2[i]) {
+			//printf("(%d, %d): %e, %e\n",subset[i], j, magnitudes[two_idx], r2[i]);
+			magnitudes[two_idx]   = -magnitudes[two_idx];
+		}
+	}
+}
+
+
+// CUDA kernel to compute the forces for a subset of particles
+__global__ void compute_forces_subset(const double* ptcl, double *diff, const double* magnitudes, int n, int m, const int* subset) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (idx < m * n) {
+		//int i = subset[idx / n];
+		int i = idx / n;
+		int j = idx % n;
+		int six_idx = idx*_six;
+		idx *= _two;
+		double acc[Dim], adot[Dim];
+
+		if (magnitudes[idx] <= 0.) {
+			acc[0]  = 0.;
+			acc[1]  = 0.;
+			acc[2]  = 0.;
+			adot[0] = 0.;
+			adot[1] = 0.;
+			adot[2] = 0.;
+		}
+		else {
+			double scale = ptcl[_seven*j+6] / (magnitudes[idx] * sqrtf(magnitudes[idx]));
+			acc[0]  = scale * diff[six_idx];
+			acc[1]  = scale * diff[six_idx + 1];
+			acc[2]  = scale * diff[six_idx + 2];
+
+			adot[0] = scale * (diff[six_idx + 3] - 3*magnitudes[idx+1]*diff[six_idx    ]/magnitudes[idx]);
+			adot[1] = scale * (diff[six_idx + 4] - 3*magnitudes[idx+1]*diff[six_idx + 1]/magnitudes[idx]);
+			adot[2] = scale * (diff[six_idx + 5] - 3*magnitudes[idx+1]*diff[six_idx + 2]/magnitudes[idx]);
+		}
+
+		diff[six_idx]   = acc[0];
+		diff[six_idx+1] = acc[1];
+		diff[six_idx+2] = acc[2];
+		diff[six_idx+3] = adot[0];
+		diff[six_idx+4] = adot[1];
+		diff[six_idx+5] = adot[2];
+
+		//printf("compute_forces: (%d, %d) = %e\n", i, j,  diff[six_idx]);
+	}
+}
+
+
+/*
+__device__ double warpReduce(double val) {
+	val += __shfl_down_sync(0xffffffff, val, 16);
+	val += __shfl_down_sync(0xffffffff, val, 8);
+	val += __shfl_down_sync(0xffffffff, val, 4);
+	val += __shfl_down_sync(0xffffffff, val, 2);
+	val += __shfl_down_sync(0xffffffff, val, 1);
+	return val;
+}
+*/
+
+__inline__ __device__ double warpReduce(double val)
+{
+	for (int offset = warpSize/2; offset > 0; offset /= 2) 
+		val += __shfl_down_sync(0xffffffff, val, offset);
+	return val;
+}
+
+
+__global__ void reduce_forces(const double *diff, double *result, int n, int m) {
+	int idx = blockIdx.x * n + threadIdx.x;
+	__shared__ double warpSum[64]; // Assumes max 32 warps per block
+	int lane = threadIdx.x % warpSize;
+	int wid = threadIdx.x / warpSize;
+	double sum;
+	int i = blockIdx.x;
+	int j = threadIdx.x;
+	int six_idx = _six*(i*n+j);
+	int k;
+	
+
+#pragma unroll 
+	for (k=0;k<_six;k++) {
+		sum = (i < m && j < n) ? diff[six_idx+k] : 0;
+		/*
+		if (k == 0)
+			if (i < m && j < n)
+				printf("(%d,%d) = %e\n", blockIdx.x,threadIdx.x, diff[six_idx+k]);
+				*/
+
+		// Warp reduce
+		sum = warpReduce(sum);
+
+		// Block reduce
+		if (lane == 0) warpSum[wid] = sum;
 		__syncthreads();
+
+		if (wid == 0)
+		{
+			sum = (threadIdx.x < blockDim.x / warpSize) ? warpSum[lane] : 0;
+			sum = warpReduce(sum);
+			if (lane == 0) result[_six*i+k] = sum;
+		}
+	}
+}
+
+
+
+__global__ void assign_neighbor(int *neighbor, int* num_neighbor, const double* r2, const double* magnitudes, int n, int m, const int *subset) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (idx < m) {
+		int i = subset[idx];
+		int k = 0;
+
+		for (int j = 0; j < n; j++) {
+			if (i != j) {
+				k = _two*(n*idx+j);
+				if (magnitudes[k] < 0) {
+					//printf("(%d, %d,%d) = %d, %e, %e\n", idx, i, j, num_neighbor[idx], magnitudes[k], r2[i]);
+					neighbor[NumNeighborMax*idx+num_neighbor[idx]] = j;
+					num_neighbor[idx]++;
+					if (num_neighbor[idx] > 100)  {
+						//printf("Error: (%d, %d,%d) = %d, %e, %e\n", idx, i, j, num_neighbor[idx], magnitudes[k], r2[i]);
+						assert(num_neighbor[idx] < 100);
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+void initializeCudaAndCublas(cublasHandle_t* handle) {
+	cudaError_t cudaStat = cudaSetDevice(0);
+	if (cudaStat != cudaSuccess) {
+		std::cerr << "cudaSetDevice failed!" << std::endl;
+		exit(1);
 	}
 
-	//printf("CUDA: 5. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-	if (threadIdx.x == 0 && tg_index < NumTarget) _addition(result[tg_index], res[0]);
-
-	//printf("CUDA: 6. (%d,%d), res=%e\n", tg_index, bg_index, res[threadIdx.x].acc.x);
-	// res=(%.3e,%.3e,%.3e)\n",
-	if (threadIdx.x == 0 && tg_index < NumTarget) {
-		printf("CUDA: (%d,%d), result=(%.3e,%.3e,%.3e)\n",  
-			 	threadIdx.x, tg_index, result[tg_index].acc.x, result[tg_index].acc.y, result[tg_index].acc.z);
-			 	//res[0].acc.x, res[0].acc.y, res[0].acc.z);
+	cublasStatus_t stat = cublasCreate(handle);
+	if (stat != CUBLAS_STATUS_SUCCESS) {
+		std::cerr << "CUBLAS initialization failed!" << std::endl;
+		exit(1);
 	}
-
 }
-
-
-// _ means inverse
-__device__ void kernel(
-		const TargetParticle &i,
-		const BackgroundParticle &j,
-		Result &res,
-		Neighbor &neighbor,
-		int &bg_index,
-		const int &tg_index) {
-
-	float dx  = j.pos.x - i.pos.x;
-	float dy  = j.pos.y - i.pos.y;
-	float dz  = j.pos.z - i.pos.z;
-	float dvx = j.vel.x - i.vel.x;
-	float dvy = j.vel.y - i.vel.y;
-	float dvz = j.vel.z - i.vel.z;
-
-	float dr2 = dx*dx + dy*dy + dz*dz;
-
-	if (dr2 == 0) return;
-
-	// neighbor
-	if(dr2 < i.r2) {
-		neighbor.NeighborList[neighbor.NumNeighbor++] = bg_index;
-		//neighbor.NeighborList[0] = bg_index;
-		//neighbor.NumNeighbor += 1;
-		//[tg_index*blockDim.x+threadIdx.x]
-		//*(neighbor_num+tg_index*blockDim.x+threadIdx.x) += 1;
-		//*(neighbor_list+tg_index*blockDim.x*100+threadIdx.x*100+neighbor_num) = bg_index;
-	}
-
-	if (dr2 < ESP2) {
-		dr2 =  ESP2;
-	}
-
-	float drdv      = dx*dvx + dy*dvy + dz*dvz;
-	float drdv3_dr2 = 3*drdv/dr2;
-	float _dr3      = rsqrtf(dr2)/dr2;
-	float m_dr3     = j.mass*_dr3;
-	float mdot_dr3  = j.mdot*_dr3;
-
-	res.acc.x  += m_dr3 * dx;
-	res.acc.y  += m_dr3 * dy;
-	res.acc.z  += m_dr3 * dz;
-
-	res.adot.x += m_dr3 * (dvx - drdv3_dr2 * dx) + mdot_dr3 * dx;
-	res.adot.y += m_dr3 * (dvy - drdv3_dr2 * dy) + mdot_dr3 * dy;
-	res.adot.z += m_dr3 * (dvz - drdv3_dr2 * dz) + mdot_dr3 * dz;
-
-
-}
-
-__device__ void initializeResult(Result &res) {
-	res.acc.x  = 0;
-	res.acc.y  = 0;
-	res.acc.z  = 0;
-	res.adot.x = 0;
-	res.adot.y = 0;
-	res.adot.z = 0;
-}
-
-
-__device__ void _addition(Result &result, const Result res) {
-	result.acc.x += res.acc.x;
-	result.acc.y += res.acc.y;
-	result.acc.z += res.acc.z;
-
-	result.adot.x += res.adot.x;
-	result.adot.y += res.adot.y;
-	result.adot.z += res.adot.z;
-}
-
-__device__ void _copy(Result &result, const Result res) {
-	result.acc.x = res.acc.x;
-	result.acc.y = res.acc.y;
-	result.acc.z = res.acc.z;
-
-	result.adot.x = res.adot.x;
-	result.adot.y = res.adot.y;
-	result.adot.z = res.adot.z;
-}
-
-
-
 
 
 /*************************************************************************
  *	 Communication with HOST
  *************************************************************************/
 void _ReceiveFromHost(
-		int _NNB,
+		int __NNB,
 		double m[],
 		double x[][3],
 		double v[][3],
-		double mdot[],
-		int _NumNeighborMax){
+		double r2[],
+		double mdot[]
+		){
 	//time_send -= get_wtime();
-	nbodymax       = 100000000;
-	NNB            = _NNB;
-	NumNeighborMax = _NumNeighborMax;
-	isend++;
-	assert(NNB <= nbodymax);
+	nbodymax = 100000000;
+	_NNB     = __NNB;  // this values can be different from NNB 
+	assert(_NNB <= nbodymax);
 	cudaError_t cudaStatus;
 
-
-
+	//fprintf(gpuout, "CUDA: receive starts\n");
 	//my_allocate(&h_background, &d_background_tmp, new_size(NNB));
 	//cudaMemcpyToSymbol(d_background, &d_background_tmp, new_size(NNB)*sizeof(BackgroundParticle));
-	my_allocate(&h_background, &d_background, new_size(NNB));
 
-	fprintf(stdout, "CUDA: receive starts\n");
-	printf("CUDA: new size of NNB=%d\n",new_size(NNB));
-	/*if (background != nullptr)  {
-		cudaStatus = cudaFree(background);
-		background = nullptr;
-		if (cudaStatus != cudaSuccess) {
-			fprintf(stderr, "background cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	if ((first) || (new_size(_NNB) > variable_size )) {
+		variable_size = new_size(_NNB);
+		if (!first) {
+			my_free(h_ptcl				 , d_ptcl);
+			my_free(h_result       , d_result);
+			my_free(h_neighbor     , d_neighbor);
+			my_free(h_num_neighbor , d_num_neighbor);
+			cudaFree(d_target);
+			cudaFree(d_r2);
+			cudaFree(d_diff);
+			cudaFree(d_magnitudes);
 		}
-	}*/
-	/*
-	cudaStatus = cudaMallocManaged(&background, new_size(NNB)*sizeof(BackgroundParticle)); //NNB*sizeof(BackgroundParticle));
-	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "background cudaMallocManaged failed: %s\n", cudaGetErrorString(cudaStatus));
+		else {
+			first = false;
+		}
+		my_allocate(&h_ptcl         , &d_ptcl        ,         _seven*variable_size); // x,v,m
+		my_allocate(&h_result       , &d_result      ,           _six*variable_size);
+		my_allocate(&h_num_neighbor , &d_num_neighbor,                variable_size);
+		my_allocate(&h_neighbor     , &d_neighbor    , NumNeighborMax*variable_size);
+		cudaMalloc((void**)&d_r2        ,        variable_size * sizeof(double));
+		cudaMalloc((void**)&d_target    ,        variable_size * sizeof(int));
+		cudaMalloc((void**)&d_diff      , _six * variable_size * variable_size * sizeof(double));
+		cudaMalloc((void**)&d_magnitudes, _two * variable_size * variable_size * sizeof(double));
+		//cudaMallocHost((void**)&h_diff          , _six * variable_size * variable_size * sizeof(double));
+		//cudaMallocHost((void**)&h_magnitudes    , _two * variable_size * variable_size * sizeof(double));
 	}
-	*/
 
-	for (int j=0; j<NNB; j++) {
-		//setBackgroundParticle(background[j], m[j], x[j], v[j], mdot[j]);
-		//fprintf(stderr, "cuda: x=(%.2e,%.2e,%.2e), v=(%.2e,%.2e,%.2e), m=%.2e, mdot=%.2e\n",\
-				//x[j][0],x[j][1],x[j][2],v[j][0],v[j][1],v[j][2],m[j],mdot[j]);
-		//h_background[j].setParticle(m[j], x[j], v[j], mdot[j]);
-		h_background[j].setParticle(m[j], x[j], v[j], mdot[j]);
+
+	for (int j=0; j<_NNB; j++) {
+
+		for (int dim=0; dim<Dim; dim++) {
+			h_ptcl[_seven*j+dim]   = x[j][dim];
+			h_ptcl[_seven*j+dim+3] = v[j][dim];
+		}
+		h_ptcl[_seven*j+6] = m[j];
+
+		//fprintf(gpuout, "CUDA: mass = %e, x=%e\n", h_ptcl[_seven*j+6], h_ptcl[_seven*j]);
+		//h_particle[j].setParticle(m[j], x[j], v[j], r2[j], mdot[j]);
 	}
-	//toDevice(h_background,d_background_tmp,new_size(NNB));
-	toDevice(h_background,d_background,new_size(NNB));
 
-	//time_send += get_wtime();
-	fprintf(stdout, "CUDA: receive done\n");
+	//toDevice(h_background,d_background,variable_size);
+	toDevice(h_ptcl,d_ptcl, _seven*_NNB, stream);
+	toDevice(r2    ,d_r2  ,        _NNB, stream);
+	//fprintf(gpuout, "CUDA: receive done\n");
 }
 
 
@@ -422,6 +561,9 @@ void _InitializeDevice(int irank){
 	int device = 0; // Choose GPU device 0
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
+
+	cudaStreamCreate(&stream);
+
 	std::cout << "There are " << deviceCount << " GPUs." << std::endl;
 	if (device < 0 || device >= deviceCount) {
 		    // Handle invalid device index
@@ -430,19 +572,26 @@ void _InitializeDevice(int irank){
 	cudaDeviceProp prop;
 	cudaGetDeviceProperties(&prop, devid);
 	//  char *hostname = getenv("HOSTNAME");
+
+
 	char hostname[150];
 	memset(hostname,0,150);
 	gethostname(hostname,150);
+	
+
 	fprintf(stderr, "# GPU initialization - rank: %d; HOST %s; NGPU %d; device: %d %s\n", irank, hostname,numGPU, devid, prop.name);
+
 
 	cudaSetDevice(device);
 
 	// Initialize CUDA context
+	/*
 	cudaError_t cudaStatus = cudaFree(0);
 	if (cudaStatus != cudaSuccess) {
 		std::cerr << "CUDA initialization failed: " << cudaGetErrorString(cudaStatus) << std::endl;
 		return;
 	}
+	*/
 
 	is_open = true;
 	// CUDA is now initialized and ready to be used
@@ -519,6 +668,23 @@ void _CloseDevice() {
 	is_open = false;
 
 
+	cudaError_t error;
+
+	printf("CUDA: ?!! ...\n");
+	//my_free(&h_result    , &d_result);
+	fprintf(stderr, "result ...\n");
+	//my_free(&h_target    , &d_target);
+	fprintf(stderr, "target ...\n");
+	//my_free(&h_neighbor  , &d_neighbor);
+	fprintf(stderr, "neighbor ...\n");
+	//my_free(&h_background, &d_background);
+
+	error = cudaGetLastError();
+	if (error != cudaSuccess) {
+		printf("CUDA error: %s\n", cudaGetErrorString(error));
+		// Handle error
+	}
+
 #ifdef PROFILE
 	fprintf(stderr, "Closed NBODY6/GPU library\n");
 	fprintf(stderr, "rank: %d***************\n",devid);
@@ -579,13 +745,14 @@ extern "C" {
 	void CloseDevice(){
 		_CloseDevice();
 	}
-	void SendToDevice(int *_NNB, double m[], double x[][3], double v[][3], double mdot[], int *_NumNeighborMax) {
-		_ReceiveFromHost(*_NNB, m, x, v, mdot, *_NumNeighborMax);
+	void SendToDevice(int *__NNB, double m[], double x[][3], double v[][3], double r2[], double mdot[]) {
+		_ReceiveFromHost(*__NNB, m, x, v, r2, mdot);
 	}
 	void ProfileDevice(int *irank){
 		_ProfileDevice(*irank);
 	}
-	void CalculateAccelerationOnDevice(int *NumTarget, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList) {
-		GetAcceleration(*NumTarget, x, v, acc, adot, mdot, radius, NumNeighbor, NeighborList);
+	void CalculateAccelerationOnDevice(int *NumTarget, int *h_target_list, double acc[][3], double adot[][3], int NumNeighbor[], int **NeighborList) {
+		GetAcceleration(*NumTarget, h_target_list, acc, adot, NumNeighbor, NeighborList);
 	}
 }
+

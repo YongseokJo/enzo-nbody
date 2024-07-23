@@ -1,9 +1,10 @@
 #pragma once
+#include "../defs.h"
+#include "cuda_defs.h"
 extern "C" {
-	void InitializeDevice(int *irank);
-	void OpenDevice(const int *irank);
+	void InitializeDevice();
 	void CloseDevice();
 	void ProfileDevice(int *irank);
-	void SendToDevice(int *_NNB, double m[], double x[][3], double v[][3], double mdot[], int *_NumNeighborMax);
-	void CalculateAccelerationOnDevice(int *NumTarget, double x[][3], double v[][3], double acc[][3], double adot[][3], double mdot[], double radius[], int NumNeighbor[], int **NeighborList, double dt);
+	void SendToDevice(int *_NNB, CUDA_REAL m[], CUDA_REAL x[][3], CUDA_REAL v[][3], CUDA_REAL r[], CUDA_REAL mdot[]);
+	void CalculateAccelerationOnDevice(int *NumTarget, int *h_target_list, CUDA_REAL acc[][3], CUDA_REAL adot[][3], int NumNeighbor[], int **NeighborList);
 }

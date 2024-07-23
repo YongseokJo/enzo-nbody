@@ -369,7 +369,7 @@ verbose: $(EXE).exe
 	@rm -f $@
 	@echo "Compiling $<"
 	@(if [ $(VERBOSE) -eq 0 ]; then \
-	  $(NVCC)  -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC)  -g -G -Xcompiler -rdynamic -lineinfo -lcudart -lcublas -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >& $(OUTPUT) ; \
 	  if [ ! -e $@ ]; then \
 	     echo; \
@@ -380,7 +380,7 @@ verbose: $(EXE).exe
              exit 1; \
           fi ; \
 	else \
-	  $(NVCC) -g -G -Xcompiler -rdynamic -lineinfo -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
+	  $(NVCC) -g -G -Xcompiler -rdynamic -lineinfo -lcudart -lcublas -c -o $@ $(DEFINES) $(CUDACOMPFLAGS) \
 	    $(INCLUDES) $*.cu >> $(OUTPUT) 2>&1 ; \
 	  if [ ! -e $@ ]; then \
 	     echo "See $(OUTPUT) for error messages"; \
