@@ -35,7 +35,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 					ptcl->a_tot[0][0],
 					ptcl->BackgroundAcceleration[0]
 					);
-
+			/*
 			if (ptcl->CurrentBlockReg >= ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg != ptcl->CurrentBlockIrr)
 				fprintf(nbpout,"--------------------------------------------------------------------------------------------- \n");
 
@@ -72,6 +72,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 					ptcl->a_irr[1][3],
 					ptcl->a_irr[2][3]
 					);
+		*/
 		}
 		CalculateRegAccelerationOnGPU(RegularList, particle);
 	}
@@ -80,7 +81,7 @@ bool RegularAccelerationRoutine(std::vector<Particle*> &particle)
 	UpdateNextRegTime(particle);
 
 	fprintf(nbpout, "Finishing regular force ...\n");
-	fflush(nbpout);
+	//fflush(nbpout);
 
 	//global_time = NextRegTimeBlock*time_step;
 	return true;

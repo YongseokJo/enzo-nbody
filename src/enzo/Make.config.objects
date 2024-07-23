@@ -1285,7 +1285,8 @@ OBJS_NBODY= \
 						nbody/Binary/KSRegularlizationTermination.o\
 						nbody/Binary/KSRegularlizationInitialization.o\
 						nbody/Binary/KSRegularlizationIntegration.o\
-#						nbody/cuda/cuda_routines.o\
+ 						nbody/cuda/cuda_kernels.o
+ 						#nbody/cuda/cuda_routines.o\
 
 
 

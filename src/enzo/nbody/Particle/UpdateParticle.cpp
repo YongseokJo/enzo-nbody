@@ -161,15 +161,29 @@ void Particle::UpdateRadius() {
 			 const double b = std::log(2) / (NumNeighborMax);  // ln(2) / 40
 			 double exp = a * (std::exp(b * NumberOfAC) - 1);
 			 */
-
 		/* n=2 polynomial (mild) as n increases it grows mild */
-		const int n = 3;
-		const double c = (NumNeighborMax-FixNumNeighbor);
-		const double b = 0.5 / pow(c,n);  // ln(2) / 40
-		double x = NumberOfAC-FixNumNeighbor;
-		//double a = n%2==0 ? b*std::abs(x)*pow(x,n-1) : b*pow(x,n);
-		double a = n%2==0 ?  b*pow(x,n) : b*std::abs(x)*pow(x,n-1);
-		RadiusOfAC *= (1-a);
+
+		if (NumberOfAC > FixNumNeighbor) {
+			const int n = 2;
+			const double c = (NumNeighborMax-FixNumNeighbor);
+			const double b = 0.9 / std::pow(c,n);  // ln(2) / 40
+			double x = NumberOfAC-FixNumNeighbor;
+			double a = n%2==0 ? b*std::abs(x)*std::pow(x,n-1) : b*std::pow(x,n);
+			//fprintf(stdout, "PID=%d, NumberOfAC=%d, 1-a=%e, R0=%e(%e), R=%e(%e)\n",
+				 	//PID,NumberOfAC, 1.-a, RadiusOfAC, RadiusOfAC*RadiusOfAC, RadiusOfAC*(1-a),RadiusOfAC*(1-a)*RadiusOfAC*(1-a));
+			RadiusOfAC *= (1.-a);
+		}
+		else if (NumberOfAC < FixNumNeighbor) {
+			const int n = 3;
+			const double c = (NumNeighborMax-FixNumNeighbor);
+			const double b = 0.5 / std::pow(c,n);  // ln(2) / 40
+			double x = NumberOfAC-FixNumNeighbor;
+			double a = n%2==0 ? b*std::abs(x)*std::pow(x,n-1) : b*std::pow(x,n);
+			//fprintf(stdout, "PID=%d, NumberOfAC=%d, 1-a=%e, R0=%e(%e), R=%e(%e)\n",
+				 	//PID,NumberOfAC, 1.-a, RadiusOfAC, RadiusOfAC*RadiusOfAC, RadiusOfAC*(1-a),RadiusOfAC*(1-a)*RadiusOfAC*(1-a));
+			RadiusOfAC *= (1.-a);
+		}
+
 	}
 	/*
 	if (NumberOfAC > FixNumNeighbor) {

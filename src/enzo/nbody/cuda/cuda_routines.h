@@ -1,49 +1,129 @@
-#pragma once
 
-#define PROFILE
-#ifdef PROFILE
-#include <sys/time.h>
-static double get_wtime(){
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return tv.tv_sec + 1.e-6 * tv.tv_usec;
+#ifndef ROUTINES_H
+#define ROUTINES_H
+#include <cublas_v2.h>
+#include <iostream>
+#include <cuda_runtime.h>
+
+
+void initializeCudaAndCublas(cublasHandle_t* handle) {
+	cudaError_t cudaStat = cudaSetDevice(0);
+	if (cudaStat != cudaSuccess) {
+		std::cerr << "cudaSetDevice failed!" << std::endl;
+		exit(1);
+	}
+
+	cublasStatus_t stat = cublasCreate(handle);
+	if (stat != CUBLAS_STATUS_SUCCESS) {
+		std::cerr << "CUBLAS initialization failed!" << std::endl;
+		exit(1);
+	}
 }
-#else
-static double get_wtime(){
-	return 0.0;
+
+void checkCudaError(cudaError_t result) {
+	if (result != cudaSuccess) {
+		std::cerr << "CUDA Runtime Error: " << cudaGetErrorString(result) << std::endl;
+		exit(EXIT_FAILURE);
+	}
 }
+
+
+
+template <typename T>
+void my_allocate(T **host, T **device, const int size) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMalloc(device, size*sizeof(T));
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMalloc failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+	//*host = (T*)calloc(size, sizeof(T));
+	//*host = (T*)malloc(size*sizeof(T));
+	/*
+		 if (host == NULL) {
+		 fprintf(stderr, "Memory allocation failed\n");
+		 }
+	 */
+	//host = new T[size]();
+	cudaStatus = cudaMallocHost(host, size*sizeof(T));
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMallocHost failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+template <typename T>
+void my_free(T &host, T &device) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaFree(device);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+	cudaStatus = cudaFreeHost(host);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+	//free(host);
+}
+
+
+
+template <typename T>
+void my_allocate_d(T **device, const int size) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMalloc(device, size*sizeof(T));
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMalloc failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+template <typename T>
+void my_free_d(T &device) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaFree(device);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaFree failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+
+
+
+template <typename T>
+void toDevice(T *host, T *device, const int size, cudaStream_t &stream) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMemcpyAsync(device, host, size * sizeof(T), cudaMemcpyHostToDevice, stream);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMemcpyHostToDevice failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+template <typename T>
+void toHost(T *host, T *device, const int size, cudaStream_t &stream) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMemcpyAsync(host, device, size * sizeof(T), cudaMemcpyDeviceToHost, stream);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMemcpyDeviceToHost failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+
+template <typename T>
+void toDevice(T *host, T *device, const int size) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMemcpy(device, host, size * sizeof(T), cudaMemcpyHostToDevice);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMemcpyHostToDevice failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+template <typename T>
+void toHost(T *host, T *device, const int size) {
+	cudaError_t cudaStatus;
+	cudaStatus = cudaMemcpy(host, device, size * sizeof(T), cudaMemcpyDeviceToHost);
+	if (cudaStatus != cudaSuccess) {
+		fprintf(stderr, "cudaMemcpyDeviceToHost failed: %s\n", cudaGetErrorString(cudaStatus));
+	}
+}
+
+
+
 #endif
-
-static float2 float2_split(double x){
-	const int shift = 20;
-	float2 ret;
-	x *= (1<<shift);
-	double xi = (int)x;
-	double xf = x - xi;
-	ret.x = xi * (1./(1<<shift));
-	ret.y = xf * (1./(1<<shift));
-	return ret;
-}
-
-static __device__ float2 float2_accum(float2 acc, float x){
-  float tmp = acc.x + x;
-  acc.y -= (tmp - acc.x) - x;
-  acc.x = tmp;
-  return acc;
-}
-
-static  __device__ float2 float2_regularize(float2 acc){
-  float tmp = acc.x + acc.y;
-  acc.y = acc.y -(tmp - acc.x);
-  acc.x = tmp;
-  return acc;
-}
-
-static __device__ float2 float2_add(float2 a, float2 b){
-  float tmp = a.x + b.x;
-  a.y -= (tmp - a.x) - b.x - b.y;
-  a.x = tmp;
-  // a.x = a.x + b.x;
-  // a.y = a.y + b.y;
-  return a;
-}

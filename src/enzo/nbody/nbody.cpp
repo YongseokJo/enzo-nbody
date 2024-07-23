@@ -51,7 +51,7 @@ int nbody(int MyProcessorNumber) {
 	 *  Nbody Calculations
 	 *********************************************************************/
 	std::cout << "Staring Nbody+ ..." << endl;
-	InitializeDevice(&irank);
+	InitializeDevice();
 	InitialCommunication(particle);
 	InitializeParticle(particle);
 	Evolve(particle);

@@ -3,7 +3,6 @@
 #include "../global.h"
 #include <cmath>
 #include "defs.h"
-#include <cassert>
 #include "cuda_functions.h"
 
 
@@ -19,9 +18,6 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
  *
  */
 void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vector<Particle*> &particle){
-
-
-
 	// regIds are the list of positions of particles subject to regular force calculation in std::vector list particle
 
 	// variables for opening GPU
@@ -31,17 +27,23 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 	const int mpi_rank  = 0; // not effective for now
 	int NeighborIndex; // this size should coincide with number of threads
 	int ListSize = RegularList.size();
-	int *IndexList = new int[ListSize];
 
 	//int NumGpuCal;
 
 	// variables for saving variables to send to GPU
 	// only regular particle informations are stored here
+	double *MassSend;
+	double *MdotSend;
+	double(*PositionSend)[Dim];
+	double(*VelocitySend)[Dim];
+
+	double* RadiusOfAC2Send;
+	double* TimeStepRegSend;
+
 	double (*AccRegReceive)[Dim];
 	double (*AccRegDotReceive)[Dim];
 	double (*AccIrr)[Dim];
 	double (*AccIrrDot)[Dim];
-	//int (*ACListReceive)[NumNeighborMax];
 
 	//double* PotSend;
 	int **ACListReceive;
@@ -60,11 +62,11 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 	double dt       = RegularList[0]->TimeStepReg;
 	double new_time = RegularList[0]->CurrentTimeReg + dt;  // next regular time
 	ULL new_block = RegularList[0]->CurrentBlockReg + RegularList[0]->TimeBlockReg;  // next regular time
-	
+
 	if (new_block != NextRegTimeBlock) {
 		if (NextRegTimeBlock == 0) {
 			UpdateNextRegTime(particle);
-			fprintf(stderr, "First RegularCalculation skips! :CalculateAcceleration.C:105\n");
+			fprintf(nbpout, "First RegularCalculation skips! :CalculateAcceleration.C:105\n");
 		}
 		else{
 			fprintf(stderr, "Something wrong! NextRegTime does not match! :CalculateAcceleration.C:105\n");
@@ -76,6 +78,13 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 
 	// need to make array to send to GPU
 	// allocate memory to the temporary variables
+	MassSend        = new double[ListSize];
+	MdotSend        = new double[ListSize];
+	PositionSend    = new double[ListSize][Dim];
+	VelocitySend    = new double[ListSize][Dim];
+
+	RadiusOfAC2Send = new double[ListSize];
+	TimeStepRegSend = new double[ListSize];
 	//PotSend         = new double[ListSize];
 
 	AccRegReceive    = new double[ListSize][Dim];
@@ -88,31 +97,14 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 	for (int i=0; i<ListSize; i++) {
 		ACListReceive[i] = new int[NumNeighborMax];
 		for (int dim=0; dim<Dim; dim++) {
-			AccRegReceive[i][dim]    = 0;
-			AccRegDotReceive[i][dim] = 0;
-			AccIrr[i][dim]           = 0;
-			AccIrrDot[i][dim]        = 0;
+			AccIrr[i][dim]    = 0;
+			AccIrrDot[i][dim] = 0;
 		}
 	}
 
-	// perform the loop twice in order to obtain
-	// both the current and predicted acceleration
-	// set the current time to 0 and next time to 1
-	// and set the time step dt to regular time step
 
 
 
-
-	/*
-	DTR = dt;
-	DTSQ = DTR*DTR;
-	DT6 = 6.0/(DTR*DTSQ);
-	DT2 = 2.0/DTSQ;
-	DTSQ12 = DTSQ/12;
-	DTR13 = DTR/3;
-	*/
-
-	//std::cout <<  "Starting Calculation On Device ..." << std::endl;
 	// send information of all the particles to GPU
 	// includes prediction
 #ifdef time_trace
@@ -130,16 +122,24 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 	// copy the data of regular particles to the arrays to be sent
 	// predicted positions and velocities should be sent
 	// but predictions are already done when sending all particles, so no need for duplicated calculation
-
 	for (int i=0; i<ListSize; i++) {
-		IndexList[i] = RegularList[i]->ParticleOrder;
+		ptcl = RegularList[i];
+		MassSend[i]   = ptcl->PredMass;
+		MdotSend[i]   = 0.; // I will do it later
+		RadiusOfAC2Send[i] = ptcl->RadiusOfAC*ptcl->RadiusOfAC/ptcl->PredMass; // mass weighted
+
+		for (int dim=0; dim<Dim; dim++) {
+			PositionSend[i][dim] = ptcl->PredPosition[dim];
+			VelocitySend[i][dim] = ptcl->PredVelocity[dim];
+		}
 	} // endfor copy info
 
 	// calculate the force by sending the particles to GPU
 #ifdef time_trace
 	_time.reg_gpu.markStart();
 #endif
-	CalculateAccelerationOnDevice(&ListSize, IndexList, AccRegReceive, AccRegDotReceive, NumNeighborReceive, ACListReceive);
+	CalculateAccelerationOnDevice(&ListSize, PositionSend, VelocitySend, AccRegReceive, AccRegDotReceive,
+			MdotSend, RadiusOfAC2Send, NumNeighborReceive, ACListReceive, dt);
 #ifdef time_trace
 	_time.reg_gpu.markEnd();
 	_time.reg_gpu.getDuration();
@@ -161,32 +161,10 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		/*******************************************************
 		 * Acceleartion correction according to past neighbor
 		 ********************************************************/
-
-
-		/*
-		std::cout <<  "MyPID=" <<  ptcl->PID;
-		std::cout <<  "(" << NumNeighborReceive[i] << ", ";
-		std::cout <<  "(" << ptcl->RadiusOfAC << ")" << std::endl;
-		//std::cout <<  "NeighborIndex = ";
-		for (int j=0;  j<NumNeighborReceive[i]; j++) {
-			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
-																						//std::cout <<  NeighborIndex << "  (" << particle[NeighborIndex]->PID << "), ";
-			std::cout <<  particle[NeighborIndex]->PID << ", ";
-		}
-		std::cout << std::endl;
-		*/
-
-		//fprintf(stderr,"%d Neighbor Correction new=%d, old=%d\n", ptcl->PID, NumNeighborReceive[i], ptcl->NumberOfAC);
 		int sign = 1;
-
-		/*
-		if (NumNeighborReceive[i]>NumNeighborMax) {
-			std::cerr <<  "MyPID=" <<  ptcl->PID << ", NN=" << NumNeighborReceive[i] << std::endl;
-		}
-		*/
-
 		for (int j=0;  j<NumNeighborReceive[i]; j++) {
 			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
+
 			for (auto it = ptcl->ACList.begin(); it != ptcl->ACList.end(); ) {
 				//fprintf(stderr,"New PID = %d, Old PID = %d\n", particle[NeighborIndex]->PID, (*it)->getPID());
 				if ((*it)->getPID() == particle[NeighborIndex]->PID) {
@@ -211,6 +189,7 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 			CalculateSingleAcceleration(ptcl, neighbor, a_tmp, adot_tmp, 0);
 
 
+
 		/*******************************************************
 		 * Position and velocity correction due to 4th order correction
 		 ********************************************************/
@@ -219,38 +198,19 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		dt3 = dt2*dt;
 		dt4 = dt3*dt;
 		dt5 = dt4*dt;
-
-		//fprintf(stdout, "PID=%d\n", ptcl->PID);
 		for (int dim=0; dim<Dim; dim++) {
-			//fprintf(stdout, "a0   =%.3e, a   =%.3e\n", ptcl->a_reg[dim][0], (AccRegReceive[i][dim] + a_tmp[dim]));
-			//fprintf(stdout, "aodt0=%.3e, adot=%.3e\n", ptcl->a_reg[dim][1], (AccRegDotReceive[i][dim] + adot_tmp[dim]));
-			da_dt2  = (ptcl->a_reg[dim][0] - AccRegReceive[i][dim] - a_tmp[dim]   ) / dt2;
-			adot_dt = (ptcl->a_reg[dim][1] + AccRegDotReceive[i][dim] + adot_tmp[dim]) / dt;
 
+			da_dt2  = (ptcl->a_reg[dim][0] - AccRegReceive[i][dim] -  a_tmp[dim]   ) / dt2;
+			adot_dt = (ptcl->a_reg[dim][1] + AccRegDotReceive[i][dim] + adot_tmp[dim]) / dt;
 
 			a2 =  -6*da_dt2 - 2*adot_dt - 2*ptcl->a_reg[dim][1]/dt;
 			a3 = (12*da_dt2 + 6*adot_dt)/dt;
 			// note that these higher order terms and lowers have different neighbors
 
-			//fprintf(stdout, "da_dt2 =%.3e, adot_dt =%.3e, dt=%.3e\n", da_dt2, adot_dt, dt);
-			//fprintf(stdout, "a2     =%.3e, a3      =%.3e\n", a2, a3);
-			/*
-			if (ptcl->PID == 753) {
-				fprintf(stderr, "dim=%d, a2=%.3e, a3=%.3e/a0=%.3e, atot=%.3e, a_tmp=%.3e, adot_tmp=%.3e, dt=%.3e\n", 
-						dim, a2,a3,ptcl->a_reg[dim][0],AccRegReceive[i][dim],a_tmp[dim],adot_tmp[dim],dt*1e10/1e6);
-				fprintf(stderr, "dim=%d, da_dt2=%.3e, adot_dt=%.3e\n", 
-						dim, da_dt2, adot_dt);
-			}
-			*/
-
 			// 4th order correction
 			// save the values in the temporary variables
 			ptcl->NewPosition[dim] = ptcl->PredPosition[dim] + a2*dt4/24 + a3*dt5/120;
 			ptcl->NewVelocity[dim] = ptcl->PredVelocity[dim] + a2*dt3/6  + a3*dt4/24;
-
-			//ptcl->NewPosition[dim] = ptcl->PredPosition[dim];
-			//ptcl->NewVelocity[dim] = ptcl->PredVelocity[dim];
-
 
 			ptcl->a_reg[dim][2] = a2;
 			ptcl->a_reg[dim][3] = a3;
@@ -263,22 +223,6 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		/*******************************************************
 		 * Acceleartion correction according to current neighbor
 		 ********************************************************/
-		//std::cout <<  "MyIndex=" <<  ;
-
-		/*
-		if (dt*1e4<1e-8) {
-			//std::cout <<  "MyPID=" <<  ptcl->PID;
-			//std::cout <<  "(" << NumNeighborReceive[i] << ")" << std::endl;
-			//std::cout <<  "NeighborIndex = ";
-			for (int j=0;  j<NumNeighborReceive[i]; j++) {
-				NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
-																							//std::cout <<  NeighborIndex << "  (" << particle[NeighborIndex]->PID << "), ";
-				//std::cout <<  particle[NeighborIndex]->PID << ", ";
-			}
-			//std::cout << std::endl;
-		}
-		*/
-
 		for (int j=0;  j<NumNeighborReceive[i]; j++) {
 			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
 			CalculateSingleAcceleration(ptcl, particle[NeighborIndex], a_tmp, adot_tmp, 1);
@@ -290,7 +234,7 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 			ptcl->a_reg[dim][1] = AccRegDotReceive[i][dim];
 			ptcl->a_irr[dim][0] = a_tmp[dim];    //AccIrr[i][dim];
 			ptcl->a_irr[dim][1] = adot_tmp[dim]; //AccIrrDot[i][dim];
-			ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0];
+			ptcl->a_tot[dim][0] = ptcl->a_reg[dim][0] + ptcl->a_irr[dim][0]; //+ ptcl->BackgroundAcceleration[dim];
 			ptcl->a_tot[dim][1] = ptcl->a_reg[dim][1] + ptcl->a_irr[dim][1];
 			// in case
 			if (ptcl->NumberOfAC == 0) {
@@ -298,27 +242,15 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 				ptcl->a_tot[dim][3] = ptcl->a_reg[dim][3];
 			}
 		}
-
-		/*
-		ptcl->ACList.clear();
-		ptcl->NumberOfAC = NumNeighborReceive[i];
-		for (int j=0; j<ptcl->NumberOfAC;j++) {
-			NeighborIndex = ACListReceive[i][j];  // gained neighbor particle (in next time list)
-			ptcl->ACList.push_back(particle[NeighborIndex]);
-		}
-		*/
 	} // endfor i, over regular particles
 #ifdef time_trace
 	_time.reg_cpu1.markEnd();
 	_time.reg_cpu1.getDuration();
-
-	_time.reg_cpu2.markStart();
 #endif
 
 	/*******************************************************
 	 * Finally update particles
 	 ********************************************************/
-	//for (Particle* ptcl: RegularList) {
 	for (int i=0; i<ListSize; i++) {
 		ptcl = RegularList[i];  // regular particle in particle list
 		ptcl->CurrentBlockReg = NextRegTimeBlock;
@@ -337,22 +269,14 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 			ptcl->updateParticle();
 		}
 		*/
+
 		ptcl->updateParticle();
-		//ptcl->calculateTimeStepReg();
-		//ptcl->calculateTimeStepIrr(ptcl->a_tot,ptcl->a_irr);
+
 		if (ptcl->NumberOfAC == 0) {
 			ptcl->CurrentBlockIrr = NextRegTimeBlock;
 			ptcl->CurrentTimeIrr = NextRegTimeBlock*time_step;
 		}
-		/*
-		if (ptcl->Position[0] !=  ptcl->Position[0] || ptcl->Velocity[0] !=  ptcl->Velocity[0]) {
-			fprintf(stdout, "after, myself = %d\n", ptcl->PID);
-			fprintf(stdout, "x[0]=%e, a[0]=%e\n", ptcl->Position[0], ptcl->a_tot[0][0]);
-			fflush(stdout);
-			throw std::runtime_error("CalculateRegAcceleration.cpp::357\n");
-			//assert(ptcl->Position[0] ==  ptcl->Position[0]);
-		}
-		*/
+
 		ptcl->ACList.clear();
 		ptcl->NumberOfAC = NumNeighborReceive[i];
 		for (int j=0; j<ptcl->NumberOfAC;j++) {
@@ -361,38 +285,19 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 		}
 		ptcl->UpdateRadius();
 	}
-#ifdef time_trace
-	_time.reg_cpu2.markEnd();
-	_time.reg_cpu2.getDuration();
 
-	_time.reg_cpu3.markStart();
-#endif
+
+	//global_time = NextRegTimeBlock*time_step;
 	//UpdateNextRegTime(particle);
-
-	//for (Particle* ptcl: RegularList)
-		//ptcl->calculateTimeStepIrr(ptcl->a_tot,ptcl->a_irr);
-	//std::cout <<  "Calculation On Device Done ..." << std::endl;
-
-
-
-
-
-
-
-	/*
-	std::cout <<  "3. a_tot= "<< particle[0]->a_tot[0][0]<< ',' << particle[0]->a_tot[1][0]\
-		<< ',' << particle[0]->a_tot[2][0] << std::endl;
-	std::cout <<  "4. a_tot= "<< particle[1]->a_tot[0][0]<< ',' << particle[1]->a_tot[1][0]\
-		<< ',' << particle[1]->a_tot[2][0] << std::endl;
-
-	std::cout <<  "3. a_irr= "<< particle[0]->a_irr[0][0]<< ',' << particle[0]->a_irr[1][0]\
-		<< ',' << particle[0]->a_irr[2][0] << std::endl;
-	std::cout <<  "4. a_irr= "<< particle[1]->a_irr[0][0]<< ',' << particle[1]->a_irr[1][0]\
-		<< ',' << particle[1]->a_irr[2][0] << std::endl;
-		*/
 
 
 	// free all temporary variables
+	delete[] MassSend;
+	delete[] MdotSend;
+	delete[] PositionSend;
+	delete[] VelocitySend;
+	delete[] RadiusOfAC2Send;
+	delete[] TimeStepRegSend;
 	//delete[] PotSend;
 
 	delete[] NumNeighborReceive;
@@ -400,16 +305,11 @@ void CalculateRegAccelerationOnGPU(std::vector<Particle*> RegularList, std::vect
 	delete[] AccRegDotReceive;
 	delete[] AccIrr;
 	delete[] AccIrrDot;
-	for (int i=0; i<ListSize; i++) {
+		for (int i=0; i<ListSize; i++) {
 		delete[] ACListReceive[i];
 	}
 	delete[] ACListReceive;
 
-
-#ifdef time_trace
-	_time.reg_cpu3.markEnd();
-	_time.reg_cpu3.getDuration();
-#endif
 	//CloseDevice();
 } // calculate 0th, 1st derivative of force + neighbors on GPU ends
 
@@ -440,15 +340,6 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 	dr2  = 0.0;
 	dxdv = 0.0;
 
-	/*
-	if (ptcl2->PredPosition[0] !=  ptcl2->PredPosition[0]) {
-		fprintf(stdout, "target = %d, neighborhood = %d\n", ptcl1->PID, ptcl2->PID);
-		fprintf(stdout, "x[0] = %e\n", ptcl2->PredPosition[0]);
-		//fflush(stdout);
-		assert(ptcl2->PredPosition[0] ==  ptcl2->PredPosition[0]);
-	}
-	*/
-
 	for (int dim=0; dim<Dim; dim++) {
 		dx[dim] = ptcl2->PredPosition[dim] - ptcl1->PredPosition[dim];
 		dv[dim] = ptcl2->PredVelocity[dim] - ptcl1->PredVelocity[dim];
@@ -456,11 +347,10 @@ void CalculateSingleAcceleration(Particle *ptcl1, Particle *ptcl2, double (&a)[3
 		dxdv   += dx[dim]*dv[dim];
 	}
 
-	/*
+
 	if (dr2 < EPS2) {
-		dr2 = EPS2;
+		dr2 =  EPS2;
 	}
-	*/
 
 	m_r3 = ptcl2->Mass/dr2/sqrt(dr2);
 	if (sign == 0)
