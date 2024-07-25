@@ -37,9 +37,9 @@ void InitializeNbodyArrays(bool NbodyFirst);
 void InitializeNbodyArrays(void);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
-int GetUnits(float *DensityUnits, float *LengthUnits,
-		float *TemperatureUnits, float *TimeUnits,
-		float *VelocityUnits, double *MassUnits, FLOAT Time);
+int GetUnits(double *DensityUnits, double *LengthUnits,
+		double *TemperatureUnits, double *TimeUnits,
+		double *VelocityUnits, double *MassUnits, double Time);
 int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level);
 int SendToNbody(LevelHierarchyEntry *LevelArray[], int level);
 
@@ -96,11 +96,11 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 	fprintf(stdout, "ENZO: Finding star index finished, LocalNumberOfNbodyParticles=%d.\n", LocalNumberOfNbodyParticles);
 
 	/* Do direct calculation!*/
-	float dt = 1e-3, scale_factor=1.0;
-	float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+	double dt = 1e-3, scale_factor=1.0;
+	double DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 				TemperatureUnits=1;
 	double MassUnits=1;
-	float Time, TimeStep;
+	double Time, TimeStep;
 	Time = LevelArray[level]->GridData->ReturnTime(); // Not sure for cosmology?
 	TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure for cosmology?
 	if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
@@ -112,22 +112,22 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 	/* At first, all the Nbody info should be updated to fortran codes only once*/
 	NbodyParticleIDOld =  NULL;
 	NumberOfNbodyParticlesOld = 0;
-	float *NbodyParticleMassTemp;
-	float *NbodyParticleCreationTimeTemp;
-	float *NbodyParticleDynamicalTimeTemp;
-	float *NbodyParticlePositionTemp[MAX_DIMENSION];
-	float *NbodyParticleVelocityTemp[MAX_DIMENSION];
-	float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
+	double *NbodyParticleMassTemp;
+	double *NbodyParticleCreationTimeTemp;
+	double *NbodyParticleDynamicalTimeTemp;
+	double *NbodyParticlePositionTemp[MAX_DIMENSION];
+	double *NbodyParticleVelocityTemp[MAX_DIMENSION];
+	double *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
 
 	NbodyParticleIDTemp            = new int[LocalNumberOfNbodyParticles];
-	NbodyParticleMassTemp          = new float[LocalNumberOfNbodyParticles];
-	NbodyParticleCreationTimeTemp  = new float[LocalNumberOfNbodyParticles];
-	NbodyParticleDynamicalTimeTemp = new float[LocalNumberOfNbodyParticles];
+	NbodyParticleMassTemp          = new double[LocalNumberOfNbodyParticles];
+	NbodyParticleCreationTimeTemp  = new double[LocalNumberOfNbodyParticles];
+	NbodyParticleDynamicalTimeTemp = new double[LocalNumberOfNbodyParticles];
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
-		NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-		NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-		NbodyParticleAccelerationNoStarTemp[dim]  = new float[LocalNumberOfNbodyParticles];
+		NbodyParticlePositionTemp[dim]            = new double[LocalNumberOfNbodyParticles];
+		NbodyParticleVelocityTemp[dim]            = new double[LocalNumberOfNbodyParticles];
+		NbodyParticleAccelerationNoStarTemp[dim]  = new double[LocalNumberOfNbodyParticles];
 	}
 
 	fprintf(stdout, "ENZO: Allocate variables.\n");
@@ -163,11 +163,11 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		int ierr;
 		int errclass,resultlen;
 		char err_buffer[MPI_MAX_ERROR_STRING];
-		float *NbodyParticleCreationTime;
-		float *NbodyParticleDynamicalTime;
+		double *NbodyParticleCreationTime;
+		double *NbodyParticleDynamicalTime;
 
-		NbodyParticleCreationTime  = new float[NumberOfNbodyParticles];
-		NbodyParticleDynamicalTime = new float[NumberOfNbodyParticles];
+		NbodyParticleCreationTime  = new double[NumberOfNbodyParticles];
+		NbodyParticleDynamicalTime = new double[NumberOfNbodyParticles];
 
 
 		MPI_Gather(&LocalNumberOfNbodyParticles, 1, IntDataType, LocalNumberAll, 1, IntDataType, ROOT_PROCESSOR, enzo_comm);
@@ -398,11 +398,11 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 
 
 	/* Do direct calculation!*/
-	float dt = 1e-3, scale_factor=1.0;
-	float DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
+	double dt = 1e-3, scale_factor=1.0;
+	double DensityUnits=1, LengthUnits=1, VelocityUnits=1, TimeUnits=1,
 				TemperatureUnits=1;
 	double MassUnits=1;
-	float Time, TimeStep;
+	double Time, TimeStep;
 	Time = LevelArray[level]->GridData->ReturnTime(); // Not sure ?
 	TimeStep = LevelArray[level]->GridData->ReturnTimeStep(); // Not sure ?
 	if (GetUnits(&DensityUnits, &LengthUnits, &TemperatureUnits,
@@ -413,26 +413,26 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 
 	//int *NbodyParticleIDTemp;
 	//int *NewNbodyParticleIDTemp;
-	float *NbodyParticleMassTemp;
-	float *NewNbodyParticleMassTemp;
-	float *NewNbodyParticleCreationTimeTemp;
-	float *NewNbodyParticleDynamicalTimeTemp;
-	float *NewNbodyParticlePositionTemp[MAX_DIMENSION]; // feedback can affect velocity
-	float *NewNbodyParticleVelocityTemp[MAX_DIMENSION]; // feedback can affect velocity
-	float *NewNbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
-	float *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
+	double *NbodyParticleMassTemp;
+	double *NewNbodyParticleMassTemp;
+	double *NewNbodyParticleCreationTimeTemp;
+	double *NewNbodyParticleDynamicalTimeTemp;
+	double *NewNbodyParticlePositionTemp[MAX_DIMENSION]; // feedback can affect velocity
+	double *NewNbodyParticleVelocityTemp[MAX_DIMENSION]; // feedback can affect velocity
+	double *NewNbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
+	double *NbodyParticleAccelerationNoStarTemp[MAX_DIMENSION];
 
 	NbodyParticleIDTemp               = new int[LocalNumberOfNbodyParticles];
 	NbodyParticleMassTemp             = new double[LocalNumberOfNbodyParticles];
 	NewNbodyParticleIDTemp            = new int[NewLocalNumberOfNbodyParticles];
-	NewNbodyParticleMassTemp          = new float[NewLocalNumberOfNbodyParticles];
-	NewNbodyParticleCreationTimeTemp  = new float[NewLocalNumberOfNbodyParticles];
-	NewNbodyParticleDynamicalTimeTemp = new float[NewLocalNumberOfNbodyParticles];
+	NewNbodyParticleMassTemp          = new double[NewLocalNumberOfNbodyParticles];
+	NewNbodyParticleCreationTimeTemp  = new double[NewLocalNumberOfNbodyParticles];
+	NewNbodyParticleDynamicalTimeTemp = new double[NewLocalNumberOfNbodyParticles];
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
-		NewNbodyParticlePositionTemp[dim]            = new float[NewLocalNumberOfNbodyParticles];
-		NewNbodyParticleVelocityTemp[dim]            = new float[NewLocalNumberOfNbodyParticles];
-		NewNbodyParticleAccelerationNoStarTemp[dim]  = new float[NewLocalNumberOfNbodyParticles];
-		NbodyParticleAccelerationNoStarTemp[dim]     = new float[LocalNumberOfNbodyParticles];
+		NewNbodyParticlePositionTemp[dim]            = new double[NewLocalNumberOfNbodyParticles];
+		NewNbodyParticleVelocityTemp[dim]            = new double[NewLocalNumberOfNbodyParticles];
+		NewNbodyParticleAccelerationNoStarTemp[dim]  = new double[NewLocalNumberOfNbodyParticles];
+		NbodyParticleAccelerationNoStarTemp[dim]     = new double[LocalNumberOfNbodyParticles];
 	}
 
 	/* Get particle information from Grids */
@@ -462,24 +462,24 @@ int SendToNbody(LevelHierarchyEntry *LevelArray[], int level) {
 	if (MyProcessorNumber == ROOT_PROCESSOR) {
 
 	int *NewNbodyParticleID;
-	float *NbodyParticleMass;
-	float *NewNbodyParticleMass;
-	float *NewNbodyParticleCreationTime;
-	float *NewNbodyParticleDynamicalTime;
-	float *NewNbodyParticleVelocity[MAX_DIMENSION]; // feedback can affect velocity
-	float *NewNbodyParticlePosition[MAX_DIMENSION]; // feedback can affect velocity
-	float *NewNbodyParticleAccelerationNoStar[MAX_DIMENSION];
+	double *NbodyParticleMass;
+	double *NewNbodyParticleMass;
+	double *NewNbodyParticleCreationTime;
+	double *NewNbodyParticleDynamicalTime;
+	double *NewNbodyParticleVelocity[MAX_DIMENSION]; // feedback can affect velocity
+	double *NewNbodyParticlePosition[MAX_DIMENSION]; // feedback can affect velocity
+	double *NewNbodyParticleAccelerationNoStar[MAX_DIMENSION];
 
-	NbodyParticleMass             = new float[NumberOfNbodyParticles];
+	NbodyParticleMass             = new double[NumberOfNbodyParticles];
 	NewNbodyParticleID            = new int[NumberOfNewNbodyParticles];
-	NewNbodyParticleMass          = new float[NumberOfNewNbodyParticles];
-	NewNbodyParticleCreationTime  = new float[NumberOfNewNbodyParticles];
-	NewNbodyParticleDynamicalTime = new float[NumberOfNewNbodyParticles];
+	NewNbodyParticleMass          = new double[NumberOfNewNbodyParticles];
+	NewNbodyParticleCreationTime  = new double[NumberOfNewNbodyParticles];
+	NewNbodyParticleDynamicalTime = new double[NumberOfNewNbodyParticles];
 
 	for (int dim=0; dim<MAX_DIMENSION; dim++) {
-		NewNbodyParticlePosition[dim]            = new float[NumberOfNewNbodyParticles];
-		NewNbodyParticleVelocity[dim]            = new float[NumberOfNewNbodyParticles];
-		NewNbodyParticleAccelerationNoStar[dim]  = new float[NumberOfNewNbodyParticles];
+		NewNbodyParticlePosition[dim]            = new double[NumberOfNewNbodyParticles];
+		NewNbodyParticleVelocity[dim]            = new double[NumberOfNewNbodyParticles];
+		NewNbodyParticleAccelerationNoStar[dim]  = new double[NumberOfNewNbodyParticles];
 	}
 
 		/* Receiving Index, NumberOfParticles, NbodyArrays from other processs */

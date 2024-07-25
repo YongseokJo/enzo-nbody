@@ -102,7 +102,6 @@ void InitializeNewParticle(std::vector<Particle*> &particle, int offset, int new
 	InitializeTimeStep(particle, offset, newSize);
 	std::cout << "Timestep finished." << std::endl;
 
-	
 	//UpdateNextRegTime(particle);
 	std::cout << "Initialization of New Particles finished." << std::endl;
 }
@@ -164,12 +163,14 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 
 	newPtcl->UpdateRadius();
 
+	newPtcl->NumberOfAC = 0;
+
 	for (Particle* ptcl: particle) {
 		if (ptcl->PID == newPtcl->PID)
 			continue;
 		r0 = dist(ptcl->Position, newPtcl->Position);
 		if (r0 < newPtcl->RadiusOfAC) {
-			if (newPtcl->NumberOfAC < NumNeighborMax) {
+			if (newPtcl->NumberOfAC <= NumNeighborMax) {
 				newPtcl->ACList.push_back(ptcl);
 				newPtcl->NumberOfAC++;
 			}

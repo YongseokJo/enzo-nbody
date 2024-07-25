@@ -81,7 +81,7 @@ int grid::UpdateParticleVelocity(float TimeStep)
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
 				// by YS Jo
-				if ( ParticleType[i] == PARTICLE_TYPE_NBODY || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW ) continue;
+				if ( ParticleType[i] == PARTICLE_TYPE_NBODY || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW || ParticleType[i] == PARTICLE_TYPE_NBODY_REMOVE) continue;
 				//&& GridLevel != MaximumRefinementLevel )
 #endif				
 
@@ -133,7 +133,7 @@ int grid::UpdateParticleVelocity(float TimeStep)
 
 			for (i = 0; i < NumberOfParticles; i++) {
 #ifdef NBODY
-				if ( ParticleType[i] != PARTICLE_TYPE_NBODY  && ParticleType[i] != PARTICLE_TYPE_NBODY_NEW ) 
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY  && ParticleType[i] != PARTICLE_TYPE_NBODY_NEW  && ParticleType[i] != PARTICLE_TYPE_NBODY_REMOVE ) 
 #endif
 					ParticleVelocity[dim][i] += ParticleAcceleration[dim][i] * TimeStep;
 			}

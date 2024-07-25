@@ -123,6 +123,20 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 			ptcl->ACList.push_back(particle[NeighborIndex]);
 		}
 		ptcl->UpdateRadius();
+
+		if (mag0(ptcl->a_irr) == 0. && ptcl->NumberOfAC != 0) {
+			fprintf(stderr, "my PID = %d (nn=%d, x=%e): ",ptcl->PID,ptcl->NumberOfAC, ptcl->PredPosition[0]);
+			fprintf(nbpout, "my PID = %d : ",ptcl->PID);
+			for (Particle* nn:ptcl->ACList) {
+				fprintf(stderr, "(%d, %e, %e (%d), %e), ",nn->PID, nn->Mass, nn->a_irr[0][0], nn->NumberOfAC, nn->PredPosition[0]);
+				fprintf(nbpout, "%d ",nn->PID);
+			}
+			fprintf(stderr, "\n");
+			fprintf(nbpout, "\n");
+			fflush(stderr);
+			fflush(nbpout);
+			throw std::runtime_error("CalculateAccelerationForAll.cpp");
+		}
 	} 
 
 

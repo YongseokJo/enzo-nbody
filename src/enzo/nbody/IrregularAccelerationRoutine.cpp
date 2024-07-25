@@ -124,7 +124,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 				 fprintf(stdout,"\n");	
 				 */
 
-			if (ptcl->a_irr[0][0] == 0. && ptcl->NumberOfAC != 0) {
+			if (mag0(ptcl->a_irr) == 0. && ptcl->NumberOfAC != 0) {
 				if (ptcl->CurrentBlockReg > ptcl->CurrentBlockIrr || ptcl->CurrentBlockReg+ptcl->TimeBlockReg < ptcl->CurrentBlockIrr)
 					fprintf(nbpout,"--------------------error--------------------------------------------------------------------\n");
 
@@ -169,7 +169,7 @@ bool IrregularAccelerationRoutine(std::vector<Particle*> &particle)
 				fprintf(stderr, "my PID = %d : ",ptcl->PID);
 				fprintf(nbpout, "my PID = %d : ",ptcl->PID);
 				for (Particle* nn:ptcl->ACList) {
-					fprintf(stderr, "%d ",nn->PID);
+					fprintf(stderr, "(%d, %e, %e), ",nn->PID, nn->Mass, nn->a_irr[0][0]);
 					fprintf(nbpout, "%d ",nn->PID);
 				}
 				fprintf(stderr, "\n");
