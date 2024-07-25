@@ -36,9 +36,9 @@
 void InitializeNbodyArrays(int);
 int GenerateGridArray(LevelHierarchyEntry *LevelArray[], int level,
 		HierarchyEntry **Grids[]);
-int GetUnits(float *DensityUnits, float *LengthUnits,
-		float *TemperatureUnits, float *TimeUnits,
-		float *VelocityUnits, double *MassUnits, FLOAT Time);
+int GetUnits(double *DensityUnits, double *LengthUnits,
+		double *TemperatureUnits, double *TimeUnits,
+		double *VelocityUnits, double *MassUnits, double Time);
 
 #ifdef NBODY
 int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
@@ -55,20 +55,20 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 		if (NumberOfNbodyParticles == 0 && NumberOfNewNbodyParticles == 0)
 			return SUCCESS;
 
-		float *NbodyParticlePositionTemp[MAX_DIMENSION];
-		float *NbodyParticleVelocityTemp[MAX_DIMENSION];
+		double *NbodyParticlePositionTemp[MAX_DIMENSION];
+		double *NbodyParticleVelocityTemp[MAX_DIMENSION];
 
-		float *NewNbodyParticlePositionTemp[MAX_DIMENSION];
-		float *NewNbodyParticleVelocityTemp[MAX_DIMENSION];
+		double *NewNbodyParticlePositionTemp[MAX_DIMENSION];
+		double *NewNbodyParticleVelocityTemp[MAX_DIMENSION];
 
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			NbodyParticlePositionTemp[dim]            = new float[LocalNumberOfNbodyParticles];
-			NbodyParticleVelocityTemp[dim]            = new float[LocalNumberOfNbodyParticles];
+			NbodyParticlePositionTemp[dim]            = new double[LocalNumberOfNbodyParticles];
+			NbodyParticleVelocityTemp[dim]            = new double[LocalNumberOfNbodyParticles];
 		}
 
 		for (int dim=0; dim<MAX_DIMENSION; dim++) {
-			NewNbodyParticlePositionTemp[dim]            = new float[NewLocalNumberOfNbodyParticles];
-			NewNbodyParticleVelocityTemp[dim]            = new float[NewLocalNumberOfNbodyParticles];
+			NewNbodyParticlePositionTemp[dim]            = new double[NewLocalNumberOfNbodyParticles];
+			NewNbodyParticleVelocityTemp[dim]            = new double[NewLocalNumberOfNbodyParticles];
 		}
 
 
@@ -82,14 +82,14 @@ int FinalizeNbodyComputation(LevelHierarchyEntry *LevelArray[], int level)
 #ifdef USE_MPI
 		if (MyProcessorNumber == ROOT_PROCESSOR) {
 
-			//float *NewNbodyParticleMass;
-			float *NewNbodyParticleVelocity[MAX_DIMENSION]; // feedback can affect velocity
-			float *NewNbodyParticlePosition[MAX_DIMENSION]; // feedback can affect velocity
+			//double *NewNbodyParticleMass;
+			double *NewNbodyParticleVelocity[MAX_DIMENSION]; // feedback can affect velocity
+			double *NewNbodyParticlePosition[MAX_DIMENSION]; // feedback can affect velocity
 
-			//NewNbodyParticleMass = new float[NumberOfNewNbodyParticles];
+			//NewNbodyParticleMass = new double[NumberOfNewNbodyParticles];
 			for (int dim=0; dim<MAX_DIMENSION; dim++) {
-				NewNbodyParticlePosition[dim]            = new float[NumberOfNewNbodyParticles];
-				NewNbodyParticleVelocity[dim]            = new float[NumberOfNewNbodyParticles];
+				NewNbodyParticlePosition[dim]            = new double[NumberOfNewNbodyParticles];
+				NewNbodyParticleVelocity[dim]            = new double[NumberOfNewNbodyParticles];
 			}
 
 			/* Receiving Index, NumberOfParticles, NbodyArrays from other processs */

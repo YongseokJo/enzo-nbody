@@ -45,11 +45,19 @@ int UpdateParticlePositions(grid *Grid)
   /* 2) x(n) --> x(n+1) with v(n+1/2)
         (problem 23 is TestGravity, so don't move the particles). */
  
+#ifdef NBODY
   Grid->DebugCheck("UpdateParticlePosition step 2");
   if (ProblemType != 23)
     if (Grid->UpdateParticlePositionNoStar(dt) == FAIL) {
       ENZO_FAIL("Error in grid->UpdateParticlePosition./\n");
     }
+#else
+  Grid->DebugCheck("UpdateParticlePosition step 2");
+  if (ProblemType != 23)
+    if (Grid->UpdateParticlePosition(dt) == FAIL) {
+      ENZO_FAIL("Error in grid->UpdateParticlePosition./\n");
+    }
+#endif
  
   /* 3) v(n+1/2) --> v(n+1) with a(n+1/2) */
  
@@ -58,7 +66,6 @@ int UpdateParticlePositions(grid *Grid)
     ENZO_FAIL("Error in grid->UpdateParticleVelocity./\n");
 
   }
- 
  
   LCAPERF_STOP("UpdateParticlePositions");
   return SUCCESS;

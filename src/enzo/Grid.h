@@ -122,8 +122,8 @@ class grid
 																											//
 		int    NumberOfParticles;
 		FLOAT *ParticlePosition[MAX_DIMENSION];  // pointers to position arrays
-		float *ParticleVelocity[MAX_DIMENSION];  // pointers to velocity arrays
-		float *ParticleAcceleration[MAX_DIMENSION+1];  // 
+		FLOAT *ParticleVelocity[MAX_DIMENSION];  // pointers to velocity arrays
+		FLOAT *ParticleAcceleration[MAX_DIMENSION+1];  // 
 																									 //
 #ifdef NBODY
 		float *ParticleAccelerationNoStar[MAX_DIMENSION+1];  //  by YS
@@ -133,7 +133,7 @@ class grid
 		float *ParticleMass;                     // pointer to mass array
 		PINT  *ParticleNumber;                   // unique identifier
 		int   *ParticleType;                     // type of particle
-		float *ParticleAttribute[MAX_NUMBER_OF_PARTICLE_ATTRIBUTES];
+		double *ParticleAttribute[MAX_NUMBER_OF_PARTICLE_ATTRIBUTES];
 
 		//
 		//  Star particle data
@@ -1819,13 +1819,13 @@ class grid
 
 
 
-		int CopyNbodyParticlesFirst(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], 
-				float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[], float *NbodyParticleAccelerationNoStarTemp[],
-				float *NbodyParticleCreationTimeTmp, float *NbodyParticleDynamicalTimeTmp) {
+		int CopyNbodyParticlesFirst(int* count,int NbodyParticleIDTemp[], double NbodyParticleMassTemp[], 
+				double *NbodyParticlePositionTemp[], double *NbodyParticleVelocityTemp[], double *NbodyParticleAccelerationNoStarTemp[],
+				double *NbodyParticleCreationTimeTmp, double *NbodyParticleDynamicalTimeTmp) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
-			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+			double dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
 
@@ -1854,15 +1854,15 @@ class grid
 
 
 
-		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], float NbodyParticleMassTemp[], float *NbodyParticleAccelerationNoStarTemp[],
-				int* count_new, int NewNbodyParticleIDTemp[], float NewNbodyParticleMassTemp[],
-				float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[], float *NewNbodyParticleAccelerationNoStarTemp[],
-				float *NewNbodyParticleCreationTimeTmp, float *NewNbodyParticleDynamicalTimeTmp
+		int CopyNbodyParticles(int* count,int NbodyParticleIDTemp[], double NbodyParticleMassTemp[], double *NbodyParticleAccelerationNoStarTemp[],
+				int* count_new, int NewNbodyParticleIDTemp[], double NewNbodyParticleMassTemp[],
+				double *NewNbodyParticlePositionTemp[], double *NewNbodyParticleVelocityTemp[], double *NewNbodyParticleAccelerationNoStarTemp[],
+				double *NewNbodyParticleCreationTimeTmp, double *NewNbodyParticleDynamicalTimeTmp
 				) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
-			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+			double dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
 
@@ -1898,22 +1898,22 @@ class grid
 
 		int UpdateNbodyParticles(int* count,
 				int NumberOfNbodyParticles,int NbodyParticleIDTemp[],
-			 	float *NbodyParticlePositionTemp[], float *NbodyParticleVelocityTemp[],
+			 	double *NbodyParticlePositionTemp[], double *NbodyParticleVelocityTemp[],
 				int NewNumberOfNbodyParticles,int NewNbodyParticleIDTemp[],
-			 	float *NewNbodyParticlePositionTemp[], float *NewNbodyParticleVelocityTemp[]) {
+			 	double *NewNbodyParticlePositionTemp[], double *NewNbodyParticleVelocityTemp[]) {
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
-			float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
+			double dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
 				for (int j=0; j<NumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NbodyParticleIDTemp[j]) {
 						//fprintf(stdout,"Escaped PID=%d, x=%lf\n", ParticleNumber[i], NbodyParticlePositionTemp[0][j]);
-						if (NbodyParticlePositionTemp[0][j] > 1e8 ) {
+						if (NbodyParticlePositionTemp[0][j] < -10 ) {
 							fprintf(stdout,"Escaped PID=%d in deletion\n", ParticleNumber[i]);
-							NbodyParticlePositionTemp[0][j] -= 1e10;
-							ParticleType[i] = PARTICLE_TYPE_STAR;
+							NbodyParticlePositionTemp[0][j] += 20;
+							ParticleType[i] = PARTICLE_TYPE_NBODY_REMOVE;
 						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
 							ParticlePosition[dim][i] = NbodyParticlePositionTemp[dim][j];
@@ -1926,9 +1926,9 @@ class grid
 				for (int j=0; j<NewNumberOfNbodyParticles; j++) {
 					if (ParticleNumber[i] == NewNbodyParticleIDTemp[j]) {
 						ParticleType[i] = PARTICLE_TYPE_NBODY;
-						if (NewNbodyParticlePositionTemp[0][j] > 1e8 ) {
-							NewNbodyParticlePositionTemp[0][j] -= 1e10;
-							ParticleType[i] = PARTICLE_TYPE_STAR;
+						if (NewNbodyParticlePositionTemp[0][j] < -10 ) {
+							NewNbodyParticlePositionTemp[0][j] += 20;
+							ParticleType[i] = PARTICLE_TYPE_NBODY_REMOVE;
 						} // particle removal
 						for (int dim=0; dim<MAX_DIMENSION; dim++) {
 							ParticlePosition[dim][i] = NewNbodyParticlePositionTemp[dim][j];
@@ -1944,15 +1944,17 @@ class grid
 
 		int IdentifyNbodyParticles() {
 
-			const float thres_r2 = NbodyClusterPosition[3];
-			float r2;
+			const double thres_r2 = NbodyClusterPosition[3];
+			double r2;
 
 			if (MyProcessorNumber != ProcessorNumber) return SUCCESS;
 
 			//float dv = CellWidth[0][0]*CellWidth[0][0]*CellWidth[0][0];
 
 			for (int i=0; i < NumberOfParticles; i++) {
-				if (ParticleType[i] == PARTICLE_TYPE_STAR  || ParticleType[i] == PARTICLE_TYPE_NBODY_NEW
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY_REMOVE &&
+						   ParticleType[i] == PARTICLE_TYPE_STAR
+						|| ParticleType[i] == PARTICLE_TYPE_NBODY_NEW
 						|| (NbodyFirst && ParticleType[i] == PARTICLE_TYPE_NBODY)) {
 					r2 = 0;
 					r2 += (ParticlePosition[0][i] - NbodyClusterPosition[0])\
@@ -1970,12 +1972,14 @@ class grid
 						}
 					}
 					else {
-						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW || 
+						if (ParticleType[i] == PARTICLE_TYPE_NBODY_NEW ||
 								(NbodyFirst && ParticleType[i] == PARTICLE_TYPE_NBODY)) {
 							ParticleType[i] = PARTICLE_TYPE_STAR;
 						}
 					}
 				} // endif
+				if (ParticleType[i] == PARTICLE_TYPE_NBODY_REMOVE)
+					ParticleType[i] = PARTICLE_TYPE_STAR;
 			} // endfor particles
 			return SUCCESS;
 		}

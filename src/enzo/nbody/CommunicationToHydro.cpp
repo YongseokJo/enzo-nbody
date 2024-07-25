@@ -573,6 +573,12 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 		else 
 			InitializeNewParticle(particle, NNB, newNNB);
 
+		fprintf(stderr, "NBODY:(New) PID=\n");
+		for (int i=NNB; i<NNB+newNNB; i++) {
+			fprintf(stderr, "%d, ", particle[i]->PID);
+		}
+		fprintf(stderr, "\n ");
+
 		/*
 		for (Particle* ptcl:particle) {
 			fprintf(nbpout, "after init, %3d neighbors of %3d : ", ptcl->NumberOfAC, ptcl->PID);
@@ -631,8 +637,11 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 		elem->CurrentBlockIrr = 0.;
 		elem->CurrentTimeReg  = 0.;
 		elem->CurrentBlockReg = 0.;
-		if (elem->Position[0] != elem->Position[0])
+		if (elem->Position[0] != elem->Position[0]) {
 			fprintf(stderr, "%d, %e, %e\n", elem->PID, elem->Position[0]);
+			throw std::runtime_error("CommunicationToHydro.cpp:643\n");
+		}
+		
 	}
 
 
@@ -659,7 +668,9 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 
 	// 
 	fprintf(nbpout, "NBODY+    : Acceleration for particles on GPU.\n");
-	CalculateAllAccelerationOnGPU(particle);
+	if (NNB > 1) {
+		CalculateAllAccelerationOnGPU(particle);
+	}
 	//UpdateNextRegTime(particle);
 	fprintf(nbpout, "NBODY+    : Acceleration and neighbors are updated.\n");
 
@@ -813,7 +824,7 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 			}
 
 			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) { // in Enzo Unit
-				Position[0][i] += 1e10;
+				Position[0][i] -= 20;
 				EscapeList.push_back(ptcl);
 				ptcl->isErase = true;
 				EscapeParticleNum++;
@@ -854,7 +865,7 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 					r2 += (newPosition[dim][i]-EnzoClusterPosition[dim])*(newPosition[dim][i]-EnzoClusterPosition[dim]);
 			}
 			if (IdentifyNbodyParticles && ClusterRadius2 > 0 && r2 > ClusterRadius2) {
-				newPosition[0][i] += 1e10;
+				newPosition[0][i] -= 20;
 				EscapeList.push_back(ptcl);
 				ptcl->isErase = true;
 				EscapeParticleNum++;
@@ -919,13 +930,11 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 
 
 
-	/*
 	fprintf(stderr, "NBODY:(Escape) PID=\n");
 	for (Particle* ptcl:EscapeList) {
 		fprintf(stderr, "%d, ", ptcl->PID);
 	}
 	fprintf(stderr, "\n ");
-	*/
 
 
 	// erase from other particles' neighbor

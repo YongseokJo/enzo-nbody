@@ -161,7 +161,9 @@ int grid::UpdateParticlePositionNoStar(float TimeStep, int OffProcessorUpdate)
 			for (i = 0; i < NumberOfParticles; i++) {
 				/* Only particle not nbody will be updated */
 				//&& GridLevel != MaximumRefinementLevel )
-				if ( ParticleType[i] != PARTICLE_TYPE_NBODY && ParticleType[i] != PARTICLE_TYPE_NBODY_NEW )  {
+				if ( ParticleType[i] != PARTICLE_TYPE_NBODY 
+						&& ParticleType[i] != PARTICLE_TYPE_NBODY_NEW  
+						&& ParticleType[i] != PARTICLE_TYPE_NBODY_REMOVE)  {
 					ParticlePosition[dim][i] += Coefficient*ParticleVelocity[dim][i];
 				}
 			} // ENDFOR particles
