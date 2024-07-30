@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cassert>
 #include <cuda_runtime.h>
-//#include <cublas_v2.h>
+#include <cublas_v2.h>
 #include "cuda_defs.h"
 #include "../defs.h"
 #include "cuda_kernels.h"
@@ -16,20 +16,12 @@ __global__ void print_forces_subset(CUDA_REAL* result, int m) {
 
 	if (idx < m) {
 		printf("acc: (%d) = %e\n", idx, result[_six*idx]);
-				/*
-				atomicAdd(&result[i+1], scale * diff[six_idx + 1]);
-				atomicAdd(&result[i+2], scale * diff[six_idx + 2]);
-
-				atomicAdd(&result[i+3], scale * (diff[six_idx + 3] - magnitudes[idx+1]*diff[six_idx    ]/magnitudes[idx]));
-				atomicAdd(&result[i+4], scale * (diff[six_idx + 4] - magnitudes[idx+1]*diff[six_idx + 1]/magnitudes[idx]));
-				atomicAdd(&result[i+5], scale * (diff[six_idx + 5] - magnitudes[idx+1]*diff[six_idx + 2]/magnitudes[idx]));
-				*/
 	}
 }
 
 
 
-__global__	void initialize(CUDA_REAL* result, int* neighbor, int* num_neighbor, CUDA_REAL* diff, CUDA_REAL *magnitudes, int n, int m, int* subset) {
+__global__	void initialize(CUDA_REAL* result, CUDA_REAL* diff, CUDA_REAL *magnitudes, int n, int m, int* subset) {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	diff[_six*idx    ] = 0.;
@@ -53,11 +45,6 @@ __global__	void initialize(CUDA_REAL* result, int* neighbor, int* num_neighbor, 
 			result[_six*i + 3] = 0.;
 			result[_six*i + 4] = 0.;
 			result[_six*i + 5] = 0.;
-			num_neighbor[i] = 0;
-			/*
-			for (j=0; j<NumNeighborMax; j++)
-				neighbor[NumNeighborMax*i+j] = 0;
-				*/
 		}
 	}
 }
@@ -85,7 +72,7 @@ __global__ void compute_pairwise_diff_subset(const CUDA_REAL* ptcl, CUDA_REAL* d
 }
 
 
-__global__ void compute_magnitudes_subset(const CUDA_REAL *r2, const CUDA_REAL* diff, CUDA_REAL* magnitudes, int n, int m, int* subset) {
+__global__ void compute_magnitudes_subset(const CUDA_REAL *r2, const CUDA_REAL* diff, CUDA_REAL* magnitudes, int n, int m, int* subset, bool* neighbor2) {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idx < n * m) {
 		int i = subset[idx / n];
@@ -106,9 +93,16 @@ __global__ void compute_magnitudes_subset(const CUDA_REAL *r2, const CUDA_REAL* 
 		if (magnitudes[two_idx] <= r2[i]) {
 			//printf("(%d, %d): %e, %e\n",subset[i], j, magnitudes[two_idx], r2[i]);
 			magnitudes[two_idx]   = -magnitudes[two_idx];
+			neighbor2[idx] = true;
+		}
+		else {
+			neighbor2[idx] = false;
 		}
 	}
 }
+
+
+
 
 
 // CUDA kernel to compute the forces for a subset of particles
@@ -153,6 +147,50 @@ __global__ void compute_forces_subset(const CUDA_REAL* ptcl, CUDA_REAL *diff, co
 	}
 }
 
+
+void reduce_forces_cublas(cublasHandle_t handle, const CUDA_REAL *diff, CUDA_REAL *result, int n, int m) {
+
+	CUDA_REAL *d_matrix;
+    cudaMalloc(&d_matrix, m * n * sizeof(CUDA_REAL));
+
+    // Create a vector of ones for the summation
+    double *ones;
+    cudaMalloc(&ones, n * sizeof(double));
+    double *h_ones = new double[n];
+    for (int i = 0; i < n; ++i) {
+        h_ones[i] = 1.0;
+    }
+    cudaMemcpy(ones, h_ones, n * sizeof(double), cudaMemcpyHostToDevice);
+    // Initialize result array to zero
+    cudaMemset(result, 0, m * 6 * sizeof(double));
+
+    const double alpha = 1.0;
+    const double beta = 0.0;
+
+    // Sum over the second axis (n) for each of the 6 elements
+    for (int i = 0; i < _six; ++i) {
+
+		cublasDcopy(handle, m * n, diff + i, _six, d_matrix, 1);
+        cublasDgemv(
+            handle,
+            CUBLAS_OP_T,  // Transpose
+            n,            // Number of rows of the matrix A
+            m,            // Number of columns of the matrix A
+            &alpha,       // Scalar alpha
+            d_matrix, // Pointer to the first element of the i-th sub-matrix
+            n,     // Leading dimension of the sub-matrix
+            ones,         // Pointer to the vector x
+            1,            // Increment between elements of x
+            &beta,        // Scalar beta
+            result + i, // Pointer to the first element of the result vector
+            _six             // Increment between elements of the result vector
+        );
+    }
+    // Cleanup
+    delete[] h_ones;
+    cudaFree(ones);
+	cudaFree(d_matrix);
+}
 
 
 /*
