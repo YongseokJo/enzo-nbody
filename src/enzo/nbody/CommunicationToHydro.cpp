@@ -8,6 +8,8 @@
 #include "../CosmologyParameters.h"
 #include "../phys_constants.h"
 
+#define No_COM_EVOLUTION
+
 Particle* FirstParticleInEnzo = nullptr;
 double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration;
 double EnzoCurrentTime, ClusterRadius2;
@@ -172,6 +174,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 		// set COM for background acc
 		GetCenterOfMass(Mass, Position, Velocity, ClusterPosition, ClusterVelocity, NNB);
 
+#ifdef COM_EVOLUTION
 		ClusterAcceleration[0] = 0.;
 		ClusterAcceleration[1] = 0.;
 		ClusterAcceleration[2] = 0.;
@@ -185,12 +188,15 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 
 		for (int dim=0; dim<Dim; dim++)
 			ClusterAcceleration[dim] /= total_mass;
+#endif
 
 		Particle* ptclPtr;
 
 		for (int i=0; i<NNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
+#ifdef COM_EVOLUTION
 				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+#endif
 				Position[dim][i]               -= ClusterPosition[dim];
 				Velocity[dim][i]               -= ClusterVelocity[dim];
 			}
@@ -359,6 +365,7 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 	ClusterAcceleration[1] = 0.0;
 	ClusterAcceleration[2] = 0.0;
 
+#ifdef COM_EVOLUTION
 	double total_mass = 0.;
 	if (NNB != 0) {
 		for (int i=0; i<NNB; i++) {
@@ -388,8 +395,6 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 			std::endl;
 	}
 
-
-
 	if (newNNB != 0) {
 		// we need to make adjustment to COM
 		GetNewCenterOfMass(particle, newMass, newPosition, newVelocity, newNNB, 
@@ -402,12 +407,12 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 			total_mass += newMass[i];
 		}
 	}
-
 	if (total_mass != 0.) {
 		for (int dim=0; dim<Dim; dim++) {
 			ClusterAcceleration[dim] /= total_mass;
 		}
 	}
+#endif
 
 
 
@@ -422,9 +427,11 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 		std::cerr << "In ReceiveFromEnzo, NNB = "<< NNB<< std::endl;
 		// loop for PID, going backwards to update the NextParticle
 		for (int i=NNB-1; i>=0; i--) {
+#ifdef COM_EVOLUTION
 			for (int dim=0; dim<Dim; dim++) {
 				BackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
 			}
+#endif
 			int j=0;
 			for (j=0; j<NNB; j++) {
 				// PID of the received particle matches the PID of the existing particle
@@ -494,7 +501,9 @@ int ReceiveFromEnzo(std::vector<Particle*> &particle) {
 		// Update New Particles
 		for (int i=0; i<newNNB; i++) {
 			for (int dim=0; dim<Dim; dim++) {
+#ifdef COM_EVOLUTION
 				newBackgroundAcceleration[dim][i] -= ClusterAcceleration[dim];
+#endif
 				newPosition[dim][i]               -= ClusterPosition[dim];
 				newVelocity[dim][i]               -= ClusterVelocity[dim];
 			}
@@ -791,12 +800,14 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 
 
 
+#ifdef COM_EVOLUTION
 	// COM evolution	
 	for (int dim=0; dim<Dim; dim++) {	
 		ClusterPosition[dim] += ClusterVelocity[dim]*TimeStep;
 		ClusterPosition[dim] += ClusterAcceleration[dim]*TimeStep*TimeStep/2;
 		ClusterVelocity[dim] += ClusterAcceleration[dim]*TimeStep;
 	}
+#endif
 
 	ptcl = FirstParticleInEnzo;
 	if (ptcl == nullptr) {
