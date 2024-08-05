@@ -69,13 +69,12 @@ void GetAcceleration(
 	initializeCudaAndCublas(&handle);
 
 
+	toDevice(h_target_list, d_target, NumTargetTotal, stream);
 
 
 	for (int TargetStart=0; TargetStart < NumTargetTotal; TargetStart+=target_size) {
 		NumTarget = std::min(target_size, NumTargetTotal-TargetStart);
 		//fprintf(stderr, "TargetStart=%d, NumTargetTotal=%d, NumTarget=%d\n", TargetStart, NumTargetTotal, NumTarget);
-
-		toDevice(h_target_list+TargetStart, d_target, NumTarget, stream);
 
 
 		total_data_num = new_size(_NNB*NumTarget);
@@ -95,8 +94,9 @@ void GetAcceleration(
 					compute_pairwise_diff_subset, 0, 0));	
 		gridSize = (total_data_num + blockSize - 1) / blockSize;
 
+
 		compute_pairwise_diff_subset<<<gridSize, blockSize, 0, stream>>>\
-			(d_ptcl, d_diff, _NNB, NumTarget, d_target);
+			(d_ptcl, d_diff, _NNB, NumTarget, d_target, TargetStart);
 		cudaDeviceSynchronize();
 
 
@@ -106,7 +106,7 @@ void GetAcceleration(
 		gridSize = (total_data_num + blockSize - 1) / blockSize;
 
 		compute_magnitudes_subset<<<gridSize, blockSize, 0, stream>>>\
-			(d_r2, d_diff, d_magnitudes, _NNB, NumTarget, d_target, d_neighbor);
+			(d_r2, d_diff, d_magnitudes, _NNB, NumTarget, d_target, d_neighbor, TargetStart);
 		cudaDeviceSynchronize();
 
 		/******* Force *********/
