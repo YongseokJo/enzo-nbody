@@ -15,7 +15,7 @@ double EnzoLength, EnzoMass, EnzoVelocity, EnzoTime, EnzoForce, EnzoAcceleration
 double EnzoCurrentTime, ClusterRadius2;
 double ClusterAcceleration[Dim], ClusterPosition[Dim], ClusterVelocity[Dim], EnzoClusterPosition[Dim+1];
 double EPS2, eta, InitialRadiusOfAC;
-int FixNumNeighbor, FixNumNeighbor0, IdentifyNbodyParticles;
+int FixNumNeighbor, MaxNumNeighbor, FixNumNeighbor0, IdentifyNbodyParticles;
 int BinaryRegularization, IdentifyOnTheFly;
 
 double KSTime;
@@ -90,6 +90,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	MPI_Recv(&IdentifyNbodyParticles  , 1, MPI_INT   , 0, 1750, inter_comm, &status);
 	MPI_Recv(&IdentifyOnTheFly        , 1, MPI_INT   , 0, 1775, inter_comm, &status);
 	MPI_Recv(&FixNumNeighbor          , 1, MPI_INT   , 0, 1800, inter_comm, &status);
+	MPI_Recv(&MaxNumNeighbor          , 1, MPI_INT   , 0, 1850, inter_comm, &status);
 	MPI_Recv(&BinaryRegularization    , 1, MPI_INT   , 0, 1900, inter_comm, &status);
 	MPI_Recv(&KSDistance              , 1, MPI_DOUBLE, 0, 2000, inter_comm, &status);
 	MPI_Recv(&KSTime                  , 1, MPI_DOUBLE, 0, 2100, inter_comm, &status);
@@ -125,7 +126,7 @@ int InitialCommunication(std::vector<Particle*> &particle) {
 	fprintf(nbpout, "Data received!\n");
 
 
-	ClusterRadius2 = EnzoClusterPosition[3]; 
+	ClusterRadius2 = EnzoClusterPosition[3];
 
 	// Enzo to Nbody unit convertors
 	//EnzoMass         = MassUnits/Msun/mass_unit;
@@ -807,6 +808,20 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 		ClusterPosition[dim] += ClusterAcceleration[dim]*TimeStep*TimeStep/2;
 		ClusterVelocity[dim] += ClusterAcceleration[dim]*TimeStep;
 	}
+#else
+	double NbodyClusterPosition[Dim] = {0,0,0};
+	double mass = 0;
+	for (Particle* ptcl:particle) {
+		for (int dim=0; dim<Dim; dim++) {
+			NbodyClusterPosition[dim] += ptcl->Mass*ptcl->Position[dim];
+			mass += ptcl->Mass;
+		}
+	}
+	for (int dim=0; dim<Dim; dim++) {
+		NbodyClusterPosition[dim] /= mass;
+		NbodyClusterPosition[dim] /= EnzoLength;
+		NbodyClusterPosition[dim] += ClusterPosition[dim];
+	}
 #endif
 
 	ptcl = FirstParticleInEnzo;
@@ -823,12 +838,19 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 				Position[dim][i]  = ptcl->Position[dim]/EnzoLength;
 				Velocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
 
+#ifdef COM_EVOLUTION
 				if (IdentifyNbodyParticles && IdentifyOnTheFly)
 					r2 += Position[dim][i]*Position[dim][i];
+#endif
 
 				// COM correction
 				Position[dim][i] += ClusterPosition[dim];
 				Velocity[dim][i] += ClusterVelocity[dim];
+
+#ifndef COM_EVOLUTION
+				if (IdentifyNbodyParticles && IdentifyOnTheFly)
+					r2 += (Position[dim][i]-NbodyClusterPosition[dim])*(Position[dim][i]-NbodyClusterPosition[dim]);
+#endif
 
 				if (IdentifyNbodyParticles && !IdentifyOnTheFly)
 					r2 += (Position[dim][i]-EnzoClusterPosition[dim])*(Position[dim][i]-EnzoClusterPosition[dim]);
@@ -865,12 +887,19 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 				newPosition[dim][i]  = ptcl->Position[dim]/EnzoLength;
 				newVelocity[dim][i]  = ptcl->Velocity[dim]/EnzoVelocity;
 
+#ifdef COM_EVOLUTION
 				if (IdentifyNbodyParticles && IdentifyOnTheFly)
 					r2 += newPosition[dim][i]*newPosition[dim][i];
+#endif
 
 				// COM correction
 				newPosition[dim][i] += ClusterPosition[dim];
 				newVelocity[dim][i] += ClusterVelocity[dim];
+
+#ifndef COM_EVOLUTION
+				if (IdentifyNbodyParticles && IdentifyOnTheFly)
+					r2 += (newPosition[dim][i]-NbodyClusterPosition[dim])*(newPosition[dim][i]-NbodyClusterPosition[dim]);
+#endif
 
 				if (IdentifyNbodyParticles && !IdentifyOnTheFly)
 					r2 += (newPosition[dim][i]-EnzoClusterPosition[dim])*(newPosition[dim][i]-EnzoClusterPosition[dim]);
@@ -922,7 +951,11 @@ int SendToEnzo(std::vector<Particle*> &particle) {
 				(ClusterPosition[0]-0.5)*EnzoLength*position_unit,
 				(ClusterPosition[1]-0.5)*EnzoLength*position_unit,
 				(ClusterPosition[2]-0.5)*EnzoLength*position_unit);*/
+#ifdef COM_EVOLUTION
 		MPI_Send(ClusterPosition, 3, MPI_DOUBLE, 0, 700, inter_comm);
+#else
+		MPI_Send(NbodyClusterPosition, 3, MPI_DOUBLE, 0, 700, inter_comm);
+#endif
 	}
 
 	CommunicationInterBarrier();

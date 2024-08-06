@@ -826,6 +826,7 @@ int SetDefaultGlobalValues(TopGridData &MetaData)
 	NbodyTimeStepConstant = 0.01;
 	NbodyNeighborRadius   = 0.00044;
 	NbodyFixNumNeighbor   = 30;
+	NbodyMaxNumNeighbor   = 200;
 	NbodyBinaryRegularization = 0;
 	NbodyBinaryDistance = 0.0002;
 	NbodyBinaryTimeStep = 2e-5;

@@ -1280,6 +1280,7 @@ int ReadParameterFile(FILE *fptr, TopGridData &MetaData, float *Initialdt)
 		ret += sscanf(line, "NbodyTimeStepConstant = %"FSYM, &NbodyTimeStepConstant);
 		ret += sscanf(line, "NbodyNeighborRadius = %"FSYM, &NbodyNeighborRadius);
 		ret += sscanf(line, "NbodyFixNumNeighbor = %"ISYM, &NbodyFixNumNeighbor);
+		ret += sscanf(line, "NbodyMaxNumNeighbor = %"ISYM, &NbodyMaxNumNeighbor);
 		ret += sscanf(line, "NbodyBinaryRegularization = %"ISYM, &NbodyBinaryRegularization);
 		ret += sscanf(line, "NbodyBinaryDistance       = %"FSYM, &NbodyBinaryDistance);
 		ret += sscanf(line, "NbodyBinaryTimeStep       = %"FSYM, &NbodyBinaryTimeStep);

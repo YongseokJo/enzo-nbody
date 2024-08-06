@@ -68,6 +68,7 @@ EXTERN double NbodySmoothingLength;
 EXTERN double NbodyTimeStepConstant;
 EXTERN double NbodyNeighborRadius;
 EXTERN int NbodyFixNumNeighbor;
+EXTERN int NbodyMaxNumNeighbor;
 EXTERN int NbodyBinaryRegularization;
 EXTERN double NbodyBinaryDistance;
 EXTERN double NbodyBinaryTimeStep;

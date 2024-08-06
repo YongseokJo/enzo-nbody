@@ -165,7 +165,7 @@ void Particle::UpdateRadius() {
 
 		if (NumberOfAC > FixNumNeighbor) {
 			const int n = 2;
-			const double c = (NumNeighborMax-FixNumNeighbor);
+			const double c = (MaxNumNeighbor-FixNumNeighbor);
 			const double b = 0.9 / std::pow(c,n);  // ln(2) / 40
 			double x = NumberOfAC-FixNumNeighbor;
 			double a = n%2==0 ? b*std::abs(x)*std::pow(x,n-1) : b*std::pow(x,n);
@@ -175,7 +175,7 @@ void Particle::UpdateRadius() {
 		}
 		else if (NumberOfAC < FixNumNeighbor) {
 			const int n = 3;
-			const double c = (NumNeighborMax-FixNumNeighbor);
+			const double c = (MaxNumNeighbor-FixNumNeighbor);
 			const double b = 0.5 / std::pow(c,n);  // ln(2) / 40
 			double x = NumberOfAC-FixNumNeighbor;
 			double a = n%2==0 ? b*std::abs(x)*std::pow(x,n-1) : b*std::pow(x,n);
@@ -248,7 +248,7 @@ void Particle::UpdateNeighbor(std::vector<Particle*> &particle) {
 		if (dist(Position, ptcl->Position)<this->RadiusOfAC) {
 			ACList.push_back(ptcl);	
 			NumberOfAC++;
-			if (NumberOfAC >= NumNeighborMax) {
+			if (NumberOfAC >= MaxNumNeighbor) {
 				isExcess = true; 
 				break;
 			}
@@ -274,7 +274,7 @@ void Particle::NeighborCorrection(double r0, Particle* newPtcl, std::vector<Part
 	bool isExcess;
 	double a[Dim], adot[Dim];
 
-	if (newPtcl->NumberOfAC < NumNeighborMax) {
+	if (newPtcl->NumberOfAC < MaxNumNeighbor) {
 		ACList.push_back(newPtcl);
 		NumberOfAC++;
 		this->ComputeAcceleration(newPtcl,a,adot);

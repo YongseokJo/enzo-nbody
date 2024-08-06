@@ -60,7 +60,7 @@ void CalculateAllAccelerationOnGPU(std::vector<Particle*> &particle){
 	ACListReceive      = new int*[ListSize];
 
 	for (int i=0; i<ListSize; i++) {
-		ACListReceive[i] = new int[NumNeighborMax];
+		ACListReceive[i] = new int[MaxNumNeighbor];
 		for (int dim=0; dim<Dim; dim++) {
 			AccIrr[i][dim]				   = 0;
 			AccIrrDot[i][dim]			 	 = 0;
