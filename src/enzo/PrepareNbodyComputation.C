@@ -259,6 +259,7 @@ int SendToNbodyFirst(LevelHierarchyEntry *LevelArray[], int level) {
 		MPI_Send(&isNbodyParticleIdentification, 1, MPI_INT   , 1, 1750, inter_comm);
 		MPI_Send(&isIdentificationOnTheFly     , 1, MPI_INT   , 1, 1775, inter_comm);
 		MPI_Send(&NbodyFixNumNeighbor        , 1, MPI_INT   , 1, 1800, inter_comm);
+		MPI_Send(&NbodyMaxNumNeighbor        , 1, MPI_INT   , 1, 1850, inter_comm);
 		MPI_Send(&NbodyBinaryRegularization  , 1, MPI_INT   , 1, 1900, inter_comm);
 		MPI_Send(&NbodyBinaryDistance        , 1, MPI_DOUBLE, 1, 2000, inter_comm);
 		MPI_Send(&NbodyBinaryTimeStep        , 1, MPI_DOUBLE, 1, 2100, inter_comm);

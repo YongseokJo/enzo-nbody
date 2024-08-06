@@ -170,7 +170,7 @@ void FindNewNeighbor(Particle* newPtcl, std::vector<Particle*> &particle) {
 			continue;
 		r0 = dist(ptcl->Position, newPtcl->Position);
 		if (r0 < newPtcl->RadiusOfAC) {
-			if (newPtcl->NumberOfAC <= NumNeighborMax) {
+			if (newPtcl->NumberOfAC <= MaxNumNeighbor) {
 				newPtcl->ACList.push_back(ptcl);
 				newPtcl->NumberOfAC++;
 			}

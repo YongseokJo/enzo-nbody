@@ -23,6 +23,7 @@ static bool first   = true;
 static int variable_size, target_size;
 
 
+extern int MaxNumNeighbor;
 extern CUDA_REAL *h_ptcl, *d_ptcl; //, *background;
 extern CUDA_REAL *h_result, *d_result;
 extern CUDA_REAL *d_diff, *d_magnitudes, *d_r2;
@@ -138,7 +139,7 @@ void GetAcceleration(
 				if (h_neighbor[i * _NNB + j] && (target != j)) {
 					targetNeighborList[k] = j;
 					k++;
-					if (k >= NumNeighborMax) {
+					if (k >= MaxNumNeighbor) {
 						throw std::runtime_error("Too many neighbors!");
 					}
 				}
